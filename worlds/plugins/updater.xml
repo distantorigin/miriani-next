@@ -129,8 +129,10 @@ sounds = GetInfo(74)
 
 update_dir = {
   [homedir..indexf[1]] = "."..indexf[2],
-  [plugins..""] = ".xml",
   [plugins.."toastush"] = ".xml",
+      [plugins.."channel_history"] = ".xml",
+      [plugins.."output_functions"] = ".xml",
+[plugins.."updater"] = ".xml",
   [sounds.."miriani/"] = ".ogg",
   [sounds.."classic_miriani/"] = ".ogg",
   [homedir.."lua/miriani/scripts/"] = ".lua",

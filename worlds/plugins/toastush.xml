@@ -452,7 +452,7 @@ end -- OnPluginSave
 
 function OnPluginConnect()
   --register()
-  mplay("music/theme", "ambiance", 1)
+  mplay("music/theme", "other", 1)
 end -- OnPluginConnect
 
 function OnPluginDisconnect()

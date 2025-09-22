@@ -975,7 +975,8 @@ print("Launch complete.")
   <trigger
    enabled="y"
    group="ship"
-   match="^You feel a mighty shaking as something seemingly large impacts the hull\.$"   regexp="y"
+   match="^You feel a mighty shaking as something seemingly large impacts the hull\.$"
+   regexp="y"
    send_to="14"
    omit_from_output="y"
    sequence="100"
@@ -1103,6 +1104,23 @@ print("Launch complete.")
    send_to="12"
   >
   <send>mplay("ship/misc/starWavewarp")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^The focused ship is no longer in the sector\.$"
+   regexp="y"
+   send_to="14"
+   sequence="1"
+   keep_evaluating="y"
+  >
+  <send>
+   -- Clear focus infobar when ship leaves sector
+   focusTarget = nil
+   focusCoordinates = nil
+   infobar("focus", "")
+  </send>
   </trigger>
 
 </triggers>

@@ -75,7 +75,7 @@ alt + shift + t: toggle timestamp announcements
 
   <alias
    script="history_add"
-   match="^history_add (\w[\w /1-9]*)=(.*)"
+   match="^history_add ([^\s=][^=]*)=(.*)"
    enabled="y"
    omit_from_command_history="y"
    omit_from_log="y"
@@ -687,7 +687,7 @@ end
 search=search+move
 while search~=0 and search~=#messages[categories[current_category]]+1 do
 str=messages[categories[current_category]][search]["message"]
-if string.find(str,current_search,1,true) then
+if string.find(string.lower(str),string.lower(current_search),1,true) then
 sayMsg("",messages[categories[current_category]][search])
 if GetVariable("tts")=="1" then
 Execute("tts_note "..search.." of "..#messages[categories[current_category]])

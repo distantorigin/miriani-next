@@ -32,7 +32,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
-   match="^The (?:star)?ship (?:rocks|shakes|shudders) (?:violently|slightly) as (?:it['s]{0,2}|a)?\s?(hit by an automated laser turret|comes into contact with a space mine|projectile strikes the hull|solar material impacts the hull)\.$"
+   match="^The (?:star)?ship (?:rocks|shakes|shudders) (?:violently|slightly) as (?:it'?s?|a)?\s?(hit by an automated laser turret|comes into contact with a space mine|projectile strikes the hull|solar material impacts the hull)\.$"
    regexp="y"
    send_to="12"
    sequence="100"

@@ -92,7 +92,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^((?:[A-Za-z0-9]{1}+)(?:[\w'! ]+) (say|ask|exclaim)s?,? ?(?:.+? )?)(&quot;.+?&quot;)$"
+   match="^((?:[A-Za-z0-9]+)(?:[\w !]+) (say|ask|exclaim)s?,? ?(?:.+? )?)(&quot;.+?&quot;)$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -163,11 +163,8 @@ ImportXML([=[
    sequence="99"
   >
   <send>
-   -- Direct ask/exclaim TO YOU - use directsay sound and bypass foreground sounds
    mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-   print_color({"%1 %2 you, \"", "default"}, {"%3", "priv_comm"}, {"\"", "default"})
-   -- Add to say buffer (use normalized format for buffer)
-   channel("say", "%1 [to you]: %3", {"say", "communication"})
+   print_color({"%1 %2 you, \\"%3\\"", "priv_comm"})
   </send>
   </trigger>
 
@@ -261,7 +258,7 @@ ImportXML([=[
    local prefix = "[PA] %1 "
    local msg = prefix.."%2."
    channel(name, msg, {"pa", "communication"})
-print_color({prefix, "default"}, {"%2", "pub_comm"})
+   print_color({prefix, "default"}, {"%2", "pub_comm"})
   </send>
   </trigger>
 
@@ -325,7 +322,7 @@ print_color({prefix, "default"}, {"%2", "pub_comm"})
   <send>
    mplay ("comm/paOther", "communication")
    if "%3" == "" then
-   print_color({"[External PA] %2 %1s.", "pub_comm"})
+    print_color({"[External PA] %2 %1s.", "pub_comm"})
     channel(name, "[External PA] %2 %1s.", {"pa", "communication"})
    else
      local social = "%5" == "" and "" or "%5s and "

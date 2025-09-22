@@ -45,6 +45,7 @@ Version 4.0:
 * New: Enhanced direct say triggers to support "asks you", "exclaims to you", and complex formats like "hesitates briefly before saying to you".
 * New: General communication channels now display as [General] instead of [General Communication] for cleaner output.
 * New: Added focus coordinates and last scanned coordinates to the status bar. Focus coordinates show "Focus: x,y,z (Target Name)" and scan coordinates show "Scan: x,y,z" in the info bar (Alt+Shift+I).
+* Fixed: Clear focus from info bar when we see the ship is no longer in the sector.
 * New: Added destination finder coordinates to the status bar. Shows "Dest: x,y,z" when using destination finder commands.
 * New: Destination coordinates automatically clear from status bar when ship finishes jumping (wormhole/relativity) or landing.
 * Fixed: Bardenium shot counter now works correctly in all weapon configurations.

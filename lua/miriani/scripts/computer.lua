@@ -284,7 +284,7 @@ mplay("ship/computer/voice/unclear", "computer")
   <trigger
    enabled="y"
    group="computer"
-   match="^#\$# computer \| (Turret|Bardenium Cannon|Long-Range)s? .+? (locked|lockin') (on|ont')(to )?.+?\.$"
+   match="^#\$# computer \| (Turret|Bardenium Cannon|Long-Range)s? .+? (?:(?:is|are) locking|(locked|lockin')) (?:on|ont')(?:to )?.+?\.$"
    regexp="y"
    send_to="12"
    sequence="100"

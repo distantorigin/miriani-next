@@ -71,6 +71,25 @@ ImportXML([=[
     end -- nested if
    end -- if
 
+   -- Track last scanned coordinates and update status bar
+   if "%1" == "Coordinates" then
+     lastScannedCoords = "%2"
+     local coords = string.gsub(lastScannedCoords, "[()]", "")  -- Strip parentheses
+     infobar("scan", "Scan: " .. coords)
+
+     -- Auto-interrupt TTS on coordinates with delay
+     if config:get_option("scan_interrupt").value == "yes" then
+       local coords = string.gsub("%2", "[()]", "")  -- Strip parentheses
+
+       -- Use coroutine for delay
+       local wait = require("wait")
+       wait.make(function()
+         wait.time(0.1)  -- Wait 100ms
+         Execute("tts_interrupt " .. coords)
+       end)
+     end -- if scan_interrupt
+   end -- if coordinates
+
    if (not searchingScan) then
      return print("%0")
     end -- if
@@ -268,7 +287,7 @@ return 0
   <alias
    enabled="y"
    group="starmap"
-   match="^sm([aAbcCdeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
+   match="^sm([AbdCeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
    regexp="y"
    send_to="12"
    sequence="100"

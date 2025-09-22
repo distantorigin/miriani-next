@@ -18,10 +18,16 @@ local colortable = {
 function notify(level, msg, brief)
   local color = colortable[level]
 
-  if not brief then  
+  if not brief then
     ColourNote(color[1], color[2], msg)
   else
-        nvda.say(msg)
+    -- Use screen reader if available
+    if nvda and nvda.say then
+      nvda.say(msg)
+    else
+      -- Fallback to regular display if NVDA not available
+      ColourNote(color[1], color[2], msg)
+    end
   end -- if
 end -- notify
 

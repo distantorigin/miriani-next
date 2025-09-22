@@ -217,7 +217,11 @@ ImportXML([=[
    regexp="y"
    send_to="12"
   >
-  <send>mplay("vehicle/landingSplash", "vehicle")</send>
+  <send>
+   mplay("vehicle/landingSplash", "vehicle")
+   -- Clear destination infobar when vehicle lands
+   infobar("dest", "")
+  </send>
   </trigger>
 
   <trigger

@@ -3,11 +3,48 @@ local const = require("miriani.lib.audio.bass.constants")
 local ffi = require("ffi")
 local stream = require("miriani.lib.audio.bass.stream")
 
-class.Bass()
+class.BASS()
 
-  local bind = require("miriani.lib.audio.bindings.bass")
+function BASS:_init()
 
-function Bass:Init(device, frequency, flags)
+  self.bass = require("miriani.lib.audio.bindings.bass")
+
+end
+
+function BASS:Free()
+
+  self.bass.BASS_Free()
+
+  return self.bass.BASS_ErrorGetCode()
+
+end
+
+function BASS:GetConfig(option)
+
+  return self.bass.BASS_GetConfig(option)
+
+end
+
+function BASS:IsInitialized()
+
+  -- Try to get BASS config - this only works if BASS is initialized
+  local result = self.bass.BASS_GetConfig(const.config.buffer)
+  local error_code = self.bass.BASS_ErrorGetCode()
+
+  -- If the error code is 'init' (8), BASS is not initialized
+  return error_code ~= const.error.init
+
+end
+
+function BASS:GetVersion()
+
+  local version = self.bass.BASS_GetVersion()
+
+  return version
+
+end
+
+function BASS:Init(device, frequency, flags)
 
   device = device or -1
 
@@ -15,77 +52,92 @@ function Bass:Init(device, frequency, flags)
 
   flags = flags or 0
 
-  bind.BASS_Init(device, frequency, flags, nil, nil)
-
-  return bind.BASS_ErrorGetCode()
+  local result = self.bass.BASS_Init(device, frequency, flags, nil, nil)
+  if result == 0 then
+    -- Init failed, return error code
+    return self.bass.BASS_ErrorGetCode()
+  else
+    -- Init succeeded, apply default configuration
+    self.bass.BASS_SetConfig(const.config.device_default, 1)
+    return 0
+  end
 end
 
-function Bass:Free()
+function BASS:SetConfig(option, value)
 
-  bind.BASS_Free()
+  self.bass.BASS_SetConfig(option, value)
 
-  return bind.BASS_ErrorGetCode()
-
-end
-
-function Bass:GetConfig(option)
-
-  return bind.BASS_GetConfig(option)
-
-end
-
-function Bass:GetVersion()
-
-  local version = bind.BASS_GetVersion()
-
-  return version
+  return self.bass.BASS_ErrorGetCode()
 
 end
 
-function Bass:SetConfig(option, value)
+function BASS:StreamCreate(freq, chans, flags)
 
-  bind.BASS_SetConfig(option, value)
+  local handle = self.bass.BASS_StreamCreate(freq, chans, flags, -1, nil)
 
-  return bind.BASS_ErrorGetCode()
-
+  if self.bass.BASS_ErrorGetCode() ~= const.error.ok then
+    return self.bass.BASS_ErrorGetCode()
+  else
+    return stream(handle)
+  end
 end
+function BASS:StreamCreateUrl(url, offset, flags)
+  offset = offset or 0
+  flags = flags or 0
+  assert(type(url) == "string")
 
-function Bass:StreamCreate(freq, chans, flags)
+  local sfile = ffi.new("char[?]", #url+1)
+  ffi.copy(sfile, url)
 
-  local handle = bind.BASS_StreamCreate(freq, chans, flags, -1, nil)
+  local handle = self.bass.BASS_StreamCreateURL(sfile, offset, flags, nil)
 
-  if bind.BASS_ErrorGetCode() ~= const.error.ok then
-    return bind.BASS_ErrorGetCode()
+  if handle == 0 then
+    return self.bass.BASS_ErrorGetCode()
   else
     return stream(handle)
   end
 end
 
-function Bass:StreamCreateFile(mem, file, offset, length, flags)
-
-  mem = mem or false
+function BASS:StreamCreateFile(mem, file, offset, length, flags)
   offset = offset or 0
   length = length or 0
-  flags = flags or const.stream.auto_free
+  flags = flags or 0
+
+  assert(type(mem) == 'boolean')
 
   local sfile = ffi.new("char[?]", #file+1)
   ffi.copy(sfile, file)
 
-  local handle = bind.BASS_StreamCreateFile(mem, sfile, offset, length, flags)
+  local handle = self.bass.BASS_StreamCreateFile(mem, sfile, offset, length, flags)
 
   if handle == 0 then
-    return bind.BASS_ErrorGetCode()
+    return self.bass.BASS_ErrorGetCode()
   else
     return stream(handle)
   end
 
 end
 
+function BASS:PluginLoad(filename)
+  local sfile = ffi.new("char[?]", #filename+1)
+  ffi.copy(sfile, filename)
+  local handle = self.bass.BASS_PluginLoad(sfile)
 
-function Bass:SetAttribute(stream, attribute, value)
-  return stream:SetAttribute(const.attribute[attribute], value)
-end -- SetAttribute
+  if handle == 0 then
+    return self.bass.BASS_ErrorGetCode()
+  else
+    return handle
+  end
+end
+function BASS:SetEnvironment(env, vol, decay, damp)
+  -- only works in 3d audio mode
+  local result = self.bass.BASS_SetEAXParameters(env, vol, decay, damp)
 
+  if not result then
+    return self.bass.BASS_ErrorGetCode()
+  else
+    return true
+  end
+end
 
-
-return Bass
+return BASS

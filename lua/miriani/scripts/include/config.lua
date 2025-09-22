@@ -17,9 +17,29 @@ class.Config()
 
 function Config:init(options, audio)
 
-
+  -- Always initialize with defaults first
   vars.options = options or {}
   vars.audio = audio or {}
+
+  -- CRITICAL: Ensure consts is always available (defensive loading)
+  if not vars.consts then
+    vars.consts = require("miriani.scripts.include.vars.consts")
+  end
+
+  -- Initialize these immediately so the object is always usable
+  self.consts = vars.consts
+  self.options = vars.options
+  self.audio = vars.audio
+
+  -- Verify initialization worked
+  if not self.consts then
+    error("Failed to initialize config constants")
+  end
+
+  -- If called without parameters (like Config()), we're done with basic initialization
+  if not options and not audio then
+    return self.consts.error.OK
+  end
 
   local serial_config = GetVariable(vars.consts.pack.MUSH_VAR)
 
@@ -49,6 +69,9 @@ function Config:init(options, audio)
     local current_consts = vars.consts
 
     -- Update keys.
+    -- Ensure self.options and self.audio are initialized before using them
+    self.options = self.options or {}
+    self.audio = self.audio or {}
     table.foreach(current_options,
     function(k, v)
       if (not self.options[k])
@@ -150,6 +173,9 @@ end -- function
 end -- _init
 
 function Config:get_option(key)
+  if not self.options then
+    return {}
+  end
   return self.options[key] or {}
 end -- get_option
 
@@ -208,6 +234,15 @@ function Config:save()
 end -- save
 
 function Config:get(var)
+
+  -- Safety check: ensure consts is initialized
+  if not self.consts then
+    -- Emergency initialization if somehow consts is missing
+    local vars_local = {
+      consts = require("miriani.scripts.include.vars.consts"),
+    }
+    self.consts = vars_local.consts
+  end
 
   if self.consts.pack[var] == nil then
     return self.consts.error.INVALID_ARG

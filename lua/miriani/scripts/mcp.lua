@@ -110,13 +110,7 @@ end
 
 function MCP:handle_message(message)
 
-  -- debug code:
-  -- --print(message)
-
-
   local data = self:parse_message(message)
-
-  -- nondebug
   if data.error and data.error == -1 then
     -- do nothing right now.
   elseif (data.version and data.to) then

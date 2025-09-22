@@ -323,7 +323,7 @@ function prev_line()
  cline = skipblanklines(cline - 1, 'b')
  line = GetLineInfo(cline, 1)
  if cline == oline then
-
+BroadcastPlugin(1,"output_boundary")
  end
  Execute("tts_interrupt "..line)
 end
@@ -340,7 +340,7 @@ function next_line()
  cline = skipblanklines(cline + 1, 'f')
  line=GetLineInfo(cline,1)
  if cline == oline then
-
+BroadcastPlugin(1,"output_boundary")
  end
  Execute("tts_interrupt "..line)
 end

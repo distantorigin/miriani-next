@@ -113,7 +113,7 @@ delay = 0.5
 timeout = 30
 download_size_limit = 20
 
-update_url = "https://raw.githubusercontent.com/PsudoDeSudo/Toastush/main"
+update_url = "https://raw.githubusercontent.com/distantorigin/Toastush/main"
 index_file = "index-v5.manifest"
 check_update_url = string.format("%s/%s", update_url, index_file)
 indexf = utils.split(index_file, ".")
@@ -129,9 +129,10 @@ sounds = GetInfo(74)
 
 update_dir = {
   [homedir..indexf[1]] = "."..indexf[2],
-  [plugins.."updater"] = ".xml",
+  [plugins..""] = ".xml",
   [plugins.."toastush"] = ".xml",
   [sounds.."miriani/"] = ".ogg",
+  [sounds.."classic_miriani/"] = ".ogg",
   [homedir.."lua/miriani/scripts/"] = ".lua",
   [homedir.."lua/miriani/"] = ".txt",
 

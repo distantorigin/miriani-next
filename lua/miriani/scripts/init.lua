@@ -12,9 +12,9 @@ local path = require("pl.path")
 local scripts = "lua/miriani/scripts"
 
 -- Dependencies:
-config = require(scripts .."/include/config")
+local Config = require(scripts .."/include/config")
+config = Config()
 notify = require(scripts .."/include/notify")
-audio = require(scripts .."/include/audio")
 
 -- Table of dependencies.
 local namespace = {
@@ -43,8 +43,4 @@ table.foreach(namespace,
 function (i, mod)
   require(string.format("%s/%s", scripts , mod))
 end )
- 
--- initialize
-  -- initialize speech interrupt
-    assert(package.loadlib("MushReader.dll", "luaopen_audio"))()
-
+     

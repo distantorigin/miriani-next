@@ -1,4 +1,65 @@
-`3.1.74
+Version 4.0:
+* New: Rewritten audio system, featuring smarter muting, foreground sound support, dynamic category adding, and more.
+* New: Foreground Sounds (fsounds), a mode that will force sounds to only play while the session is foregrounded. You can enable this by typing fsounds, through toastush:config, or by pressing ctrl+F9.
+* New: Allow certain high priority sounds through fsounds mode. Currently these are private comms and direct says.
+* New: Aaaannnnd...added a new sound for says that are targeted directly at you.
+* New: Play the say sound for targeted says that aren't sent to you.
+* New: Add targeted says to the say buffer, even if they aren't specifically at you.
+* New: Plugins can now broadcast various messages to create, remove, or modify audio groups from within Toastush itself.
+* New: Enabled automatic device switching for audio devices via Audio.CONST.config.device_default.
+* New: Flight control messages now use soundpack hooks to properly clean message formatting. Flight announcements like "A flight monitor announces, Ship detected" are now cleaned to just show "Ship detected".
+* New: Fixed classic_miriani sound randomization to properly handle numbered variants (laser1-laser30, etc).
+* New: Improved sound file finding to prevent randomization on already-numbered files. This would often manifest in things like unable to play insect2.ogg messages.
+* Changed: Changed plugin name to toastush_ng, bumped version to 4.0, and now register soundpack as Toastush-NG.
+* Changed: (updater.xml) Update URL now points at Toastush-NG repository.
+* Changed: Migrated alt+shift+A to ctrl+L. With auto device switching, this keystroke should largely be a thing of the past, however.
+* Changed: Alt+F10 (toggle sound mute) is now F9.
+* Changed: Settings variable renamed from "secret_settings" to "toastush_settings".
+* Changed: Starship relay messages now consistently show as [shipname] format instead of [Starship | shipname].
+* New: Volume adjusting now has a sound.
+* New: Audio mute now has a sound.
+* New: Printing files from a Lore computer now has a sound.
+* New: Players connecting, disconnecting, or reconnecting in the room now has a sound.
+* New: Audio Style preference, available under toastush:config general or by typing toastush:classic. The only two preferences are Modern or Classic. Classic captures many of the old sounds from the circa 2012 era and earlier, restoring things such as: channel sounds, starship engine sounds, the multitudes of laser sounds, cannon sounds, target lock and many Lore computer sounds.
+* New: (output_functions.xml) Re-added the boundary sound when the start or end of history is reached.
+* New: (channel_history.xml) Add support for buffer names containing numbers.
+* New: (channel_history.xml) Alt+Enter: Open a URL in the current message if there is one, otherwise open world configuration.
+* New: (channel_history.xml) Alt+Shift+1-0: Jump to first through tenth buffer.
+* New: (channel_history.xml) Alt+Shift+` (grave accent, also works without shift): If you have text typed in the command window, try to jump to a buffer starting with that text. Press the command with an empty window to return to where you were before the last jump, effectively allowing you to flip between two buffers.
+* New: (channel_history.xml) Alt+Backslash: If you have text typed in the command window, searches toward the bottom of the current buffer for that text. Add Shift to search toward the top of the buffer. If a match is found, focus jumps to that message.
+* New: (channel_history.xml) Alt+Shift+Enter: Copy current buffer to a notepad.
+* New: (channel_history.xml) Alt+Shift+T: Toggle timestamp announcements.
+* New: Optimized audio cleanup routines, which should hopefully make sounds a little bit more snappy.
+* New: Enhanced audio resource management with proper stream cleanup and memory optimization.
+* New: Forced laser and cannon sounds to pan randomly.
+* New: Added automatic ASCII character translation to prevent MOO server from dropping non-ASCII characters. Smart quotes, dashes, ellipsis, and non-breaking spaces are automatically converted to ASCII equivalents when sending commands.
+* New: Enhanced direct say trigger to handle "says to you" syntax in addition to existing "[to you]" format.
+* New: Added an option under 'toastush:config reader' to interrupt speech for scan coordinates. This will reintroduce the old functionality found in many soundpacks where scanning anything would be interrupted almost immediately to read the coordinates. A 100ms delay has been added, which should allow most speech systems to read part of the name of the item before jumping to the coordinates themselves. These values may be tweaked.
+* New: Added an option under buffer config to separate metafrequency channels into a buffer for each frequency.
+* New: Added a sound for successful soundpack registration.
+* New: Escape to @abort (rather than clear input).
+* New: Stop all sounds immediately with shift+escape.
+* New: Added pulse emitter sounds (LoadEMPulse1-3.ogg, EmptyEmitter.ogg) for loading energy packs and empty pulse emitters.
+* New: Added triggers for pulse emitter loading and emptying sounds.
+* New: Added "There are no damaged components" sound.
+* New: Enhanced direct say triggers to support "asks you", "exclaims to you", and complex formats like "hesitates briefly before saying to you".
+* New: General communication channels now display as [General] instead of [General Communication] for cleaner output.
+* New: Added focus coordinates and last scanned coordinates to the status bar. Focus coordinates show "Focus: x,y,z (Target Name)" and scan coordinates show "Scan: x,y,z" in the info bar (Alt+Shift+I).
+* New: Added destination finder coordinates to the status bar. Shows "Dest: x,y,z" when using destination finder commands.
+* New: Destination coordinates automatically clear from status bar when ship finishes jumping (wormhole/relativity) or landing.
+* Fixed: Bardenium shot counter now works correctly in all weapon configurations.
+* Fixed: Spellchecker now plays the prompt sound.
+* Removed: Removed aliases 'smc' and 'sma' from starmap filters, as these are now commands inside the game.
+* Removed: @paste alias
+* Removed: worlds/plugins/ClientLock.xml
+* Removed: worlds/plugins/Text_To_Speech.xml
+* Removed: worlds/plugins/timer.xml
+* Removed: worlds/plugins/Timestamps.xml
+* Removed: worlds/plugins/gmcp_handler.xml
+* Removed: worlds/plugins/local_edit.xml
+
+
+Version 3.1.74
 
 
     * Added spooky Halloween morphing sound!

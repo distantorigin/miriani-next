@@ -96,14 +96,13 @@ ImportXML([=[
    enabled="y"
    group="combat"
    script="gagline"
-   match="^The ship jerks slightly as its turrets are fired\.$"
+   match="^The room is (?:filled with a .+? light as the laser turrets? (?:are|is) fired|bathed in brilliant .+? light as the ship's (?:laser turrets? )?fires? alternating patterns of festive color)\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
-  <send>
-   mplay ("ship/combat/laser", "ship")</send>
+  <send>mplay ("ship/combat/laser", "ship", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -116,7 +115,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/combat/cannon", "ship")</send>
+  <send>mplay ("ship/combat/cannon", "ship", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -182,12 +181,45 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
+   match="^(?:You|[A-Z][a-z]+?\s?\w*) carefully discharges? a.+?energy pack into a.+?\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("combat/LoadEMPulse", "melee")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
+   match="^A.+?appears to have run out of energy\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("combat/EmptyEmitter", "melee")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
+   match="^(?:You press and hold a small red button on .+? pulse emitter, discharging the remaining energy and rendering the device inert|[A-Z][a-z]+?\s?\w* presses and holds a small red button on .+? pulse emitter)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("combat/EmptyEmitter", "melee")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
    match="^A distant whirring noise can be heard as the \w+'s laser aligns itself, followed by a faint pulse as it fires\.$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>mplay("ship/combat/planetaryLaser", "ship")</send>
+  <send>mplay("ship/combat/planetaryLaser", "ship", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -370,7 +402,7 @@ ImportXML([=[
    send_to="14"
       sequence="100"
   >
-  <send>mplay ("ship/combat/laser", "ship")</send>
+  <send>mplay ("ship/combat/laser", "ship", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -385,10 +417,6 @@ ImportXML([=[
   >
   <send>
    mplay ("ship/combat/reload", "ship")
-   if config:get_option("count_cannon").value == "yes" and fullBarde and numberOfCannons then
-    cannonShots = fullBarde / numberOfCannons
-   end -- if cannonCount
-
 </send>
   </trigger>
 
@@ -421,6 +449,8 @@ ImportXML([=[
     end -- if
     focusCoordinates = "%2"
     focusTarget = "%1"
+    local coords = string.gsub(focusCoordinates, "[()]", "")  -- Strip parentheses
+    infobar("focus", "Focus: " .. coords .. " (" .. focusTarget .. ")")
     print("%2 (%1)")
     mplay("ship/combat/focus", "ship")
    end -- if
@@ -451,32 +481,49 @@ ImportXML([=[
   </trigger>
 
   <trigger
-   name="cannonCount"
-    enabled="y"
+   name="cannonCountSetup"
+   enabled="y"
    group="combat"
-   lines_to_match="7"
-   match="\A^Available Cannons: (\d+)\s?(\(Salvo of (\d+)\))?\n(?s).+?\n^(No available weapons\-grade bardenium\.|Available weapons\-grade bardenium:)$\n^(\s*[A-Za-z\s-]+ Bardenium: (\d+))?.*$\Z"
-   multi_line="y"
+   match="^Available Cannons: (\d+)\s?(\(Salvo of (\d+)\))?$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>
-   fullBarde = tonumber("%1") * 10
+   -- Get number of cannons
+   local totalCannons = tonumber("%1") or 0
 
-   if "%3" ~= "" then
-    numberOfCannons = tonumber("%3")
+   -- Check if salvo mode (capture group %3 contains salvo size)
+   if "%3" ~= "" and "%3" ~= nil then
+    numberOfCannons = tonumber("%3") or totalCannons
    else
-    numberOfCannons = tonumber("%1")
-   end -- total cannons
+    numberOfCannons = totalCannons
+   end
+  </send>
+  </trigger>
 
-   if "%4" == "No available weapons-grade bardenium." then
-    cannonShots = 0
-   else
-    cannonShots = math.ceil(tonumber("%6") / numberOfCannons)
-   end -- if
-print("Shots Remaining: "..cannonShots)
+  <trigger
+   name="cannonCountBardenium"
+   enabled="y"
+   group="combat"
+   match="^\s*([A-Za-z\s-]+) Bardenium: (\d+)$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   -- Only process if we have cannon count from previous trigger
+   if numberOfCannons and numberOfCannons > 0 then
+    local bardeniumAmount = tonumber("%2") or 0
+    if bardeniumAmount > 0 then
+     cannonShots = math.ceil(bardeniumAmount / numberOfCannons)
+    else
+     cannonShots = 0
+    end
 
+    mplay("ship/combat/secondaryLock", "ship")
+    notify("info", "Bardenium counter reset: " .. cannonShots .. " shots", 1)
+   end
   </send>
   </trigger>
 

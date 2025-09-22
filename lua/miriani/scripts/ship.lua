@@ -8,8 +8,13 @@ ImportXML([=[
    match="^The bright light vanishes as the starship emerges at the other side of the wormhole\.$"
    regexp="y"
    omit_from_output="y"
+   send_to="12"
    sequence="100"
   >
+  <send>
+   -- Clear destination infobar when ship finishes jumping
+   infobar("dest", "")
+  </send>
   </trigger>
 
   <trigger
@@ -225,7 +230,11 @@ print("Launch complete.")
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/relStop", "ship")</send>
+  <send>
+   mplay ("ship/move/relStop", "ship")
+   -- Clear destination infobar when ship finishes jumping
+   infobar("dest", "")
+  </send>
   </trigger>
 
   <trigger
@@ -1024,7 +1033,11 @@ print("Launch complete.")
    omit_from_output="y"
    send_to="14"
   >
-  <send>mplay("ship/move/flash")</send>
+  <send>
+   mplay("ship/move/flash")
+   -- Clear destination infobar when ship finishes jumping
+   infobar("dest", "")
+  </send>
   </trigger>
 
   <trigger

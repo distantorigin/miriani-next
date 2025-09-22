@@ -260,6 +260,14 @@ local data = {
   fft_complex = 0x80 -- FFT flag: return complex data
 }
 
+--Eax environments
+local environment= {
+unchanged=-1,
+generic=0,
+padded_cell=1,
+room=2,
+bathroom=3
+}
 return {
   active = active,
   attribute = attribute,
@@ -267,6 +275,7 @@ return {
   data = data,
   device = device,
   device_info = device_info,
+  environment = environment,
   error = error,
   fx = fx,
   music = music,

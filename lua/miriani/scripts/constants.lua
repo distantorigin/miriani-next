@@ -1,17 +1,19 @@
 -- Defines shared constants across Miriani plugins.
 
-VERSION = "3.1.7"
-EXTENSION = ".ogg"
-ALT_EXTENSION = ".ogg"
-SOUNDPATH = "miriani/"
-ALTPATH = "alternate/"
-TOASTUSH_ID = "843d2f53cb3685465bda7d4a"
-UPDATE_ID = "508bd88f4d441f81466bf471"
-INDEX = "index-v5.manifest"
-DISCORD = "https://discord.gg/rpqbjd8bTt"
-PROXIANI = "https://github.com/PsudoDeSudo/proxiani"
-UPDATE_URL = "https://raw.githubusercontent.com/PsudoDeSudo/Toastush/main"
-IDLE_CUTOFF = 1200
+local constants = {}
+
+constants.VERSION = "4.0"
+constants.EXTENSION = ".ogg"
+constants.ALT_EXTENSION = ".ogg"
+constants.SOUNDPATH = "miriani/"
+constants.ALTPATH = "alternate/"
+constants.TOASTUSH_ID = "843d2f53cb3685465bda7d4a"
+constants.UPDATE_ID = "508bd88f4d441f81466bf471"
+constants.INDEX = "index-v5.manifest"
+constants.DISCORD = "https://discord.gg/rpqbjd8bTt"
+constants.PROXIANI = "https://github.com/PsudoDeSudo/proxiani"
+constants.UPDATE_URL = "https://raw.githubusercontent.com/distantorigin/Toastush/main"
+constants.IDLE_CUTOFF = 1200
 
 
 
@@ -21,11 +23,11 @@ IDLE_CUTOFF = 1200
 
 -- sound groups to disable:
 
-  minimal_groups = {"ship", "combat", "vehicle", "computer", "salvaging", "misc", "market", "hauling", "asteroid", "archaeology"}
+constants.minimal_groups = {"ship", "combat", "vehicle", "computer", "salvaging", "misc", "market", "hauling", "asteroid", "archaeology"}
 
 
 -- room types:
-rooms = {
+constants.rooms = {
   starship = {
     cr = "cr",
     eng = "eng",
@@ -72,7 +74,7 @@ rooms = {
 
 
 -- Global table of walkstyle:
-walkStyle = {
+constants.walkStyle = {
   ["ambles"] = "amble",
   ["boogies"] = "boogie",
   ["bounces"] = "bounce",
@@ -138,3 +140,5 @@ walkStyle = {
   ["waddles"] = "waddle",
   ["walks"] = "walk"
 } -- table of walk-styles
+
+return constants

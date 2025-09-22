@@ -15,10 +15,10 @@ ImportXML([=[
 
    if "%3" ~= "" then
     print_color({"[%3] %4 ", "default"}, {"%5", "priv_comm"})
-    channel(name, "[%3] %4 %5", {"metaf", "communication"})
+    channel(name, "[%3] %4 %5", {"metaf %3", "metaf", "communication"})
    else
     print_color({"[%2] %4 ", "default"}, {"%5", "priv_comm"})
-    channel(name, "%0", {"metaf", "communication"})
+    channel(name, "%0", {"metaf %2", "metaf", "communication"})
    end -- if
   </send>
   </trigger>
@@ -33,12 +33,22 @@ ImportXML([=[
    sequence="100"
     >
   <send>
-   print_color({"%1", "flight"})
-   channel("flight", "%1", {"flight"})
-   if string.find ("%1", "we detect.+Ontanka") then
+   local scanner_name = GetVariable("fc_scanner_name") or "flight control"
+   local message = "%1"
+
+   -- Always truncate "A flight monitor announces, " or similar
+   local clean_message = message:gsub("^[Aa] flight .* announces, ", ""):gsub("^From .* flight control scanner .*, ", "")
+
+   print_color({clean_message, "flight"})
+   channel("flight", clean_message, {"flight"})
+
+   if string.find (clean_message, "we detect.+Ontanka") then
      mplay ("comm/praelorInbound", "communication")
    end -- if praelor activity
    mplay ("comm/flight", "communication")
+
+   -- Clear the stored scanner name
+   DeleteVariable("fc_scanner_name")
   </send>
   </trigger>
 
@@ -52,23 +62,30 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("comm/private", "communication")
+   mplay ("comm/private", "communication", nil, nil, nil, nil, nil, true)
    channel("private", "%0", {"private", "communication"})
    print_color({"%1 ", "default"}, {"%2", "priv_comm"})
   </send>
   </trigger>
 
+
   <trigger
    enabled="y"
    group="comm"
-   match="^\[(Newbie|Chatter|General|Short|Admin|OOC)(?:-range)? ?(?:Communication|Message)?\]:? .+$"
+   match="^\[(Newbie|Chatter|General|Short|Admin|OOC)(?:-range)? ?(?:Communication|Message)?\]:? (.+)$"
    regexp="y"
-   send_to="12"
+   send_to="14"
+   omit_from_output="y"
    sequence="100"
   >
   <send>
-   mplay("comm/"..string.lower("%1"), "communication")
-   channel("%1", "%0", {"communication", string.lower("%1")})
+   local channel_name = "%1"
+   local message = "%2"
+   local display_text = "[" .. channel_name .. "] " .. message
+
+   mplay("comm/"..string.lower(channel_name), "communication")
+   channel(channel_name, display_text, {"communication", string.lower(channel_name)})
+   print(display_text)
   </send>
   </trigger>
 
@@ -85,6 +102,90 @@ ImportXML([=[
    mplay("comm/say", "communication")
    print_color({"%1", "default"}, {"%3", "pub_comm"})
    channel(name, "%0", {"say", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^([\w\s'!]+) \[to ([\w\s'!]+)\] ?: (.+)$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="99"
+  >
+  <send>
+   if string.find(string.lower("%2"), "you") then
+     -- Direct say TO YOU - use directsay sound and bypass foreground sounds
+     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+     print_color({"%1 [to %2]: ", "default"}, {"%3", "priv_comm"})
+   else
+     -- Direct say to someone else - use normal say sound
+     mplay("comm/say", "communication")
+     print_color({"%1 [to %2]: ", "default"}, {"%3", "pub_comm"})
+   end
+   -- All direct says go to the say buffer
+   channel("say", "%1 [to %2]: %3", {"say", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^(.+?) says to ([\w\s'!]+), &quot;(.+?)&quot;$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="99"
+  >
+  <send>
+   if string.find(string.lower("%2"), "you") then
+     -- Direct say TO YOU - use directsay sound and bypass foreground sounds
+     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+     print_color({"%1 says to %2, \"", "default"}, {"%3", "priv_comm"}, {"\"", "default"})
+   else
+     -- Direct say to someone else - use normal say sound
+     mplay("comm/say", "communication")
+     print_color({"%1 says to %2, \"", "default"}, {"%3", "pub_comm"}, {"\"", "default"})
+   end
+   -- All direct says go to the say buffer (use normalized format for buffer)
+   channel("say", "%1 [to %2]: %3", {"say", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^(.+?) (asks|exclaims) (?:to )?you, &quot;(.+?)&quot;$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="99"
+  >
+  <send>
+   -- Direct ask/exclaim TO YOU - use directsay sound and bypass foreground sounds
+   mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+   print_color({"%1 %2 you, \"", "default"}, {"%3", "priv_comm"}, {"\"", "default"})
+   -- Add to say buffer (use normalized format for buffer)
+   channel("say", "%1 [to you]: %3", {"say", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^(.+?) .+ to you, &quot;(.+?)&quot;$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="98"
+  >
+  <send>
+   -- Catch-all for complex direct says TO YOU (like hesitates briefly before saying)
+   mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+   print_color({"%0", "priv_comm"})
+   -- Add to say buffer (use normalized format for buffer)
+   channel("say", "%1 [to you]: %2", {"say", "communication"})
   </send>
   </trigger>
 
@@ -333,13 +434,12 @@ print_color({prefix, "default"}, {"%2", "pub_comm"})
   >
   <send>
    mplay ("comm/relay", "communication")
-    if config:get_option("spam").value == "yes" then
-      print_color({"[%2] ", "default"}, {"%3", "priv_comm"})
-    else
-    print_color({"%1 ", "default"}, {"%3", "priv_comm"})
-    end -- if
+   local ship_name = "%2"
+   local message = "%3"
 
-   channel(name, "[%1] %3", {"ship", "communication"})
+   -- Always show as [shipname] format
+   print_color({"[" .. ship_name .. "] ", "default"}, {message, "priv_comm"})
+   channel("ship", "[" .. ship_name .. "] " .. message, {"ship", "communication"})
   </send>
   </trigger>
 

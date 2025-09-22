@@ -1,4 +1,4 @@
--- Secretpack Constants
+-- Toastush Constants
 
 local consts = {
   error = {
@@ -14,9 +14,9 @@ local consts = {
 
   pack = {
     SOUND_DIRECTORY = "sounds/",
-    MUSH_VAR = "secret_settings",
+    MUSH_VAR = "toastush_settings",
     DEFAULT_AUDIO = "master",
-    VERSION = "1.3.0",
+    VERSION = "4.0",
   } -- pack
 
 } -- consts

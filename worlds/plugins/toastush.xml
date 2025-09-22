@@ -7,18 +7,21 @@
 
 <muclient>
 <plugin
-   name="toastush"
-   author="Erick Rosso"
+   name="toastush_ng"
+   author="Erick Rosso+community"
    id="843d2f53cb3685465bda7d4a"
    language="Lua"
    date_written="2021-04-12 15:47:28"
    requires="5.05"
-   version="2.4"
+   version="4.0"
    save_state="y"
    >
+
  <description trim="y">
 
-    Welcome to the Miriani MUSHclient soundpack: Toastush.
+    Welcome to the Miriani MUSHclient soundpack: Toastush-NG (Next Generation).
+    Enhanced with foreground audio controls, improved architecture, and bug fixes.
+    
 ----------------------------------------
 
     To get started with configuring the soundpack, type: `toastush:config or toastush:config [option]'
@@ -43,15 +46,16 @@
 -------------------Key Bindings--------------
 
     - Audio:
+    F9: Toggle global mute.
+    Ctrl+F9: Toggle foreground sounds (sounds only when window has focus).
     F10: Cycle forward through audio groups.
     Shift+F10: Cycle backward through audio groups.
-    Alt+F10: Toggle global mute.
     F11: Decrease group volume.
     F12: Increase group volume.
 
     - Miscellaneous:
     ALT+SHIFT+U: Open last url.
-    ALT+SHIFT+A: Initialize audio settings. (Helpful in the case of switching soundcards.)
+    CTRL+L: Initialize audio settings. (Helpful in the case of switching soundcards.)
     ALT+SHIFT+I: Read the info bar.
 
 
@@ -66,7 +70,7 @@
 
 <!--  Get our standard constants -->
 
-<include name="constants.lua"/>
+<!-- Constants are now loaded via require in the script section -->
 <!--  Plugin help  -->
 
 <!--  Timers  -->
@@ -97,7 +101,8 @@
   <send>
    heartbeat = heartbeat + 1
 
-   if (config:get_option("roundtime").value == "yes") and 
+   local roundtime_option = config:get_option("roundtime")
+   if (roundtime_option.value == "yes") and
    (roundtime == 1) then
     mplay("misc/roundtime")
    end -- if round time
@@ -280,33 +285,6 @@ show_paralyzed(roundtime, stuntime)
   </send>
   </alias>
 
-  <alias
-   enabled="y"
-   match="^@p(?:aste|ost)$"
-   regexp="y"
-   ignore_case="y"
-   send_to="12"
-  >
-  <send>
-
-   local result = utils.editbox(
-   [[
-   Enter the text to send to the world.
-   Press "ok" to send, anything else to abort.]], "Paste Edit Box")
-
-   if (result) then
-     local paste
-     paste = string.gsub(result,
-     string.char(10), " ")
-
-     paste = string.gsub(paste,
-     string.char(13), "")
-
-     Send(paste)
-   end -- if
-
-  </send>
-  </alias>
 
 
   <alias
@@ -317,6 +295,48 @@ show_paralyzed(roundtime, stuntime)
    regexp="y"
    send_to="12"
   >
+  </alias>
+
+  <alias
+   enabled="y"
+   name="fsounds_alias"
+   match="^fsounds$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+    local current = config:get_option("foreground_sounds").value
+    if current == "yes" then
+      config:set_option("foreground_sounds", "no")
+      Execute("tts_interrupt Sounds will play in background")
+    else
+      config:set_option("foreground_sounds", "yes")
+      Execute("tts_interrupt Sounds only when window has focus")
+    end
+    mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
+    config:save()
+  </send>
+  </alias>
+
+
+
+
+  <alias
+   enabled="y"
+   send_to="12"
+   match="^toastush:classic$"
+   ignore_case="y"
+   regexp="y"
+  >
+   <send>local current = config:get_option("classic_audio_mode").value
+if current == "modern" then
+  config:set_option("classic_audio_mode", "classic")
+  notify("info", "Classic audio mode enabled")
+else
+  config:set_option("classic_audio_mode", "modern")
+  notify("info", "Modern audio mode enabled")
+end
+config:save()</send>
   </alias>
 
 
@@ -333,7 +353,7 @@ require(scripts.."init")
 MSP, GMCP = 90, 201 
 timeout = 120
 script = 12
-registry = "toastush"
+registry = "Toastush-NG"
 heartbeat = 0
 reset_heartbeat = 60
 ping_after_heartbeat = 30
@@ -349,12 +369,25 @@ Accelerator('F1', 'toastush:config')
 AcceleratorTo ("F10", 'forward_cycle_audio_groups()', script) -- cycle forward sound groups.
 AcceleratorTo ("SHIFT+F10", 'previous_cycle_audio_groups()', script) -- cycle previous sound groups.
 
-AcceleratorTo("ALT + F10", 'toggle_mute()', script)
+AcceleratorTo("F9", 'toggle_mute()', script)
+AcceleratorTo("CTRL + F9", [[
+  local current = config:get_option("foreground_sounds").value
+  if current == "yes" then
+    config:set_option("foreground_sounds", "no")
+    Execute("tts_interrupt Sounds will play in background")
+  else
+    config:set_option("foreground_sounds", "yes")
+    Execute("tts_interrupt Sounds only when window has focus")
+  end
+  mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
+  config:save()
+]], script)
 AcceleratorTo("F11", 'decrease_attribute("volume")', script)
 AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
-AcceleratorTo("ALT+SHIFT+A", [[
-  notify("info", "Initializing audio settings...")
+AcceleratorTo("Esc", 'Send("@abort")', script)
+AcceleratorTo("ctrl+l", [[
+  notify("info", "Reloading audio settings...")
   initialize_audio()
   notify("info", "Audio settings initialized.")]], script)
 
@@ -375,8 +408,17 @@ AcceleratorTo("ALT+SHIFT+I", [[
 
 
 
+
 ---------------------
 -- script routines
+-- Load constants
+local constants = require(scripts.."constants")
+
+-- Load constants into global scope
+for k, v in pairs(constants) do
+  _G[k] = v
+end
+
 local sp_options = require(scripts.."options")
 local audio_options = require(scripts.."audio")
 
@@ -419,17 +461,50 @@ function OnPluginDisconnect()
 end -- OnPluginDisconnect
 
 function OnPluginClose()
-  stop()
-  audio:Free()
+  -- Clean up all audio streams properly
+  if sounds and sounds.cleanup_all_streams then
+    sounds.cleanup_all_streams()
+  else
+    stop() -- fallback to basic stop
+  end
+
+  -- Clean up BASS audio system
+  if BASS and BASS.IsInitialized and BASS:IsInitialized() then
+    BASS:Free()
+  end
 end -- OnPluginClose
+
+function OnPluginSend(text)
+  local s = text
+
+  -- Convert smart quotes and other special characters to ASCII equivalents
+  -- This prevents the MOO server from dropping non-ASCII characters
+  s = s:gsub("\147", "\"")  -- Left double quote (U+0093)
+  s = s:gsub("\148", "\"")  -- Right double quote (U+0094)
+  s = s:gsub("\145", "'")   -- Left single quote (U+0091)
+  s = s:gsub("\146", "'")   -- Right single quote (U+0092)
+  s = s:gsub("\160", " ")   -- Non-breaking space (U+00A0)
+  s = s:gsub("\150", "-")   -- En dash (U+0096)
+  s = s:gsub("\151", "-")   -- Em dash (U+0097)
+  s = s:gsub("\133", "...")  -- Ellipsis (U+0085)
+
+  -- If text was modified, send the converted version instead
+  if s ~= text then
+    Send(s)
+    return false  -- Don't send the original
+  end
+
+  return true  -- Send the original text
+end -- OnPluginSend
 
 function OnPluginLoseFocus()
 
   -- Reset focus flag.
   focusWindow = nil
 
-  -- pause the ambiance
-  pause_group("ambiance")
+  -- Call our focus handling function
+  pause_all_sounds()
+
 end -- OnPluginLoseFocus
 
 function OnPluginGetFocus()
@@ -437,10 +512,8 @@ function OnPluginGetFocus()
   -- Set focus flag.
   focusWindow = true
 
-  -- resume the ambiance.
-  if config:get_option("background_ambiance").value == "yes" then
-    resume_group("ambiance")
-  end -- if
+  -- Call our focus handling function
+  resume_all_sounds()
 
 end -- OnPluginGetFocus
 
@@ -462,26 +535,68 @@ function OnPluginTelnetSubnegotiation (type, data)
   end -- if
 end -- function OnPluginTelnetSubnegotiation
 
-function OnPluginCommandEntered()
+function OnPluginBroadcast(msg, id, name, text)
+  
+  if id == "54846c23d8b15594e7eb4b8a" then
+    if text=="output_boundary" then
+      mplay("misc/boundary")
+          end
+  elseif id == "843d2f53cb3685465bda7d4c" then
+    local message_type, data = text:match("([^|]+)|?(.*)")
+    message_type = message_type or text
+    
+    if message_type == "register_audio_group" then
+      -- Register audio group dynamically (format: "groupname,display_name")
+      local group_name, display_name = data:match("([^,]+),?([^,]*)")
+      if group_name then
+        -- Add to config.audio table for F10 cycling (preserve existing volume if group exists)
+        if not config.audio[group_name] then
+          config.audio[group_name] = {volume=50, pan=0}
+        end
 
-  last_command_time = os.time()
-  if (searchingScan) then
-    searchingScan = false
-    scan = nil
-   classFilter = nil
-  end -- if scan
-end -- OnPluginCommandEnter
+        -- Also add the config option for persistence (preserve existing value)
+        local option_name = group_name .. "_volume"
+        display_name = display_name ~= "" and display_name or (group_name:gsub("^%l", string.upper) .. " Volume")
 
-function OnPluginBroadcast(event, id, name, text)
-
-  if (id == UPDATE_ID) then
-    -- update detected.
-
+        if not config:get_option(option_name) then
+          -- Use existing volume from config.audio if available, otherwise default to 50
+          local existing_volume = config.audio[group_name] and config.audio[group_name].volume or 50
+          config:add_option("volume", option_name, display_name, existing_volume, "number", "volume")
+        end
+      end
+    elseif message_type == "unregister_audio_group" then
+      -- Remove audio group (format: "groupname")
+      if data and config.audio[data] then
+        config.audio[data] = nil
+      end
+    elseif message_type == "play_sound" then
+      -- Parse sound file and group from data (format: "filepath,group")
+      local filepath, group = data:match("([^,]+),([^,]+)")
+      if filepath and group then
+        mplay(filepath, group)
+      end
+    elseif message_type == "set_audio_volume" then
+      -- Set audio group volume (format: "groupname,volume")
+      local group_name, volume = data:match("([^,]+),([^,]+)")
+      if group_name and volume then
+        local vol_num = tonumber(volume)
+        if vol_num and config.audio[group_name] then
+          config:set_attribute(group_name, "volume", vol_num)
+        end
+      end
+    elseif message_type == "get_audio_volume" then
+      -- Get audio group volume and broadcast back (format: "groupname")
+      local group_name = data
+      if group_name and config.audio[group_name] then
+        local volume = config:get_attribute(group_name, "volume") or 100
+        BroadcastPlugin(999, "audio_volume_reply|" .. group_name .. "," .. volume)
+      end
+    end
+  elseif id == UPDATE_ID then
+    -- Updater plugin communication
     local info = json.decode.decode(text)
 
-
     for i, u in pairs(info.update) do
-
       local name = u[i]
 
       if type(name) == 'string' and string.find(name, "updater.xml") then
@@ -492,12 +607,41 @@ function OnPluginBroadcast(event, id, name, text)
 
     if config:get_option("automatic_changelog").value == "yes" then
       notepad_changelog()
-
     end -- if
+  else
+    -- Other generic plugin communication handlers
+    if msg == "register_audio_group" then
+      -- Register audio group dynamically (format: "groupname,display_name")
+      local group_name, display_name = text:match("([^,]+),?([^,]*)")
+      if group_name then
+        local option_name = group_name .. "_volume"
+        display_name = display_name ~= "" and display_name or (group_name:gsub("^%l", string.upper) .. " Volume")
 
-  end -- if
-
+        if not config:get_option(option_name) then
+          config:add_option("volume", option_name, display_name, 100, "number", "volume")
+        end
+      end
+    elseif msg == "play_sound" then
+      -- Parse sound file and group from text (format: "filepath,group")
+      local filepath, group = text:match("([^,]+),([^,]+)")
+      if filepath and group then
+        mplay(filepath, group)
+      end
+    end
+  end
 end -- OnPluginBroadcast
+
+function OnPluginCommandEntered()
+
+  last_command_time = os.time()
+  if (searchingScan) then
+    searchingScan = false
+    scan = nil
+   classFilter = nil
+  end -- if scan
+end -- OnPluginCommandEnter
+
+-- Combined with first OnPluginBroadcast function above
 
 
 function gmcp_handler(data)
@@ -655,31 +799,46 @@ function toggle_minimal_groups(minimal_mode)
 
 function initialize_audio()
 
-  if (audio) then
-    audio:Free()
-  end -- if
+  -- Clean up existing BASS instance if it exists
+  if BASS and BASS.IsInitialized and BASS:IsInitialized() then
+    BASS:Free()
+  end
 
-  assert(config:init(sp_options, audio_options) == 0)
+  -- Initialize LUA Audio system
+  Audio = require("miriani.lib.audio.audio")
 
-  local channels = audio.const.device.stereo
+  -- Initialize the audio system
+  if Audio.BASS then
+    BASS = Audio.BASS()
 
+    -- Initialize BASS
+    if BASS then
+      local init_result = BASS:Init(-1,44100,7)
 
-  audio:Init(nil, nil, channels)
+      if init_result ~= 0 then
+        Note("BASS initialization failed with error: " .. tostring(init_result))
+      end
+    end
+  else
+    Note("Audio.BASS not available")
+  end
+
+  -- Initialize volume settings
+  local saved_vol = GetVariable("master_volume")
+  local vol = saved_vol and tonumber(saved_vol) or 100
+
+  if not saved_vol then
+    SetVariable("master_volume", "100")
+  end
+
+  local init_result = config:init(sp_options, audio_options)
+  if init_result ~= 0 then
+    print("Warning: Config initialization failed with code:", init_result)
+    print("Continuing with basic initialization...")
+  end
 
 end -- initialize_audio
 
-local function sortkeys(mnu)
-
-  local keys = {}
-  for k, v in  pairs(mnu) do
-    keys[#keys + 1] = k
-  end -- for
-
-  table.sort (keys)
-  table.foreachi (keys, function(k1, k2) return k2 end)
-
-  return keys
-end -- sortkeys
 
 function config_secondary_menu(option)
   local secondary_menu = config:render_menu_list(option)
@@ -828,13 +987,37 @@ function channel(name, line, wc)
 
   -- add record table of channel arguments
    for k,v in ipairs(wc) do
-    -- Add only if the buffer is active:
-        buffer = config:get_option(string.format("%s_buffer", v))
-
-    if buffer ~= nil and
-    buffer.value == "yes" then
-      Execute("history_add "..v.."="..line)
-    end -- if
+    -- Handle metaf buffers
+    if string.match(v, "^metaf ") then
+      -- Check if separate buffers is enabled
+      local separate_buffers = config:get_option("metaf_separate_buffers")
+      if separate_buffers and separate_buffers.value == "yes" then
+        -- Use frequency/label-specific buffer (no need to check metaf_buffer)
+        Execute("history_add " .. v .. "=" .. line)
+      else
+        -- Use single metaf buffer if it's enabled
+        local metaf_buffer = config:get_option("metaf_buffer")
+        if metaf_buffer and metaf_buffer.value == "yes" then
+          Execute("history_add metaf=" .. line)
+        end
+      end
+    elseif v == "metaf" then
+      -- Regular metaf without frequency/label - only use if separate buffers is disabled
+      local separate_buffers = config:get_option("metaf_separate_buffers")
+      if separate_buffers and separate_buffers.value == "no" then
+        local metaf_buffer = config:get_option("metaf_buffer")
+        if metaf_buffer and metaf_buffer.value == "yes" then
+          Execute("history_add metaf=" .. line)
+        end
+      end
+      -- If separate buffers is enabled, ignore plain "metaf" completely
+    else
+      -- Normal buffer handling
+      buffer = config:get_option(string.format("%s_buffer", v))
+      if buffer ~= nil and buffer.value == "yes" then
+        Execute("history_add "..v.."="..line)
+      end
+    end -- if metaf
   end -- for loop
 end -- channel
 
@@ -861,23 +1044,32 @@ function open_url()
   end -- if
 end -- open_url
 
-function mplay(file, group, interrupt, pan, loop, slide, sec)
+function mplay(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   -- Miriani only play:
   local filepath
 
   if (config:get_option("alternate_audio").value == "yes") then
     local path = require("pl.path")
     local dir, fn = path.splitpath(file)
-    if (path.isfile(config:get("SOUND_DIRECTORY")..ALTPATH..fn..ALT_EXTENSION)) then
-      filepath = ALTPATH..fn..ALT_EXTENSION
+    local alt_file = ALTPATH..fn..ALT_EXTENSION
+
+    -- Use find_sound_file for alternate audio to handle numbered variants
+    if find_sound_file then
+      local alt_path = find_sound_file(alt_file)
+      if alt_path then
+        filepath = alt_file
+      end
+    elseif (path.isfile(config:get("SOUND_DIRECTORY")..alt_file)) then
+      filepath = alt_file
     end -- if
   end -- if
 
+  -- Handle classic/modern audio selection - let the play function handle the logic
   if (not filepath) then
     filepath = string.format(SOUNDPATH.."%s%s", file, EXTENSION)
   end -- if
 
-  play(filepath, group, interrupt, pan, loop, slide, sec)
+  play(filepath, group, interrupt, pan, loop, slide, sec, ignore_focus)
 end -- mplay
 
 function speech_interrupt(line)
@@ -886,7 +1078,16 @@ end -- speech_interrupt
 
 function register()
   Send("#$#REGISTER_SOUNDPACK "..registry.." | "..VERSION.."\n")
+  mplay("misc/negotiate", "notification")
 end -- register
+
+function GetAudioVolume(group_name)
+  -- Function for other plugins to call directly
+  if group_name and config.audio[group_name] then
+    return tostring(config:get_attribute(group_name, "volume") or 100)
+  end
+  return ""
+end -- GetAudioVolume
 
 function set_environment(name, line, wc)
   environment = {}
@@ -989,14 +1190,14 @@ function playsocial(name, line, wc)
     wc[2] = genders[math.random(2)]
     end
 
-  local socialtable = utils.readdir(config:get("SOUND_DIRECTORY")..SOUNDPATH.."social/"..wc[2].."/"..wc[1].."*"..EXTENSION) 
+  local socialtable = utils.readdir(config:get("SOUND_DIRECTORY")..SOUNDPATH.."social/"..wc[2].."/"..wc[1].."*"..EXTENSION)
   -- check that table exists
   if type(socialtable) ~= 'table' then
 
     if wc[2] ~= "neuter" then
       wc[2] = "neuter"
 
-      return playsocial(name, line, wc, "socials")
+      return playsocial(name, line, wc)
     else
       return 0
     end -- recursive
@@ -1134,11 +1335,8 @@ function print_color(...)
   end -- for
   ColourNote(unpack(content))
 end -- print_color
-
-
-
 ]]>
-</script> 
+</script>
 
 
 </muclient>

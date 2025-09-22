@@ -91,7 +91,6 @@ function Channel:Flags(flags, mask)
 end
 
 function Channel:GetAttribute(attrib)
-
   local f = ffi.new("float[1]")
 
   local success = self.bass.BASS_ChannelGetAttribute(self.id, attrib, f)
@@ -188,8 +187,16 @@ function Channel:Play(restart)
 
   self.bass.BASS_ChannelPlay(self.id, restart)
 
-  return self.bass.BASS_ErrorGetCode()
-
+  err=self.bass.BASS_ErrorGetCode()
+  if err==9 then
+  started=self.bass.BASS_Start()
+  if not started then
+  return 0
+  end
+--  self:Play(restart)
+else
+return self.bass.BASS_ErrorGetCode()
+end
 end
 
 function Channel:Seconds2Bytes(seconds)
@@ -206,10 +213,8 @@ function Channel:SetAttribute(attrib, value)
 
 end
 
-function Channel:SetFX(lfx, priority)
-
+function Channel.SetFX(self,lfx, priority)
   priority = priority or 0
-
   local handle = self.bass.BASS_ChannelSetFX(self.id, lfx, priority)
 
   if handle ~= 0 then
@@ -231,7 +236,7 @@ function Channel:SetPosition(position, mode)
 end
 
 function Channel:SlideAttribute(attribute, value, time)
-
+local t=ffi.new("float",time)
   self.bass.BASS_ChannelSlideAttribute(self.id, attribute, value, time)
 
   return self.bass.BASS_ErrorGetCode()
@@ -246,6 +251,9 @@ function Channel:Stop()
 
 end
 
+function Channel:OnReachedEnd(func)
+	print(self.bass.BASS_ChannelSetSync(self.id,2,nil,default_sync_proc))
+end
 function Channel:Update(length)
 
   length = length or 0
@@ -309,5 +317,25 @@ function Channel:set_position(position)
   self:SetPosition(self:Seconds2Bytes(position))
 
 end
-
+function Channel:AddFX(effect,options)
+--adds an effect to this channel. Effect is a constant from audio.const.fx, options is a table of options matching the parameter names withou the leading f, such as RightDelay or Feedback.
+newFX=self:SetFX(effect)
+for k, v in pairs(options) do
+if newFX.Parameters["set_"..string.lower(k)]==nil then
+valid={}
+for k, v in pairs(newFX.Parameters) do
+if string.sub(k,1,3)=="set" then
+table.insert(valid,k:sub(5))
+end
+end
+print("invalid fx parameter. Available parameters are: "..table.concat(valid,", "))
+else
+newFX.Parameters["set_"..string.lower(k)](newFX.Parameters,v)
+end
+end
+newFX:SetParameters(newFX.Parameters)
+end
+function Channel:listFX()
+return l
+end
 return Channel

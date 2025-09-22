@@ -9,6 +9,8 @@ ffi.cdef[[
   typedef DWORD HPLUGIN;
   typedef DWORD HSAMPLE;
   typedef DWORD HSTREAM;
+  typedef DWORD HSYNC;
+  typedef void(*SYNCPROC)(HSYNC handle, DWORD channel, DWORD data, void *user);
 
   typedef struct {
     float fWetDryMix;
@@ -125,13 +127,18 @@ ffi.cdef[[
   BOOL BASS_FXSetParameters(HFX handle, void * parameters);
   DWORD BASS_GetConfig(DWORD option);
   DWORD BASS_GetVersion();
+
   BOOL BASS_Init(int device, DWORD frequency, DWORD flags, void *win, const void *dsguid);
   BOOL BASS_SetConfig(DWORD option, DWORD value);
+  BOOL BASS_Start();
   HSTREAM BASS_StreamCreate(DWORD freq, DWORD chans, DWORD flags, int proc, void *user);
   HSTREAM BASS_StreamCreateFile(BOOL mem, char *file, QWORD offset, QWORD length, DWORD flags);
+  HSTREAM BASS_StreamCreateURL(const char *url, DWORD offset, DWORD flags, void *user);
+  int BASS_PluginLoad(char* file);
   BOOL BASS_StreamFree(HSTREAM handle);
-  DWORD BASS_StreamPutData(HSTREAM handle, void *buffer, DWORD length);  
-
+  DWORD BASS_StreamPutData(HSTREAM handle, void *buffer, DWORD length);
+  bool BASS_SetEAXParameters(DWORD env, float vol, float decay, float damp);
+  HSYNC BASS_ChannelSetSync(DWORD handle, DWORD type, QWORD param, SYNCPROC *proc, void *user);
 ]]
 
 local basslib = ffi.load("bass")

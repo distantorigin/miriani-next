@@ -56,10 +56,8 @@ function FXParameters:LinkParameter(struct_param, table_param)
     return self.obj[0][struct_param]
 
   end
-
   self["set_"..table_param] = function(self, value)
-
-    self.obj[0][struct_param] = value
+self.obj[0][struct_param] = value
 
   end
 

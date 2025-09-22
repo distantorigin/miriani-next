@@ -271,6 +271,23 @@ ImportXML([=[
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="hooks"
+   match="^#\$#soundpack fc \| (.+?)$"
+   regexp="y"
+   send_to="12"
+   omit_from_output="y"
+   omit_from_log="y"
+   keep_evaluating="y"
+   sequence="10"
+  >
+  <send>
+   -- Store flight control scanner name for the upcoming message
+   SetVariable("fc_scanner_name", "%1")
+  </send>
+  </trigger>
+
 </triggers>
 ]=])
 

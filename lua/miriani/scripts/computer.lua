@@ -284,7 +284,7 @@ mplay("ship/computer/voice/unclear", "computer")
   <trigger
    enabled="y"
    group="computer"
-   match="^#\$# computer \| (Turret|Bardenium Cannon|Long-Range)s? .+? (locking|locked|lockin') (on|ont')(to )?.+?\.$"
+   match="^#\$# computer \| (Turret|Bardenium Cannon|Long-Range)s? .+? (locked|lockin') (on|ont')(to )?.+?\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -481,6 +481,48 @@ mplay("ship/computer/voice/unclear", "computer")
   <send>mplay("ship/computer/nebula", "notification")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="computer"
+   match="^Several short bleeps emit from .+ Lore computer, followed by a hardcopy print of .+$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("device/lore/Print", "computer")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="computer"
+   match="^There are no damaged components\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/computer/NoDamage", "computer")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="computer"
+   match="^(.+?)\s+(.+?)\s+(\d+, \d+, \d+)\s*$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   -- Capture destination finder coordinates for infobar
+   local destination = "%1"
+   local sector = "%2"
+   local coords = "%3"
+
+   -- Skip the header line
+   if destination ~= "Destination" then
+    infobar("dest", "Dest: " .. coords)
+   end
+  </send>
+  </trigger>
 
 </triggers>
 ]=])

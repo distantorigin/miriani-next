@@ -202,6 +202,36 @@ show_paralyzed(roundtime, stuntime)
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   name="MessageBoardNewMessage"
+   match="^A.+message board reader beeps quietly, indicating to you that there is a new message.+\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>play("miriani/device/NewPost" .. math.random(1,7) .. ".ogg")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="MessageBoardToggle"
+   match="^A.+message board reader will (now|no longer) notify you of new messages\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>-- PlayToggle functionality would need to be implemented</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="MessageBoardUnreadPosts"
+   match="^(There are new messages in.+\.|A.+message board reader beeps urgently, notifying you that there are new messages in .+\.)$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>play("miriani/device/UnreadPosts.ogg")</send>
+  </trigger>
+
 
 </triggers>
 

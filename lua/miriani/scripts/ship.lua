@@ -780,7 +780,6 @@ print("Launch complete.")
    sequence="100"
   >
   <send>
-
    mplay ("ship/alarm/%1", "notification", 1)</send>
   </trigger>
 

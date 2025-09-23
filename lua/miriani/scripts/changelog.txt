@@ -1,4 +1,18 @@
-Version 4.0:
+Version 4.0.beta.2:
+*New: Enable gag flavor text by default.
+* New: Enable Cannon shot counter by default.
+* New: Enable archaeology digging tracker by default.
+* New: Added cease digging sound
+* New: Replace requesting clearance to land/launch in classic mode.
+* New: Added message board sound triggers and imported missing message board sound files (NewPost1-7.ogg, UnreadPosts.ogg).
+* New: Message board notifications now play random new post sounds (NewPost1-7.ogg) when receiving new messages.
+* New: Urgent message board notifications now play UnreadPosts.ogg for multiple unread messages when logging in.
+* New: Began work on a script to generate the manifest out of MUSHclient, which should make life a lot easier.
+* Changed: Experimentally change relativity sounds in classic mode to V6.
+* Fixed: Suppress unable to play audio messages, need to add a debug mode to reenable them.
+* Fixed: Pickaxe now uses shovel sound and properly counts depth when tracking artifacts.
+
+Version 4.0 (Initial Release):
 * New: Rewritten audio system, featuring smarter muting, foreground sound support, dynamic category adding, and more.
 * New: Foreground Sounds (fsounds), a mode that will force sounds to only play while the session is foregrounded. You can enable this by typing fsounds, through toastush:config, or by pressing ctrl+F9.
 * New: Allow certain high priority sounds through fsounds mode. Currently these are private comms and direct says.
@@ -45,6 +59,7 @@ Version 4.0:
 * New: Enhanced direct say triggers to support "asks you", "exclaims to you", and complex formats like "hesitates briefly before saying to you".
 * New: General communication channels now display as [General] instead of [General Communication] for cleaner output.
 * New: Added focus coordinates and last scanned coordinates to the status bar. Focus coordinates show "Focus: x,y,z (Target Name)" and scan coordinates show "Scan: x,y,z" in the info bar (Alt+Shift+I).
+* Fixed: Don't show Short-range Communication as "Short".
 * Fixed: Clear focus from info bar when we see the ship is no longer in the sector.
 * New: Added destination finder coordinates to the status bar. Shows "Dest: x,y,z" when using destination finder commands.
 * New: Destination coordinates automatically clear from status bar when ship finishes jumping (wormhole/relativity) or landing.
@@ -58,7 +73,6 @@ Version 4.0:
 * Removed: worlds/plugins/Timestamps.xml
 * Removed: worlds/plugins/gmcp_handler.xml
 * Removed: worlds/plugins/local_edit.xml
-
 
 Version 3.1.74
 

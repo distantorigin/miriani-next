@@ -35,7 +35,6 @@ luac.out
 
 #configuration files.
 *.config
-*.sqlite
 
 #World files.
 *.mcl
@@ -44,6 +43,8 @@ worlds/*/state/*.xml
 #Log files.
 *.log
 
-# Script files
-*.sh
+# Development files that change during runtime
+mushclient.ini
 
+# AIGC slop
+.claude/

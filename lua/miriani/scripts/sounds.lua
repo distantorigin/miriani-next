@@ -127,7 +127,7 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   end
 
   if not sfile then
-    notify("important", string.format("Unable to find audio file: %s", original_file))
+    --notify("important", string.format("Unable to find audio file: %s", original_file))
     return
   end
 

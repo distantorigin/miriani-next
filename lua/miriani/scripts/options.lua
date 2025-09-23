@@ -2,7 +2,7 @@
 local options = {
   automatic_changelog = {descr="Automatically open changelog after updates?", value="no", group="general", type="bool"},
   automatic_updates = {descr="Automatically apply updates quietly at login?", value="no", group="general", type="bool"},
-  archaeology_helper_dig = {descr="Buried artifact digging tracker.", value="no", group="archaeology", type="bool"},
+  archaeology_helper_dig = {descr="Buried artifact digging tracker.", value="yes", group="archaeology", type="bool"},
   alternate_audio = {descr="Access alternative audio files before soundpack files? Note you must create the sounds/alternate directory for this change to take affect.", value="no", group="general", type="bool"},
   classic_audio_mode = {descr="Audio style preference.", value="modern", group="general", type="list", options={"modern", "classic"}},
   background_ambiance = {descr="Play background ambiances.", value="yes", group="room", type="bool"},
@@ -22,7 +22,7 @@ local options = {
   roundtime = {descr="Play a sound when roundtime is up.", value="no", group="general", type="bool"},
   escape_abort = {descr="Use Escape key to send @abort command.", value="yes", group="general", type="bool"},
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},
-  spam = {descr="Cutback on spam by gagging flavored text.", value="no", group="gags", type="bool"},
+  spam = {descr="Cutback on spam by gagging flavored text.", value="yes", group="gags", type="bool"},
   store_detector = {descr="Play a sound when detecting stores.", value="no", group="room", type="bool"},
   unchange_coords = {descr="Print 'unchanged' before coordinates if the target has not moved since its last scan.", value="no", group="ship", type="bool"},
 

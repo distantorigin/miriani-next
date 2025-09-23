@@ -115,6 +115,23 @@ mplay("activity/archaeology/nothing")
   </send>
   </trigger>
 
+<trigger
+   enabled="y"
+   group="archaeology"
+   match="^[A-Z].+ thrusts? a small pickaxe into the ground and begins? methodically removing large chunks of dirt\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+   mplay("activity/archaeology/shovel")
+
+   if buried_artifact
+   and room == artifact_room then
+     buried_artifact = buried_artifact - 0.3
+   end -- if
+
+  </send>
+  </trigger>
 
   <trigger
    enabled="y"
@@ -177,7 +194,7 @@ mplay("activity/archaeology/nothing")
    regexp="y"
    send_to="12"
   >
-  <send>
+  <send>mplay("activity/archaeology/cease")
    if config:get_option("archaeology_helper_dig").value == "yes"
    and buried_artifact then
      print(string.format("%%.2f feet.", buried_artifact))

@@ -388,6 +388,9 @@ AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
 AcceleratorTo("Esc", [[
   if config:get_option("escape_abort").value == "yes" then
     Send("@abort")
+  else
+    SetCommandSelection(1, #GetCommand())
+    PasteCommand("")
   end
 ]], script)
 AcceleratorTo("ctrl+l", [[

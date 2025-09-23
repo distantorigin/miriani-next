@@ -72,7 +72,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^\[(Newbie|Chatter|General|Short|Admin|OOC)(?:-range)? ?(?:Communication|Message)?\]:? (.+)$"
+   match="^\[(Newbie|Chatter|OOC|General Communication|Short-range Communication)\]:? (.+)$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -81,10 +81,24 @@ ImportXML([=[
   <send>
    local channel_name = "%1"
    local message = "%2"
-   local display_text = "[" .. channel_name .. "] " .. message
 
-   mplay("comm/"..string.lower(channel_name), "communication")
-   channel(channel_name, display_text, {"communication", string.lower(channel_name)})
+   -- Map channel names for display and sound
+   local display_name = channel_name
+   local sound_name = string.lower(channel_name)
+
+   if channel_name == "Short-range Communication" then
+     -- Keep full name for short-range
+     sound_name = "short"
+   elseif channel_name == "General Communication" then
+     -- Shorten General Communication to just General
+     display_name = "General"
+     sound_name = "general"
+   end
+
+   local display_text = "[" .. display_name .. "] " .. message
+
+   mplay("comm/"..sound_name, "communication")
+   channel(display_name, display_text, {"communication", sound_name})
    print(display_text)
   </send>
   </trigger>

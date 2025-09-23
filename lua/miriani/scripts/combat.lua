@@ -430,6 +430,11 @@ ImportXML([=[
   >
   <send>
    mplay ("ship/combat/reload", "ship")
+   if config:get_option("count_cannon").value == "yes" and numberOfCannons then
+    local fullBarde = numberOfCannons * 10
+    cannonShots = fullBarde / numberOfCannons
+    notify("info", "Bardenium reloaded: " .. cannonShots .. " shots", 1)
+   end -- if cannonCount
 </send>
   </trigger>
 
@@ -525,8 +530,8 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   -- Only process if we have cannon count from previous trigger
-   if numberOfCannons and numberOfCannons > 0 then
+   -- Only process if we have cannon count from previous trigger and counting is enabled
+   if numberOfCannons and numberOfCannons > 0 and config:get_option("count_cannon").value == "yes" then
     local bardeniumAmount = tonumber("%2") or 0
     if bardeniumAmount > 0 then
      cannonShots = math.ceil(bardeniumAmount / numberOfCannons)

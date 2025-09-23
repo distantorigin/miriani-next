@@ -278,13 +278,13 @@ mplay("ship/computer/voice/unclear", "computer")
    send_to="12"
    sequence="100"
   >
-  <send>play("audio/cancel.ogg")</send>
+  <send>mplay("misc/cancel", "ship")</send>
   </trigger>
 
   <trigger
    enabled="y"
    group="computer"
-   match="^#\$# computer \| (Turret|Bardenium Cannon|Long-Range)s? .+? (?:(?:is|are) locking|(locked|lockin')) (?:on|ont')(?:to )?.+?\.$"
+   match="^#\$# computer \| (Turret|Bardenium Cannon|Long-Range)s? .+? (?:(?:is|are) locking|(locked|lockin')|locked on) (?:on|ont'|)(?:to )?(.+?)\.? ?(?:Firing\.)?$"
    regexp="y"
    send_to="12"
    sequence="100"

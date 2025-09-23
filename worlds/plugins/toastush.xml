@@ -844,6 +844,11 @@ function initialize_audio()
     print("Continuing with basic initialization...")
   end
 
+  if audio and audio.const and audio.const.device then
+    local channels = audio.const.device.stereo
+    audio:Init(nil, nil, channels)
+  end
+
 end -- initialize_audio
 
 

@@ -2,7 +2,7 @@
 
 local constants = {}
 
-constants.VERSION = "4.0.beta.2"
+constants.VERSION = "4.0.beta.3"
 constants.EXTENSION = ".ogg"
 constants.ALT_EXTENSION = ".ogg"
 constants.SOUNDPATH = "miriani/"

@@ -385,7 +385,11 @@ AcceleratorTo("CTRL + F9", [[
 AcceleratorTo("F11", 'decrease_attribute("volume")', script)
 AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
-AcceleratorTo("Esc", 'Send("@abort")', script)
+AcceleratorTo("Esc", [[
+  if config:get_option("escape_abort").value == "yes" then
+    Send("@abort")
+  end
+]], script)
 AcceleratorTo("ctrl+l", [[
   notify("info", "Reloading audio settings...")
   initialize_audio()

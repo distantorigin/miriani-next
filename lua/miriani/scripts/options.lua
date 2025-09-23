@@ -20,6 +20,7 @@ local options = {
   praelor_interrupt = {descr="Interrupt speech when detecting insectoid activity.", value="no", group="screen reader", type="bool"},
   scan_interrupt = {descr="Interrupt speech for scan coordinates.", value="no", group="screen reader", type="bool"},
   roundtime = {descr="Play a sound when roundtime is up.", value="no", group="general", type="bool"},
+  escape_abort = {descr="Use Escape key to send @abort command.", value="yes", group="general", type="bool"},
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},
   spam = {descr="Cutback on spam by gagging flavored text.", value="no", group="gags", type="bool"},
   store_detector = {descr="Play a sound when detecting stores.", value="no", group="room", type="bool"},

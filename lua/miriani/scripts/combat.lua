@@ -109,6 +109,19 @@ ImportXML([=[
    enabled="y"
    group="combat"
    script="gagline"
+   match="^The ship jerks slightly as its turrets are fired\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay ("ship/combat/laser", "ship", nil, math.random(-100, 100))</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
+   script="gagline"
    match="^You hear a thunk as a chunk of charged weapons-grade bardenium is fired from the ship's cannons\.$"
    regexp="y"
    omit_from_output="y"

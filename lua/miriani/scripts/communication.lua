@@ -54,8 +54,8 @@ ImportXML([=[
 
   <trigger
    enabled="y"
-   group="comm"	
-   match="^(\[Private \| .+?\]) (.+?)$"
+   group="comm"
+   match="^(\[Private \| (.+?)\]) (.+?)$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -63,8 +63,8 @@ ImportXML([=[
   >
   <send>
    mplay ("comm/private", "communication", nil, nil, nil, nil, nil, true)
-   channel("private", "%0", {"private", "communication"})
-   print_color({"%1 ", "default"}, {"%2", "priv_comm"})
+   channel("private", "%0", {"private %2", "private", "communication"})
+   print_color({"%1 ", "default"}, {"%3", "priv_comm"})
   </send>
   </trigger>
 
@@ -106,97 +106,80 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^((?:[A-Za-z0-9]+)(?:[\w !]+) (say|ask|exclaim)s?,? ?(?:.+? )?)(&quot;.+?&quot;)$"
-   regexp="y"
-   send_to="14"
-   omit_from_output="y"
-   sequence="100"
-  >
-  <send>
-   mplay("comm/say", "communication")
-   print_color({"%1", "default"}, {"%3", "pub_comm"})
-   channel(name, "%0", {"say", "communication"})
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^([\w\s'!]+) \[to ([\w\s'!]+)\] ?: (.+)$"
+   match="^(.+?) (?:hesitates briefly before )?(say|ask|exclaim)s?(?: to (.+?))?, &quot;(.+?)&quot;$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
    sequence="99"
   >
   <send>
-   if string.find(string.lower("%2"), "you") then
+   local speaker = "%1"
+   local verb = "%2"
+   local target = "%3"
+   local message = "%4"
+
+   -- Check if this is directed at you
+   local is_direct_to_you = target and string.find(string.lower(target), "you")
+
+   -- Determine proper verb form based on speaker
+   local verb_form = verb
+   if speaker ~= "You" then
+     verb_form = verb .. "s"
+   end
+
+   -- Determine sound and color based on target
+   if is_direct_to_you then
      -- Direct say TO YOU - use directsay sound and bypass foreground sounds
      mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-     print_color({"%1 [to %2]: ", "default"}, {"%3", "priv_comm"})
-   else
+     if target then
+       print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
+     else
+       print_color({speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
+     end
+   elseif target and target ~= "" then
      -- Direct say to someone else - use normal say sound
      mplay("comm/say", "communication")
-     print_color({"%1 [to %2]: ", "default"}, {"%3", "pub_comm"})
-   end
-   -- All direct says go to the say buffer
-   channel("say", "%1 [to %2]: %3", {"say", "communication"})
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^(.+?) says to ([\w\s'!]+), &quot;(.+?)&quot;$"
-   regexp="y"
-   send_to="14"
-   omit_from_output="y"
-   sequence="99"
-  >
-  <send>
-   if string.find(string.lower("%2"), "you") then
-     -- Direct say TO YOU - use directsay sound and bypass foreground sounds
-     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-     print_color({"%1 says to %2, \"", "default"}, {"%3", "priv_comm"}, {"\"", "default"})
+     print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
    else
-     -- Direct say to someone else - use normal say sound
+     -- General say - use normal say sound
      mplay("comm/say", "communication")
-     print_color({"%1 says to %2, \"", "default"}, {"%3", "pub_comm"}, {"\"", "default"})
+     print_color({speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
    end
-   -- All direct says go to the say buffer (use normalized format for buffer)
-   channel("say", "%1 [to %2]: %3", {"say", "communication"})
+
+   -- Add to say buffer
+   channel("say", "%0", {"say", "communication"})
   </send>
   </trigger>
 
   <trigger
    enabled="y"
    group="comm"
-   match="^(.+?) (asks|exclaims) (?:to )?you, &quot;(.+?)&quot;$"
-   regexp="y"
-   send_to="14"
-   omit_from_output="y"
-   sequence="99"
-  >
-  <send>
-   mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-   print_color({"%1 %2 you, \\"%3\\"", "priv_comm"})
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^(.+?) .+ to you, &quot;(.+?)&quot;$"
+   match="^(.+?) \[to (.+?)\]:?\s*(.+)$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
    sequence="98"
   >
   <send>
-   -- Catch-all for complex direct says TO YOU (like hesitates briefly before saying)
-   mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-   print_color({"%0", "priv_comm"})
-   -- Add to say buffer (use normalized format for buffer)
-   channel("say", "%1 [to you]: %2", {"say", "communication"})
+   local speaker = "%1"
+   local target = "%2"
+   local message = "%3"
+
+   -- Check if this is directed at you
+   local is_direct_to_you = string.find(string.lower(target), "you")
+
+   if is_direct_to_you then
+     -- Direct say TO YOU - use directsay sound and bypass foreground sounds
+     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+     print_color({speaker .. " [to " .. target .. "]: ", "default"}, {message, "priv_comm"})
+   else
+     -- Direct say to someone else - use normal say sound
+     mplay("comm/say", "communication")
+     print_color({speaker .. " [to " .. target .. "]: ", "default"}, {message, "pub_comm"})
+   end
+
+   -- Add to say buffer
+   channel("say", speaker .. " [to " .. target .. "]: " .. message, {"say", "communication"})
   </send>
   </trigger>
 
@@ -519,16 +502,55 @@ regexp="y"
   <trigger
    enabled="y"
    group="comm"
-   match="^\[(\w+)\] .+? (?:transmits|says), .+?$"
+   match="^You have access to the following channels:$"
    regexp="y"
-   send_to="12"
-   sequence="100"
+   send_to="14"
+   sequence="50"
   >
   <send>
-   local file = require("pl.path").isfile(
-   config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/%1"..config:get("EXTENSION")) and "%1" or "organization"
-   mplay("comm/"..file, "communication")
-   channel(name, "%0", {"communication", file})
+   -- Start looking for organization in channel list
+   SetVariable("looking_for_org", "1")
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^\[Organization\] (.+)$"
+   regexp="y"
+   send_to="14"
+   sequence="50"
+  >
+  <send>
+   -- Only capture org if we're in a channel list
+   if GetVariable("looking_for_org") == "1" then
+     local current_org = GetVariable("org_name")
+     if current_org ~= "%1" then
+       SetVariable("org_name", "%1")
+       print_color({"Organization set: ", "default"}, {"%1", "priv_comm"})
+     end
+     DeleteVariable("looking_for_org")
+   end
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^\[(\w+)\] .+$"
+   regexp="y"
+   send_to="12"
+   sequence="110"
+  >
+  <send>
+   local detected_org = GetVariable("org_name")
+   if detected_org and "%1" == detected_org then
+     -- This is our organization - play org sound
+     local file = require("pl.path").isfile(
+     config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/%1"..config:get("EXTENSION")) and "%1" or "organization"
+     mplay("comm/"..file, "communication")
+     channel(name, "%0", {file .. " %1", file, "communication"})
+   end
   </send>
   </trigger>
 

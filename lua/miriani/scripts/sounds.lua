@@ -127,7 +127,9 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   end
 
   if not sfile then
-    --notify("important", string.format("Unable to find audio file: %s", original_file))
+    if config:get_option("debug_mode").value == "yes" then
+      notify("important", string.format("Unable to find audio file: %s", original_file))
+    end
     return
   end
 

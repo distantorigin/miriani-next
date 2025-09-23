@@ -1,5 +1,13 @@
+Version 4.0.beta.3:
+* New: Rewrite bardenium shot counter by dynamically dividing available bardenium by the number of cannons announced in the firing message. Bugs are sure to be afoot with this one.
+* New: Added a debug mode to subject yourself to spammy debug messages and errors. Enable under 'toastush:config general'
+* New: Organization name is now gathered dynamically to trigger properly on the channel name. To set your org name, type 'tr channels' and it'll be set for you automatically.
+* Fixed: Org sound now plays for messages that don't contain text (i.e. comm socials).
+* Fixed: Completely rewrote say triggers to be more robust; also fixes a scripting error.
+* Changed: Canceled the experiment and reverted classic engine sounds to the V7 version
+
 Version 4.0.beta.2:
-*New: Enable gag flavor text by default.
+* New: Enable gag flavor text by default.
 * New: Enable Cannon shot counter by default.
 * New: Enable archaeology digging tracker by default.
 * New: Added cease digging sound

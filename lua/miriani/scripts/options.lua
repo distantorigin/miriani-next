@@ -2,6 +2,7 @@
 local options = {
   automatic_changelog = {descr="Automatically open changelog after updates?", value="no", group="general", type="bool"},
   automatic_updates = {descr="Automatically apply updates quietly at login?", value="no", group="general", type="bool"},
+  debug_mode = {descr="Enable debug notifications (missing audio files, etc).", value="no", group="general", type="bool"},
   archaeology_helper_dig = {descr="Buried artifact digging tracker.", value="yes", group="archaeology", type="bool"},
   alternate_audio = {descr="Access alternative audio files before soundpack files? Note you must create the sounds/alternate directory for this change to take affect.", value="no", group="general", type="bool"},
   classic_audio_mode = {descr="Audio style preference.", value="modern", group="general", type="list", options={"modern", "classic"}},

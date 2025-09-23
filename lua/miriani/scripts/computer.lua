@@ -36,6 +36,28 @@ local str
 
    print_color({str, "computer"})
 
+   -- Extract cannon count from bardenium firing messages
+   if string.find("%2", "Bardenium Cannons? .+ locked on .+%. Firing%.") then
+     local cannon_list = string.match("%2", "Bardenium Cannons? (.+) locked on")
+     if cannon_list then
+       local count = 0
+       for num in string.gmatch(cannon_list, "%d+") do
+         count = count + 1
+       end
+       -- Check if number of cannons changed and recalculate if we know the bardenium amount
+       if numberOfCannons ~= count then
+         local oldCannons = numberOfCannons
+         numberOfCannons = count
+         -- Recalculate shots based on estimated remaining bardenium
+         if config:get_option("count_cannon").value == "yes" and numberOfCannons > 0 and cannonShots and oldCannons then
+           -- Estimate remaining bardenium: shots left * old cannon count
+           local estimatedBardenium = cannonShots * oldCannons
+           cannonShots = math.ceil(estimatedBardenium / numberOfCannons)
+         end
+       end
+     end
+   end
+
    -- replicate the string for toastush:
    replicate_line("#$# computer | %2")
   </send>
@@ -292,18 +314,37 @@ mplay("ship/computer/voice/unclear", "computer")
   <send>
 
    -- count shots if cannonCount is active
-   if string.find("%1", "Bardenium Cannon")
-   and config:get_option("count_cannon").value == "yes"
-   and cannonShots then
-     cannonShots = cannonShots - 1
+   if (string.find("%1", "Bardenium Cannon") or string.find("%1", "Bardenium Cannons"))
+   and config:get_option("count_cannon").value == "yes" then
 
-     -- play a sound for 0 shots left.
-     if cannonShots == 0 then
-      mplay("ship/combat/noBarde", "ship")
-     end -- no shots
+     -- If we don't have cannonShots set yet, initialize with default
+     if not cannonShots and numberOfCannons and numberOfCannons > 0 then
+       -- Total shots = 20 bardenium / numberOfCannons, rounded up to 8
+       cannonShots = math.max(8, math.ceil(20 / numberOfCannons))
+     end
 
-    notify("info", "Shots Remaining: "..cannonShots, 1)
+     if cannonShots then
+       -- Only subtract once per firing event, not per cannon
+       if not currentlyFiring then
+         currentlyFiring = true
+         cannonShots = cannonShots - 1
+
+         -- play a sound for 0 shots left.
+         if cannonShots == 0 then
+          mplay("ship/combat/noBarde", "ship")
+         end -- no shots
+
+        notify("info", "Shots Remaining: "..cannonShots, 1)
+       end
+     end
    end -- if cannonCount
+
+   -- Reset firing flag after a short delay
+   if currentlyFiring then
+     SetVariable("firing_timer", "1")
+     DeleteVariable("firing_timer")
+     currentlyFiring = nil
+   end
 
    mplay ("ship/combat/weaponFire", "ship")
   </send>

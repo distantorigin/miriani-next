@@ -933,7 +933,40 @@ print("Launch complete.")
    send_to="12"
    sequence="100"
   >
-  <send>mplay("ship/misc/screen", "ship")</send>
+  <send>mplay("ship/misc/display", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^You input some commands into a console and access the starship's service record\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/display", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^Laser Turrets\s+\d+/\d+$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/display", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^Starship\s+Mass\s+Docking Bay\s+Status$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/display", "ship")</send>
   </trigger>
 
   <trigger
@@ -1115,10 +1148,11 @@ print("Launch complete.")
    keep_evaluating="y"
   >
   <send>
-   -- Clear focus infobar when ship leaves sector
+   -- Clear focus and scan infobar when ship leaves sector
    focusTarget = nil
    focusCoordinates = nil
    infobar("focus", "")
+   infobar("scan", "")
   </send>
   </trigger>
 

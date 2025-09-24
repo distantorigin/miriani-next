@@ -63,8 +63,8 @@ ImportXML([=[
   >
   <send>
    mplay ("comm/private", "communication", nil, nil, nil, nil, nil, true)
-   channel("private", "%0", {"private %2", "private", "communication"})
-   print_color({"%1 ", "default"}, {"%3", "priv_comm"})
+   channel("private", "[%2] %3", {"private %2", "private", "communication"})
+   print_color({"[%2] ", "default"}, {"%3", "priv_comm"})
   </send>
   </trigger>
 
@@ -106,7 +106,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^(.+?) (?:hesitates briefly before )?(say|ask|exclaim)s?(?: to (.+?))?, &quot;(.+?)&quot;$"
+   match="^([A-Z][a-z]+(?: [A-Z][a-z]+)*) (?:hesitates briefly before )?(says?|asks?|exclaims?)(?: (?:to )?(.+?))?, &quot;(.+?)&quot;$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -118,28 +118,38 @@ ImportXML([=[
    local target = "%3"
    local message = "%4"
 
+   -- Clean up target (remove leading "to " if present)
+   if target then
+     target = target:gsub("^to ", "")
+   end
+
    -- Check if this is directed at you
    local is_direct_to_you = target and string.find(string.lower(target), "you")
 
-   -- Determine proper verb form based on speaker
+   -- Use the verb as-is since we're capturing it already conjugated
    local verb_form = verb
-   if speaker ~= "You" then
-     verb_form = verb .. "s"
-   end
 
    -- Determine sound and color based on target
    if is_direct_to_you then
      -- Direct say TO YOU - use directsay sound and bypass foreground sounds
      mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
      if target then
-       print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
+       if verb == "ask" or verb == "asks" then
+         print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
+       else
+         print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
+       end
      else
        print_color({speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
      end
    elseif target and target ~= "" then
      -- Direct say to someone else - use normal say sound
      mplay("comm/say", "communication")
-     print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
+     if verb == "ask" then
+       print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
+     else
+       print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
+     end
    else
      -- General say - use normal say sound
      mplay("comm/say", "communication")
@@ -278,7 +288,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^([\w\s]+) (?:hear)?\s?(shout|yell)s?, (&quot;.+?&quot;)$"
+   match="^([\w\s]+) (?:hear)?\s?(shout|yell|holler)s?, (&quot;.+?&quot;)$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -286,8 +296,13 @@ ImportXML([=[
   >
   <send>
    mplay ("comm/shout", "communication")
-   print_color({"%1 %2, ", "default"}, {"%3", "pub_comm"})
-   channel(name, "%1 %2, %3", {"say", "communication"})
+   local speaker = "%1"
+   local verb = "%2"
+   local message = "%3"
+   -- Properly conjugate the verb for third person
+   local verb_form = verb .. "s"
+   print_color({speaker .. " " .. verb_form .. ", ", "default"}, {message, "pub_comm"})
+   channel(name, speaker .. " " .. verb_form .. ", " .. message, {"say", "communication"})
   </send>
   </trigger>
 
@@ -554,5 +569,241 @@ regexp="y"
   </send>
   </trigger>
 
+  <!-- Camera say messages -->
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^\((.+?)\) ([a-zA-Z ]+) (?:hesitates briefly before )?(say|ask|exclaim)s?(?:(?: to | )(.+?))?, &quot;(.+?)&quot;$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="98"
+  >
+  <send>
+   local location = "%1"
+   local speaker = "%2"
+   local verb = "%3"
+   local target = "%4"
+   local message = "%5"
+
+   -- Clean up target (remove leading "to " if present)
+   if target then
+     target = target:gsub("^to ", "")
+   end
+
+   -- Check if this is directed at you
+   local is_direct_to_you = target and string.find(string.lower(target), "you")
+
+   -- Play appropriate sound and display with correct grammar
+   local verb_form = verb
+   if speaker ~= "You" then
+     verb_form = verb .. "s"
+   end
+
+   if is_direct_to_you then
+     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+     if verb == "ask" then
+       print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
+     else
+       print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
+     end
+   else
+     mplay("comm/say", "communication")
+     if target and target ~= "" then
+       if verb == "ask" or verb == "asks" then
+         print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
+       else
+         print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
+       end
+     else
+       print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
+     end
+   end
+
+   -- Add to say buffer
+   local verb_form = verb
+   if speaker ~= "You" then
+     verb_form = verb .. "s"
+   end
+   local buffer_text = "(" .. location .. ") " .. speaker .. " " .. verb_form
+   if target and target ~= "" then
+     if verb == "ask" then
+       buffer_text = buffer_text .. " " .. target  -- "asks you" not "asks to you"
+     else
+       buffer_text = buffer_text .. " to " .. target  -- "says to you", "exclaims to you"
+     end
+   end
+   buffer_text = buffer_text .. ", \\\"" .. message .. "\\\""
+   channel("say", buffer_text, {"say"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^\[From Outside\] ([a-zA-Z ]+) (?:hesitates briefly before )?(say|ask|exclaim)s?(?:(?: to | )(.+?))?, &quot;(.+?)&quot;$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="98"
+  >
+  <send>
+   local speaker = "%1"
+   local verb = "%2"
+   local target = "%3"
+   local message = "%4"
+
+   -- Clean up target (remove leading "to " if present)
+   if target then
+     target = target:gsub("^to ", "")
+   end
+
+   -- Check if this is directed at you
+   local is_direct_to_you = target and string.find(string.lower(target), "you")
+
+   -- Play appropriate sound and display with correct grammar
+   local verb_form = verb
+   if speaker ~= "You" then
+     verb_form = verb .. "s"
+   end
+
+   if is_direct_to_you then
+     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+     if verb == "ask" then
+       print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
+     else
+       print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
+     end
+   else
+     mplay("comm/say", "communication")
+     if target and target ~= "" then
+       if verb == "ask" or verb == "asks" then
+         print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
+       else
+         print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
+       end
+     else
+       print_color({speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
+     end
+   end
+
+   -- Add to say buffer
+   local verb_form = verb
+   if speaker ~= "You" then
+     verb_form = verb .. "s"
+   end
+   local buffer_text = "[From Outside] " .. speaker .. " " .. verb_form
+   if target and target ~= "" then
+     if verb == "ask" then
+       buffer_text = buffer_text .. " " .. target  -- "asks you" not "asks to you"
+     else
+       buffer_text = buffer_text .. " to " .. target  -- "says to you", "exclaims to you"
+     end
+   end
+   buffer_text = buffer_text .. ", \\\"" .. message .. "\\\""
+   channel("say", buffer_text, {"say"})
+  </send>
+  </trigger>
+
+  <!-- Targeted social message parser -->
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^(.+?) (poke|pokes|nudge|nudges) (you|.+?) .*$"
+   regexp="y"
+   keep_evaluating="y"
+   send_to="14"
+   sequence="10"
+  >
+  <send>
+<![CDATA[
+   local actor = "%1"
+   local action = "%2"
+   local target = "%3"
+
+   -- Remove trailing 's' from action if present (pokes -> poke, nudges -> nudge)
+   action = action:gsub("s$", "")
+
+   -- Store message info for hook to check against (only if it's a targeted social and we're the target)
+   if (action == "poke" or action == "nudge") and target == "you" then
+     pending_targeted_message = {
+       action = action,
+       actor = actor,
+       timestamp = os.time()
+     }
+   end
+]]>
+  </send>
+  </trigger>
+
+  <!-- Static burst for metafs and comms -->
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^\[.+?\] .+ transmits an exciting burst of static"
+   regexp="y"
+   send_to="12"
+   sequence="50"
+   keep_evaluating="y"
+  >
+  <send>mplay("comm/static", "communication")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^.+ yawns suddenly and collapses to the ground, asleep\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    -- Pick random yawn from social directories
+    local yawn_sounds = {"social/male/yawn", "social/female/yawn1", "social/female/yawn2", "social/female/YAWN3"}
+    mplay(yawn_sounds[math.random(#yawn_sounds)], "communication")
+    mplay("social/neuter/collapse" .. math.random(1,3), "communication")
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^.+ suddenly awakens\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    mplay("misc/wake_up", "communication")
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^A.+ sanitation drone arrives\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    mplay("misc/sanin", "communication")
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^A.+ sanitation drone goes .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    mplay("misc/sanout", "communication")
+  </send>
+  </trigger>
+
 </triggers>
+
 ]=])

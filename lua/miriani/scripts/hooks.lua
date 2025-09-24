@@ -211,8 +211,12 @@ ImportXML([=[
     weapon = "revolver"
    elseif string.find (weapon, "shotgun") then
     weapon = "shotgun"
-    elseif string.find (weapon, "stun turret") then
+   elseif string.find (weapon, "stun turret") then
     weapon = "turret"
+   elseif string.find (weapon, "stun baton") then
+    weapon = "stunBaton"
+   elseif string.find (weapon, "correction club") then
+    weapon = "stunBaton"
    else
     weapon = "defaultGun"
    end -- weapon type 
@@ -220,11 +224,17 @@ ImportXML([=[
 
    if (outcome == "miss")
    or (outcome == "unloaded") then
-   mplay("combat/"..outcome, "melee")
+     mplay("combat/"..outcome, "melee")
    else
-   mplay("combat/guns/"..weapon, "melee")
+     -- Handle melee weapons vs guns differently
+     if (weapon == "stunBaton") then
+       mplay("combat/"..weapon, "melee")
+     else
+       mplay("combat/guns/"..weapon, "melee")
+     end
 
-   mplay("combat/"..action.."/"..outcome, "melee")
+     -- Play action/outcome sound if it exists
+     mplay("combat/"..action.."/"..outcome, "melee")
    end -- if
 
   </send>

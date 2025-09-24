@@ -79,18 +79,6 @@ ImportXML([=[
   <send>mplay ("ship/combat/reflector", "ship")</send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   group="combat"
-   match="^An internal stun turret orients towards [A-Za-z\s]+? and fires!$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-   mplay ("ship/combat/internal", "ship")
-  </send>
-  </trigger>
 
   <trigger
    enabled="y"
@@ -542,21 +530,11 @@ ImportXML([=[
     end
 
     mplay("ship/combat/secondaryLock", "ship")
-    notify("info", "Bardenium counter reset: " .. cannonShots .. " shots", 1)
+    print("Bardenium counter reset: " .. cannonShots .. " shots")
    end
   </send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   group="combat"
-   match="^[A-Za-z\s]+ conjures? up some mighty force and slams? .+? into .+?[.!].*$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay("combat/stunBaton", "melee")</send>
-  </trigger>
 
   <trigger
    enabled="y"
@@ -747,16 +725,6 @@ ImportXML([=[
   <send>mplay("combat/praelor/board", "melee")</send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   group="combat"
-   match="^[A-Z][a-z\s,'-]+ aims? (?:his|her|its|their) (?:counter\-?)?stun turret attachments? at [A-Za-z\s'-]+ and fires?!$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay("combat/droidShot", "melee")</send>
-  </trigger>
 
   <trigger
    enabled="y"

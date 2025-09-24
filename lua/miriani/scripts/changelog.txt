@@ -1,3 +1,27 @@
+Version 4.0.beta.4:
+* New: Rewrite computer announcement handling to exist in a single trigger, using a table for the various strings that should be matched.
+* New: Shortened "Shots remaining" in the bardenium counter to just "Shots" and experimentally made it display before the firing announcement, rather than after.
+* New: Added 10 more keyboard and announcement sounds.
+* New: Added separate sounds for the computer reporting things. Previously this just used the announcement sound.
+* New: Play the punch sound for sock/slug/hit.
+* New: Add weapon power up/power down to classic Miriani sounds.
+* New: Add new display sounds that get used by the records, ships, cargo, damage, arsenal, and status commands.
+* New: New connect sound.
+* New: Play collapse/yawn socials when somebody disconnects.
+* New: Sanitation drone sounds.
+* New: Use weapon soundpack hooks instead of matching on messages manually. This should hopefully make them much more reliable for any kind of weapon, regardless of its name.
+* New: Added static sounds for communicators and metafrequencies.
+* Changed: Shorten private comms to only say [Player Name] instead of [Private | Player Name].
+* Changed: Poke/nudge socials will only trigger when you've been targeted.
+* Fixed: Show "Person yells" instead of "Person yell" and add support for the shout/holler versions.
+* Fixed: Don't trigger say on flirt.
+* Fixed: Clear focus and scan from info bar on launch/land. Previously this only cleared upon FTL, and unreliably so.
+* Fixed: Say history, OOC, and other channels will no longer trigger the speech routine.
+* Fixed: Say trigger now gets caught when seen via camera or droid remote.
+* Fixed: Malformed say messages appearing in the say buffer.
+* Fixed: "Asks you" will now trigger the direct say sound.
+* Fixed: Bardenium counter no longer announces twice.
+
 Version 4.0.beta.3:
 * New: Rewrite bardenium shot counter by dynamically dividing available bardenium by the number of cannons announced in the firing message. Bugs are sure to be afoot with this one.
 * New: Added a debug mode to subject yourself to spammy debug messages and errors. Enable under 'toastush:config general'

@@ -126,6 +126,16 @@ computer_actions_wildcard = {
       mplay("ship/combat/weaponFire", "ship")
     end
   },
+  ["[Ll]ong.[Rr]ange (.+) is locking ont?o (.+)%."] = {
+    func = function(weapon_info, target)
+      mplay("ship/combat/weaponFire", "ship")
+    end
+  },
+  ["[Ll]ong.[Rr]ange (.+) are locking ont?o (.+)%."] = {
+    func = function(weapon_info, target)
+      mplay("ship/combat/weaponFire", "ship")
+    end
+  },
   ["I am beginning the repair of (.+)%. Estimated time to completion: (.+)"] = {
     sound = "ship/computer/repStart",
     group = "computer"

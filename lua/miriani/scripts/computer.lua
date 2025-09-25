@@ -64,9 +64,9 @@ computer_actions = {
 }
 
 computer_actions_wildcard = {
-  ["(.+?) been detect(?:ed|'d) in the sector%."] = {
+  ["(.+) h[a][sv]e been detected in the sector%."] = {
     func = function(match1)
-      if string.find(match1, "artifact") then mplay("ship/computer/artifact", "notification") end
+      if string.find(string.lower(match1), "artifact") then mplay("ship/computer/artifact", "notification") end
       if string.find(match1, "planet") then mplay("ship/computer/planet", "notification") end
       if string.find(match1, "starship") or string.find(match1, "furner") then mplay("ship/computer/starship", "notification") end
       if string.find(match1, "space station") then mplay("ship/computer/station", "notification") end
@@ -116,32 +116,37 @@ computer_actions_wildcard = {
       mplay("ship/combat/weaponFire", "ship")
     end
   },
-  ["(Turret|Long%-Range)s? (.+?) (?:(?:is|are) locking|(?:locked|lockin')|locked on) (?:on|ont'|)(?:to )?(.+?)%.? ?(?:Firing%.)?"] = {
-    func = function(weapon_type, weapon_num, target)
+  ["Turrets (.+) are locking ont?o (.+)%."] = {
+    func = function(weapon_num, target)
       mplay("ship/combat/weaponFire", "ship")
     end
   },
-  ["I (?:am|be) (?:beginning|beginnin') the repair of (.+?)%. Estimat(?:ed|'d) time (?:to |t')completion: (.+?)"] = {
+  ["Turret (.+) is locking ont?o (.+)%."] = {
+    func = function(weapon_num, target)
+      mplay("ship/combat/weaponFire", "ship")
+    end
+  },
+  ["I am beginning the repair of (.+)%. Estimated time to completion: (.+)"] = {
     sound = "ship/computer/repStart",
     group = "computer"
   },
-  ["I have complet(?:ed|'d) the repair of (.+?)%."] = {
+  ["I have completed the repair of (.+)%."] = {
     sound = "ship/computer/repStop",
     group = "computer"
   },
-  ["(.+?) has been destroyed%."] = {
+  ["(.+) has been destroyed%."] = {
     sound = "ship/computer/otherDestroy",
     group = "computer"
   },
-  ["Hit on (.+?)%."] = {
+  ["Hit on (.+)%."] = {
     sound = "ship/combat/hit/otherHit",
     group = "ship"
   },
-  ["Partial hit on (.+?)"] = {
+  ["Partial hit on (.+)"] = {
     sound = "ship/combat/hit/partialHit",
     group = "ship"
   },
-  ["Scans reveal the debris to be (.+?)%."] = {
+  ["Scans reveal the debris to be (.+)%."] = {
     func = function(debris_type)
       mplay("ship/misc/debrisSalvage", "computer")
       if string.find(debris_type, "lifeform") then
@@ -149,15 +154,15 @@ computer_actions_wildcard = {
       end
     end
   },
-  ["(.+?) (?:locking|be lockin') (?:onto |ont')empty space%."] = {
+  ["(.+) locking ont?o empty space%."] = {
     sound = "ship/combat/noLock",
     group = "ship"
   },
-  ["(.+?) is one unit away from this ship%."] = {
+  ["(.+) is one unit away from this ship%."] = {
     sound = "ship/computer/inRange",
     group = "computer"
   },
-  ["Mission objective has been complet(?:ed|'d) in approximately (.+?)%. Return to base%."] = {
+  ["Mission objective has been completed in approximately (.+)%. Return to base%."] = {
     sound = "music/mission",
     group = "computer"
   },
@@ -169,11 +174,11 @@ computer_actions_wildcard = {
     sound = "activity/acv/detonatorRelease",
     group = "ship"
   },
-  ["Successfully detonated (.+?) detonator%."] = {
+  ["Successfully detonated (.+) detonator%."] = {
     sound = "activity/acv/detonate",
     group = "ship"
   },
-  ["Bomb has detonated (.+?)%."] = {
+  ["Bomb has detonated (.+)%."] = {
     sound = "activity/acv/detonate",
     group = "ship"
   },
@@ -236,7 +241,6 @@ ImportXML([=[
        if #matches > 0 then
          if action.sound then
            mplay(action.sound, action.group or "computer")
-           sound_played = true
          end
          if action.func then
            action.func(unpack(matches))

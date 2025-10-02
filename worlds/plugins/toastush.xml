@@ -848,12 +848,29 @@ function initialize_audio()
   if Audio.BASS then
     BASS = Audio.BASS()
 
-    -- Initialize BASS
+    -- Initialize BASS with retry logic for device switching
     if BASS then
-      local init_result = BASS:Init(-1,44100,7)
+      -- Flags: 1 (eight_bit) + 4 (three_d) = 5 (removed mono flag to get stereo by default)
+      local init_result = BASS:Init(-1,44100,5)
 
       if init_result ~= 0 then
-        Note("BASS initialization failed with error: " .. tostring(init_result))
+        -- Error codes: 4 = buffer_lost, 23 = device (illegal device number)
+        -- 3 = driver (can't find free/valid driver)
+        if init_result == 4 or init_result == 23 or init_result == 3 then
+          Note("BASS device error (code " .. tostring(init_result) .. "), retrying with default device...")
+          -- Free any partial initialization
+          BASS:Free()
+          -- Reinitialize BASS
+          BASS = Audio.BASS()
+          init_result = BASS:Init(-1,44100,5)
+          if init_result ~= 0 then
+            Note("BASS initialization retry failed with error: " .. tostring(init_result))
+          else
+            Note("BASS initialized successfully on retry")
+          end
+        else
+          Note("BASS initialization failed with error: " .. tostring(init_result))
+        end
       end
     end
   else

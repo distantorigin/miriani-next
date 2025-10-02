@@ -189,8 +189,41 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
 
   -- Validate stream creation
   if type(stream) == "number" then
-    notify("important", string.format("BASS audio failed to play: %s (error code %d)", sfile, stream))
-    return
+    -- Error codes that indicate device issues:
+    -- 4 = buffer_lost (device disconnected/changed)
+    -- 23 = device (illegal device number)
+    -- 3 = driver (can't find free/valid driver)
+    if stream == 4 or stream == 23 or stream == 3 then
+      if config:get_option("debug_mode").value == "yes" then
+        notify("important", string.format("Audio device error (code %d), switching to available device...", stream))
+      end
+
+      -- Attempt to reinitialize BASS with new device
+      local init_result = BASS:Reinit(44100, 5)
+      if init_result == 0 then
+        -- Retry playing the sound
+        stream = BASS:StreamCreateFile(false, sfile, 0, 0, flags)
+        if type(stream) == "number" then
+          -- Still failing, give up silently
+          if config:get_option("debug_mode").value == "yes" then
+            notify("important", string.format("BASS audio failed after device switch: %s (error code %d)", sfile, stream))
+          end
+          return
+        end
+        -- Successfully recovered, continue below to play sound
+      else
+        -- Reinit failed - no available device, fail silently
+        if config:get_option("debug_mode").value == "yes" then
+          notify("important", string.format("BASS device switch failed with error: %d (no audio device available)", init_result))
+        end
+        return
+      end
+    else
+      if config:get_option("debug_mode").value == "yes" then
+        notify("important", string.format("BASS audio failed to play: %s (error code %d)", sfile, stream))
+      end
+      return
+    end
   end
 
   -- Set volume for this group

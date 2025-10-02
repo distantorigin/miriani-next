@@ -57,8 +57,24 @@ function BASS:Init(device, frequency, flags)
     -- Init failed, return error code
     return self.bass.BASS_ErrorGetCode()
   else
-    -- Init succeeded, apply default configuration
-    self.bass.BASS_SetConfig(const.config.device_default, 1)
+    -- Init succeeded, but DON'T set device_default - this locks us to a specific device
+    -- Instead, we'll handle device switching manually when errors occur
+    return 0
+  end
+end
+
+function BASS:Reinit(frequency, flags)
+  -- Free current BASS instance
+  self:Free()
+
+  -- Try to initialize with device -1 (system default)
+  frequency = frequency or 44100
+  flags = flags or 0
+
+  local result = self.bass.BASS_Init(-1, frequency, flags, nil, nil)
+  if result == 0 then
+    return self.bass.BASS_ErrorGetCode()
+  else
     return 0
   end
 end

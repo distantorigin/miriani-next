@@ -36,6 +36,17 @@ Alt + Backslash: If you have some text typed in the command window, searches tow
 alt+shift+enter; copy current buffer to a notepad
 alt + shift + t: toggle timestamp announcements
 
+**NEW QUICK BUFFER SYSTEM:**
+Alt + Q: Cycle through your quick list of buffers endlessly
+Alt + Shift + Q: Add/remove current buffer from quick list, or remove missing buffers after "not found" messages
+Commands: history_quicklist, history_quickclear
+
+CHANGELOG:
+- Added quick buffer system for fast cycling between favorite channels/buffers
+- Buffers automatically announce current list when added/removed for easy management
+- Missing buffer cleanup: when cycling fails to find a buffer, Alt+Shift+Q removes it from the list
+- Quick list persists across client restarts
+
 ]]>
 </description>
 
@@ -219,6 +230,48 @@ SetVariable("timestamps", "true")
 Execute("tts_interrupt You will now hear an approximate time after every message.")
 end</send>
   </alias>
+  <alias
+   script="history_quickcycle"
+   match="history_quickcycle"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+  <alias
+   script="history_quicktoggle"
+   match="history_quicktoggle"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+  <alias
+   script="history_quicklist"
+   match="^history_quicklist$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+  <alias
+   script="history_quickclear"
+   match="^history_quickclear$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
 </aliases>
 
 <!--  Script  -->
@@ -233,6 +286,9 @@ current_category = 0 -- not set yet
 prev_category=0 --for jump
 current_search=0 --for search
 categories = {}
+quick_buffers = {} -- configurable list of buffers for quick cycling
+quick_buffer_index = 1 -- current position in quick buffer cycle
+last_not_found_buffer = nil -- track the last buffer that wasn't found
 if not GetVariable("timestamps") then
 timestamps=true
 DoAfterSpecial(30, "Note('You can now toggle off the new relative time announcements in channel history. Press alt+shift+t to turn it on or off. Alternatively, you can just type timestamp.')", 14)
@@ -272,6 +328,8 @@ AcceleratorTo("alt+shift+\\","history_find(0)",12)
 Accelerator("alt+shift+`","history_catsearch")
 Accelerator("alt+`","history_catsearch")
 Accelerator("alt+shift+t","timestamps")
+Accelerator("alt+q","history_quickcycle")
+Accelerator("alt+shift+q","history_quicktoggle")
 
 function history_delete(n,l,w)
  if #categories == 0 then
@@ -327,6 +385,7 @@ end
 function OnPluginInstall()
  --SetVariable("tts",GetPluginVariable("553a883096da345ce6897740","tts"))
  SetVariable("tts","1")
+ load_quick_buffers()
 end
 
 function ttstoggle(n,l,w)
@@ -705,6 +764,201 @@ if search==0 or search==#messages[categories[current_category]]+1 then
 say("not found")
 end
 end
+
+-- Announce the current quick buffers list
+function announce_quick_buffers()
+  if #quick_buffers == 0 then
+    say("No buffers in quick list.")
+    return
+  end
+
+  say("Quick list (" .. #quick_buffers .. " buffers): " .. table.concat(quick_buffers, ", "))
+end
+
+-- Load quick buffers from saved variable
+function load_quick_buffers()
+  local saved_buffers = GetVariable("quick_buffers")
+  if saved_buffers and saved_buffers ~= "" then
+    quick_buffers = {}
+    for buffer in saved_buffers:gmatch("([^|]+)") do
+      table.insert(quick_buffers, buffer)
+    end
+  end
+end
+
+-- Save quick buffers to variable
+function save_quick_buffers()
+  SetVariable("quick_buffers", table.concat(quick_buffers, "|"))
+end
+
+-- Cycle through quick buffers with Alt+Q
+function history_quickcycle(name, line, wc)
+  if #quick_buffers == 0 then
+    say("No buffers in quick list. Use Alt+Shift+Q to add the current buffer.")
+    return
+  end
+
+  if #quick_buffers == 1 then
+    -- Only one buffer, just switch to it
+    local buffer_name = quick_buffers[1]
+    for i, cat in ipairs(categories) do
+      if cat == buffer_name then
+        current_category = i
+        if indices[categories[current_category]] == 0 then
+          indices[categories[current_category]] = 1
+        end
+        say(categories[current_category] .. ": " .. indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+        return
+      end
+    end
+    last_not_found_buffer = buffer_name
+    say("Buffer " .. buffer_name .. " not found. Press Alt+Shift+Q to remove it.")
+    return
+  end
+
+  -- Multiple buffers, cycle through them
+  quick_buffer_index = quick_buffer_index + 1
+  if quick_buffer_index > #quick_buffers then
+    quick_buffer_index = 1
+  end
+
+  local buffer_name = quick_buffers[quick_buffer_index]
+
+  -- Find the buffer in categories and switch to it
+  for i, cat in ipairs(categories) do
+    if cat == buffer_name then
+      current_category = i
+      if indices[categories[current_category]] == 0 then
+        indices[categories[current_category]] = 1
+      end
+      say(categories[current_category] .. ": " .. indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+      return
+    end
+  end
+
+  last_not_found_buffer = buffer_name
+  say("Buffer " .. buffer_name .. " not found. Press Alt+Shift+Q to remove it.")
+end
+
+-- Toggle current buffer in/out of quick buffers list with Alt+Shift+Q
+function history_quicktoggle(name, line, wc)
+  -- Check if we should remove the last not-found buffer
+  if last_not_found_buffer then
+    local buffer_to_remove = last_not_found_buffer
+    last_not_found_buffer = nil -- clear it
+
+    -- Find and remove the not-found buffer from quick_buffers
+    local found_index = nil
+    for i, buffer in ipairs(quick_buffers) do
+      if buffer == buffer_to_remove then
+        found_index = i
+        break
+      end
+    end
+
+    if found_index then
+      table.remove(quick_buffers, found_index)
+      save_quick_buffers()
+
+      -- Adjust index if needed
+      if quick_buffer_index > found_index then
+        quick_buffer_index = quick_buffer_index - 1
+      elseif quick_buffer_index == found_index and quick_buffer_index > #quick_buffers then
+        quick_buffer_index = 1
+      end
+
+      if #quick_buffers == 0 then
+        say("Removed missing buffer " .. buffer_to_remove .. " from quick list. No buffers remaining.")
+      else
+        say("Removed missing buffer " .. buffer_to_remove .. " from quick list. Current buffers: " .. table.concat(quick_buffers, ", "))
+      end
+    else
+      say("Buffer " .. buffer_to_remove .. " was not in quick list.")
+    end
+    return
+  end
+
+  if #categories == 0 then
+    say("No categories")
+    return
+  end
+
+  if current_category == 0 then
+    say("No category selected.")
+    return
+  end
+
+  local current_buffer = categories[current_category]
+
+  -- Check if buffer is already in quick_buffers
+  local found_index = nil
+  for i, buffer in ipairs(quick_buffers) do
+    if buffer == current_buffer then
+      found_index = i
+      break
+    end
+  end
+
+  if found_index then
+    -- Remove from quick buffers
+    table.remove(quick_buffers, found_index)
+    save_quick_buffers()
+
+    -- Adjust index if needed
+    if quick_buffer_index > found_index then
+      quick_buffer_index = quick_buffer_index - 1
+    elseif quick_buffer_index == found_index and quick_buffer_index > #quick_buffers then
+      quick_buffer_index = 1
+    end
+
+    if #quick_buffers == 0 then
+      say("Removed " .. current_buffer .. " from quick list. No buffers remaining.")
+    else
+      say("Removed " .. current_buffer .. " from quick list. Current buffers: " .. table.concat(quick_buffers, ", "))
+    end
+  else
+    -- Add to quick buffers
+    table.insert(quick_buffers, current_buffer)
+    save_quick_buffers()
+
+    -- Set index to the newly added buffer
+    quick_buffer_index = #quick_buffers
+
+    say("Added " .. current_buffer .. " to quick list. Current buffers: " .. table.concat(quick_buffers, ", "))
+  end
+end
+
+-- List all quick buffers
+function history_quicklist(name, line, wc)
+  if #quick_buffers == 0 then
+    say("No buffers in quick list.")
+    return
+  end
+
+  say("Quick list (" .. #quick_buffers .. " buffers):")
+  for i, buffer in ipairs(quick_buffers) do
+    local marker = (i == quick_buffer_index) and " (current)" or ""
+    say(i .. ". " .. buffer .. marker)
+  end
+end
+
+-- Clear all quick buffers
+function history_quickclear(name, line, wc)
+  if #quick_buffers == 0 then
+    say("No buffers in quick list to clear.")
+    return
+  end
+
+  local count = #quick_buffers
+  quick_buffers = {}
+  quick_buffer_index = 1
+  save_quick_buffers()
+  say("Cleared " .. count .. " buffers from quick list.")
+end
+
+-- Call this on plugin load to initialize quick buffers
+load_quick_buffers()
+
 ]]>
 </script>
 </muclient>

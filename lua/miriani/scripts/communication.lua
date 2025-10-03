@@ -106,7 +106,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^([A-Z][a-z]+(?: [A-Z][a-z]+)*) (?:hesitates briefly before )?(says?|asks?|exclaims?)(?: (?:to )?(.+?))?, &quot;(.+?)&quot;$"
+   match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*) (?:hesitates briefly before )?(says?|asks?|exclaims?)(?: (?:to )?([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*))?, &quot;(.+?)&quot;$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -288,7 +288,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^([\w\s]+) (?:hear)?\s?(shout|yell|holler)s?, (&quot;.+?&quot;)$"
+   match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*|You) (?:hear )?(shout|yell|holler)s?, (&quot;.+?&quot;)$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -299,8 +299,8 @@ ImportXML([=[
    local speaker = "%1"
    local verb = "%2"
    local message = "%3"
-   -- Properly conjugate the verb for third person
-   local verb_form = verb .. "s"
+   -- Properly conjugate the verb: third person gets 's', first person doesn't
+   local verb_form = speaker == "You" and verb or verb .. "s"
    print_color({speaker .. " " .. verb_form .. ", ", "default"}, {message, "pub_comm"})
    channel(name, speaker .. " " .. verb_form .. ", " .. message, {"say", "communication"})
   </send>
@@ -705,38 +705,42 @@ regexp="y"
   </send>
   </trigger>
 
-  <!-- Targeted social message parser -->
   <trigger
    enabled="y"
    group="comm"
-   match="^(.+?) (poke|pokes|nudge|nudges) (you|.+?) .*$"
+   match="^You (poke|nudge) (.+)$"
    regexp="y"
-   keep_evaluating="y"
    send_to="14"
    sequence="10"
   >
   <send>
 <![CDATA[
-   local actor = "%1"
-   local action = "%2"
-   local target = "%3"
-
-   -- Remove trailing 's' from action if present (pokes -> poke, nudges -> nudge)
-   action = action:gsub("s$", "")
-
-   -- Store message info for hook to check against (only if it's a targeted social and we're the target)
-   if (action == "poke" or action == "nudge") and target == "you" then
-     pending_targeted_message = {
-       action = action,
-       actor = actor,
-       timestamp = os.time()
-     }
+   local action = "%1"
+   local target = "%2"
+   if pending_targeted_message and pending_targeted_message.action == action and pending_targeted_message.actor == "You" and os.time() - pending_targeted_message.timestamp < 2 then
+     mplay("social/neuter/" .. action, "communication")
+     pending_targeted_message = nil
    end
 ]]>
   </send>
   </trigger>
 
-  <!-- Static burst for metafs and comms -->
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^(.+?) (poke|pokes|nudge|nudges) you (.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="10"
+  >
+  <send>
+   local actor = "%1"
+   local action = "%2"
+   action = action:gsub("s$", "")
+   mplay("social/neuter/" .. action, "communication")
+  </send>
+  </trigger>
+
   <trigger
    enabled="y"
    group="comm"

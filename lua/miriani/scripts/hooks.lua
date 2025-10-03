@@ -301,4 +301,16 @@ ImportXML([=[
 </triggers>
 ]=])
 
+function playsocial(name, line, wildcards)
+  local action = wildcards[1]
+  local gender = wildcards[2]
+
+  notify("important", "Hook received: " .. action .. " | " .. gender)
+
+  pending_targeted_message = {
+    action = action,
+    actor = "You",
+    timestamp = os.time()
+  }
+end
 

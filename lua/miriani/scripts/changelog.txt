@@ -1,3 +1,24 @@
+Version 4.0.beta.5:
+* New: Aquatic salvaging sounds for movement, scoop, fish encounters and probably more at the current time of writing.
+* New: Enhanced Channel History plugin with quick buffer system:
+  - Alt+Q: Cycle through favorited buffers endlessly
+  - Alt+Shift+Q: Add/remove current buffer from favorited buffers/quick list
+  - Quick list persists across client restarts
+* New: Add planetary mining triggers. Credit for tunnel rats goes to the pull request here: https://github.com/PsudoDeSudo/Toastush/issues/5
+* New: Add sound for drifting off to sleep (disconnecting while on the ground and/or furniture).
+* New: Removed classic mode and merged all classic sounds with the Toastush default.
+* New: Delete classic_miriani directory at startup.
+* New: Added automatic detection and cleanup of conflicting sound files (removes non-numbered when numbered variants exist).
+* New: Improved audio device switching with proactive health monitoring and automatic recovery.
+* Fixed: Audio device switching now uses position-based detection to catch stuck playback and WASAPI output issues.
+* Fixed: Fixed the say trigger to match on names with mixed capitalization beyond the first letter (i.e. Cedric McKinley)
+* Fixed: Properly format says that are in all uppercase.
+* Fixed: Don't play weapon firing sound for empty space when using the ravager's laser turret.
+* Fixed: Don't play weapon firing if you only have a single laser turret (probably related to the above change).
+* Fixed: OICIC <person> no longer gets caught by the shout trigger.
+* Fixed: Force all sounds to stereo (again). This flag got removed in the audio system overhaul. Ahem.
+* Changed: Updated poke/nudge triggers to play sound when it's you performing the social.
+
 Version 4.0.beta.4:
 * New: Rewrite computer announcement handling to exist in a single trigger, using a table for the various strings that should be matched.
 * New: Shortened "Shots remaining" in the bardenium counter to just "Shots" and experimentally made it display before the firing announcement, rather than after.

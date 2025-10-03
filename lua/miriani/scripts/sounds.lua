@@ -11,6 +11,11 @@ local group_sounds = {}
 
 
 
+-- Device health monitoring variables
+local last_device_check = 0
+local device_check_interval = 5000 -- Check every 5 seconds
+local last_position_check = {}
+
 -- Helper function to cleanup finished sounds from a group
 local function cleanup_group(group)
   if not streamtable[group] then
@@ -26,6 +31,26 @@ local function cleanup_group(group)
         -- Properly free the BASS stream resource
         sound_data.stream:Free()
         table.remove(streamtable[group], i)
+      elseif status == 1 then
+        -- For playing streams, check position to detect stuck playback
+        local current_pos = sound_data.stream:GetPosition()
+        local stream_id = tostring(sound_data.stream.id)
+
+        if last_position_check[stream_id] then
+          -- If position hasn't changed in multiple checks, stream might be stuck
+          if current_pos == last_position_check[stream_id].position then
+            last_position_check[stream_id].stuck_count = (last_position_check[stream_id].stuck_count or 0) + 1
+            -- If stuck for more than 3 checks, consider it a device issue
+            if last_position_check[stream_id].stuck_count > 3 then
+              check_and_recover_device()
+              last_position_check[stream_id] = nil
+            end
+          else
+            last_position_check[stream_id] = { position = current_pos, stuck_count = 0 }
+          end
+        else
+          last_position_check[stream_id] = { position = current_pos, stuck_count = 0 }
+        end
       end
     else
       -- Remove entries with invalid streams
@@ -36,6 +61,69 @@ local function cleanup_group(group)
   -- Remove empty groups
   if #streamtable[group] == 0 then
     streamtable[group] = nil
+  end
+end
+
+-- Function to check device health and attempt recovery
+function check_and_recover_device()
+  if not BASS then
+    return false
+  end
+
+  local health = BASS:CheckDeviceHealth()
+  if health ~= Audio.CONST.error.ok then
+    if config:get_option("debug_mode").value == "yes" then
+      notify("important", string.format("Audio device issue detected (error %d), attempting recovery...", health))
+    end
+
+    -- Store info about currently playing streams for recovery
+    local streams_to_recover = {}
+    for group, sounds in pairs(streamtable) do
+      for _, sound_data in ipairs(sounds) do
+        if sound_data.stream and sound_data.stream:IsActive() == 1 then
+          table.insert(streams_to_recover, {
+            file = sound_data.file,
+            group = group,
+            position = sound_data.stream:get_position()
+          })
+        end
+      end
+    end
+
+    -- Stop all current streams before recovery
+    cleanup_all_streams()
+
+    local success, message = BASS:RecoverFromDeviceFailure()
+    if success then
+      if config:get_option("debug_mode").value == "yes" then
+        notify("info", "Audio device recovery successful: " .. message)
+      end
+
+      -- Attempt to restore streams that were playing
+      for _, stream_info in ipairs(streams_to_recover) do
+        if stream_info.group ~= "ambiance" then -- Don't restore ambiance as it may be inappropriate
+          -- Try to restart the sound from where it left off
+          play(stream_info.file, stream_info.group, false, nil, false, nil, nil, true)
+        end
+      end
+
+      return true
+    else
+      if config:get_option("debug_mode").value == "yes" then
+        notify("important", "Audio device recovery failed: " .. message)
+      end
+      return false
+    end
+  end
+  return true
+end
+
+-- Periodic device health check
+local function periodic_device_check()
+  local current_time = GetInfo(304) -- GetInfo(304) returns current time in milliseconds
+  if current_time - last_device_check > device_check_interval then
+    check_and_recover_device()
+    last_device_check = current_time
   end
 end
 
@@ -87,6 +175,9 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   group = group or "other"
   sec = tonumber(sec) or 1 -- 1 second fadeout by default
 
+  -- Periodic device health check
+  periodic_device_check()
+
   if config:is_mute() then
     return -- Audio is muted.
   end -- if
@@ -107,24 +198,8 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   local sfile
   local original_file = file
 
-  -- Try classic audio first if enabled
-  if config:get_option("classic_audio_mode").value == "classic" then
-    local classic_file = string.gsub(file, SOUNDPATH, "classic_miriani/")
-    sfile = find_sound_file(classic_file)
-  end
-
-  -- If no classic sound found, try the default path
-  if not sfile then
-    sfile = find_sound_file(original_file)
-  end
-
-  if not sfile then
-    -- Fallback for the case where the file passed from mplay has the classic path already
-    if string.find(original_file, "classic_miriani/") then
-      local modern_file = string.gsub(original_file, "classic_miriani/", SOUNDPATH)
-      sfile = find_sound_file(modern_file)
-    end
-  end
+  -- Find the sound file
+  sfile = find_sound_file(original_file)
 
   if not sfile then
     if config:get_option("debug_mode").value == "yes" then
@@ -193,28 +268,33 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
     -- 4 = buffer_lost (device disconnected/changed)
     -- 23 = device (illegal device number)
     -- 3 = driver (can't find free/valid driver)
-    if stream == 4 or stream == 23 or stream == 3 then
+    -- 9 = start (BASS_Start has not been successfully called)
+    if stream == 4 or stream == 23 or stream == 3 or stream == 9 then
       if config:get_option("debug_mode").value == "yes" then
-        notify("important", string.format("Audio device error (code %d), switching to available device...", stream))
+        notify("important", string.format("Audio device error (code %d), attempting recovery...", stream))
       end
 
-      -- Attempt to reinitialize BASS with new device
-      local init_result = BASS:Reinit(44100, 5)
-      if init_result == 0 then
+      -- Use the improved recovery mechanism
+      local recovery_success, recovery_message = BASS:RecoverFromDeviceFailure()
+      if recovery_success then
+        if config:get_option("debug_mode").value == "yes" then
+          notify("info", "Device recovery successful: " .. recovery_message)
+        end
+
         -- Retry playing the sound
         stream = BASS:StreamCreateFile(false, sfile, 0, 0, flags)
         if type(stream) == "number" then
-          -- Still failing, give up silently
+          -- Still failing after recovery, give up
           if config:get_option("debug_mode").value == "yes" then
-            notify("important", string.format("BASS audio failed after device switch: %s (error code %d)", sfile, stream))
+            notify("important", string.format("BASS audio failed after recovery: %s (error code %d)", sfile, stream))
           end
           return
         end
         -- Successfully recovered, continue below to play sound
       else
-        -- Reinit failed - no available device, fail silently
+        -- Recovery failed - no available device, fail silently
         if config:get_option("debug_mode").value == "yes" then
-          notify("important", string.format("BASS device switch failed with error: %d (no audio device available)", init_result))
+          notify("important", "Device recovery failed: " .. recovery_message)
         end
         return
       end

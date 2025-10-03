@@ -60,6 +60,143 @@ ImportXML([=[
    enabled="y"
    group="vehicle"
    script="gagline"
+   match="^You feel a floating sensation as the craft moves through the water\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/move", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^The craft comes to a halt, a plume of bubbles surrounding it before dissipating\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/salvagestop", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^The craft spins around and around as it's sucked downward\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/whirlpool", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^The pull of acceleration eases off as the ship ceases its .+?\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/salvagestop", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^The vehicle shudders violently as it makes contact with the topmost gas clouds\. .+$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/contact", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^A whirlpool forms nearby, sucking the craft downward into its swirling vortex.+?$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/whirlpool", "vehicle")
+mplay("activity/atmo/wave", "vehicle")
+gagline()</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^The craft manages to stabilize itself and break free from the whirlpool\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/salvagestop", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^A bubble in the vicinity bursts and you hear the engines strain to keep the craft on course.+?$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/bubble", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^.+?A disruption in the water near the craft has caused a massive wave which has resulted in the current trajectory being rerouted\. Please stand by.+?$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/wave", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^The craft makes a tremendous splash as it lands in the planet's watery atmosphere\. It turns a few times and then the stabilizers kick in, righting the craft.+?$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/landingsplash", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^.+?The craft has slammed into a massive life form\. A breach in the outer hull has been detected.+?$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/fishcrash", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
    match="^You feel the pull of acceleration as the (?:craft|ship|vehicle) (?:navigates|begins) ((?:[dea]{1,2}scending)? ?through the (?:planet's)? ?atmosphere|moving)\.$"
    regexp="y"
    omit_from_output="y"
@@ -190,15 +327,6 @@ ImportXML([=[
   <send>mplay("vehicle/salvageExplode", "vehicle")</send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   group="vehicle"
-   match="^A whirlpool forms nearby, sucking the craft downward into its swirling vortex.+?\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>mplay("vehicle/whirlpool", "vehicle")</send>
-  </trigger>
 
   <trigger
    enabled="y"

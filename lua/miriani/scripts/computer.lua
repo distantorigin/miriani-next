@@ -60,6 +60,10 @@ computer_actions = {
   ["The starship has entered an H II region. Caution is advised."] = {
     sound = "ship/computer/nebula",
     group = "notification"
+  },
+  ["Warning! Aquatic life form has entered scooper chamber. Expulsion in progress..."] = {
+    sound = "activity/salvaging/scoop",
+    group = "computer"
   }
 }
 
@@ -116,6 +120,18 @@ computer_actions_wildcard = {
       mplay("ship/combat/weaponFire", "ship")
     end
   },
+  ["Turrets (.+) are locking ont?o empty space%. Firing%."] = {
+    sound = "ship/combat/noLock",
+    group = "ship"
+  },
+  ["Turret (.+) is locking ont?o empty space%. Firing%."] = {
+    sound = "ship/combat/noLock",
+    group = "ship"
+  },
+  ["(.+turret.+) (?:is|are) locking ont?o empty space%. Firing%."] = {
+    sound = "ship/combat/noLock",
+    group = "ship"
+  },
   ["Turrets (.+) are locking ont?o (.+)%."] = {
     func = function(weapon_num, target)
       mplay("ship/combat/weaponFire", "ship")
@@ -123,6 +139,11 @@ computer_actions_wildcard = {
   },
   ["Turret (.+) is locking ont?o (.+)%."] = {
     func = function(weapon_num, target)
+      mplay("ship/combat/weaponFire", "ship")
+    end
+  },
+  ["(.+turret.+) (?:is|are) locking ont?o (.+)%."] = {
+    func = function(weapon_info, target)
       mplay("ship/combat/weaponFire", "ship")
     end
   },

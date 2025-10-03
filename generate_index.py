@@ -31,7 +31,6 @@ def generate_manifest():
         ".": ".manifest",  # index-v5.manifest in root
         "worlds/plugins/": ".xml",  # toastush, channel_history, output_functions, updater
         "sounds/miriani/": ".ogg",
-        "sounds/classic_miriani/": ".ogg",
         "lua/miriani/scripts/": ".lua",
         "lua/miriani/": ".txt"
     }

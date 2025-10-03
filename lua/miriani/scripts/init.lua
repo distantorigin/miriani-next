@@ -35,6 +35,8 @@ local namespace = {
   "hauling", -- asteroid hauling
   "salvaging", -- Atmospheric salvaging.
   "asteroid_mining", -- Asteroid mining.
+  "planetary_mining", -- Planetary mining.
+  "sound_conflict_detector", -- Sound file conflict detection and cleanup
 -- "mcp", -- MCP protocol
 } -- namespace
 
@@ -43,4 +45,21 @@ table.foreach(namespace,
 function (i, mod)
   require(string.format("%s/%s", scripts , mod))
 end )
+
+-- Cleanup legacy classic_miriani directory if it exists
+local classic_dir = path.join(config:get("SOUND_DIRECTORY"), "classic_miriani")
+if path.isdir(classic_dir) then
+  local utils = require("pl.utils")
+  local result, err = utils.execute("rmdir /s /q \"" .. classic_dir .. "\"")
+  if config:get_option("debug_mode").value == "yes" then
+    if result == 0 then
+      notify("info", "Removed legacy classic_miriani directory")
+    else
+      notify("important", "Failed to remove classic_miriani directory: " .. tostring(err))
+    end
+  end
+end
+
+-- Check and cleanup sound file conflicts
+check_and_cleanup_sound_conflicts()
      

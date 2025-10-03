@@ -5,7 +5,6 @@ local options = {
   debug_mode = {descr="Enable debug notifications (missing audio files, etc).", value="no", group="general", type="bool"},
   archaeology_helper_dig = {descr="Buried artifact digging tracker.", value="yes", group="archaeology", type="bool"},
   alternate_audio = {descr="Access alternative audio files before soundpack files? Note you must create the sounds/alternate directory for this change to take affect.", value="no", group="general", type="bool"},
-  classic_audio_mode = {descr="Audio style preference.", value="modern", group="general", type="list", options={"modern", "classic"}},
   background_ambiance = {descr="Play background ambiances.", value="yes", group="room", type="bool"},
   foreground_sounds = {descr="Restrict sounds to only when window has focus.", value="no", group="general", type="bool"},
   computer_voice = {descr="Use computerized voice files.", value="no", group="ship", type="bool"},

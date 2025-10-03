@@ -1237,6 +1237,18 @@ ImportXML([=[
 
 
 
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^.+? (?:yawns suddenly and collapses to the ground, asleep|drifts off to sleep)\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+   mplay("misc/Disconnected")
+  </send>
+  </trigger>
+
 </triggers>
 ]=])
 

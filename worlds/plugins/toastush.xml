@@ -351,23 +351,6 @@ show_paralyzed(roundtime, stuntime)
 
 
 
-  <alias
-   enabled="y"
-   send_to="12"
-   match="^toastush:classic$"
-   ignore_case="y"
-   regexp="y"
-  >
-   <send>local current = config:get_option("classic_audio_mode").value
-if current == "modern" then
-  config:set_option("classic_audio_mode", "classic")
-  notify("info", "Classic audio mode enabled")
-else
-  config:set_option("classic_audio_mode", "modern")
-  notify("info", "Modern audio mode enabled")
-end
-config:save()</send>
-  </alias>
 
 
 </aliases>

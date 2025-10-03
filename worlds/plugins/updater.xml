@@ -134,7 +134,6 @@ update_dir = {
       [plugins.."output_functions"] = ".xml",
 [plugins.."updater"] = ".xml",
   [sounds.."miriani/"] = ".ogg",
-  [sounds.."classic_miriani/"] = ".ogg",
   [homedir.."lua/miriani/scripts/"] = ".lua",
   [homedir.."lua/miriani/"] = ".txt",
 

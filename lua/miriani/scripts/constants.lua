@@ -23,7 +23,7 @@ constants.IDLE_CUTOFF = 1200
 
 -- sound groups to disable:
 
-constants.minimal_groups = {"ship", "combat", "vehicle", "computer", "salvaging", "misc", "market", "hauling", "asteroid", "archaeology"}
+constants.minimal_groups = {"ship", "combat", "vehicle", "computer", "salvaging", "misc", "market", "hauling", "asteroid", "archaeology", "planetary mining"}
 
 
 -- room types:

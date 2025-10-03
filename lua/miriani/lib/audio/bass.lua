@@ -79,6 +79,56 @@ function BASS:Reinit(frequency, flags)
   end
 end
 
+function BASS:Start()
+  -- Start BASS output
+  local result = self.bass.BASS_Start()
+  if result == 0 then
+    return self.bass.BASS_ErrorGetCode()
+  else
+    return 0
+  end
+end
+
+function BASS:CheckDeviceHealth()
+  -- Check if BASS is still functional by testing basic operations
+  if not self:IsInitialized() then
+    return const.error.init
+  end
+
+  -- Try to get device info as a health check
+  local result = self.bass.BASS_GetConfig(const.config.buffer)
+  local error_code = self.bass.BASS_ErrorGetCode()
+
+  if error_code == const.error.device or error_code == const.error.driver or error_code == const.error.buffer_lost then
+    return error_code
+  end
+
+  return const.error.ok
+end
+
+function BASS:RecoverFromDeviceFailure()
+  -- Attempt to recover from device failure
+  local recovery_attempts = {
+    -- First attempt: just restart BASS output
+    function()
+      return self:Start()
+    end,
+    -- Second attempt: reinitialize completely
+    function()
+      return self:Reinit(44100, 5)
+    end
+  }
+
+  for i, attempt in ipairs(recovery_attempts) do
+    local result = attempt()
+    if result == 0 then
+      return true, "Recovered using method " .. i
+    end
+  end
+
+  return false, "All recovery attempts failed"
+end
+
 function BASS:SetConfig(option, value)
 
   self.bass.BASS_SetConfig(option, value)

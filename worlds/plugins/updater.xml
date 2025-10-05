@@ -106,12 +106,13 @@
 <![CDATA[
 
 -------------------------
--- static -- 
+-- static --
 -- Update the following variables
 
-delay = 0.5
+delay = 0.05
 timeout = 30
 download_size_limit = 20
+max_concurrent_downloads = 10
 
 update_url = "https://raw.githubusercontent.com/distantorigin/Toastush/main"
 index_file = "index-v5.manifest"
@@ -134,7 +135,7 @@ update_dir = {
       [plugins.."output_functions"] = ".xml",
 [plugins.."updater"] = ".xml",
   [sounds.."miriani/"] = ".ogg",
-    [homedir.."lua/miriani/lib/"] = ".LUA",
+    [homedir.."lua/miriani/lib/"] = ".lua",
 [homedir.."lua/miriani/scripts/"] = ".lua",
   [homedir.."lua/miriani/"] = ".txt",
 
@@ -148,6 +149,8 @@ update_dir = {
 
 tfile = nil
 download_status = nil
+download_results = {}
+pending_downloads = 0
 
 
 option_flags = {
@@ -349,6 +352,55 @@ function callback_download(res, page, status, headers, full_status, url)
   end -- if
 end -- callback_download
 
+function callback_download_parallel(key)
+  return function(res, page, status, headers, full_status, url)
+    download_results[key] = {status = status, data = page}
+    pending_downloads = pending_downloads - 1
+  end
+end -- callback_download_parallel
+
+-- @coroutine
+-- Downloads multiple URLs in parallel batches
+-- Returns: table of {key -> {status, data}}
+function download_batch(items, options, key_field, url_field)
+  download_results = {}
+  local batch_size = max_concurrent_downloads
+  local total = #items
+  local current = 1
+
+  while current <= total do
+    -- Start a batch
+    local batch_end = math.min(current + batch_size - 1, total)
+    pending_downloads = batch_end - current + 1
+
+    for i = current, batch_end do
+      local item = items[i]
+      local key = item[key_field]
+      local url = item[url_field]
+
+      if async_ok then
+        async.doAsyncRemoteRequest(url, callback_download_parallel(key), "HTTPS", timeout)
+
+        if options.verbose then
+          print("- Hit: ", url .. "...")
+        end
+
+        SetStatus("Downloading batch "..math.floor(current/batch_size + 1).."...")
+      end
+    end
+
+    -- Wait for batch to complete
+    repeat
+      wait.time(delay)
+    until pending_downloads == 0
+
+    current = batch_end + 1
+  end
+
+  SetStatus("Ready")
+  return download_results
+end -- download_batch
+
 function build_updates(current, pending, options)
   local path = require("pl.path")
 
@@ -390,42 +442,60 @@ end -- build_updates
 -- @coroutine
 function download_updates(create, update, options)
 
-  local create_count = 0
+  -- Prepare download items
+  local download_items = {}
+
+  -- Add create items
   for _, index in ipairs(create) do
     local lpath, data = index[1], index[2]
-    download(data.url, options)
+    table.insert(download_items, {
+      key = lpath,
+      url = data.url,
+      lpath = lpath,
+      is_update = false
+    })
+  end
 
-    if (download_status == 200)
-    and file then
-
-      if (makefile(lpath, file, options) == 1) then
-        create_count = create_count + 1
-
-        if (not options.quiet) then
-          progress_report(table.getn(keys(create)), create_count, "Creating Files")
-        end -- if
-      end -- if
-    end -- if
-  end -- for    
-
-  local update_count = 0
-  for i, index in ipairs(update) do
+  -- Add update items
+  for _, index in ipairs(update) do
     local lpath, data = index[1], index[2]
-    download(data.url, options)
+    table.insert(download_items, {
+      key = lpath,
+      url = data.url,
+      lpath = lpath,
+      is_update = true
+    })
+  end
 
-    if (download_status == 200)
-    and file then
+  -- Download all files in parallel batches
+  local results = download_batch(download_items, options, "key", "url")
 
-      if options.safe then
+  -- Process results
+  local create_count = 0
+  local update_count = 0
+
+  for _, item in ipairs(download_items) do
+    local lpath = item.lpath
+    local result = results[lpath]
+
+    if result and result.status == 200 and result.data then
+
+      if item.is_update and options.safe then
         os.rename(lpath, lpath..".old")
-      end -- if
+      end
 
-      if (makefile(lpath, file, options) == 1) then
-        update_count = update_count + 1
-
-        if (not options.quiet) then
-          progress_report(table.getn(keys(update)), update_count, "Updating Files")
-        end -- if
+      if (makefile(lpath, result.data, options) == 1) then
+        if item.is_update then
+          update_count = update_count + 1
+          if (not options.quiet) then
+            progress_report(table.getn(keys(update)), update_count, "Updating Files")
+          end
+        else
+          create_count = create_count + 1
+          if (not options.quiet) then
+            progress_report(table.getn(keys(create)), create_count, "Creating Files")
+          end
+        end
       end -- if
     end -- if
   end -- for

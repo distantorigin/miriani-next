@@ -301,18 +301,18 @@ function OnPluginScreendraw(t,l,line)
  if GetInfo(113) then
   AppendToNotepad("output", line.."\r\n")
  else
-  table.insert(msgbuffer, line)
+  table.insert(msgbuffer, line.."\r\n")
  end
 end
 
 function OnPluginGetFocus()
  if GetVariable("output") == "0" then
   return
- end
- if #msgbuffer > 0 then
-  for i, buffered in ipairs(msgbuffer) do
-   AppendToNotepad("output", buffered.."\r\n")
   end
+  local concat_buffer
+  if #msgbuffer > 0 then
+  concat_buffer = table.concat(msgbuffer)
+  AppendToNotepad("output", concat_buffer.."\r\n")
   msgbuffer={}
  end
 end

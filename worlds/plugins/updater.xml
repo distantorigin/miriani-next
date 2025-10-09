@@ -259,7 +259,7 @@ function detect_updates(name, line, wc)
           " ", delete_count, " files deleted.",
           " ", update_count, " files updated.")
           broadcast_event(create, delete, update)
-          reload_plugins()
+          reload_plugins(create, update)
         end -- if
       else -- pending delete
         print("- Untracked files. Run `update -c [options]' to clean directory.")
@@ -547,24 +547,86 @@ function broadcast_event(create, delete, update)
 end -- broadcast_event
 
 
-function reload_plugins()
-
+function reload_plugins(create, update)
+  local path = require("pl.path")
   local pid = GetPluginID()
   local plugins = GetPluginList()
 
-  for _, id in ipairs(plugins) do
+  -- Collect plugin files that were created or updated
+  local plugin_files = {}
 
+  -- Check created files
+  if create then
+    for _, index in ipairs(create) do
+      local lpath = index[1]
+      if string.find(lpath, "worlds/plugins/") then
+        plugin_files[lpath] = true
+      end
+    end
+  end
+
+  -- Check updated files
+  if update then
+    for _, index in ipairs(update) do
+      local lpath = index[1]
+      if string.find(lpath, "worlds/plugins/") then
+        plugin_files[lpath] = true
+      end
+    end
+  end
+
+  -- If no plugin files were updated, use old behavior
+  if not next(plugin_files) then
+    for _, id in ipairs(plugins) do
+      if (id ~= pid) then
+        local res, ret = CallPlugin(id, "on_plugin_update")
+
+        if (ret == 1) then
+          local ok, msg = ReloadPlugin(id)
+
+          if ok ~= 0 then
+            -- Could not reload:
+            print(msg)
+          end -- if
+        end -- if
+      end -- if
+    end -- for
+    return 1
+  end
+
+  -- Plugin files were updated, reload them
+  for _, id in ipairs(plugins) do
     if (id ~= pid) then
+      local plugin_file = GetPluginInfo(id, 6) -- Get plugin filename
+
+      if plugin_file then
+        local normalized_path = string.gsub(plugin_file, "\\", "/")
+
+        -- Check if this plugin file was updated
+        for updated_path, _ in pairs(plugin_files) do
+          if string.find(normalized_path, path.basename(updated_path)) then
+            local ok, msg = ReloadPlugin(id)
+
+            if ok ~= 0 then
+              print(msg)
+            else
+              print("- Reloaded plugin: " .. path.basename(updated_path))
+            end
+            break
+          end
+        end
+      end
+
+      -- Also check for on_plugin_update callback
       local res, ret = CallPlugin(id, "on_plugin_update")
 
       if (ret == 1) then
         local ok, msg = ReloadPlugin(id)
 
         if ok ~= 0 then
-          -- Could not reload:
           print(msg)
-        end -- if
-      end -- if
+        end
+      end
     end -- if
   end -- for
 

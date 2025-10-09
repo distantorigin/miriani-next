@@ -83,7 +83,7 @@ ImportXML([=[
    regexp="y"
    send_to="12"
   >
-  <send>mplay("activity/asteroid/rampDown", "other")</send>
+  <send>mplay("activity/asteroid/rampDown", "other", nil, nil, nil, nil, nil, nil, -25)</send>
   </trigger>
 
   <trigger
@@ -123,7 +123,7 @@ ImportXML([=[
    regexp="y"
    send_to="12"
   >
-  <send>mplay("activity/asteroid/rampDown", "other")</send>
+  <send>mplay("activity/asteroid/rampDown", "other", nil, nil, nil, nil, nil, nil, -25)</send>
   </trigger>
 
   <trigger
@@ -143,7 +143,7 @@ ImportXML([=[
    regexp="y"
    send_to="12"
   >
-  <send>mplay("activity/asteroid/rampStart", "other")</send>
+  <send>mplay("activity/asteroid/rampStart", "other", nil, nil, nil, nil, nil, nil, -25)</send>
   </trigger>
 
   <trigger

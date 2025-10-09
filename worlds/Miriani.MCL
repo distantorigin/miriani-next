@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on Monday, January 31, 2022, 2:28 PM -->
-<!-- MuClient version 5.05 -->
+<!-- Saved on Thursday, October 09, 2025, 12:11 PM -->
+<!-- MuClient version 5.07-pre -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
 <muclient>
 <world
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -51,6 +51,8 @@
    enable_triggers="y"
    enable_trigger_sounds="y"
    escape_deletes_input="y"
+   fade_output_opacity_percent="20"
+   fade_output_seconds="8"
    history_lines="1000"
    hyperlink_adds_to_command_history="y"
    hyperlink_colour="#0080FF"
@@ -72,6 +74,7 @@
    port="1234"
    proxy_port="1080"
    save_world_automatically="y"
+   script_errors_to_output_window="y"
    send_file_delay_per_lines="1"
    send_mxp_afk_response="y"
    show_connect_disconnect="y"
@@ -106,36 +109,36 @@
 <!-- triggers -->
 
 <triggers
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 </triggers>
 
 <!-- aliases -->
 
 <aliases
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 </aliases>
 
 <!-- timers -->
 
 <timers
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 </timers>
 
 <!-- macros -->
 
 <macros
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 
   <macro name="up" type="send_now" >
@@ -227,18 +230,18 @@
 <!-- variables -->
 
 <variables
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 </variables>
 
 <!-- colours -->
 
 <colours
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 
 <ansi>
@@ -261,8 +264,8 @@
    <colour seq="3" rgb="lime" />
    <colour seq="4" rgb="yellow" />
    <colour seq="5" rgb="blue" />
-   <colour seq="6" rgb="magenta" />
-   <colour seq="7" rgb="cyan" />
+   <colour seq="6" rgb="fuchsia" />
+   <colour seq="7" rgb="aqua" />
    <colour seq="8" rgb="white" />
 
  </bold>
@@ -278,7 +281,7 @@
   <colour seq="6" name="Custom6" text="#FF80C0" back="black" />
   <colour seq="7" name="Custom7" text="red" back="black" />
   <colour seq="8" name="Custom8" text="#0080C0" back="black" />
-  <colour seq="9" name="Custom9" text="magenta" back="black" />
+  <colour seq="9" name="Custom9" text="fuchsia" back="black" />
   <colour seq="10" name="Custom10" text="#804040" back="black" />
   <colour seq="11" name="Custom11" text="#FF8040" back="black" />
   <colour seq="12" name="Custom12" text="teal" back="black" />
@@ -293,9 +296,9 @@
 <!-- keypad -->
 
 <keypad
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 
   <key name="0" >
@@ -407,9 +410,9 @@
 <!-- printing -->
 
 <printing
-   muclient_version="5.05"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2022-01-31 14:28:20"
+   date_saved="2025-10-09 12:11:42"
   >
 
 <ansi>
@@ -438,6 +441,6 @@
 <include name="MushReader.xml" plugin="y" />
 <include name="Omit_Blank_Lines.xml" plugin="y" />
 <include name="channel_history.xml" plugin="y" />
-<include name="toastush.xml" plugin="y" />
 <include name="updater.xml" plugin="y" />
+<include name="toastush.xml" plugin="y" />
 </muclient>

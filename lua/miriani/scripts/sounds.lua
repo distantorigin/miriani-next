@@ -9,6 +9,17 @@ local window_has_focus = true
 -- Group audio IDs for management
 local group_sounds = {}
 
+-- Group registry for sound filtering
+-- Tracks discovered sound groups (notification, computer, babies, etc.) and their enabled state
+local group_registry = {}
+local registry_file = "worlds/settings/sound_groups.conf"
+
+-- Groups that should not be filterable (they have their own volume controls)
+local excluded_groups = {
+  ambiance = true,
+  environment = true,
+}
+
 
 
 -- Device health monitoring variables
@@ -127,6 +138,118 @@ local function periodic_device_check()
   end
 end
 
+-- Group registry functions
+
+-- Load group registry from file
+local function load_group_registry()
+  local path = require("pl.path")
+  local file_path = registry_file
+
+  if path.isfile(file_path) then
+    local f = io.open(file_path, "r")
+    if f then
+      local content = f:read("*all")
+      f:close()
+
+      -- Parse the registry file (format: group=enabled)
+      for line in content:gmatch("[^\r\n]+") do
+        local group, enabled = line:match("^([^=]+)=([^=]+)$")
+        if group and enabled then
+          group_registry[group] = (enabled == "true")
+        end
+      end
+    end
+  end
+end
+
+-- Save group registry to file
+local function save_group_registry()
+  local path = require("pl.path")
+  local dir = path.dirname(registry_file)
+
+  -- Ensure directory exists
+  if not path.isdir(dir) then
+    path.mkdir(dir)
+  end
+
+  local f = io.open(registry_file, "w")
+  if f then
+    for group, enabled in pairs(group_registry) do
+      f:write(string.format("%s=%s\n", group, tostring(enabled)))
+    end
+    f:close()
+  end
+end
+
+-- Register a group if not already registered
+-- New groups default to enabled (true)
+-- Excluded groups (ambiance, environment) are not registered
+local function register_group(group)
+  if not group or group == "" then
+    return
+  end
+
+  -- Skip excluded groups
+  if excluded_groups[group] then
+    return
+  end
+
+  -- If group is not in registry, add it as enabled
+  if group_registry[group] == nil then
+    group_registry[group] = true
+    save_group_registry()
+  end
+end
+
+-- Check if a group is enabled
+-- Returns true if enabled or not yet registered (default enabled)
+-- Excluded groups always return true
+function is_group_enabled(group)
+  if not group or group == "" then
+    return true -- Unknown groups are enabled by default
+  end
+
+  -- Excluded groups are always enabled (they have their own controls)
+  if excluded_groups[group] then
+    return true
+  end
+
+  -- If not in registry, it's enabled by default
+  if group_registry[group] == nil then
+    return true
+  end
+
+  return group_registry[group]
+end
+
+-- Get all registered groups
+function get_all_sound_groups()
+  local groups = {}
+  for group, _ in pairs(group_registry) do
+    table.insert(groups, group)
+  end
+  table.sort(groups)
+  return groups
+end
+
+-- Set group enabled state
+function set_group_enabled(group, enabled)
+  if not group or group == "" then
+    return
+  end
+
+  -- Don't allow changing excluded groups
+  if excluded_groups[group] then
+    return
+  end
+
+  group_registry[group] = enabled
+  save_group_registry()
+end
+
+-- Initialize group registry on module load
+load_group_registry()
+
 
 function find_sound_file(file)
   local path = require("pl.path")
@@ -170,7 +293,7 @@ function find_sound_file(file)
   return nil
 end
 
-function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
+function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
   local path = require("pl.path")
   group = group or "other"
   sec = tonumber(sec) or 1 -- 1 second fadeout by default
@@ -181,6 +304,13 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   if config:is_mute() then
     return -- Audio is muted.
   end -- if
+
+  -- Group filtering: register the group and check if it's enabled
+  register_group(group)
+
+  if not is_group_enabled(group) then
+    return -- This group is disabled
+  end
 
   -- foreground sounds: check foreground sounds mode
   if not window_has_focus and not ignore_focus then
@@ -233,9 +363,15 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   -- Clean up finished sounds before adding new one
   cleanup_group(group)
 
-  -- Get volume and pan from config for this group
-  local vol = config:get_attribute(group, "volume") or 100
-  local group_pan = config:get_attribute(group, "pan") or 0
+  -- New volume system: master * (category_volume + offset)
+  -- Get the base category for this group (sounds or environment)
+  local master_vol = config:get_master_volume() or 100
+  local base_category = config:get_base_category(group)
+  local category_vol = config:get_attribute(base_category, "volume") or 100
+  local group_pan = config:get_attribute(base_category, "pan") or 0
+
+  -- Use custom offset if provided, otherwise use group offset
+  local offset = tonumber(custom_offset) or config:get_offset(group)
 
   -- Use provided pan or group pan
   local final_pan = pan or group_pan
@@ -243,8 +379,13 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   -- Convert loop parameter
   local loop_mode = loop and 1 or 0
 
+  -- Calculate final volume: master * (category + offset) / 10000
+  -- Clamp offset application to 0-100 range
+  local adjusted_vol = math.max(0, math.min(100, category_vol + offset))
+  local final_volume = (master_vol / 100.0) * (adjusted_vol / 100.0)
+
   -- Convert volume to decimal
-  local volume = vol / 100.0
+  local volume = final_volume
 
   -- Verify file exists before attempting to play
   if not path.isfile(sfile) then
@@ -320,6 +461,10 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
   -- Track the stream for group management
   add_stream(group, stream, original_file)
 
+  -- Log to sounds buffer if enabled
+  if config:get_option("sounds_buffer").value == "yes" then
+    Execute("history_add sounds=" .. original_file)
+  end
 
 end -- play
 
@@ -421,7 +566,12 @@ function slide_group(group, attr, value, time_ms)
   for _, sound_data in ipairs(streamtable[group]) do
     if sound_data.stream then
       if attr == "volume" then
-        sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, value / 100.0)
+        -- Apply master volume multiplication with offset support
+        local master_vol = config:get_master_volume() or 100
+        local offset = config:get_offset(group)
+        local adjusted_vol = math.max(0, math.min(100, value + offset))
+        local final_volume = (master_vol / 100.0) * (adjusted_vol / 100.0)
+        sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, final_volume)
       elseif attr == "pan" then
         sound_data.stream:SetAttribute(Audio.CONST.attribute.pan, value / 100.0)
       end
@@ -498,82 +648,187 @@ function cleanup_all_streams()
 end
 
 -- Audio group management for volume controls
+-- Simplified: only cycle between master, sounds, environment
+local volume_groups = {"master", "sounds", "environment"}
+
 function forward_cycle_audio_groups()
-  local groups = config:get_audio_groups()
-  if type(groups) == "table" and #groups > 0 then
-    active_group = active_group + 1
-    if active_group > #groups then
-      active_group = 1
-    end
-    local group_name = groups[active_group]
-    local volume = config:get_attribute(group_name, "volume") or 0
-    mplay("misc/mouseClick")
-    Execute(string.format("tts_interrupt %s %d%%", group_name, volume))
+  active_group = active_group + 1
+  if active_group > #volume_groups then
+    active_group = 1
   end
+
+  mplay("misc/mouseClick")
+  local group_name = volume_groups[active_group]
+  local volume
+
+  if group_name == "master" then
+    volume = config:get_master_volume()
+  else
+    volume = config:get_attribute(group_name, "volume") or 0
+  end
+
+  Execute(string.format("tts_interrupt %s %d%%", group_name, volume))
 end
 
 function previous_cycle_audio_groups()
-  local groups = config:get_audio_groups()
-  if type(groups) == "table" and #groups > 0 then
-    active_group = active_group - 1
-    if active_group < 1 then
-      active_group = #groups
-    end
-    local group_name = groups[active_group]
-    local volume = config:get_attribute(group_name, "volume") or 0
-    mplay("misc/mouseClick")
-    Execute(string.format("tts_interrupt %s %d%%", group_name, volume))
+  active_group = active_group - 1
+  if active_group < 1 then
+    active_group = #volume_groups
   end
+
+  mplay("misc/mouseClick")
+  local group_name = volume_groups[active_group]
+  local volume
+
+  if group_name == "master" then
+    volume = config:get_master_volume()
+  else
+    volume = config:get_attribute(group_name, "volume") or 0
+  end
+
+  Execute(string.format("tts_interrupt %s %d%%", group_name, volume))
 end
 
 function increase_attribute(attribute)
-  local groups = config:get_audio_groups()
-  if type(groups) == "table" and #groups > 0 then
-    local group = groups[active_group]
-    local current_val = config:get_attribute(group, attribute) or 0
-    local new_val = math.min(current_val + 5, 100)
-    config:set_attribute(group, attribute, new_val)
+  if active_group > 0 and active_group <= #volume_groups then
+    local group_name = volume_groups[active_group]
 
-    -- Apply volume change to currently playing sounds in this group
-    if attribute == "volume" then
-      slide_group(group, "volume", new_val)
-    elseif attribute == "pan" then
-      slide_group(group, "pan", new_val)
-    end
+    if group_name == "master" then
+      -- Adjusting master volume
+      if attribute == "volume" then
+        local current_val = config:get_master_volume()
+        local new_val = math.min(current_val + 5, 100)
+        config:set_master_volume(new_val)
 
-    if attribute == "volume" then
-      Execute(string.format("tts_interrupt %s %d%%", group, new_val))
-      mplay("misc/volume")
-      -- Notify other plugins about volume change
-      BroadcastPlugin(999, "audio_volume_changed|" .. group .. "," .. new_val)
+        -- Apply to all currently playing sounds
+        for group, sounds in pairs(streamtable) do
+          local base_category = config:get_base_category(group)
+          local category_vol = config:get_attribute(base_category, "volume") or 100
+          local offset = config:get_offset(group)
+          local adjusted_vol = math.max(0, math.min(100, category_vol + offset))
+          local final_volume = (new_val / 100.0) * (adjusted_vol / 100.0)
+          for _, sound_data in ipairs(sounds) do
+            if sound_data.stream then
+              sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, final_volume)
+            end
+          end
+        end
+
+        Execute(string.format("tts_interrupt master %d%%", new_val))
+        mplay("misc/volume")
+        BroadcastPlugin(999, "audio_volume_changed|master," .. new_val)
+      end
     else
-      notify("info", string.format("%s %s: %d", group, attribute, new_val))
+      -- Adjusting sounds or environment volume
+      if attribute == "volume" then
+        local current_val = config:get_attribute(group_name, "volume") or 0
+        local new_val = math.min(current_val + 5, 100)
+        config:set_attribute(group_name, "volume", new_val)
+        config:save()
+
+        -- Apply volume change to all currently playing sounds that use this category
+        local master_vol = config:get_master_volume() or 100
+        for group, sounds in pairs(streamtable) do
+          -- Check if this group uses the category we're adjusting
+          local base_category = config:get_base_category(group)
+
+          if base_category == group_name then
+            local category_vol = new_val
+            local offset = config:get_offset(group)
+            local adjusted_vol = math.max(0, math.min(100, category_vol + offset))
+            local final_volume = (master_vol / 100.0) * (adjusted_vol / 100.0)
+
+            for _, sound_data in ipairs(sounds) do
+              if sound_data.stream then
+                sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, final_volume)
+              end
+            end
+          end
+        end
+
+        Execute(string.format("tts_interrupt %s %d%%", group_name, new_val))
+        mplay("misc/volume")
+        BroadcastPlugin(999, "audio_volume_changed|" .. group_name .. "," .. new_val)
+      elseif attribute == "pan" then
+        local current_val = config:get_attribute(group_name, "pan") or 0
+        local new_val = math.min(current_val + 5, 100)
+        config:set_attribute(group_name, "pan", new_val)
+        config:save()
+        slide_group(group_name, "pan", new_val)
+        notify("info", string.format("%s %s: %d", group_name, attribute, new_val))
+      end
     end
   end
 end
 
 function decrease_attribute(attribute)
-  local groups = config:get_audio_groups()
-  if type(groups) == "table" and #groups > 0 then
-    local group = groups[active_group]
-    local current_val = config:get_attribute(group, attribute) or 0
-    local new_val = math.max(current_val - 5, 0)
-    config:set_attribute(group, attribute, new_val)
+  if active_group > 0 and active_group <= #volume_groups then
+    local group_name = volume_groups[active_group]
 
-    -- Apply volume change to currently playing sounds in this group
-    if attribute == "volume" then
-      slide_group(group, "volume", new_val)
-    elseif attribute == "pan" then
-      slide_group(group, "pan", new_val)
-    end
+    if group_name == "master" then
+      -- Adjusting master volume
+      if attribute == "volume" then
+        local current_val = config:get_master_volume()
+        local new_val = math.max(current_val - 5, 0)
+        config:set_master_volume(new_val)
 
-    if attribute == "volume" then
-      Execute(string.format("tts_interrupt %s %d%%", group, new_val))
-      mplay("misc/volume")
-      -- Notify other plugins about volume change
-      BroadcastPlugin(999, "audio_volume_changed|" .. group .. "," .. new_val)
+        -- Apply to all currently playing sounds
+        for group, sounds in pairs(streamtable) do
+          local base_category = config:get_base_category(group)
+          local category_vol = config:get_attribute(base_category, "volume") or 100
+          local offset = config:get_offset(group)
+          local adjusted_vol = math.max(0, math.min(100, category_vol + offset))
+          local final_volume = (new_val / 100.0) * (adjusted_vol / 100.0)
+          for _, sound_data in ipairs(sounds) do
+            if sound_data.stream then
+              sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, final_volume)
+            end
+          end
+        end
+
+        Execute(string.format("tts_interrupt master %d%%", new_val))
+        mplay("misc/volume")
+        BroadcastPlugin(999, "audio_volume_changed|master," .. new_val)
+      end
     else
-      notify("info", string.format("%s %s: %d", group, attribute, new_val))
+      -- Adjusting sounds or environment volume
+      if attribute == "volume" then
+        local current_val = config:get_attribute(group_name, "volume") or 0
+        local new_val = math.max(current_val - 5, 0)
+        config:set_attribute(group_name, "volume", new_val)
+        config:save()
+
+        -- Apply volume change to all currently playing sounds that use this category
+        local master_vol = config:get_master_volume() or 100
+        for group, sounds in pairs(streamtable) do
+          -- Check if this group uses the category we're adjusting
+          local base_category = config:get_base_category(group)
+
+          if base_category == group_name then
+            local category_vol = new_val
+            local offset = config:get_offset(group)
+            local adjusted_vol = math.max(0, math.min(100, category_vol + offset))
+            local final_volume = (master_vol / 100.0) * (adjusted_vol / 100.0)
+
+            for _, sound_data in ipairs(sounds) do
+              if sound_data.stream then
+                sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, final_volume)
+              end
+            end
+          end
+        end
+
+        Execute(string.format("tts_interrupt %s %d%%", group_name, new_val))
+        mplay("misc/volume")
+        BroadcastPlugin(999, "audio_volume_changed|" .. group_name .. "," .. new_val)
+      elseif attribute == "pan" then
+        local current_val = config:get_attribute(group_name, "pan") or 0
+        local new_val = math.max(current_val - 5, 0)
+        config:set_attribute(group_name, "pan", new_val)
+        config:save()
+        slide_group(group_name, "pan", new_val)
+        notify("info", string.format("%s %s: %d", group_name, attribute, new_val))
+      end
     end
   end
 end
@@ -588,10 +843,15 @@ function toggle_mute()
     mplay("misc/mouseClick", "notification")
     -- Restore current group volumes when unmuting (in case they changed while muted)
     for group, sounds in pairs(streamtable) do
-      local current_group_volume = config:get_attribute(group, "volume") or 100
+      local master_vol = config:get_master_volume() or 100
+      local base_category = config:get_base_category(group)
+      local category_vol = config:get_attribute(base_category, "volume") or 100
+      local offset = config:get_offset(group)
+      local adjusted_vol = math.max(0, math.min(100, category_vol + offset))
+      local final_volume = (master_vol / 100.0) * (adjusted_vol / 100.0)
       for _, sound_data in ipairs(sounds) do
         if sound_data.stream then
-          sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, current_group_volume / 100.0)
+          sound_data.stream:SetAttribute(Audio.CONST.attribute.volume, final_volume)
         end
       end
     end

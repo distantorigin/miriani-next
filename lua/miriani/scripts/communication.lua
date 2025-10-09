@@ -55,6 +55,33 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
+   match="^\[Private \| Auction Service\] Auction Service transmits, &quot;(.+?) has bid ([0-9,.]+) credits on auction ([a-z0-9]+): (.+?)!&quot;$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="50"
+  >
+  <send>
+   local bidder = "%1"
+   local amount = "%2"
+   local auction_num = "%3"
+   local item = "%4"
+
+   -- Play auction bid sound
+   mplay("misc/bid", "notification")
+
+   -- Format display text
+   local display_text = bidder .. " has bid " .. amount .. " credits on auction " .. auction_num .. ": " .. item .. "!"
+   print_color({"[Auction] ", "default"}, {display_text, "priv_comm"})
+
+   -- Add to Auction buffer
+   channel("auction", "[Auction] " .. display_text, {"auction", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
    match="^(\[Private \| (.+?)\]) (.+?)$"
    regexp="y"
    send_to="14"
@@ -106,7 +133,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*) (?:hesitates briefly before )?(says?|asks?|exclaims?)(?: (?:to )?([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*))?, &quot;(.+?)&quot;$"
+   match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*) (.+ )?(says?|asks?|exclaims?)(?: (?:to )?([A-Za-z]+(?: [A-Z][A-Za-z]+)*))?, &quot;(.+?)&quot;$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -114,46 +141,47 @@ ImportXML([=[
   >
   <send>
    local speaker = "%1"
-   local verb = "%2"
-   local target = "%3"
-   local message = "%4"
+   local emotes = "%2"  -- Everything before the verb (includes emotes like "grins and ", "hesitates briefly before ", etc.)
+   local verb = "%3"
+   local target = "%4"
+   local message = "%5"
 
-   -- Clean up target (remove leading "to " if present)
-   if target then
-     target = target:gsub("^to ", "")
+   -- Check if this is directed at you (exact match, case-insensitive)
+   local is_direct_to_you = target and string.lower(target) == "you"
+
+   -- Build display text - include emotes if present
+   local display_text
+   if emotes and emotes ~= "" then
+     display_text = speaker .. " " .. emotes .. verb
+   else
+     display_text = speaker .. " " .. verb
    end
 
-   -- Check if this is directed at you
-   local is_direct_to_you = target and string.find(string.lower(target), "you")
+   -- Add target if present, with correct grammar:
+   -- "asks you" but "says to you" / "exclaims to you"
+   if target and target ~= "" then
+     if verb:match("^ask") then
+       -- asks/asked uses "asks you" (no "to")
+       display_text = display_text .. " " .. target
+     else
+       -- says/said and exclaims/exclaimed use "to you"
+       display_text = display_text .. " to " .. target
+     end
+   end
 
-   -- Use the verb as-is since we're capturing it already conjugated
-   local verb_form = verb
-
-   -- Determine sound and color based on target
+   -- Determine sound and color based on whether it's directed at you
    if is_direct_to_you then
      -- Direct say TO YOU - use directsay sound and bypass foreground sounds
-     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-     if target then
-       if verb == "ask" or verb == "asks" then
-         print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
-       else
-         print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
-       end
-     else
-       print_color({speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
-     end
+     mplay("comm/directsay", "sounds", nil, nil, nil, nil, nil, true)
+     print_color({display_text .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
    elseif target and target ~= "" then
      -- Direct say to someone else - use normal say sound
      mplay("comm/say", "communication")
-     if verb == "ask" then
-       print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
-     else
-       print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
-     end
+     print_color({display_text .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
    else
      -- General say - use normal say sound
      mplay("comm/say", "communication")
-     print_color({speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
+     print_color({display_text .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
    end
 
    -- Add to say buffer
@@ -573,7 +601,7 @@ regexp="y"
   <trigger
    enabled="y"
    group="comm"
-   match="^\((.+?)\) ([a-zA-Z ]+) (?:hesitates briefly before )?(say|ask|exclaim)s?(?:(?: to | )(.+?))?, &quot;(.+?)&quot;$"
+   match="^\((.+?)\) ([a-zA-Z ]+) (.+ )?(say|ask|exclaim)s?(?:(?: to | )?([a-zA-Z]+))?, &quot;(.+?)&quot;$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -582,58 +610,46 @@ regexp="y"
   <send>
    local location = "%1"
    local speaker = "%2"
-   local verb = "%3"
-   local target = "%4"
-   local message = "%5"
+   local emotes = "%3"  -- Everything before the verb
+   local verb = "%4"
+   local target = "%5"
+   local message = "%6"
 
-   -- Clean up target (remove leading "to " if present)
-   if target then
-     target = target:gsub("^to ", "")
-   end
+   -- Check if this is directed at you (exact match, case-insensitive)
+   local is_direct_to_you = target and string.lower(target) == "you"
 
-   -- Check if this is directed at you
-   local is_direct_to_you = target and string.find(string.lower(target), "you")
-
-   -- Play appropriate sound and display with correct grammar
+   -- Build display text - include emotes if present
    local verb_form = verb
    if speaker ~= "You" then
      verb_form = verb .. "s"
+   end
+
+   local display_text
+   if emotes and emotes ~= "" then
+     display_text = speaker .. " " .. emotes .. verb_form
+   else
+     display_text = speaker .. " " .. verb_form
+   end
+
+   -- Add target if present, with correct grammar
+   if target and target ~= "" then
+     if verb == "ask" then
+       display_text = display_text .. " " .. target
+     else
+       display_text = display_text .. " to " .. target
+     end
    end
 
    if is_direct_to_you then
-     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-     if verb == "ask" then
-       print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
-     else
-       print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
-     end
+     mplay("comm/directsay", "sounds", nil, nil, nil, nil, nil, true)
+     print_color({"(" .. location .. ") ", "camera"}, {display_text .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "default"})
    else
      mplay("comm/say", "communication")
-     if target and target ~= "" then
-       if verb == "ask" or verb == "asks" then
-         print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
-       else
-         print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
-       end
-     else
-       print_color({"(" .. location .. ") ", "camera"}, {speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
-     end
+     print_color({"(" .. location .. ") ", "camera"}, {display_text .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "default"})
    end
 
    -- Add to say buffer
-   local verb_form = verb
-   if speaker ~= "You" then
-     verb_form = verb .. "s"
-   end
-   local buffer_text = "(" .. location .. ") " .. speaker .. " " .. verb_form
-   if target and target ~= "" then
-     if verb == "ask" then
-       buffer_text = buffer_text .. " " .. target  -- "asks you" not "asks to you"
-     else
-       buffer_text = buffer_text .. " to " .. target  -- "says to you", "exclaims to you"
-     end
-   end
-   buffer_text = buffer_text .. ", \\\"" .. message .. "\\\""
+   local buffer_text = "(" .. location .. ") " .. display_text .. ", \\\"" .. message .. "\\\""
    channel("say", buffer_text, {"say"})
   </send>
   </trigger>
@@ -641,7 +657,7 @@ regexp="y"
   <trigger
    enabled="y"
    group="comm"
-   match="^\[From Outside\] ([a-zA-Z ]+) (?:hesitates briefly before )?(say|ask|exclaim)s?(?:(?: to | )(.+?))?, &quot;(.+?)&quot;$"
+   match="^\[From Outside\] ([a-zA-Z ]+) (.+ )?(say|ask|exclaim)s?(?:(?: to | )?([a-zA-Z]+))?, &quot;(.+?)&quot;$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -649,58 +665,46 @@ regexp="y"
   >
   <send>
    local speaker = "%1"
-   local verb = "%2"
-   local target = "%3"
-   local message = "%4"
+   local emotes = "%2"  -- Everything before the verb
+   local verb = "%3"
+   local target = "%4"
+   local message = "%5"
 
-   -- Clean up target (remove leading "to " if present)
-   if target then
-     target = target:gsub("^to ", "")
-   end
+   -- Check if this is directed at you (exact match, case-insensitive)
+   local is_direct_to_you = target and string.lower(target) == "you"
 
-   -- Check if this is directed at you
-   local is_direct_to_you = target and string.find(string.lower(target), "you")
-
-   -- Play appropriate sound and display with correct grammar
+   -- Build display text - include emotes if present
    local verb_form = verb
    if speaker ~= "You" then
      verb_form = verb .. "s"
+   end
+
+   local display_text
+   if emotes and emotes ~= "" then
+     display_text = speaker .. " " .. emotes .. verb_form
+   else
+     display_text = speaker .. " " .. verb_form
+   end
+
+   -- Add target if present, with correct grammar
+   if target and target ~= "" then
+     if verb == "ask" then
+       display_text = display_text .. " " .. target
+     else
+       display_text = display_text .. " to " .. target
+     end
    end
 
    if is_direct_to_you then
-     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
-     if verb == "ask" then
-       print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
-     else
-       print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
-     end
+     mplay("comm/directsay", "sounds", nil, nil, nil, nil, nil, true)
+     print_color({display_text .. ", \\\"", "default"}, {message, "priv_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
    else
      mplay("comm/say", "communication")
-     if target and target ~= "" then
-       if verb == "ask" or verb == "asks" then
-         print_color({speaker .. " " .. verb_form .. " " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
-       else
-         print_color({speaker .. " " .. verb_form .. " to " .. target .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
-       end
-     else
-       print_color({speaker .. " " .. verb_form .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
-     end
+     print_color({display_text .. ", \\\"", "default"}, {message, "pub_comm"}, {"\\\"", "camera"}, {" (From Outside)", "default"})
    end
 
    -- Add to say buffer
-   local verb_form = verb
-   if speaker ~= "You" then
-     verb_form = verb .. "s"
-   end
-   local buffer_text = "[From Outside] " .. speaker .. " " .. verb_form
-   if target and target ~= "" then
-     if verb == "ask" then
-       buffer_text = buffer_text .. " " .. target  -- "asks you" not "asks to you"
-     else
-       buffer_text = buffer_text .. " to " .. target  -- "says to you", "exclaims to you"
-     end
-   end
-   buffer_text = buffer_text .. ", \\\"" .. message .. "\\\""
+   local buffer_text = "[From Outside] " .. display_text .. ", \\\"" .. message .. "\\\""
    channel("say", buffer_text, {"say"})
   </send>
   </trigger>

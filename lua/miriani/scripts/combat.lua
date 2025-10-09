@@ -90,7 +90,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/combat/laser", "ship", nil, math.random(-100, 100))</send>
+  <send>mplay ("ship/combat/laser", "sounds", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -103,7 +103,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/combat/laser", "ship", nil, math.random(-100, 100))</send>
+  <send>mplay ("ship/combat/laser", "sounds", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -116,7 +116,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/combat/cannon", "ship", nil, math.random(-100, 100))</send>
+  <send>mplay ("ship/combat/cannon", "sounds", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -220,7 +220,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("ship/combat/planetaryLaser", "ship", nil, math.random(-100, 100))</send>
+  <send>mplay("ship/combat/planetaryLaser", "sounds", nil, math.random(-100, 100))</send>
   </trigger>
 
   <trigger
@@ -403,7 +403,7 @@ ImportXML([=[
    send_to="14"
       sequence="100"
   >
-  <send>mplay ("ship/combat/laser", "ship", nil, math.random(-100, 100))</send>
+  <send>mplay ("ship/combat/laser", "sounds", nil, math.random(-100, 100))</send>
   </trigger>
 
 
@@ -420,9 +420,8 @@ ImportXML([=[
   <send>
    mplay ("ship/combat/reload", "ship")
    if config:get_option("count_cannon").value == "yes" and numberOfCannons then
-    -- Reload gives 20 bardenium total, minimum 8 shots
     lastKnownBardenium = 20  -- Track bardenium amount
-    cannonShots = math.max(8, math.ceil(20 / numberOfCannons))
+    cannonShots = math.max(7, math.ceil(20 / numberOfCannons))
    end -- if cannonCount
 </send>
   </trigger>
@@ -444,10 +443,6 @@ ImportXML([=[
     return print("%2")
    elseif "%1" == "Coordinates" then
     return print("%0")
-   else -- do if focus
-   if config:get_option("focus_interrupt").value == "yes" then
-    Execute("tts_stop")
-   end -- if focus interrupts
     if focusCoordinates and focusCoordinates == "%2" then
 
   local unchanged = (config:get_option("unchange_coords").value == "yes") and "Unchanged: " or ""

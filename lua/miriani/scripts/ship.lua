@@ -3,22 +3,6 @@ ImportXML([=[
 <triggers>
   <trigger
    enabled="y"
-   group="ship"
-   script="gagline"
-   match="^The bright light vanishes as the starship emerges at the other side of the wormhole\.$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-   -- Clear destination infobar when ship finishes jumping
-   infobar("dest", "")
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
    group="gags"
    match="^You feel the sudden pull of acceleration as the starship's relativity drive kicks in, hurling you through the gate's event horizon\.$"
    regexp="y"
@@ -179,16 +163,54 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="ship"
+   script="gagline"
+   match="^You hear a high pitched whine as the starship's bias drive spools up\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay ("ship/move/BiasStart", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   script="gagline"
+   match="^A wave of nausea comes over you as gravity around the ship is twisted and bent\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay ("ship/move/BiasContinues", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   script="gagline"
+   match="^The feeling of nausea passes as the starship moves rapidly\. .+?$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay ("ship/move/BiasEnds", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
    match="^The sounds of the relativity drive calm as the starship completes its final maneuver into space\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
-  <send>
+  <send>mplay("misc/beep/beep", "ship")
+  mplay ("ship/misc/background", "ship")
   if config:get_option("spam").value == "yes" then
-print("Launch complete.")
-  else
     print ("%0")
   end -- if
   </send>
@@ -230,10 +252,12 @@ print("Launch complete.")
    send_to="14"
    sequence="100"
   >
-  <send>
-   mplay ("ship/move/relStop", "ship")
-   -- Clear destination infobar when ship finishes jumping
+  <send>mplay("misc/beep/beep", "ship")
+  mplay ("ship/misc/background", "ship")
+   -- Clear destination and focus infobar when ship finishes jumping
    infobar("dest", "")
+   infobar("focus", "")
+   infobar("scan", "")
   </send>
   </trigger>
 
@@ -247,7 +271,7 @@ print("Launch complete.")
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/jump", "ship")</send>
+  <send>mplay ("ship/move/jumpgate", "ship")</send>
   </trigger>
 
   <trigger
@@ -265,6 +289,18 @@ print("Launch complete.")
    enabled="y"
    group="ship"
    script="gagline"
+   match="^You hear the sounds of the atmospheric scoop activating\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+  >
+  <send>mplay("activity/salvaging/scoop", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   script="gagline"
    match="^You hear a thunk as a salvaging line is deployed into space\. You watch as the line slowly winds its way to a piece of debris, projects an energy net around it and begins to slowly make its way back to the ship\.$"
    regexp="y"
    omit_from_output="y"
@@ -272,6 +308,16 @@ print("Launch complete.")
    sequence="100"
   >
   <send>mplay ("ship/misc/salvageLine", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^(A|An|The) .+ has (launched|landed|docked|undocked) (from|on|with) .+$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("comm/other", "ship")</send>
   </trigger>
 
   <trigger
@@ -543,6 +589,17 @@ print("Launch complete.")
   <trigger
    enabled="y"
    group="ship"
+   match="^The .+ drive is still recharging\. Time remaining: .+$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/computer/driveCharging", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
    match="^[A-Za-z0-9\s-'&quot;]+? has initiated an intrasector (?:subwarp|slip|wavewarp)\.$"
    regexp="y"
    send_to="12"
@@ -585,7 +642,13 @@ print("Launch complete.")
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("ship/misc/dockClose", "ship")</send>
+  <send>
+   mplay ("ship/misc/dockClose", "ship")
+   -- Clear infobar when ship lands in docking bay
+   infobar("dest", "")
+   infobar("focus", "")
+   infobar("scan", "")
+  </send>
   </trigger>
 
 
@@ -600,7 +663,9 @@ print("Launch complete.")
   <send>
    if "%1" == "blockade" then
     mplay ("ship/combat/prox/singleBlockade", "ship")
-   elseif "%1" == "blockades" then
+     elseif "%1" == "interdictor" then
+    mplay ("ship/combat/prox/interdict", "ship")
+  elseif "%1" == "blockades" then
     mplay ("ship/combat/prox/multiBlockade", "ship")
    else
     mplay ("ship/combat/prox/proxLaunch", "ship")
@@ -1044,7 +1109,6 @@ print("Launch complete.")
   >
   <send>mplay("ship/misc/solarPanels"..("%1" == "the ship's solar panels return to their previous positions along the hull" and "Off" or "On"), "other")</send>
   </trigger>
-
   <trigger
    enabled="y"
    group="ship"
@@ -1054,10 +1118,10 @@ print("Launch complete.")
    omit_from_output="y"
    send_to="14"
   >
-  <send>mplay("ship/move/flash")</send>
+  <send>--mplay("ship/move/flash")</send>
   </trigger>
-
-  <trigger
+  
+<trigger
    enabled="y"
    group="ship"
    script="gagline"
@@ -1067,9 +1131,10 @@ print("Launch complete.")
    send_to="14"
   >
   <send>
-   mplay("ship/move/flash")
-   -- Clear destination infobar when ship finishes jumping
-   infobar("dest", "")
+   mplay("ship/misc/background")
+   -- Clear infobar when ship emerges from the natural wormhole
+   infobar("focus", "")
+   infobar("scan", "")
   </send>
   </trigger>
 
@@ -1093,6 +1158,23 @@ print("Launch complete.")
    send_to="12"
   >
   <send>mplay("ship/misc/summon")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   script="gagline"
+   match="^The bright light vanishes as the starship emerges at the other side of the wormhole\.$"
+      regexp="y"
+   omit_from_output="y"
+   send_to="14"
+  >
+  <send>mplay("ship/misc/background")
+   -- Clear destination infobar when ship finishes jumping
+   infobar("dest", "")
+   infobar("focus", "")
+   infobar("scan", "")
+  </send>
   </trigger>
 
   <trigger

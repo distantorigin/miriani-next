@@ -1,21 +1,36 @@
 
 -- Audio configuration for LUA Audio system
--- Volume values are now in percentage (0-100) instead of decimal fractions
+-- Volume values are in percentage (0-100)
 -- Pan values range from -100 to 100 (left to right)
--- Frequency is removed as LUA Audio doesn't use it
+--
+-- New simplified volume system:
+-- - master: Global master volume (applied to everything)
+-- - sounds: Main game sounds (combat, ships, UI, etc.)
+-- - environment: Ambient loops and background sounds
+-- - All other categories use fixed offsets applied to the sounds volume
 
 local audio = {
-  notification = {volume=15, pan=0},
-  ambiance = {volume=20, pan=0},
-  melee = {volume=20, pan=0},
-  communication = {volume=30, pan=0},
-  loop = {volume=30, pan=0},
-  master = {volume=50, pan=0},
-  other = {volume=25, pan=0},
-  socials = {volume=30, pan=0},
-  ship = {volume=25, pan=0},
-  computer = {volume=25, pan=0},
-  vehicle = {volume=25, pan=0},
-} -- audio
+  sounds = {volume=100, pan=0},
+  environment = {volume=50, pan=0},
+}
+
+-- Fixed volume offsets (applied as: master * (category + offset))
+-- These are relative adjustments to the base category volume
+audio.offsets = {
+  notification = -15,    -- Quieter beeps/alerts
+  communication = 0,     -- Same as sounds
+  computer = -10,        -- Ship computer slightly quieter
+  ship = 0,              -- Ship sounds same as sounds
+  melee = -5,            -- Combat slightly quieter
+  socials = 0,           -- Socials same as sounds
+  vehicle = 0,           -- Vehicle sounds same as sounds
+  other = 0,             -- Other sounds same as sounds
+}
+
+-- Map groups to their base category (defaults to "sounds" if not listed)
+audio.category_map = {
+  ambiance = "environment",
+  loop = "environment",
+}
 
 return audio

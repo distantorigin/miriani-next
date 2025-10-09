@@ -39,12 +39,11 @@ luac.out
 #World files.
 *.mcl
 worlds/*/state/*.xml
+worlds/settings/*.conf
+MUSHclient.ini
 
 #Log files.
 *.log
-
-# Development files that change during runtime
-mushclient.ini
 
 # AIGC slop
 .claude/

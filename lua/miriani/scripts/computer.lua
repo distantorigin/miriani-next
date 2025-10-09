@@ -1,26 +1,6 @@
 
 -- Computer action lookup tables
 computer_actions = {
-  ["Autopilot engaged."] = {
-    sound = "ship/computer/voice/auto",
-    condition = 'config:get_option("computer_voice").value == "yes"'
-  },
-  ["Autopilot disengaged."] = {
-    sound = "ship/computer/voice/manual",
-    condition = 'config:get_option("computer_voice").value == "yes"'
-  },
-  ["Self-destruct sequence initiated. Destruction in sixty seconds."] = {
-    sound = "ship/computer/voice/selfdestruct",
-    condition = 'config:get_option("computer_voice").value == "yes"'
-  },
-  ["Self-destruct sequence has been aborted."] = {
-    sound = "ship/computer/voice/terminate",
-    condition = 'config:get_option("computer_voice").value == "yes"'
-  },
-  [""] = {
-    sound = "ship/computer/voice/terminate",
-    condition = 'config:get_option("computer_voice").value == "yes"'
-  },
   ["There is insufficient weapons-grade bardenium available for firing."] = {
     sound = "ship/combat/noBarde",
     group = "ship"
@@ -62,7 +42,7 @@ computer_actions = {
     group = "notification"
   },
   ["Warning! Aquatic life form has entered scooper chamber. Expulsion in progress..."] = {
-    sound = "activity/salvaging/scoop",
+    sound = "ship/computer/warning",
     group = "computer"
   }
 }
@@ -310,12 +290,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>   if config:get_option("computer_voice").value == "yes" then
-mplay("ship/computer/voice/unclear", "computer")
-   else
-   print_color({"%0", "computer"})
-   end -- if
-  </send>
+  <send>print_color({"%0", "computer"})</send>
   </trigger>
 
   <trigger
@@ -336,7 +311,7 @@ mplay("ship/computer/voice/unclear", "computer")
   <trigger
    enabled="y"
    group="computer"
-   match="^Several short bleeps emit from .+ Lore computer, followed by a hardcopy print of .+$"
+   match="^Several short bleeps emit from .+ Lore computer, followed by .+$"
    regexp="y"
    send_to="12"
    sequence="100"

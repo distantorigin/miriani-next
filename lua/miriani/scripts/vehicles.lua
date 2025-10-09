@@ -369,7 +369,11 @@ gagline()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("vehicle/returnThud", "vehicle")</send>
+  <send>
+   mplay("vehicle/returnThud", "vehicle")
+   -- Clear destination infobar when salvager lands
+   infobar("dest", "")
+  </send>
   </trigger>
 
 

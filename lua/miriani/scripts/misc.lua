@@ -303,7 +303,10 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/command")</send>
+  <send>
+resetScan()
+mplay ("misc/command")
+  </send>
   </trigger>
 
   <trigger
@@ -681,7 +684,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay("misc/liftStop", "loop", 1, nil, nil, 1)
+   mplay("misc/liftStop", "environment", 1, nil, nil, 1)
    mplay("misc/liftOpen")
    </send>
   </trigger>
@@ -698,7 +701,7 @@ ImportXML([=[
    liftroom = room
    mplay("misc/liftClose")
    mplay("misc/liftStart", "loop")
-   mplay("misc/liftMoving", "loop", 1, nil, 1, 1)
+   mplay("misc/liftMoving", "environment", 1, nil, 1, 1)
    </send>
   </trigger>
 
@@ -812,7 +815,7 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   mplay("ambiance/underwater", "ambiance", 1, nil, 1, 1, 0.5)
+   mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
    ambianceFile = nil
   </send>
   </trigger>
@@ -825,7 +828,7 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   mplay("ambiance/underwater", "ambiance", 1, nil, 1, 1, 0.5)
+   mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
    ambianceFile = nil
   </send>
   </trigger>
@@ -839,7 +842,7 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   mplay("ambiance/underwater", "ambiance", 1, nil, 1, 1, 0.5)
+   mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
    ambianceFile = nil
   </send>
   </trigger>
@@ -1091,7 +1094,7 @@ ImportXML([=[
 
     if (not stunned) then
       stunned = true
-      mplay("ambiance/heartbeat", "ambiance", 1, nil, 1, 1, fade)
+      mplay("ambiance/heartbeat", "environment", 1, nil, 1, 1, fade)
     end -- if
 
    else
@@ -1246,6 +1249,18 @@ ImportXML([=[
   >
   <send>
    mplay("misc/Disconnected")
+  </send>
+  </trigger>
+<trigger
+   enabled="y"
+   group="misc"
+   match="^(.+) gives you (.+) (credit|credits)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+  mplay("misc/cash")
   </send>
   </trigger>
 

@@ -80,6 +80,10 @@ enabled="y"
    send_to="14"
    sequence="100"
   >
+  <send>
+   -- Clear destination infobar when ship lands
+   infobar("dest", "")
+  </send>
   </trigger>
 
   <trigger
@@ -100,6 +104,24 @@ enabled="y"
    omit_from_output="y"
    sequence="100"
   >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="gags"
+   match="^#\$#(?:keep_alive|hjelp)$"
+   regexp="y"
+   omit_from_output="y"
+   omit_from_log="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   -- Optionally play beep sound on keep-alive
+   if config:get_option("beep_on_keepalive").value == "yes" then
+     mplay("misc/beep", "notification")
+   end
+  </send>
   </trigger>
 
 

@@ -17,19 +17,39 @@ class.Config()
 
 function Config:init(options, audio)
 
-  -- Always initialize with defaults first
+  -- Handle new options format (with group_metadata)
+  local group_metadata = nil
+  if options and options.options and options.group_metadata then
+    -- New format: {options = {...}, group_metadata = {...}}
+    group_metadata = options.group_metadata
+    options = options.options
+  end
+
+  -- Store defaults in vars for later comparison
   vars.options = options or {}
   vars.audio = audio or {}
+  vars.group_metadata = group_metadata
+
+  -- Initialize master volume from saved variable or default to 100
+  self.master_volume = tonumber(GetVariable("master_volume")) or 100
+
+  -- Store audio offsets and category map separately if provided
+  if audio then
+    if audio.offsets then
+      self.audio_offsets = audio.offsets
+    end
+    if audio.category_map then
+      self.category_map = audio.category_map
+    end
+  end
 
   -- CRITICAL: Ensure consts is always available (defensive loading)
   if not vars.consts then
     vars.consts = require("miriani.scripts.include.vars.consts")
   end
 
-  -- Initialize these immediately so the object is always usable
+  -- Initialize consts immediately
   self.consts = vars.consts
-  self.options = vars.options
-  self.audio = vars.audio
 
   -- Verify initialization worked
   if not self.consts then
@@ -38,135 +58,147 @@ function Config:init(options, audio)
 
   -- If called without parameters (like Config()), we're done with basic initialization
   if not options and not audio then
+    self.options = {}
+    self.audio = {}
     return self.consts.error.OK
   end
 
-  local serial_config = GetVariable(vars.consts.pack.MUSH_VAR)
-
-  local function initialize(v)
-    self.options = v.options
-    self.audio = v.audio
-    self.consts = v.consts
-
-    if self.options and self.audio and self.consts then
-      return self.consts.error.OK
+  -- Helper function to deep copy a table
+  local function deep_copy(orig)
+    local copy
+    if type(orig) == 'table' then
+      copy = {}
+      for k, v in pairs(orig) do
+        copy[k] = deep_copy(v)
+      end
     else
-      return self.consts.error.NO_INIT
-    end -- if
-  end -- Initialize
+      copy = orig
+    end
+    return copy
+  end
 
-  local error = vars.consts.error.UNKNOWN
+  -- Start with defaults
+  self.options = deep_copy(vars.options)
+  self.audio = deep_copy(vars.audio)
 
-  if serial_config then
-    do -- Incapcilate namespace.
+  local serial_config = GetVariable(vars.consts.pack.MUSH_VAR)
+  local error = vars.consts.error.OK
 
+  -- Try loading from file first
+  local file_data = self:load_from_file()
+
+  if file_data then
+    -- Check if this is old format (full option structures) or new format (values only)
+    local is_old_format = false
+    if file_data.options then
+      for k, v in pairs(file_data.options) do
+        if type(v) == "table" and v.descr and v.value ~= nil then
+          is_old_format = true
+          break
+        end
+      end
+    end
+
+    if is_old_format then
+      -- Old format: merge full structures, keeping user values
+      if file_data.options then
+        for key, saved_option in pairs(file_data.options) do
+          if self.options[key] and saved_option.value ~= nil then
+            -- Keep the user's value but update metadata from defaults
+            self.options[key].value = saved_option.value
+          end
+        end
+      end
+
+      if file_data.audio then
+        for group, attrs in pairs(file_data.audio) do
+          if self.audio[group] and type(attrs) == "table" then
+            for attr, value in pairs(attrs) do
+              if self.audio[group][attr] ~= nil then
+                self.audio[group][attr] = value
+              end
+            end
+          end
+        end
+      end
+
+      -- Convert to new format by saving
+      self:save_to_file()
+    else
+      -- New format: just apply user values to defaults
+      if file_data.options then
+        for key, value in pairs(file_data.options) do
+          if self.options[key] then
+            self.options[key].value = value
+          end
+        end
+      end
+
+      if file_data.audio then
+        for group, attrs in pairs(file_data.audio) do
+          if self.audio[group] and type(attrs) == "table" then
+            for attr, value in pairs(attrs) do
+              if self.audio[group][attr] ~= nil then
+                self.audio[group][attr] = value
+              end
+            end
+          end
+        end
+      end
+    end
+
+  elseif serial_config then
+    -- Migrating from old MUSHclient variable storage
+    do -- Encapsulate namespace
       loadstring(serial_config)()
-        error = initialize(mush_var)
-    end -- do
+    end
 
-    local current_options = vars.options
-    local current_audio = vars.audio
-    local current_consts = vars.consts
+    -- Check if mush_var was loaded and has the old format
+    if mush_var and mush_var.options then
+      -- Check if this is old format (full option structures)
+      local is_old_format = false
+      for k, v in pairs(mush_var.options) do
+        if type(v) == "table" and v.descr and v.value ~= nil then
+          is_old_format = true
+          break
+        end
+      end
 
-    -- Update keys.
-    -- Ensure self.options and self.audio are initialized before using them
-    self.options = self.options or {}
-    self.audio = self.audio or {}
-    table.foreach(current_options,
-    function(k, v)
-      if (not self.options[k])
-      or (self.options[k].descr ~= current_options[k].descr)
-      or (self.options[k].group ~= current_options[k].group)
-      or (type(self.options[k].value) ~= type(current_options[k].value)) then
-        self.options[k] = v
-        end -- if
-      end -- function
-    ) -- foreach 
+      if is_old_format then
+        -- Apply user values from old format to defaults
+        for key, saved_option in pairs(mush_var.options) do
+          if self.options[key] and saved_option.value ~= nil then
+            self.options[key].value = saved_option.value
+          end
+        end
 
-    table.foreach(self.options,
-    function(k)
-      -- Remove missing keys.
-      if (not current_options[k]) then
-        self.options[k] = nil
-      end -- if
-end -- function
-    ) -- foreach
+        if mush_var.audio then
+          for group, attrs in pairs(mush_var.audio) do
+            if self.audio[group] and type(attrs) == "table" then
+              for attr, value in pairs(attrs) do
+                if self.audio[group][attr] ~= nil then
+                  self.audio[group][attr] = value
+                end
+              end
+            end
+          end
+        end
+      end
 
-    table.foreach(current_audio,
-      function(k, v)
-        if (not self.audio[k]) then
-          self.audio[k] = v
-        end -- if
-      end -- function
-    ) -- foreach
- 
-    table.foreach(self.audio,
-    function(k)
-      if (not current_audio[k]) then
-        self.audio[k] = nil
-    end -- if
-    end ) -- anon
+      -- Migrate to file and delete variable
+      local migrate_result = self:save_to_file()
+      if migrate_result == self.consts.error.OK then
+        SetVariable("toastush_show_migration_msg", "1")
+        DeleteVariable(self.consts.pack.MUSH_VAR)
+      else
+        SetVariable("toastush_migration_failed", "1")
+      end
+    end
 
-    table.foreach(current_consts,
-    function(k, v)
-      if (not self.consts[k])
-      or (self.consts[k] ~= v) then
-        self.consts[k] = v
-
-      end -- if
-    end -- function
-    ) -- foreach 
-
-    table.foreach(self.consts,
-    function(k)
-      if (not current_consts[k]) then
-        self.consts[k] = nil
-    end -- if
-    end -- function
-    ) -- foreach
-
-    -- compare nested keys of consts.
-    for key, _ in pairs(current_consts) do
-      table.foreach(current_consts[key],
-      function(k, v)
-        if (not self.consts[key][k]) then
-          self.consts[key][k] = v
-        end -- if
-      end -- function
-      ) -- foreach
-
-      table.foreach(self.consts[key],
-      function(k)
-        if (not current_consts[key][k]) then
-          self.consts[key][k] = nil
-        end -- if
-      end -- function
-      ) -- foreach
-
-    end -- for
-
-    -- compare nested keys for audio
-    for key, _ in pairs(current_audio) do
-      table.foreach(current_audio[key],
-      function(k, v)
-        if (not self.audio[key][k]) then
-          self.audio[key][k] = v
-        end -- if
-      end -- function
-      ) -- foreach
-
-      table.foreach(self.audio[key],
-      function(k)
-        if (not current_audio[key][k]) then
-          self.audio[key][k] = nil
-        end -- if
-      end -- function
-      ) -- foreach
-
-    end -- for
-
-  else -- new settings
-    error= initialize(vars)
+  else
+    -- New installation - no saved config
+    SetVariable("toastush_show_init_msg", "1")
+    -- Don't save on initial setup - let user make changes first
   end -- if
 
   return error
@@ -192,7 +224,20 @@ function Config:set_option(key, val)
     return self.consts.error.INVALID_ARG
   end -- if
 
-  self.options[key].value = val
+  -- If empty string is provided, reset to default value
+  if val == "" and self.options[key].type == "string" then
+    -- Get the default value from vars.options (the original defaults)
+    if vars.options and vars.options[key] and vars.options[key].value then
+      self.options[key].value = vars.options[key].value
+      print("Reset to default: " .. key)
+    else
+      -- Fallback if we can't find the default
+      return self.consts.error.INVALID_ARG
+    end
+  else
+    self.options[key].value = val
+  end
+
   return self.consts.error.OK
 end -- set_option
 
@@ -209,8 +254,157 @@ function Config:set_attribute(group, attr, val)
   return self.consts.error.OK
 end -- set_attribute
 
-function Config:save()
+function Config:get_master_volume()
+  return self.master_volume or 100
+end -- get_master_volume
 
+function Config:set_master_volume(val)
+  val = tonumber(val)
+  if not val or val < 0 or val > 100 then
+    return self.consts.error.INVALID_ARG
+  end
+
+  self.master_volume = val
+  SetVariable("master_volume", tostring(val))
+  return self.consts.error.OK
+end -- set_master_volume
+
+function Config:get_offset(category)
+  if self.audio_offsets and self.audio_offsets[category] then
+    return self.audio_offsets[category]
+  end
+  return 0
+end -- get_offset
+
+function Config:get_base_category(group)
+  -- Check if this group has an explicit category mapping
+  if self.category_map and self.category_map[group] then
+    return self.category_map[group]
+  end
+  -- Default to "sounds"
+  return "sounds"
+end -- get_base_category
+
+function Config:save_to_file()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
+  local settings_dir = path.join(mushclient_dir, "worlds", "settings")
+  local settings_file = path.join(settings_dir, "toastush.conf")
+
+  -- Ensure directory exists
+  local dir_ok = utils.readdir(settings_dir)
+  if not dir_ok then
+    local worlds_dir = path.join(mushclient_dir, "worlds")
+    local ok = utils.shellexecute("cmd", "/C mkdir settings", worlds_dir, "open", 0)
+    if not ok then
+      return self.consts.error.NO_SAVE
+    end
+  end
+
+  -- Only save values that differ from defaults
+  local user_options = {}
+  local user_audio = {}
+
+  -- Get default options from vars (the original defaults from options.lua)
+  local default_options = vars.options or {}
+
+  -- Compare current options with defaults
+  for key, option in pairs(self.options) do
+    local default = default_options[key]
+    if default and option.value ~= default.value then
+      -- Only save the value, not the entire option structure
+      user_options[key] = option.value
+    end
+  end
+
+  -- Get default audio from vars
+  local default_audio = vars.audio or {}
+
+  -- Compare current audio settings with defaults
+  for group, attrs in pairs(self.audio) do
+    local default_group = default_audio[group]
+    if default_group and type(attrs) == "table" then
+      for attr, value in pairs(attrs) do
+        if default_group[attr] ~= nil and value ~= default_group[attr] then
+          if not user_audio[group] then
+            user_audio[group] = {}
+          end
+          user_audio[group][attr] = value
+        end
+      end
+    end
+  end
+
+  -- Create global variable for serialization with only changed values
+  toastush_config = {
+    options = user_options,
+    audio = user_audio,
+    -- Note: we don't save consts anymore as they should come from code
+  }
+
+  local serialize = require("serialize")
+  local serial_config, error = serialize.save("toastush_config")
+
+  if type(serial_config) ~= 'string' then
+    return error or self.consts.error.UNKNOWN
+  end
+
+  local file, err = io.open(settings_file, "w")
+  if not file then
+    return self.consts.error.NO_SAVE
+  end
+
+  file:write(serial_config)
+  file:close()
+
+  return self.consts.error.OK
+end -- save_to_file
+
+function Config:load_from_file()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
+  local settings_file = path.join(mushclient_dir, "worlds", "settings", "toastush.conf")
+
+  if not path.isfile(settings_file) then
+    return nil -- File doesn't exist, not an error
+  end
+
+  local file, err = io.open(settings_file, "r")
+  if not file then
+    return nil
+  end
+
+  local content = file:read("*all")
+  file:close()
+
+  if not content or content == "" then
+    return nil
+  end
+
+  -- Load the serialized data
+  local load_func, load_err = loadstring(content)
+  if not load_func then
+    return nil
+  end
+
+  load_func()
+
+  if toastush_config then
+    -- New format: only user-modified values
+    -- We'll return this and merge with defaults in init
+    return toastush_config
+  end
+
+  return nil
+end -- load_from_file
+
+function Config:save()
+  -- Only save to file now
+  return self:save_to_file()
+end -- save
+
+function Config:save_to_variable_for_testing()
+  -- For testing migration: saves current config to variable AND deletes the file
   mush_var = {
     options = self.options,
     audio = self.audio,
@@ -221,17 +415,24 @@ function Config:save()
   local serial_config, error = serialize.save("mush_var")
 
   if type(serial_config) ~= 'string' then
-    return error or self.consts.error.UNKNOWN
-  end -- if
+    Note("Failed to serialize config for testing")
+    return
+  end
 
-  local errcode = SetVariable(self.consts.pack.MUSH_VAR, serial_config)
+  SetVariable(self.consts.pack.MUSH_VAR, serial_config)
 
-  if errcode ~= 0 then
-    return self.consts.error.NO_SAVE
-  end -- if
+  -- Delete the config file so migration will run on reload
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59)
+  local settings_file = path.join(mushclient_dir, "worlds", "settings", "toastush.conf")
 
-  return self.consts.error.OK
-end -- save
+  if path.isfile(settings_file) then
+    os.remove(settings_file)
+    Note("Config saved to MUSHclient state variable and file deleted. Reload to test migration.")
+  else
+    Note("Config saved to MUSHclient state variable. Reload to test migration.")
+  end
+end -- save_to_variable_for_testing
 
 function Config:get(var)
 
@@ -257,20 +458,27 @@ function Config:render_menu_list(option)
   for k,v in pairs(self.options) do
     if option and string.find(v.group, option) then
 
-      local value 
+      local value
 
       if (v.read) then
         local ok, res = pcall(loadstring(v.read)(), v.value)
         if (ok) then value = res end
+      elseif v.type == "bool" or v.type == "boolean" then
+        -- Display boolean values as [On]/[Off]
+        value = (v.value == "yes" or v.value == true) and "[On]" or "[Off]"
       else
         value = tostring(v.value)
       end -- if
 
-
-
-      menu[k] = v.descr.." Currently: "..value
+      -- For boolean types, show status at end; otherwise show "Currently: value"
+      if v.type == "bool" or v.type == "boolean" then
+        menu[k] = v.descr .. " " .. value
+      else
+        menu[k] = v.descr .. " Currently: " .. value
+      end
     elseif (not option) and (not seen_previously[v.group]) then
-      menu[#menu + 1] = tostring(v.group)
+      -- Use display title instead of raw group key
+      menu[#menu + 1] = self:get_group_title(v.group)
       seen_previously[v.group] = true
     end -- if
   end -- for
@@ -338,5 +546,49 @@ function Config:get_audio_groups()
   and self.consts.error.UNKNOWN
   or groups
 end -- get_audio_groups
+
+function Config:get_group_title(group_key)
+  -- Get display title for a group, falling back to the key if no metadata exists
+  if vars.group_metadata then
+    for _, meta in ipairs(vars.group_metadata) do
+      if meta.key == group_key then
+        return meta.title
+      end
+    end
+  end
+  -- Fallback: capitalize first letter of group_key
+  return group_key:gsub("^%l", string.upper)
+end -- get_group_title
+
+function Config:get_group_order(group_key)
+  -- Get sort order for a group, returning 999 if not defined (will sort to end)
+  if vars.group_metadata then
+    for _, meta in ipairs(vars.group_metadata) do
+      if meta.key == group_key then
+        return meta.order
+      end
+    end
+  end
+  return 999
+end -- get_group_order
+
+function Config:get_group_key_from_title(title)
+  -- Get group key from display title
+  if vars.group_metadata then
+    for _, meta in ipairs(vars.group_metadata) do
+      if meta.title == title then
+        return meta.key
+      end
+    end
+  end
+  -- Fallback: if no metadata match, check if the title matches any actual group keys
+  for _, v in pairs(self.options) do
+    if self:get_group_title(v.group) == title then
+      return v.group
+    end
+  end
+  -- Last resort: return title as-is (might be a group key already)
+  return title:lower()
+end -- get_group_key_from_title
 
 return Config

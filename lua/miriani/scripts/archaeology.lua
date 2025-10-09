@@ -1,3 +1,7 @@
+-- Global variables for tracking player coordinates
+player_x = nil
+player_y = nil
+player_z = nil
 
 ImportXML([=[
 <triggers>
@@ -32,8 +36,65 @@ ImportXML([=[
   <send>
    mplay("activity/archaeology/detect")
 
+   local output_message = "%1"
+
+   -- Check if we should calculate direction
+   if config:get_option("archaeology_calculate_direction").value == "yes"
+      and player_x and player_y then
+
+     -- Try to extract coordinates from message like "(X, Y, Z)" or "(X, Y)"
+     local coords_pattern = "%(([%-%d]+),%s*([%-%d]+)%s*,?%s*([%-%d]*)%)"
+     local target_x, target_y, target_z = output_message:match(coords_pattern)
+
+     if target_x and target_y then
+       target_x = tonumber(target_x)
+       target_y = tonumber(target_y)
+       target_z = target_z ~= "" and tonumber(target_z) or player_z
+
+       -- Calculate direction
+       local directions = {}
+       local x_diff = target_x - player_x
+       local y_diff = target_y - player_y
+
+       if x_diff ~= 0 then
+         if x_diff > 0 then
+           table.insert(directions, string.format("%dE", x_diff))
+         else
+           table.insert(directions, string.format("%dW", math.abs(x_diff)))
+         end
+       end
+
+       if y_diff ~= 0 then
+         if y_diff > 0 then
+           table.insert(directions, string.format("%dS", y_diff))
+         else
+           table.insert(directions, string.format("%dN", math.abs(y_diff)))
+         end
+       end
+
+       -- Only calculate Z if both coordinates exist
+       if target_z and player_z then
+         local z_diff = target_z - player_z
+         if z_diff ~= 0 then
+           if z_diff > 0 then
+             table.insert(directions, string.format("%dD", z_diff))
+           else
+             table.insert(directions, string.format("%dU", math.abs(z_diff)))
+           end
+         end
+       end
+
+       if #directions > 0 then
+         output_message = table.concat(directions, ", ")
+       end
+     end
+   end
+
+   -- Always print the result (we're gagging the original line)
    if config:get_option("spam").value == "yes" then
-     print("Artifact detected %1")
+     print("Artifact detected " .. output_message)
+   else
+     print("Scanner indicates: " .. output_message)
    end  -- if
   </send>
   </trigger>
@@ -202,6 +263,54 @@ mplay("activity/archaeology/nothing")
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="archaeology"
+   match="^(.+) \((.+)\)$"
+   regexp="y"
+   send_to="12"
+   sequence="99"
+  >
+  <send>
+   -- Try to extract coordinates from room description
+   -- Pattern: "Room Name (X, Y, Z)" or "Room Name (X, Y)"
+   local room_info = "%2"
+
+   -- Look for coordinate pattern
+   local x, y, z = room_info:match("^([%-%d]+),%s*([%-%d]+)%s*,?%s*([%-%d]*)$")
+
+   if x and y then
+     player_x = tonumber(x)
+     player_y = tonumber(y)
+     player_z = z ~= "" and tonumber(z) or nil
+   end
+  </send>
+  </trigger>
 
 </triggers>
+]=])
+
+-- Debug alias to show current coordinates
+ImportXML([=[
+<aliases>
+  <alias
+   enabled="y"
+   group="archaeology"
+   match="^archcoords$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+   if player_x and player_y then
+     if player_z then
+       print(string.format("Current coordinates: (%d, %d, %d)", player_x, player_y, player_z))
+     else
+       print(string.format("Current coordinates: (%d, %d)", player_x, player_y))
+     end
+   else
+     print("No coordinates detected yet. Visit a room with coordinates in the title.")
+   end
+  </send>
+  </alias>
+</aliases>
 ]=])

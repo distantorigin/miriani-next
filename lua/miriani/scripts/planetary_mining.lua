@@ -11,7 +11,7 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   mplay("activity/PlanetaryMining/MineralsDetected", "other", true)
+   mplay("activity/PlanetaryMining/MineralsDetected", "sounds", true)
    stop("loop")
   </send>
   </trigger>
@@ -50,7 +50,7 @@ ImportXML([=[
   >
   <send>
    mplay("activity/PlanetaryMining/ScanningMinerals", "other")
-   mplay("activity/PlanetaryMining/ScanLoop", "loop", false, nil, true)
+   mplay("activity/PlanetaryMining/ScanLoop", "environment", false, nil, true)
   </send>
   </trigger>
 
@@ -64,7 +64,7 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   mplay("activity/PlanetaryMining/NoMinerals", "other", true)
+   mplay("activity/PlanetaryMining/NoMinerals", "sounds", true)
    stop("loop")
   </send>
   </trigger>

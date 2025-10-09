@@ -63,7 +63,7 @@
 
 ----------------------------------------
  
-    ** Once in the game, tune a metaf frequency communicator to 0.07 for in game support. **
+    ** Once in the game, tune a metaf frequency communicator to 7.07 for in game support. **
 </description>
 </plugin>
 
@@ -236,12 +236,65 @@ show_paralyzed(roundtime, stuntime)
 </triggers>
 
 <aliases>
+  <!-- Dialog input interceptor - only enabled when dialog is active -->
+  <alias
+   name="dialog_input_handler"
+   enabled="n"
+   match="^(.*)$"
+   regexp="y"
+   send_to="12"
+   sequence="10"
+   keep_evaluating="y"
+  >
+  <send>
+-- Check if dialog is active
+if dialog and dialog.is_active() then
+  local input = "%1"
+
+  -- Allow volume, history, use, clear, and output function commands through
+  local bypass_patterns = {
+    "^vol",           -- Volume commands
+    "^history_",      -- Channel history commands
+"^tts",
+"^\#\$\#",
+    "^Line_Get",      -- Output functions
+    "^clearoutput",   -- Output functions
+    "^prevline",      -- Output functions
+    "^toggleoutput",  -- Output functions
+    "^toggleinterrupt", -- Output functions
+    "^curline",       -- Output functions
+    "^select",        -- Output functions
+    "^nextline",      -- Output functions
+    "^whichline",     -- Output functions
+    "^topline",       -- Output functions
+    "^snap_shot",     -- Output functions
+    "^endline",       -- Output functions
+  }
+
+  local should_bypass = false
+  for _, pattern in ipairs(bypass_patterns) do
+    if input:match(pattern) then
+      should_bypass = true
+      break
+    end
+  end
+
+  if not should_bypass then
+    -- Handle as dialog input
+    dialog.handle_input(input)
+  end
+  -- With keep_evaluating=y, bypassed commands will be processed by their actual aliases, so reading history doesn't cancel out a menu.
+end
+  </send>
+  </alias>
+
   <alias
    enabled="y"
    script="help"
    match="^toastush:help$"
    ignore_case="y"
    regexp="y"
+   sequence="100"
   >
   </alias>
 
@@ -260,6 +313,7 @@ show_paralyzed(roundtime, stuntime)
    match="^toastush:config(?:ure)?$"
    ignore_case="y"
    regexp="y"
+   sequence="100"
   >
   </alias>
 
@@ -269,6 +323,7 @@ show_paralyzed(roundtime, stuntime)
    ignore_case="y"
    regexp="y"
    send_to="12"
+   sequence="100"
   >
   <send>config_secondary_menu("%1")</send>
   </alias>
@@ -353,6 +408,15 @@ show_paralyzed(roundtime, stuntime)
 
 
 
+  <alias
+   match="config_save_to_var"
+   enabled="y"
+   script="config_save_to_var"
+   send_to="12"
+   sequence="100"
+  >
+  </alias>
+
 </aliases>
 
 <script>
@@ -423,6 +487,21 @@ AcceleratorTo("ALT+SHIFT+I", [[
 
 ]], script)
 
+AcceleratorTo("SHIFT+Esc", [[
+  -- Reset status bar
+  infobar_t = {}
+  InfoClear()
+
+  -- Stop all playing sounds
+  stop()
+
+  -- Reset scan state
+  resetScan()
+
+  -- Say "Reset"
+  Execute("tts_interrupt Reset")
+]], script)
+
 
 
 
@@ -441,6 +520,15 @@ end
 
 local sp_options = require(scripts.."options")
 local audio_options = require(scripts.."audio")
+
+-- Load dialog system
+local dialog_ok, dialog_module = pcall(require, scripts.."include/dialog")
+if dialog_ok then
+  dialog = dialog_module
+else
+  Note("Failed to load dialog system: " .. tostring(dialog_module))
+  dialog = nil
+end
 
 function OnPluginInstall()
   math.randomseed(os.time())
@@ -464,10 +552,29 @@ function OnPluginInstall()
     toggle_minimal_groups(0)
   end -- if
 
+  -- Check for config migration messages (delayed so users see them)
+  if GetVariable("toastush_show_migration_msg") == "1" then
+    DoAfterSpecial(2, [[Note("Settings migrated from MUSHclient state to worlds/settings/toastush.conf")]], sendto.script)
+    DeleteVariable("toastush_show_migration_msg")
+  end
+
+  if GetVariable("toastush_migration_failed") == "1" then
+    DoAfterSpecial(2, [[Note("Warning: Failed to migrate settings to file. Settings remain in MUSHclient state.")]], sendto.script)
+    DeleteVariable("toastush_migration_failed")
+  end
+
+  if GetVariable("toastush_show_init_msg") == "1" then
+    DoAfterSpecial(2, [[Note("New configuration initialized. Settings saved to worlds/settings/toastush.conf")]], sendto.script)
+    DeleteVariable("toastush_show_init_msg")
+  end
+
 end -- OnPluginInstall
 
 function OnPluginSaveState()
-  config:save()
+  -- Only save if we're not in test mode (i.e., the variable doesn't exist)
+  if not GetVariable("toastush_settings") then
+    config:save()
+  end
 end -- OnPluginSave
 
 function OnPluginConnect()
@@ -495,6 +602,12 @@ function OnPluginClose()
 end -- OnPluginClose
 
 function OnPluginSend(text)
+  -- Prevent sending to server if dialog is active
+  -- This catches input that didn't match any alias
+  if dialog and dialog.is_active() then
+    return false  -- Don't send to server
+  end
+
   local s = text
 
   -- Convert smart quotes and other special characters to ASCII equivalents
@@ -651,9 +764,15 @@ function OnPluginBroadcast(msg, id, name, text)
   end
 end -- OnPluginBroadcast
 
-function OnPluginCommandEntered()
-
+function OnPluginCommandEntered(text)
   last_command_time = os.time()
+
+  -- Handle blank lines for dialog system (aliases don't catch them)
+  if dialog and dialog.is_active() and text == "" then
+    dialog.handle_input("")
+    return
+  end
+
   if (searchingScan) then
     searchingScan = false
     scan = nil
@@ -860,14 +979,6 @@ function initialize_audio()
     Note("Audio.BASS not available")
   end
 
-  -- Initialize volume settings
-  local saved_vol = GetVariable("master_volume")
-  local vol = saved_vol and tonumber(saved_vol) or 100
-
-  if not saved_vol then
-    SetVariable("master_volume", "100")
-  end
-
   local init_result = config:init(sp_options, audio_options)
   if init_result ~= 0 then
     print("Warning: Config initialization failed with code:", init_result)
@@ -882,77 +993,23 @@ function initialize_audio()
 end -- initialize_audio
 
 
+-- Load the new terminal-based config menu module
+local config_menu_module = require(scripts.."config_menu")
+
 function config_secondary_menu(option)
-  local secondary_menu = config:render_menu_list(option)
-
-  if type(secondary_menu) ~= 'table' then
-    notify("info", string.format("Unable to locate menu group '%s`.", option))
-    return 0
-  end -- if 
-
-  table.sort(secondary_menu)
-
-  local group = config:get_option(next(secondary_menu)).group
-
-  local title = string.format("%s Menu", group)
-
-  repeat -- Display menu until escaped.
-    mplay("misc/prompt")
-      local second_choice = utils.listbox("Select Setting", title, secondary_menu)
-
-    -- Step our user through a sequence to determine the value type.
-    if config:is_option(second_choice) then
-
-      if (not config:get_option(second_choice).type)
-      or config:get_option(second_choice).type == "bool" then
-        -- Interface for boolean value.
-        local yes_no = utils.msgbox("Select an option.", title, "yesnocancel", "?")
-        config:set_option(second_choice,
-        yes_no ~= nil
-        and yes_no ~= "cancel"
-        and yes_no
-        or config:get_option(second_choice).value)
-      elseif config:get_option(second_choice).type == "function" then
-        local newval = loadstring(config:get_option(second_choice).action)()
-
-        if (newval and newval ~= -1) then
-          config:set_option(second_choice, newval)
-        else
-         config:set_option(second_choice, config:get_option(second_choice).value)
-        end -- if
-      end -- if
-    end -- if
-
-    -- show changes:
-    secondary_menu = config:render_menu_list(option)
-
-  until not second_choice
-
-  assert(config:save() == 0)
-  mplay("misc/close")
-
+  -- Use new terminal-based menu system
+  config_menu_module.show_group(option)
 end -- config_secondary_menu
 
 
 function config_main_menu()
-  local main_menu = config:render_menu_list()
-  local title = string.format("%s Configuration Manager", GetPluginName()) 
-
-  table.sort(main_menu)
-
-  repeat -- Display main list.
-    mplay("misc/prompt")
-
-    local first_choice = utils.listbox("Select Setting", title, main_menu, 1)
-
-    if first_choice then
-      config_secondary_menu(main_menu[first_choice])
-    end -- if
-
-  until not first_choice
-
-  mplay("misc/close")
+  -- Use new terminal-based menu system
+  config_menu_module.show_main()
 end -- config_main_menu
+
+function config_save_to_var()
+  config:save_to_variable_for_testing()
+end -- config_save_to_var
 
 link = {}
 infobar_t = {}
@@ -1086,7 +1143,7 @@ function open_url()
   end -- if
 end -- open_url
 
-function mplay(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
+function mplay(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
   -- Miriani only play:
   local filepath
 
@@ -1111,7 +1168,7 @@ function mplay(file, group, interrupt, pan, loop, slide, sec, ignore_focus)
     filepath = string.format(SOUNDPATH.."%s%s", file, EXTENSION)
   end -- if
 
-  play(filepath, group, interrupt, pan, loop, slide, sec, ignore_focus)
+  play(filepath, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
 end -- mplay
 
 function speech_interrupt(line)

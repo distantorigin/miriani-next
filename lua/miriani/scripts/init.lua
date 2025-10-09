@@ -33,9 +33,10 @@ local namespace = {
   "vehicles", -- vehicles
   "archaeology", -- archaeology
   "hauling", -- asteroid hauling
-  "salvaging", -- Atmospheric salvaging.
   "asteroid_mining", -- Asteroid mining.
   "planetary_mining", -- Planetary mining.
+  "contributions", -- Credit contribution tracking
+  "babies", -- Baby emotes and sounds
   "sound_conflict_detector", -- Sound file conflict detection and cleanup
 -- "mcp", -- MCP protocol
 } -- namespace

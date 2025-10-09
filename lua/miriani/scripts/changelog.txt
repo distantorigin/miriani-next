@@ -1,3 +1,56 @@
+Version 4.0.beta.6:
+* New: Replaced  the dialog-based configuration system with a new menu-based one. This menu behaves in the same manner as any menu on Miriani itself--it supports number-based selection, entering part of the name of a selection, or @abort to back out.
+* New: Removed most of the volume categories from the settings available in F10. Now, volume is split among the following groups:
+	- Master: Influences all volumes. Other volume groups are multiplied by this value.
+	- Sounds: All sound effects throughout.
+	- Environment: Ambiences, loops, potentially other things in the future.
+* New: Added sound offsets for various categories. Currently these are hardcoded, although they could become configurable later:
+	- Computer: -5% from default volume
+	- Notifications: -15% from default volume
+	- Combat: -5% from default volume
+* New: Tracking system for starship contributions:
+	- Tracks contributions received from players with name, amount, and frequency
+	- CONTRIBS command displays sorted list of contributors (highest to lowest)
+	- CONTRIBS CLEAR resets all contribution data
+	- Plays sound when receiving contributions
+	- Contributions buffer enabled by default to track all received contributions
+* New: Sound for receiving credits from another player.
+* New: You can now toggle various sound categories on and off from within the configuration menu. Keep in mind that this list populates as sounds play, so if a category you expect isn't there, try playing a sound that might be in the corresponding category first.
+* New: Shift+escape now resets the info bar in addition to its existing functionality.
+* New: Overhauled the configuration system to write to worlds/settings/toastush.conf rather than saving the configuration as a variable in MUSHclient's state. This will allow you to easily transfer configurations between clients or backup a known good config for later.
+* New: Added optional, experimental formatting of scan output, which allows you to filter scans to be shown on a single line, similarly to the VIP Mud soundpack. Off by default, you can enable this under the ship category in config.
+* New: Added 'sca' alias for atmospheric composition and 'scn' for natural resources on planets.
+* New: Shift+escape resets scan state.
+* New: Upgrade binary to MUSHclient 5.07-pre, based off of the tip of the current MUSHclient release tree (last updated in Aug 2025). Updater users will not receive this as part of the update process, and are encouraged but do not need to download the new executable from https://github.com/nickgammon/mushclient/releases, under the latest_commit (release) section.
+* New: Added scan sounds from Miriani 7.
+* New: Add background1 through background5.ogg, which get played when FTL and jumpgate jumps complete and the ship finishes launching. (Previously jumpgates played the move decelerate sound.)
+* New: Add 29 new beep sounds.
+* New: Add experimental code to the updater that will automatically reload any file that gets updated if the file is located under worlds\plugins. This will only work for updates moving forward after you've installed this version.
+* New: Add baby sounds. (Credit goes to the Miriani Soundpack for VIP MUD. This is a direct migration and should operate the same.)
+* New: Bias drive now has sounds.
+* New: Added a sound for auction bids and add bids to an Auction history buffer. Sales will happen as soon as I have a sound.
+* New: Add a sound for attempting to use a drive while it's still recharging.
+* New: Add four new FTL and jumpgate sounds.
+* Changed: No longer play a sound when in the middle of a wormhole. This was previously ship/move/flash.ogg.
+* Changed: Enable a wider swath of history buffers by default.
+* Changed: Standardized the grammar in the configuration menu labels.
+* Changed: Update metafrequency to 7.07 instead of 0.07, for Toastush-NG users to report bugs.
+* Changed: Lower asteroid rover ramp sounds by 25%.
+* Changed: Anomaly detection sound reverted to older version from Miriani 7.
+* Changed: The sound for being out of range has been reverted to the VIP Mud sound.
+* Changed: Interrupt on scan coordinates now only works for starships.
+* Changed: Remove "Launch complete." from spam reduction mode and replace it with the background sound and a random beep.
+* Fixed: Info bar now resets in more places.
+* Fixed: Ship locked on has been reverted to the classic sound. I accidentally wiped it out when merging classic in with main. Hurray regressions!
+* Fixed: Set the minimum number of shots to 7 instead of 8 for the bardenium counter, which should, in theory, fix the double shot remaining on the ravager.
+* Fixed: Fish warning in aquatic salvager now plays warning instead of scoop.
+* Fixed: Using scan filter commands without arguments will now properly filter after choosing a target from the menu.
+* Fixed: Scan filter commands are now case insensitive.
+* Fixed: More say fixes, I'm not really sure anymore...
+* Fixed: The Lore Computer print sound now works for any kind of paper.
+* Removed: Interrupt on focus screen reader option.
+* Removed: Computer voice files and the corresponding option.
+
 Version 4.0.beta.5:
 * New: Aquatic salvaging sounds for movement, scoop, fish encounters and probably more at the current time of writing.
 * New: Enhanced Channel History plugin with quick buffer system:

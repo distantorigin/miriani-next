@@ -31,6 +31,8 @@ Version 4.0.beta.6:
 * New: Added a sound for auction bids and add bids to an Auction history buffer. Sales will happen as soon as I have a sound.
 * New: Add a sound for attempting to use a drive while it's still recharging.
 * New: Add four new FTL and jumpgate sounds.
+* New: Added wind sound for atmospheric instability.
+
 * Changed: No longer play a sound when in the middle of a wormhole. This was previously ship/move/flash.ogg.
 * Changed: Enable a wider swath of history buffers by default.
 * Changed: Standardized the grammar in the configuration menu labels.
@@ -48,6 +50,8 @@ Version 4.0.beta.6:
 * Fixed: Scan filter commands are now case insensitive.
 * Fixed: More say fixes, I'm not really sure anymore...
 * Fixed: The Lore Computer print sound now works for any kind of paper.
+* Fixed: Checking coordinates no longer throws an error.
+* Fixed: Heartbeat stun sound ends properly.
 * Removed: Interrupt on focus screen reader option.
 * Removed: Computer voice files and the corresponding option.
 

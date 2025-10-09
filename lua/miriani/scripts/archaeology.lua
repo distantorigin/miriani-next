@@ -306,10 +306,10 @@ ImportXML([=[
        print(string.format("Current coordinates: (%d, %d, %d)", player_x, player_y, player_z))
      else
        print(string.format("Current coordinates: (%d, %d)", player_x, player_y))
-     end
+     end -- if player_z
    else
      print("No coordinates detected yet. Visit a room with coordinates in the title.")
-   end
+   end -- if player_x and player_y
   </send>
   </alias>
 </aliases>

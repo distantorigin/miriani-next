@@ -119,7 +119,7 @@ enabled="y"
   <send>
    -- Optionally play beep sound on keep-alive
    if config:get_option("beep_on_keepalive").value == "yes" then
-     mplay("misc/beep", "notification")
+     mplay("misc/beep/beep", "notification")
    end
   </send>
   </trigger>

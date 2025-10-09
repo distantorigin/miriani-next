@@ -286,6 +286,16 @@ gagline()</send>
   <trigger
    enabled="y"
    group="vehicle"
+   match="^A sudden instability in the layer of gasses around the ship causes it to rapidly sink deeper into the atmosphere\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("vehicle/wind", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
    script="gagline"
    match="^The vehicle shudders violently as it makes contact with the topmost gas clouds\. .+?\.$"
    regexp="y"

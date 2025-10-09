@@ -123,10 +123,9 @@
    if (stuntime == 0)
    and (stunned == true) then
     stunned = false
+    stop("environment", nil, 1, 0.5)
     if (environment) and (environment.line) then
       replicate_line(environment.line)
-    else
-      stop("ambiance", nil, 1, 0.5)
     end -- if
    end -- if
 

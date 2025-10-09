@@ -204,13 +204,14 @@ ImportXML([=[
    group="ship"
    match="^The sounds of the relativity drive calm as the starship completes its final maneuver into space\.$"
    regexp="y"
+      script="gagline"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
   <send>mplay("misc/beep/beep", "ship")
   mplay ("ship/misc/background", "ship")
-  if config:get_option("spam").value == "yes" then
+  if config:get_option("spam").value ~= "yes" then
     print ("%0")
   end -- if
   </send>

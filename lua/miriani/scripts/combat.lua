@@ -442,12 +442,9 @@ ImportXML([=[
    elseif "%1" == "Current coordinates" then
     return print("%2")
    elseif "%1" == "Coordinates" then
-    return print("%0")
     if focusCoordinates and focusCoordinates == "%2" then
-
-  local unchanged = (config:get_option("unchange_coords").value == "yes") and "Unchanged: " or ""
- 
-     return print(unchanged.."%2 (%1)")
+      local unchanged = (config:get_option("unchange_coords").value == "yes") and "Unchanged: " or ""
+      return print(unchanged.."%2 (%1)")
     end -- if
     focusCoordinates = "%2"
     focusTarget = "%1"

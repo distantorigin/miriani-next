@@ -304,8 +304,13 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-resetScan()
-mplay ("misc/command")
+   -- If we were in a scan, play cancel sound instead
+   if searchingScan then
+     mplay("misc/cancel")
+   else
+     mplay("misc/command")
+   end
+   resetScan()
   </send>
   </trigger>
 
@@ -1089,11 +1094,14 @@ mplay ("misc/command")
    local fade = 0.8
 
    if ("%2" == "stun time") then
-    ambianceFile = nil
     stuntime = stuntime + time
 
     if (not stunned) then
       stunned = true
+      -- Stop current ambiance and environment sounds before playing heartbeat
+      stop("ambiance")
+      stop("environment")
+      ambianceFile = nil
       mplay("ambiance/heartbeat", "environment", 1, nil, 1, 1, fade)
     end -- if
 
@@ -1248,7 +1256,11 @@ mplay ("misc/command")
    send_to="12"
   >
   <send>
-   mplay("misc/Disconnected")
+   -- Play yawn social (randomly choose male or female)
+   local yawn_gender = (math.random(2) == 1) and "male" or "female"
+   mplay("social/"..yawn_gender.."/yawn", "socials")
+   -- Play collapse social (neuter has collapse sounds)
+   mplay("social/neuter/collapse", "socials")
   </send>
   </trigger>
 <trigger

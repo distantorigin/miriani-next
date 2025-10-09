@@ -1,0 +1,242 @@
+-- @module config_menu
+-- Terminal-based configuration menu using dialog system
+-- Uses global 'dialog' variable set in toastush.xml
+
+local config_menu = {}
+
+-- Helper function to strip trailing punctuation from option descriptions
+local function strip_trailing_punctuation(text)
+  return text:gsub("[%.,:;!?]+%s*$", "")
+end
+
+-- Main configuration menu
+function config_menu.show_main()
+  local main_menu = config:render_menu_list()
+
+  if type(main_menu) ~= 'table' then
+    notify("error", "Unable to load configuration menu.")
+    return
+  end
+
+  -- Add "audio groups" to the menu even though it has no regular options
+  local has_audio_groups = false
+  for _, title in ipairs(main_menu) do
+    if config:get_group_key_from_title(title) == "audio groups" then
+      has_audio_groups = true
+      break
+    end
+  end
+  if not has_audio_groups then
+    table.insert(main_menu, config:get_group_title("audio groups"))
+  end
+
+  -- Custom sort based on group order metadata
+  table.sort(main_menu, function(a, b)
+    -- Get group keys from titles
+    local key_a = config:get_group_key_from_title(a)
+    local key_b = config:get_group_key_from_title(b)
+
+    -- Get sort orders
+    local order_a = config:get_group_order(key_a)
+    local order_b = config:get_group_order(key_b)
+
+    -- If orders are different, sort by order
+    if order_a ~= order_b then
+      return order_a < order_b
+    end
+
+    -- If orders are the same (both undefined), sort alphabetically
+    return a < b
+  end)
+
+  -- Convert to choices format for dialog
+  local choices = {}
+  for i, group_title in ipairs(main_menu) do
+    choices[tostring(i)] = group_title
+  end
+
+  dialog.menu({
+    title = string.format("%s Configuration Options", GetPluginName()),
+    choices = choices,
+    callback = function(result, reason)
+      if result then
+        -- Convert title back to group key
+        local group_key = config:get_group_key_from_title(result.value)
+        config_menu.show_group(group_key)
+      end
+    end
+  })
+end
+
+-- Show options for a specific group
+function config_menu.show_group(group_name)
+  -- Special handling for audio groups submenu - it has no regular options
+  local secondary_menu = {}
+  local group_title = config:get_group_title(group_name)
+
+  if group_name == "audio groups" then
+    -- Get all discovered sound groups
+    local groups = get_all_sound_groups()
+
+    if #groups == 0 then
+      notify("info", "No sound groups discovered yet. Play the game to discover sound groups, then they will appear here for toggling.")
+      config_menu.show_main()
+      return
+    end
+
+    -- Add each group as a toggleable option
+    for _, group in ipairs(groups) do
+      local group_key = "_sound_group_" .. group
+      local enabled = is_group_enabled(group)
+      local status = enabled and "[On]" or "[Off]"
+      -- Capitalize first letter
+      local display_name = group:gsub("^%l", string.upper)
+      secondary_menu[group_key] = string.format("%s %s", display_name, status)
+    end
+  else
+    -- Normal menu rendering for other groups
+    secondary_menu = config:render_menu_list(group_name)
+
+    if type(secondary_menu) ~= 'table' then
+      notify("info", string.format("Unable to locate menu group '%s'.", group_name))
+      config_menu.show_main()
+      return
+    end
+  end
+
+  -- Convert to numbered choices and create a key mapping
+  local choices = {}
+  local key_map = {}  -- Maps numbers to option keys
+  local sorted_keys = {}
+
+  -- Get all keys and sort by their display text
+  for key in pairs(secondary_menu) do
+    table.insert(sorted_keys, key)
+  end
+  table.sort(sorted_keys, function(a, b)
+    return secondary_menu[a] < secondary_menu[b]
+  end)
+
+  -- Create numbered menu
+  choices["0"] = "Go back"
+  for i, key in ipairs(sorted_keys) do
+    local num = tostring(i)
+    choices[num] = secondary_menu[key]  -- Just the description, no key name
+    key_map[num] = key  -- Remember which option this number refers to
+  end
+
+  dialog.menu({
+    title = string.format("%s Menu", group_title),
+    choices = choices,
+    callback = function(result, reason)
+      if result then
+        if result.key == "0" then
+          config_menu.show_main()
+        else
+          -- Look up the actual option key from our mapping
+          local option_key = key_map[result.key]
+          if option_key then
+            config_menu.edit_option(option_key, group_name)
+          end
+        end
+      else
+        -- Aborted or cancelled - save config
+        config:save()
+              end
+    end
+  })
+end
+
+-- Edit a specific option
+function config_menu.edit_option(option_key, group_name)
+  -- Special handling for dynamic sound groups
+  if option_key:match("^_sound_group_") then
+    local sound_group = option_key:match("^_sound_group_(.+)$")
+    if sound_group then
+      -- Toggle the group
+      local current_state = is_group_enabled(sound_group)
+      local new_state = not current_state
+      set_group_enabled(sound_group, new_state)
+
+      local status = new_state and "on" or "off"
+      notify("info", string.format("%s sounds set to %s", sound_group, status))
+
+      -- Return to group menu
+      config_menu.show_group(group_name)
+      return
+    end
+  end
+
+  if not config:is_option(option_key) then
+    notify("error", string.format("Invalid option: %s", option_key))
+    config_menu.show_group(group_name)
+    return
+  end
+
+  local option = config:get_option(option_key)
+  local opt_type = option.type or config:option_type(option_key)
+
+  if opt_type == "boolean" or opt_type == "bool" then
+    -- Boolean option - toggle directly
+    local current_is_on = (option.value == "yes" or option.value == true)
+    local new_value = current_is_on and "no" or "yes"
+    local display_value = current_is_on and "off" or "on"
+
+    config:set_option(option_key, new_value)
+    notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), display_value))
+    config:save()
+
+    -- Return to group menu
+    config_menu.show_group(group_name)
+
+  elseif opt_type == "function" then
+    -- Function-based option
+    local newval = loadstring(option.action)()
+
+    if newval and newval ~= -1 then
+      config:set_option(option_key, newval)
+      notify("info", string.format("%s updated", strip_trailing_punctuation(option.descr)))
+      config:save()
+    end
+
+    config_menu.show_group(group_name)
+
+  else
+    -- String or other type - use prompt
+    dialog.prompt({
+      title = string.format("Set %s", option.descr),
+      message = string.format("Current value: %s\n\nEnter a blank line to reset to default.", tostring(option.value)),
+      allow_blank = true,
+      callback = function(result, reason)
+        if reason == "aborted" then
+          -- User aborted, just return to menu
+        elseif reason == "blank" or (result and result.value == "") then
+          -- Blank line - reset to default
+          config:set_option(option_key, "")
+          -- Get the default value to show in notification
+          local default_value = config:get_option(option_key).value
+          notify("info", string.format("%s reset to default: %s", strip_trailing_punctuation(option.descr), default_value))
+          config:save()
+        elseif result and result.value then
+          -- Normal value
+          config:set_option(option_key, result.value)
+          notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), result.value))
+          config:save()
+        end
+        -- Return to group menu
+        config_menu.show_group(group_name)
+      end
+    })
+  end
+end
+
+-- Convenience function for command alias
+function config_menu.start(group)
+  if group then
+    config_menu.show_group(group)
+  else
+    config_menu.show_main()
+  end
+end
+
+return config_menu

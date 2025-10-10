@@ -336,6 +336,7 @@ ImportXML([=[
    omit_from_output="y"
    send_to="14"
    sequence="95"
+   keep_evaluating="y"
   >
   <send>
    local line = "%0"
@@ -353,7 +354,8 @@ ImportXML([=[
      "^That is now out of scanning range%.$",
      "^Your sensors are unable to scan those coordinates%.$",
      "^General sector report for ",
-     "^I don't understand that%.$"
+     "^I don't understand that%.$",
+     "^Invalid selection%.$"
    }
 
    for _, pattern in ipairs(errorPatterns) do
@@ -876,6 +878,7 @@ return 0
    enabled="y"
    group="computer"
    match="^sc([acdghilmnoprstuvwyz]|\.help)(?:\s+(.+))?$"
+   ignore_case="y"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -888,7 +891,7 @@ return 0
      return
    end
 
-   local filterField = scantable["%1"]
+   local filterField = scantable[string.lower("%1")]
    if filterField then
      shipscan("%2", filterField)
    else

@@ -434,6 +434,7 @@ ImportXML([=[
    omit_from_output="y"
    send_to="14"
    sequence="100"
+   keep_evaluating="y"
   >
   <send>
    if "%1" == "Locked onto coordinates" then
@@ -442,7 +443,9 @@ ImportXML([=[
    elseif "%1" == "Current coordinates" then
     return print("%2")
    elseif "%1" == "Coordinates" then
-    if focusCoordinates and focusCoordinates == "%2" then
+    return print("%0")
+   else -- do if focus
+ if focusCoordinates and focusCoordinates == "%2" then
       local unchanged = (config:get_option("unchange_coords").value == "yes") and "Unchanged: " or ""
       return print(unchanged.."%2 (%1)")
     end -- if

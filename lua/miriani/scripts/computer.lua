@@ -100,41 +100,15 @@ computer_actions_wildcard = {
       mplay("ship/combat/weaponFire", "ship")
     end
   },
-  ["Turrets (.+) are locking ont?o empty space%. Firing%."] = {
-    sound = "ship/combat/noLock",
-    group = "ship"
-  },
-  ["Turret (.+) is locking ont?o empty space%. Firing%."] = {
-    sound = "ship/combat/noLock",
-    group = "ship"
-  },
-  ["(.+turret.+) (?:is|are) locking ont?o empty space%. Firing%."] = {
-    sound = "ship/combat/noLock",
-    group = "ship"
-  },
-  ["Turrets (.+) are locking ont?o (.+)%."] = {
-    func = function(weapon_num, target)
-      mplay("ship/combat/weaponFire", "ship")
-    end
-  },
-  ["Turret (.+) is locking ont?o (.+)%."] = {
-    func = function(weapon_num, target)
-      mplay("ship/combat/weaponFire", "ship")
-    end
-  },
-  ["(.+turret.+) (?:is|are) locking ont?o (.+)%."] = {
-    func = function(weapon_info, target)
-      mplay("ship/combat/weaponFire", "ship")
-    end
-  },
-  ["[Ll]ong.[Rr]ange (.+) is locking ont?o (.+)%."] = {
-    func = function(weapon_info, target)
-      mplay("ship/combat/weaponFire", "ship")
-    end
-  },
-  ["[Ll]ong.[Rr]ange (.+) are locking ont?o (.+)%."] = {
-    func = function(weapon_info, target)
-      mplay("ship/combat/weaponFire", "ship")
+  -- Unified turret and long-range weapon triggers (using Lua patterns, not PCRE)
+  -- Matches anything ending with "locking onto [target]."
+  [".+ locking ont?o (.+)%."] = {
+    func = function(target)
+      if target == "empty space" then
+        mplay("ship/combat/noLock", "ship")
+      else
+        mplay("ship/combat/weaponFire", "ship")
+      end
     end
   },
   ["I am beginning the repair of (.+)%. Estimated time to completion: (.+)"] = {
@@ -164,10 +138,6 @@ computer_actions_wildcard = {
         mplay("ship/computer/lifeform", "notification")
       end
     end
-  },
-  ["(.+) locking ont?o empty space%."] = {
-    sound = "ship/combat/noLock",
-    group = "ship"
   },
   ["(.+) is one unit away from this ship%."] = {
     sound = "ship/computer/inRange",

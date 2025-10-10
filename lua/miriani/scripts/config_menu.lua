@@ -189,6 +189,43 @@ function config_menu.edit_option(option_key, group_name)
     -- Return to group menu
     config_menu.show_group(group_name)
 
+  elseif opt_type == "enum" then
+    -- Enum option - show menu of choices
+    if not option.options or #option.options == 0 then
+      notify("error", "No options defined for this enum")
+      config_menu.show_group(group_name)
+      return
+    end
+
+    local choices = {}
+    for i, opt_value in ipairs(option.options) do
+      local display_value = opt_value:gsub("^%l", string.upper)
+      -- Mark current selection
+      if opt_value == option.value then
+        choices[tostring(i)] = display_value .. " (Currently selected)"
+      else
+        choices[tostring(i)] = display_value
+      end
+    end
+
+    dialog.menu({
+      title = string.format("Make a selection for %s", strip_trailing_punctuation(option.descr)),
+      choices = choices,
+      callback = function(result, reason)
+        if result then
+          local selected_value = option.options[tonumber(result.key)]
+          if selected_value then
+            config:set_option(option_key, selected_value)
+            local display_value = selected_value:gsub("^%l", string.upper)
+            notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), display_value))
+            config:save()
+          end
+        end
+        -- Return to group menu
+        config_menu.show_group(group_name)
+      end
+    })
+
   elseif opt_type == "function" then
     -- Function-based option
     local newval = loadstring(option.action)()

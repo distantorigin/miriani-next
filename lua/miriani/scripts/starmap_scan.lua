@@ -535,19 +535,26 @@ ImportXML([=[
        end
      end
 
-     local scanInterrupt = false
+     local scanInterruptMode = "off"
      if config and config.get_option then
        local opt = config:get_option("scan_interrupt")
        if opt and opt.value then
-         scanInterrupt = (opt.value == "yes")
+         scanInterruptMode = opt.value
        end
      end
 
-     if not (scanFiltering or useFormatting) and scanInterrupt then
-       -- Check if it's a starship (only interrupt for starships)
-       local isStarship = scanData.weapons or scanData.hull_damage
+     if not (scanFiltering or useFormatting) and scanInterruptMode ~= "off" then
+       local shouldInterrupt = false
 
-       if isStarship then
+       if scanInterruptMode == "everything" then
+         shouldInterrupt = true
+       elseif scanInterruptMode == "starships" then
+         -- Check if it's a starship (only interrupt for starships)
+         local isStarship = scanData.weapons or scanData.hull_damage
+         shouldInterrupt = isStarship
+       end
+
+       if shouldInterrupt then
          local coords = string.gsub(fieldValue, "[()]", "")  -- Strip parentheses
 
          -- Use coroutine for delay

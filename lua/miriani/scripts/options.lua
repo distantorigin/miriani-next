@@ -19,7 +19,7 @@ local options = {
   friendly_combat = {descr="Gag friendly (non-praelor) sector combat messages.", value="no", group="gags", type="bool"},
   pa_interrupt = {descr="Interrupt speech for public address (PA) messages.", value="no", group="screen reader", type="bool"},
   praelor_interrupt = {descr="Interrupt speech when detecting insectoid activity.", value="no", group="screen reader", type="bool"},
-  scan_interrupt = {descr="Interrupt speech for scan coordinates.", value="yes", group="screen reader", type="bool"},
+  scan_interrupt = {descr="Interrupt speech for scan coordinates.", value="starships", group="screen reader", type="enum", options={"starships", "everything", "off"}},
   scan_formatting = {descr="Use formatted single-line scan output instead of raw multi-line output.", value="no", group="ship", type="bool"},
 
   --ss

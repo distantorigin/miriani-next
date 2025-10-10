@@ -104,8 +104,17 @@ function Config:init(options, audio)
       if file_data.options then
         for key, saved_option in pairs(file_data.options) do
           if self.options[key] and saved_option.value ~= nil then
+            local value = saved_option.value
+            -- Migrate old boolean values to new enum values
+            if self.options[key].type == "enum" then
+              if key == "scan_interrupt" and (value == "yes" or value == true) then
+                value = "starships"
+              elseif key == "scan_interrupt" and (value == "no" or value == false) then
+                value = "off"
+              end
+            end
             -- Keep the user's value but update metadata from defaults
-            self.options[key].value = saved_option.value
+            self.options[key].value = value
           end
         end
       end
@@ -129,6 +138,15 @@ function Config:init(options, audio)
       if file_data.options then
         for key, value in pairs(file_data.options) do
           if self.options[key] then
+            -- Migrate old boolean values to new enum values
+            if self.options[key].type == "enum" then
+              -- Handle scan_interrupt migration from boolean to enum
+              if key == "scan_interrupt" and (value == "yes" or value == true) then
+                value = "starships"
+              elseif key == "scan_interrupt" and (value == "no" or value == false) then
+                value = "off"
+              end
+            end
             self.options[key].value = value
           end
         end
@@ -466,12 +484,16 @@ function Config:render_menu_list(option)
       elseif v.type == "bool" or v.type == "boolean" then
         -- Display boolean values as [On]/[Off]
         value = (v.value == "yes" or v.value == true) and "[On]" or "[Off]"
+      elseif v.type == "enum" then
+        -- Display enum values in brackets, capitalize first letter
+        local display_value = tostring(v.value):gsub("^%l", string.upper)
+        value = "[" .. display_value .. "]"
       else
         value = tostring(v.value)
       end -- if
 
-      -- For boolean types, show status at end; otherwise show "Currently: value"
-      if v.type == "bool" or v.type == "boolean" then
+      -- For boolean and enum types, show status at end; otherwise show "Currently: value"
+      if v.type == "bool" or v.type == "boolean" or v.type == "enum" then
         menu[k] = v.descr .. " " .. value
       else
         menu[k] = v.descr .. " Currently: " .. value

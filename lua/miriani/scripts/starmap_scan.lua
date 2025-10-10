@@ -354,6 +354,7 @@ ImportXML([=[
      "^That is now out of scanning range%.$",
      "^Your sensors are unable to scan those coordinates%.$",
      "^General sector report for ",
+          "^You'll have better results scanning in space%.$"
      "^I don't understand that%.$",
      "^Invalid selection%.$"
    }

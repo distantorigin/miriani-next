@@ -312,7 +312,7 @@ ImportXML([=[
    name="prescan_potential_name"
    enabled="n"
    group="ship"
-   match="^([a-zA-Z0-9'&quot; -]{1,99})$"
+   match="^([\(\)\[\]a-zA-Z0-9'&quot; -]{1,99})$"
    regexp="y"
    send_to="14"
    sequence="101"
@@ -526,7 +526,7 @@ ImportXML([=[
    -- Check if this is the ending dash line (matches first dash line length)
    if firstDashLength and dashCount == firstDashLength then
      -- This is the ending dash line - scan is complete
-
+mplay("ship/computer/scan", "other")
      -- Always generate and store formatted output
      local formatted = formatScanOutput()
 
@@ -691,8 +691,8 @@ ImportXML([=[
        print(fieldName .. ": " .. fieldValue)
        speech_interrupt(fieldValue)
        mplay("ship/computer/scan", "other")
-       if fieldName == "Hull Damage" or fieldName == "Distance" then
-         if fieldValue == "1" or string.sub(fieldValue, 1, 2) == "1%" then
+       if fieldName == "Distance" then
+         if fieldValue == "1" then
            mplay("ship/computer/oneUnit", "notification")
          end
        end
@@ -710,23 +710,19 @@ ImportXML([=[
    elseif useFormatting then
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then
-       mplay("ship/computer/scan", "other")
        if fieldValue == "1" then
          mplay("ship/computer/oneUnit", "notification")
        end
-       -- Don't output yet - wait for the ending dash line
      end
      -- All other fields: do nothing (gagged by omit_from_output)
    else
      -- Normal mode: show all fields
      print(fieldName .. ": " .. fieldValue)
      if fieldName == "Distance" then
-       mplay("ship/computer/scan", "other")
        if fieldValue == "1" then
          mplay("ship/computer/oneUnit", "notification")
        end
-       -- Don't clear scanData yet - wait for dash trigger to clear it
-     end
+      end
    end
   </send>
   </trigger>

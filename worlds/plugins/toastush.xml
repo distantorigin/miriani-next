@@ -170,8 +170,7 @@ show_paralyzed(roundtime, stuntime)
   name="url_catcher"
    enabled="n"
    script="OnURL"
-   
-   match="((?:https?|ftp|telnet|rsync|mailto|gopher)://[[:graph:]]+[^&quot;])"
+     match="((?:https?|ftp|telnet|rsync|mailto|gopher)://[[:graph:]]+[^&quot;])"
    regexp="y"
    send_to="12"
    keep_evaluating="y"
@@ -452,6 +451,7 @@ ping_after_heartbeat = 30
 roundtime, stuntime = 0, 0
 stunned = false
 logged_in = false
+EnableTrigger("url_catcher", false)
 
 
 

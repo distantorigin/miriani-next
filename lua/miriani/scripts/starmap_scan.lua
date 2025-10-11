@@ -1025,7 +1025,7 @@ return 0
   <alias
    enabled="y"
    group="starmap"
-   match="^sm([aAbcCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
+   match="^sm([AbCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
    regexp="y"
    send_to="12"
    sequence="100"

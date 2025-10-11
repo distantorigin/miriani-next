@@ -1,7 +1,8 @@
 -- Scan table
 scantable = {
   a = "Atmospheric Composition",
-  c = "Coordinates",
+  c = "Average Component Damage",
+  f = "Coordinates",
   d = "Distance",
   g = "Cargo",
   h = "Hull Damage",
@@ -55,30 +56,8 @@ starmaptable = {
 -- Scan data storage
 scanData = {}
 
--- Scan format templates
--- Template variables available:
--- Starship: name, ship_type, alliance, organization, newbie, distance, coordinates, hull_damage, average_component_damage, power, weapons, occupancy, number_of_occupants, cargo, iff, pilot_status, courier_ship_status
--- Planet: object_name, classification, distance, coordinates, natural_resources, atmospheric_composition, surface_conditions, hostile_military_occupation
--- Moon: object_name, classification, distance, coordinates, orbiting, natural_resources, atmospheric_composition
--- Station: object_name, distance, coordinates, integrity, occupancy, identifiable_power_sources
--- Asteroid: object_name, size, distance, coordinates, composition, starships, landing_beacons
--- Star: object_name, classification, distance, coordinates
--- Debris: object_name, type, size, distance, coordinates
--- Weapon/Probe/Interdictor/Blockade: object_name, distance, coordinates, damage, available_charge, launched_by
-scanTemplates = {
-  Starship = "{newbie}{name} ({ship_type}) is {distance} units away. Hull {hull_damage}, Avg dmg {average_component_damage}. Power {power}, Weapons {weapons}. {number_of_occupants}{occupancy}. Alliance {alliance}. {organization}{cargo}{coordinates}",
-  Planet = "{object_name}: {classification} planet {distance} units away, at {coordinates}. {natural_resources}{atmospheric_composition}{surface_conditions}{hostile_military_occupation}",
-  Moon = "{object_name}: {classification} moon {distance} units away, orbiting {orbiting}. {coordinates}. {natural_resources}{atmospheric_composition}",
-  Station = "{object_name}: Station {distance} units away, at {coordinates}. {integrity}{occupancy}{identifiable_power_sources}",
-  Asteroid = "{object_name}: {size} asteroid {distance} units away. {composition}{starships}{landing_beacons}{coordinates}",
-  Star = "{object_name}: Class {classification} star {distance} units away, at {coordinates}",
-  Debris = "{object_name}: {type} {distance} units away, at {coordinates}",
-  Weapon = "{object_name}: {distance} units distant. {damage}{available_charge}{launched_by}{coordinates}",
-  Probe = "{object_name}: {distance} units distant. {launched_by}{coordinates}",
-  Interdictor = "{object_name}: {distance} units distant. {launched_by}{coordinates}",
-  Blockade = "{object_name}: {distance} units distant. {launched_by}{coordinates}",
-  Unknown = "{object_name}: {distance} units away, at {coordinates}"
-}
+-- NOTE: Scan format templates are defined in options.lua as configurable options
+-- (scan_format_starship, scan_format_planet, etc.) and accessed via config:get_option()
 
 -- Helper function to convert field names to template keys
 local function fieldToKey(fieldName)
@@ -183,19 +162,14 @@ function formatScanOutput()
     objectType = "Weapon"
   end
 
-  -- Get template for this object type from config (with fallback to hardcoded)
-  local template = scanTemplates.Unknown
+  -- Get template for this object type from config
+  local template = "{object_name}: {distance} units away, at {coordinates}"  -- Default fallback
   if config and config.get_option then
     local configKey = "scan_format_" .. string.lower(objectType)
     local opt = config:get_option(configKey)
     if opt and opt.value then
       template = opt.value
-    else
-      -- Fallback to hardcoded template
-      template = scanTemplates[objectType] or scanTemplates.Unknown
     end
-  else
-    template = scanTemplates[objectType] or scanTemplates.Unknown
   end
 
   -- Replace placeholders with actual data
@@ -242,10 +216,7 @@ function formatScanOutput()
   if scanData.available_charge then
     scanData.available_charge = "Available charge: " .. scanData.available_charge .. ". "
   end
-  if scanData.coordinates then
-    scanData.coordinates = "Coordinates: " .. scanData.coordinates .. "."
-  end
-
+  
   for key, value in pairs(scanData) do
     if value and value ~= "" and key ~= "in_scan" and key ~= "object_type" and key ~= "potential_object_name" then
       local placeholder = "{" .. key .. "}"
@@ -284,10 +255,13 @@ function formatScanOutput()
 end
 
 -- Central function to initiate a scan
-function shipscan(target, filterField)
+function shipscan(target, filterField, forceFormatting)
   -- Initialize scan state
   scanData = {}
-  scanData.in_scan = true  -- Mark that we're in a scan
+  pendingScan = true  -- Mark that we're waiting for scan output
+  inActiveScan = false  -- Not in active scan yet
+  EnableTrigger("prescan_potential_name", true)
+  firstDashLength = nil  -- Will store the length of the first dash line
 
   if filterField then
     scan = filterField
@@ -297,8 +271,12 @@ function shipscan(target, filterField)
     scan = ""
   end
 
-  -- Enable scan triggers immediately
-  EnableTriggerGroup("scan_triggers", true)
+  -- Force formatting mode if requested (for scu command)
+  if forceFormatting then
+    scanData.force_formatting = true
+  end
+
+  -- Don't enable scan triggers yet - wait for first dash line
 
   if target and target ~= "" then
     Send("scan " .. target)
@@ -313,9 +291,12 @@ function endScan()
   scanData = {}
   scanFiltering = false
   scan = ""
+  pendingScan = false
+  inActiveScan = false
+  firstDashLength = nil
   -- Disable scan triggers until next scan
-  -- Safe to call even if already disabled
-  EnableTriggerGroup("scan_triggers", false)
+    EnableTriggerGroup("scan_triggers", false)
+    EnableTrigger("prescan_potential_name", false)
 end
 
 -- Manual reset function
@@ -325,6 +306,116 @@ end
 
 ImportXML([=[
 <triggers>
+
+  <!-- Scan Start Detection: Capture potential object names before we're in active scan -->
+  <trigger
+   name="prescan_potential_name"
+   enabled="n"
+   group="ship"
+   match="^([a-zA-Z0-9'&quot; -]{1,99})$"
+   regexp="y"
+   send_to="14"
+   sequence="101"
+   keep_evaluating="y"
+  >
+  <send>
+   local line = "%0"
+
+   -- Only capture if we're waiting for a scan to start
+   if not pendingScan or inActiveScan then
+     return
+   end
+
+   -- Skip blank lines
+   if string.match(line, "^%s*$") then
+     return
+   end
+
+   -- Skip lines with colons (they're fields)
+   if string.find(line, ":") then
+     return
+   end
+
+   -- Store as potential object name for the next dash line to validate
+   scanData.potential_object_name = line
+  </send>
+  </trigger>
+
+  <!-- Scan Start Detection: Validate first dash line and enable scan processing -->
+  <trigger
+   name="scan_start_dash_validator"
+   enabled="y"
+   group="computer"
+   match="^-+$"
+   regexp="y"
+   send_to="14"
+   sequence="10"
+   keep_evaluating="y"
+  >
+  <send>
+   local line = "%0"
+
+   -- Only validate if we're waiting for a scan to start
+   if not pendingScan or inActiveScan then
+     return
+   end
+
+   -- Check if we have a potential object name to validate
+   if not scanData.potential_object_name then
+     return
+   end
+
+   local dashCount = string.len(line)
+   local potentialName = scanData.potential_object_name
+
+   -- For starships, check if dashes match up to the parenthesis (not including what's after)
+   local nameBeforeParen = string.match(potentialName, "^(.-)%s+%(")
+   local isValid = false
+
+   if nameBeforeParen then
+     -- Starship: dash length should match name before parenthesis
+     local nameLen = string.len(nameBeforeParen)
+     if dashCount == nameLen then
+       isValid = true
+     end
+   else
+     -- Non-starship: dash length should match entire line
+     local lineLen = string.len(potentialName)
+     if dashCount == lineLen then
+       isValid = true
+     end
+   end
+
+   if isValid then
+     -- We've confirmed this is a real scan! Activate scan processing
+     inActiveScan = true
+     pendingScan = false
+     firstDashLength = dashCount
+     scanData.object_name = potentialName
+     scanData.potential_object_name = nil
+
+     -- Check if this is a special object type and set object_type
+     local specialTypes = {
+       "Video Probe",
+       "Interdictor",
+       "Blockade",
+       "Automated Laser Turret",
+       "Space Mine",
+       "Push Pulse"
+     }
+     for _, specialType in ipairs(specialTypes) do
+       if potentialName == specialType then
+         scanData.object_type = specialType
+         break
+       end
+     end
+
+     -- Now enable the scan triggers to process the scan data
+     EnableTriggerGroup("scan_triggers", true)
+     EnableTrigger("prescan_potential_name", false)
+   end
+  </send>
+  </trigger>
 
   <!-- Capture lines that look like object names (start with capital letter or "The") -->
   <trigger
@@ -341,30 +432,9 @@ ImportXML([=[
   <send>
    local line = "%0"
 
-   -- Only process if we're in a scan
-   if not scanData.in_scan then
+   -- Only process if we're in an active scan
+   if not inActiveScan then
      return
-   end
-
-   -- Check if this is an error message - if so, end scan and let it through
-   local errorPatterns = {
-     "^Nothing was detected at those coordinates%.$",
-     "^That object was not found%.$",
-     "^You'll have better results scanning in space%.$",
-     "^That is now out of scanning range%.$",
-     "^Your sensors are unable to scan those coordinates%.$",
-     "^General sector report for ",
-     "^You'll have better results scanning in space%.$",
-     "^I don't understand that%.$",
-     "^Invalid selection%.$"
-   }
-
-   for _, pattern in ipairs(errorPatterns) do
-     if string.match(line, pattern) then
-       endScan()
-       print(line)
-       return
-     end
    end
 
    -- Skip if we already have an object name
@@ -386,8 +456,8 @@ ImportXML([=[
    -- Store as potential object name (will be confirmed by dash line)
    scanData.potential_object_name = line
 
-   local useFormatting = false
-   if config and config.get_option then
+   local useFormatting = scanData.force_formatting or false
+   if not useFormatting and config and config.get_option then
      local opt = config:get_option("scan_formatting")
      if opt and opt.value then
        useFormatting = (opt.value == "yes")
@@ -415,9 +485,15 @@ ImportXML([=[
    keep_evaluating="y"
   >
   <send>
-   -- Check if we have a potential object name to confirm
+   -- Only process if we're in an active scan
+   if not inActiveScan then
+     return
+   end
+
+   local dashCount = string.len("%0")
+
+   -- Check if we have a potential object name to confirm (for multi-object scans)
    if scanData.potential_object_name then
-     local dashCount = string.len("%0")
      local potentialName = scanData.potential_object_name
 
      -- For ships, check if dashes match up to the parenthesis
@@ -439,25 +515,40 @@ ImportXML([=[
    end
 
    -- Determine if we should use formatting/filtering
-   local useFormatting = false
-   if config and config.get_option then
+   local useFormatting = scanData.force_formatting or false
+   if not useFormatting and config and config.get_option then
      local opt = config:get_option("scan_formatting")
      if opt and opt.value then
        useFormatting = (opt.value == "yes")
      end
    end
 
-   -- Check if this is the ending dash line (after Distance field)
-   if scanData.distance then
-     -- Save state before clearing
-     local shouldGag = scanFiltering or useFormatting
+   -- Check if this is the ending dash line (matches first dash line length)
+   if firstDashLength and dashCount == firstDashLength then
+     -- This is the ending dash line - scan is complete
+
+     -- Always generate and store formatted output
+     local formatted = formatScanOutput()
+
+     -- Store in scan channel buffer (but not when filtering)
+     if not scanFiltering then
+       channel("scan", formatted, {"scan"})
+     end
+
+     -- Output formatted version if useFormatting is enabled (but not when filtering)
+     if useFormatting and not scanFiltering then
+       print(formatted)
+       speech_interrupt(formatted)
+     end
+
+     --local shouldGag = scanFiltering or useFormatting
      -- End the scan
      endScan()
-     if shouldGag then
+     --if shouldGag then
        -- Gag the line
-     else
-       print("%0")
-     end
+     --else
+--       print("%0")
+     --end
    elseif scanFiltering or useFormatting then
      -- Gag all dash lines when formatting/filtering
    else
@@ -467,6 +558,8 @@ ImportXML([=[
   </trigger>
 
   <!-- Capture special object types: Video Probe, Interdictor, Blockade, etc -->
+  <!-- Note: Special objects are now primarily handled in scan_start_dash_validator -->
+  <!-- This trigger remains as a fallback for edge cases -->
   <trigger
    name="capture_special_objects"
    enabled="n"
@@ -481,12 +574,21 @@ ImportXML([=[
   <send>
    local line = "%0"
 
-   -- Store object type and name
-   scanData.object_type = "%1"
-   scanData.object_name = line
+   -- Only process if we're in an active scan
+   if not inActiveScan then
+     return
+   end
 
-   local useFormatting = false
-   if config and config.get_option then
+   -- Store object type and name (if not already set)
+   if not scanData.object_type then
+     scanData.object_type = "%1"
+   end
+   if not scanData.object_name then
+     scanData.object_name = line
+   end
+
+   local useFormatting = scanData.force_formatting or false
+   if not useFormatting and config and config.get_option then
      local opt = config:get_option("scan_formatting")
      if opt and opt.value then
        useFormatting = (opt.value == "yes")
@@ -527,8 +629,8 @@ ImportXML([=[
      infobar("scan", "Scan: " .. coords)
 
      -- Auto-interrupt TTS on coordinates with delay (only when not filtering/formatting)
-     local useFormatting = false
-     if config and config.get_option then
+     local useFormatting = scanData.force_formatting or false
+     if not useFormatting and config and config.get_option then
        local opt = config:get_option("scan_formatting")
        if opt and opt.value then
          useFormatting = (opt.value == "yes")
@@ -539,7 +641,7 @@ ImportXML([=[
      if config and config.get_option then
        local opt = config:get_option("scan_interrupt")
        if opt and opt.value then
-         scanInterruptMode = opt.value
+         scanInterruptMode = opt.value  -- "starships", "everything", or "off"
        end
      end
 
@@ -568,8 +670,8 @@ ImportXML([=[
    end -- if coordinates
 
    -- Determine if we should use formatting
-   local useFormatting = false
-   if config and config.get_option then
+   local useFormatting = scanData.force_formatting or false
+   if not useFormatting and config and config.get_option then
      local opt = config:get_option("scan_formatting")
      if opt and opt.value then
        useFormatting = (opt.value == "yes")
@@ -596,27 +698,23 @@ ImportXML([=[
        end
        scanData.field_found = true
      end
-     -- Check if we're at the last field (Distance)
+     -- Check if we're at Distance to see if field was found
      if fieldName == "Distance" then
        -- Check if the requested field was found
        if not scanData.field_found then
          print("That object does not have a " .. scan .. " field.")
-         mplay("ship/computer/nothingToScan", "other")
-         mplay("cancel", "notification")
+         mplay("ship/computer/noScan", "other")
        end
        -- Don't clear scanFiltering/scan yet - wait for the ending dash line
      end
    elseif useFormatting then
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then
-       local formatted = formatScanOutput()
-       print(formatted)
-       speech_interrupt(formatted)
        mplay("ship/computer/scan", "other")
        if fieldValue == "1" then
          mplay("ship/computer/oneUnit", "notification")
        end
-       -- Don't clear scanData yet - wait for the ending dash line
+       -- Don't output yet - wait for the ending dash line
      end
      -- All other fields: do nothing (gagged by omit_from_output)
    else
@@ -715,7 +813,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="starmap"
-   match="^(?:(\w+ Space|Midway Point|Sector \d+): .+?|a .+? starship simulator) \(.+?\)\s?(?:\[Outside (Communications Range|Local Space)\])?\s?(\[(Explored|Unexplored)\])?$"
+   match="^(?:Galactic Coordinates: \(.+?\)|(?:\w+ Space|Midway Point|Sector \d+|\w+ Sector): .+? \(.+?\)|a .+? starship simulator \(.+?\))\s?(?:\[Outside (Communications Range|Local Space)\])?\s?(\[(Explored|Unexplored)\])?$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -732,8 +830,9 @@ ImportXML([=[
 
   <trigger
    name="starmap_filter"
+   enabled="n"
    group="starmap"
-   match="^([A-Z][a-z]+?\s?[A-Za-z\s]*?): (.+)$"
+   match="^([A-Z][A-Za-z\s]+): (.+)$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -885,7 +984,7 @@ return 0
   <alias
    enabled="y"
    group="computer"
-   match="^sc([acdghilmnoprstuvwyz]|\.help)(?:\s+(.+))?$"
+   match="^sc([acdghilmnoprstvwyz]|\.help)(?:\s+(.+))?$"
    ignore_case="y"
    regexp="y"
    send_to="12"
@@ -908,10 +1007,25 @@ return 0
   </send>
   </alias>
 
+  <!-- Scan with forced formatted output -->
+  <alias
+   enabled="y"
+   group="computer"
+   match="^scu$|^scu\s+(.+)$"
+   regexp="y"
+   send_to="12"
+   sequence="50"
+  >
+  <send>
+   -- Trigger a new scan with forced formatting mode
+   shipscan("%1", nil, true)
+  </send>
+  </alias>
+
   <alias
    enabled="y"
    group="starmap"
-   match="^sm([AbdCeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
+   match="^sm([aAbcCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
    regexp="y"
    send_to="12"
    sequence="100"

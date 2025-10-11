@@ -4,6 +4,18 @@ ImportXML([=[
 
   <trigger
    enabled="y"
+   script="register_at_login"
+   group="misc"
+   match="^Username:$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>logged_in = false</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
    script="register"
    group="misc"
    match="\*{3} (?:Connected|Redirecting (?:old|new) connection to this port) \*{3}"
@@ -11,7 +23,9 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>stop()</send>
+  <send>stop()
+  EnableTrigger("url_catcher", true)
+  logged_in = true</send>
   </trigger>
 
   <trigger
@@ -70,13 +84,22 @@ ImportXML([=[
    group="misc"
    keep_evaluating="y"
    match="^\[(.+?)\]( (\((indoors|outdoors)\))? ?(\(([\d, ]+)\))? ?(\((hostile environment|aquatic environment)\))? ?(\(riding a .+?\))?)?$"
-   regexp="y"
+     regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>
    room = "%0"
    cameraFeed = nil
+
+   if config:get_option("debug_mode").value == "yes" then
+     notify("info", string.format("room_title trigger: room='%s', environment=%s, has_digsite=%s, has_store=%s",
+       tostring(room),
+       tostring(environment ~= nil),
+       tostring(environment and environment.digsite or false),
+       tostring(environment and environment.store or false)))
+   end
+
    if config:get_option("digsite_detector").value == "yes"
    and environment then
 
@@ -92,6 +115,9 @@ ImportXML([=[
    and environment then
 
      if environment.store then
+       if config:get_option("debug_mode").value == "yes" then
+         notify("info", string.format("Store detector: room='%s', store='%s', equal=%s", tostring(room), tostring(store), tostring(room == store)))
+       end
        if room ~= store then mplay("misc/store", "notification", 1) end
        store = room
      elseif store then
@@ -245,7 +271,7 @@ ImportXML([=[
   <send>
    mplay ("device/camera")
    if config:get_option("external_camera").value == "no" then
-    print_color({"%1", "camera"}, {" [Outside]", "default"})
+    print_color({" %1", "camera"}, {" [Outside]", "default"})
    end -- if
    channel("camera", "%1 [Outside]", {"camera"})
   </send>
@@ -618,12 +644,187 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="misc"
-   match="^You access a \w+ portable point unit and note you have .+?\.$"
+   match="^You access a \w+ portable point unit and note you have ([0-9,.]+) license points? and ([0-9,.]+) combat points?\.$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
-  <send>mplay("device/pointUnit")</send>
+  <send>
+   -- Parse current point values
+   local license_pts = tonumber((string.gsub("%1", ",", "")))
+   local combat_pts = tonumber((string.gsub("%2", ",", "")))
+
+   -- Calculate differences
+   local license_diff = 0
+   local combat_diff = 0
+
+   local last_license = GetVariable("last_license_points")
+   if last_license then
+    local last_lp = tonumber(last_license)
+    if last_lp then
+     license_diff = license_pts - last_lp
+    end
+   end
+
+   local last_combat = GetVariable("last_combat_points")
+   if last_combat then
+    local last_cp = tonumber(last_combat)
+    if last_cp then
+     combat_diff = combat_pts - last_cp
+    end
+   end
+
+   -- Store current values for next time
+   SetVariable("last_license_points", tostring(license_pts))
+   SetVariable("last_combat_points", tostring(combat_pts))
+
+   -- Play sound
+   mplay("device/lore/track")
+
+   -- Build output with original text
+   local output = "%0"
+
+   -- Append difference if enabled and non-zero
+   if config:get_option("show_point_calculations").value == "yes" then
+    if license_diff ~= 0 or combat_diff ~= 0 then
+     output = output .. " " .. string.format("The difference since last check is %.1f license points and %.1f combat points.", license_diff, combat_diff)
+    end
+   end
+
+   print(output)
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^Your private organization has ([0-9,.]+) inter-organization cooperation points?\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   -- Parse org points
+   local org_pts = tonumber((string.gsub("%1", ",", "")))
+   local org_diff = 0
+
+   -- Calculate difference if we have a previous value
+   local last_org = GetVariable("last_org_points")
+   if last_org then
+    local last_op = tonumber(last_org)
+    if last_op then
+     org_diff = org_pts - last_op
+    end
+   end
+
+   -- Store current value for next time
+   SetVariable("last_org_points", tostring(org_pts))
+
+   -- Build output with original text
+   local output = "%0"
+
+   -- Append difference if enabled and non-zero
+   if config:get_option("show_point_calculations").value == "yes" and org_diff ~= 0 then
+    output = output .. " " .. string.format("The difference since last check is %.1f Org Points.", org_diff)
+   end
+
+   print(output)
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^You access a \w+ portable point unit and note you had ([0-9,.]+) license points? and ([0-9,.]+) combat points?\. This information was current as of (.+?)\. No new information can be obtained until you return to communications range\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   -- Parse current point values (out-of-range)
+   local license_pts = tonumber((string.gsub("%1", ",", "")))
+   local combat_pts = tonumber((string.gsub("%2", ",", "")))
+
+   -- Calculate differences
+   local license_diff = 0
+   local combat_diff = 0
+
+   local last_license = GetVariable("last_license_points")
+   if last_license then
+    local last_lp = tonumber(last_license)
+    if last_lp then
+     license_diff = license_pts - last_lp
+    end
+   end
+
+   local last_combat = GetVariable("last_combat_points")
+   if last_combat then
+    local last_cp = tonumber(last_combat)
+    if last_cp then
+     combat_diff = combat_pts - last_cp
+    end
+   end
+
+   -- Store current values for next time
+   SetVariable("last_license_points", tostring(license_pts))
+   SetVariable("last_combat_points", tostring(combat_pts))
+
+   -- Play sound
+   mplay("device/lore/track")
+
+   -- Build output with original text
+   local output = "%0"
+
+   -- Append difference if enabled and non-zero
+   if config:get_option("show_point_calculations").value == "yes" then
+    if license_diff ~= 0 or combat_diff ~= 0 then
+     output = output .. " " .. string.format("The difference since last check is %.1f license points and %.1f combat points.", license_diff, combat_diff)
+    end
+   end
+
+   print(output)
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^Additionally, your private organization had ([0-9,.]+) inter-organization cooperation points?\. This information was current as of (.+?)\. No new information can be obtained until you return to communications range\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   -- Parse org points (out-of-range continuation)
+   local org_pts = tonumber((string.gsub("%1", ",", "")))
+   local org_diff = 0
+
+   -- Calculate difference if we have a previous value
+   local last_org = GetVariable("last_org_points")
+   if last_org then
+    local last_op = tonumber(last_org)
+    if last_op then
+     org_diff = org_pts - last_op
+    end
+   end
+
+   -- Store value for next time
+   SetVariable("last_org_points", tostring(org_pts))
+
+   -- Build output with original text
+   local output = "%0"
+
+   -- Append difference if enabled and non-zero
+   if config:get_option("show_point_calculations").value == "yes" and org_diff ~= 0 then
+    output = output .. " " .. string.format("The difference since last check is %.1f Org Points.", org_diff)
+   end
+
+   print(output)
+  </send>
   </trigger>
 
   <trigger

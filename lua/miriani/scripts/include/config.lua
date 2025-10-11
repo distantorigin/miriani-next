@@ -30,8 +30,9 @@ function Config:init(options, audio)
   vars.audio = audio or {}
   vars.group_metadata = group_metadata
 
-  -- Initialize master volume from saved variable or default to 100
-  self.master_volume = tonumber(GetVariable("master_volume")) or 100
+  -- Initialize master volume and mute (will be loaded from file if present)
+  self.master_volume = 100
+  self.master_mute = false
 
   -- Store audio offsets and category map separately if provided
   if audio then
@@ -81,10 +82,9 @@ function Config:init(options, audio)
   self.options = deep_copy(vars.options)
   self.audio = deep_copy(vars.audio)
 
-  local serial_config = GetVariable(vars.consts.pack.MUSH_VAR)
   local error = vars.consts.error.OK
 
-  -- Try loading from file first
+  -- Try loading from file
   local file_data = self:load_from_file()
 
   if file_data then
@@ -131,6 +131,14 @@ function Config:init(options, audio)
         end
       end
 
+      -- Load master volume and mute settings from old format
+      if file_data.master_volume then
+        self.master_volume = tonumber(file_data.master_volume) or 100
+      end
+      if file_data.master_mute ~= nil then
+        self.master_mute = file_data.master_mute
+      end
+
       -- Convert to new format by saving
       self:save_to_file()
     else
@@ -163,61 +171,17 @@ function Config:init(options, audio)
           end
         end
       end
-    end
 
-  elseif serial_config then
-    -- Migrating from old MUSHclient variable storage
-    do -- Encapsulate namespace
-      loadstring(serial_config)()
-    end
-
-    -- Check if mush_var was loaded and has the old format
-    if mush_var and mush_var.options then
-      -- Check if this is old format (full option structures)
-      local is_old_format = false
-      for k, v in pairs(mush_var.options) do
-        if type(v) == "table" and v.descr and v.value ~= nil then
-          is_old_format = true
-          break
-        end
+      -- Load master volume and mute settings
+      if file_data.master_volume then
+        self.master_volume = tonumber(file_data.master_volume) or 100
       end
-
-      if is_old_format then
-        -- Apply user values from old format to defaults
-        for key, saved_option in pairs(mush_var.options) do
-          if self.options[key] and saved_option.value ~= nil then
-            self.options[key].value = saved_option.value
-          end
-        end
-
-        if mush_var.audio then
-          for group, attrs in pairs(mush_var.audio) do
-            if self.audio[group] and type(attrs) == "table" then
-              for attr, value in pairs(attrs) do
-                if self.audio[group][attr] ~= nil then
-                  self.audio[group][attr] = value
-                end
-              end
-            end
-          end
-        end
-      end
-
-      -- Migrate to file and delete variable
-      local migrate_result = self:save_to_file()
-      if migrate_result == self.consts.error.OK then
-        SetVariable("toastush_show_migration_msg", "1")
-        DeleteVariable(self.consts.pack.MUSH_VAR)
-      else
-        SetVariable("toastush_migration_failed", "1")
+      if file_data.master_mute ~= nil then
+        self.master_mute = file_data.master_mute
       end
     end
 
-  else
-    -- New installation - no saved config
-    SetVariable("toastush_show_init_msg", "1")
-    -- Don't save on initial setup - let user make changes first
-  end -- if
+  end -- if file_data
 
   return error
 end -- _init
@@ -283,7 +247,6 @@ function Config:set_master_volume(val)
   end
 
   self.master_volume = val
-  SetVariable("master_volume", tostring(val))
   return self.consts.error.OK
 end -- set_master_volume
 
@@ -357,6 +320,8 @@ function Config:save_to_file()
   toastush_config = {
     options = user_options,
     audio = user_audio,
+    master_volume = self.master_volume ~= 100 and self.master_volume or nil,
+    master_mute = self.master_mute or nil,
     -- Note: we don't save consts anymore as they should come from code
   }
 
@@ -420,37 +385,6 @@ function Config:save()
   -- Only save to file now
   return self:save_to_file()
 end -- save
-
-function Config:save_to_variable_for_testing()
-  -- For testing migration: saves current config to variable AND deletes the file
-  mush_var = {
-    options = self.options,
-    audio = self.audio,
-    consts = self.consts,
-  }
-
-  local serialize = require("serialize")
-  local serial_config, error = serialize.save("mush_var")
-
-  if type(serial_config) ~= 'string' then
-    Note("Failed to serialize config for testing")
-    return
-  end
-
-  SetVariable(self.consts.pack.MUSH_VAR, serial_config)
-
-  -- Delete the config file so migration will run on reload
-  local path = require("pl.path")
-  local mushclient_dir = GetInfo(59)
-  local settings_file = path.join(mushclient_dir, "worlds", "settings", "toastush.conf")
-
-  if path.isfile(settings_file) then
-    os.remove(settings_file)
-    Note("Config saved to MUSHclient state variable and file deleted. Reload to test migration.")
-  else
-    Note("Config saved to MUSHclient state variable. Reload to test migration.")
-  end
-end -- save_to_variable_for_testing
 
 function Config:get(var)
 
@@ -531,26 +465,13 @@ function Config:option_type(key)
 end -- option_type
 
 function Config:is_mute()
-
-  if GetVariable("master_mute") ~= "1" then
-  return false
-  else
-    return true
-  end -- if
+  return self.master_mute
 end -- is_mute
 
 function Config:toggle_mute()
-  local res
-  if GetVariable("master_mute") == "1" then
-    SetVariable("master_mute", 0)
-    res = true
-  else
-    SetVariable("master_mute", 1)
-    flag = false
-  end -- if
-
-  return res
-  end -- toggle_mute
+  self.master_mute = not self.master_mute
+  return not self.master_mute  -- Return true if now unmuted, false if now muted
+end -- toggle_mute
 
 function Config:get_version()
   return self.consts.pack.VERSION or self.consts.error.UNKNOWN

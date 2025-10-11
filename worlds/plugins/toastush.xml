@@ -167,9 +167,10 @@ show_paralyzed(roundtime, stuntime)
   </trigger>
 
   <trigger
-   enabled="y"
+  name="url_catcher"
+   enabled="n"
    script="OnURL"
-   name="http"
+   
    match="((?:https?|ftp|telnet|rsync|mailto|gopher)://[[:graph:]]+[^&quot;])"
    regexp="y"
    send_to="12"
@@ -327,6 +328,26 @@ end
   <send>config_secondary_menu("%1")</send>
   </alias>
 
+  <alias
+   enabled="y"
+   script="config_main_menu"
+   match="^conf(?:ig)?$"
+   ignore_case="y"
+   regexp="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   enabled="y"
+   match="^conf(?:ig)? (\w+)$"
+   ignore_case="y"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>config_secondary_menu("%1")</send>
+  </alias>
 
   <alias
    enabled="y"
@@ -402,18 +423,13 @@ end
   </send>
   </alias>
 
-
-
-
-
-
   <alias
-   match="config_save_to_var"
    enabled="y"
-   script="config_save_to_var"
+   match="^sim (.+)$"
+   regexp="y"
    send_to="12"
-   sequence="100"
   >
+  <send>Simulate("%1\\n")</send>
   </alias>
 
 </aliases>
@@ -435,6 +451,7 @@ reset_heartbeat = 60
 ping_after_heartbeat = 30
 roundtime, stuntime = 0, 0
 stunned = false
+logged_in = false
 
 
 
@@ -442,6 +459,7 @@ stunned = false
 ---------------------
 -- Macros
 Accelerator('F1', 'toastush:config')
+Accelerator('F2', 'toastush:changes')
 AcceleratorTo ("F10", 'forward_cycle_audio_groups()', script) -- cycle forward sound groups.
 AcceleratorTo ("SHIFT+F10", 'previous_cycle_audio_groups()', script) -- cycle previous sound groups.
 
@@ -551,34 +569,15 @@ function OnPluginInstall()
     toggle_minimal_groups(0)
   end -- if
 
-  -- Check for config migration messages (delayed so users see them)
-  if GetVariable("toastush_show_migration_msg") == "1" then
-    DoAfterSpecial(2, [[Note("Settings migrated from MUSHclient state to worlds/settings/toastush.conf")]], sendto.script)
-    DeleteVariable("toastush_show_migration_msg")
-  end
-
-  if GetVariable("toastush_migration_failed") == "1" then
-    DoAfterSpecial(2, [[Note("Warning: Failed to migrate settings to file. Settings remain in MUSHclient state.")]], sendto.script)
-    DeleteVariable("toastush_migration_failed")
-  end
-
-  if GetVariable("toastush_show_init_msg") == "1" then
-    DoAfterSpecial(2, [[Note("New configuration initialized. Settings saved to worlds/settings/toastush.conf")]], sendto.script)
-    DeleteVariable("toastush_show_init_msg")
-  end
-
 end -- OnPluginInstall
 
 function OnPluginSaveState()
-  -- Only save if we're not in test mode (i.e., the variable doesn't exist)
-  if not GetVariable("toastush_settings") then
-    config:save()
-  end
+  config:save()
 end -- OnPluginSave
 
 function OnPluginConnect()
   --register()
-  mplay("music/theme", "other", 1)
+--  mplay("music/theme", "other", 1)
 end -- OnPluginConnect
 
 function OnPluginDisconnect()
@@ -1006,10 +1005,6 @@ function config_main_menu()
   config_menu_module.show_main()
 end -- config_main_menu
 
-function config_save_to_var()
-  config:save_to_variable_for_testing()
-end -- config_save_to_var
-
 link = {}
 infobar_t = {}
 
@@ -1179,6 +1174,11 @@ function register()
   mplay("misc/negotiate", "notification")
 end -- register
 
+function register_at_login()
+  Send("REGISTER_SOUNDPACK "..registry.." | "..VERSION.."")
+  mplay("music/theme", "other")
+end -- register_at_login
+
 function GetAudioVolume(group_name)
   -- Function for other plugins to call directly
   if group_name and config.audio[group_name] then
@@ -1206,6 +1206,19 @@ function set_environment(name, line, wc)
       environment[string.lower(value)] = true
     end ) -- foreach
   end -- for
+
+  -- Debug output is enabled
+  if config:get_option("debug_mode").value == "yes" then
+    local flags = {}
+    for k, v in pairs(environment) do
+      if k ~= "name" and k ~= "line" and v == true then
+        table.insert(flags, k)
+      end
+    end
+    if #flags > 0 then
+      notify("info", "Environment [" .. name .. "]: " .. table.concat(flags, ", "))
+    end
+  end
 
   -- ambiance
   ambiance(wc[#wc])

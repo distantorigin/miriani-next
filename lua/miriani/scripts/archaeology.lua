@@ -39,8 +39,12 @@ ImportXML([=[
    local output_message = "%1"
 
    -- Check if we should calculate direction
-   if config:get_option("archaeology_calculate_direction").value == "yes"
-      and player_x and player_y then
+   if config:get_option("archaeology_calculate_direction").value == "yes" and current_coordinates and current_coordinates['x'] and current_coordinates['y'] then
+        local player_x = current_coordinates['x']
+        local player_y = current_coordinates['y']
+        if current_coordinates['z'] then
+          local player_z = current_coordinates['z']
+        end -- current_coordinates['z']
 
      -- Try to extract coordinates from message like "(X, Y, Z)" or "(X, Y)"
      local coords_pattern = "%(([%-%d]+),%s*([%-%d]+)%s*,?%s*([%-%d]*)%)"
@@ -262,31 +266,6 @@ mplay("activity/archaeology/nothing")
    end -- if
   </send>
   </trigger>
-
-  <trigger
-   enabled="y"
-   group="archaeology"
-   match="^(.+) \((.+)\)$"
-   regexp="y"
-   send_to="12"
-   sequence="99"
-  >
-  <send>
-   -- Try to extract coordinates from room description
-   -- Pattern: "Room Name (X, Y, Z)" or "Room Name (X, Y)"
-   local room_info = "%2"
-
-   -- Look for coordinate pattern
-   local x, y, z = room_info:match("^([%-%d]+),%s*([%-%d]+)%s*,?%s*([%-%d]*)$")
-
-   if x and y then
-     player_x = tonumber(x)
-     player_y = tonumber(y)
-     player_z = z ~= "" and tonumber(z) or nil
-   end
-  </send>
-  </trigger>
-
 </triggers>
 ]=])
 
@@ -301,15 +280,11 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   if player_x and player_y then
-     if player_z then
-       print(string.format("Current coordinates: (%d, %d, %d)", player_x, player_y, player_z))
-     else
-       print(string.format("Current coordinates: (%d, %d)", player_x, player_y))
-     end -- if player_z
-   else
-     print("No coordinates detected yet. Visit a room with coordinates in the title.")
-   end -- if player_x and player_y
+   if current_coordinates then
+       print(string.format("Current coordinates: (%d, %d, %d)", current_coordinates['x'], current_coordinates['y'], current_coordinates['z']))
+        else
+     print("No coordinates detected yet. Visit a room with coordinates, such as a digsite.")
+   end -- if current_coordinates
   </send>
   </alias>
 </aliases>

@@ -3,7 +3,7 @@
 -- Similar to VIP MUD's contribution system
 
 -- Author: Claude Code
--- Last updated 2025-10-08
+-- Reviewed by: Distantorigin
 
 ---------------------------------------------
 
@@ -110,12 +110,6 @@ function show_contributions(name, line, wildcards, styles)
   Note("Use CONTRIBS CLEAR to reset.")
 end
 
--- Initialize contributions buffer (enabled by default)
-if config:get_option("contributions_buffer") then
-  config:get_option("contributions_buffer").value = "yes"
-else
-  config:set_option("contributions_buffer", "yes", "buffer")
-end
 
 -- Import triggers and alias
 ImportXML([=[
@@ -149,7 +143,16 @@ ImportXML([=[
   <alias
    enabled="y"
    script="show_contributions"
-   match="^contribs?\s*(.*)$"
+   match="^contribs$"
+   regexp="y"
+   ignore_case="y"
+   send_to="12"
+  >
+  </alias>
+  <alias
+   enabled="y"
+   script="show_contributions"
+   match="^contribs (.+)$"
    regexp="y"
    ignore_case="y"
    send_to="12"

@@ -72,9 +72,22 @@ end
 function config_menu.show_group(group_name)
   -- Special handling for audio groups submenu - it has no regular options
   local secondary_menu = {}
-  local group_title = config:get_group_title(group_name)
 
-  if group_name == "audio groups" then
+  -- If group_name is partial, try to find the actual group key
+  local actual_group_key = group_name
+  if group_name ~= "audio groups" then
+    -- Try to find a matching group by checking if any option's group contains this string
+    for key, option in pairs(config.options or {}) do
+      if string.find(option.group, group_name) then
+        actual_group_key = option.group
+        break
+      end
+    end
+  end
+
+  local group_title = config:get_group_title(actual_group_key)
+
+  if actual_group_key == "audio groups" then
     -- Get all discovered sound groups
     local groups = get_all_sound_groups()
 
@@ -95,7 +108,7 @@ function config_menu.show_group(group_name)
     end
   else
     -- Normal menu rendering for other groups
-    secondary_menu = config:render_menu_list(group_name)
+    secondary_menu = config:render_menu_list(actual_group_key)
 
     if type(secondary_menu) ~= 'table' then
       notify("info", string.format("Unable to locate menu group '%s'.", group_name))
@@ -136,7 +149,7 @@ function config_menu.show_group(group_name)
           -- Look up the actual option key from our mapping
           local option_key = key_map[result.key]
           if option_key then
-            config_menu.edit_option(option_key, group_name)
+            config_menu.edit_option(option_key, actual_group_key)
           end
         end
       else

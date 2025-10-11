@@ -234,7 +234,9 @@ ImportXML([=[
      end
 
      -- Play action/outcome sound if it exists
-     mplay("combat/"..action.."/"..outcome, "melee")
+     if action ~= "unknown" then
+       mplay("combat/"..action.."/"..outcome, "melee")
+     end
    end -- if
 
   </send>
@@ -287,8 +289,6 @@ ImportXML([=[
    match="^#\$#soundpack fc \| (.+?)$"
    regexp="y"
    send_to="12"
-   omit_from_output="y"
-   omit_from_log="y"
    keep_evaluating="y"
    sequence="10"
   >
@@ -296,6 +296,20 @@ ImportXML([=[
    -- Store flight control scanner name for the upcoming message
    SetVariable("fc_scanner_name", "%1")
   </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="hooks"
+   script="handle_coordinates"
+   match="^#\$#soundpack coordinates \| (\d+) \| (\d+) \| (\d+)$"
+   regexp="y"
+   send_to="12"
+   omit_from_output="y"
+   omit_from_log="y"
+   keep_evaluating="y"
+   sequence="100"
+  >
   </trigger>
 
 </triggers>
@@ -312,5 +326,26 @@ function playsocial(name, line, wildcards)
     actor = "You",
     timestamp = os.time()
   }
+end
+
+function handle_coordinates(name, line, wildcards)
+  local x = tonumber(wildcards[1])
+  local y = tonumber(wildcards[2])
+  local z = tonumber(wildcards[3])
+
+  -- Store coordinates globally for other scripts to access
+  current_coordinates = {
+    x = x,
+    y = y,
+    z = z
+  }
+
+  -- Debug output if enabled
+  if config:get_option("debug_mode").value == "yes" then
+    notify("info", string.format("Coordinates received: X=%d, Y=%d, Z=%d", x, y, z))
+  end
+
+  -- Channel to hooks buffer if enabled
+  channel("hooks", string.format("Coordinates: %d, %d, %d", x, y, z), {"hooks"})
 end
 

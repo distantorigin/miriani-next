@@ -14,7 +14,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? cries softly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? cries softly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -25,7 +25,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? starts crying loudly"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? starts crying loudly"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -36,7 +36,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? coos"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? coos"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -47,7 +47,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? babbles"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? babbles"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -58,7 +58,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? bubbles\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? bubbles\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -69,7 +69,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? begin.* to feed .* a sucking sound as"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? begin.* to feed .* a sucking sound as"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -102,7 +102,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? starts fussing\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? starts fussing\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -113,24 +113,18 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^(.+?) groans"
+   match="^([a-zA-Z][a-zA-Z0-9 '-]*?) groans"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>
-   local name = "%1"
-   -- Only play if it's not a channel message (contains [) or number (#)
-   if not name:find("[%[#]") then
-     mplay("misc/baby/babygroan"..math.random(1,3))
-   end -- if
-  </send>
+  <send>mplay("misc/baby/babygroan"..math.random(1,3))</send>
   </trigger>
 
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? giggles softly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? giggles softly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -141,7 +135,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? giggles loudly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? giggles loudly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -152,7 +146,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? laughs loudly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? laughs loudly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -163,7 +157,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? grunts loudly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? grunts loudly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -174,7 +168,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? flails.+?limbs\.\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? flails.+?limbs\.\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -185,7 +179,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? hiccups\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? hiccups\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -196,7 +190,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? kicks.+?feet and waves.+?arms\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? kicks.+?feet and waves.+?arms\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -207,7 +201,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? kicks one foot\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? kicks one foot\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -218,7 +212,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? nibbles on"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? nibbles on"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -229,7 +223,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? rolls over\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? rolls over\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -240,7 +234,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? screams loudly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? screams loudly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -251,7 +245,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? shrieks loudly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? shrieks loudly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -262,7 +256,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? sneezes\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? sneezes\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -273,7 +267,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? sucks.+?thumb\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? sucks.+?thumb\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -284,7 +278,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? spits\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? spits\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -295,7 +289,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? spits up\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? spits up\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -306,7 +300,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? sputters\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? sputters\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -317,7 +311,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? squeaks\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? squeaks\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -328,7 +322,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? squeals\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? squeals\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -339,7 +333,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? starts sucking on.+?toes\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? starts sucking on.+?toes\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -350,24 +344,18 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^(.+?) toddles"
+   match="^([a-zA-Z][a-zA-Z0-9 '-]*?) toddles"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>
-   local name = "%1"
-   -- Only play if it's not a channel message (contains [) or number (#)
-   if not name:find("[%[#]") then
-     mplay("misc/baby/babytoddles", "babies")
-   end -- if
-  </send>
+  <send>mplay("misc/baby/babytoddles", "babies")</send>
   </trigger>
 
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? wails loudly\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? wails loudly\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -378,7 +366,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? waves.+?fist around\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? waves.+?fist around\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -389,7 +377,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? waves.+?hand through the air\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? waves.+?hand through the air\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -400,7 +388,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? whimpers\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? whimpers\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -411,7 +399,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+? whines\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-]*? whines\.$"
    regexp="y"
    send_to="12"
    sequence="100"

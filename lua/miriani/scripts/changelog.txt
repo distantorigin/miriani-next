@@ -8,6 +8,7 @@ Version 4.0.beta.6:
 	- Computer: -5% from default volume
 	- Notifications: -15% from default volume
 	- Combat: -5% from default volume
+* New: Point tracking for license, combat, and organization points; enable under conf gen.
 * New: Tracking system for starship contributions:
 	- Tracks contributions received from players with name, amount, and frequency
 	- CONTRIBS command displays sorted list of contributors (highest to lowest)
@@ -19,6 +20,8 @@ Version 4.0.beta.6:
 * New: Shift+escape now resets the info bar in addition to its existing functionality.
 * New: Overhauled the configuration system to write to worlds/settings/toastush.conf rather than saving the configuration as a variable in MUSHclient's state. This will allow you to easily transfer configurations between clients or backup a known good config for later.
 * New: Added optional, experimental formatting of scan output, which allows you to filter scans to be shown on a single line, similarly to the VIP Mud soundpack. Off by default, you can enable this under the ship category in config.
+* New: Replaced the scu alias. Now, this will force a single-line scan on demand if you choose to keep the option disabled.
+* New: Added a buffer for recent scans. Using a scan filter alias will not add to this buffer, only initiating a scan with the sc/scan command.
 * New: Added 'sca' alias for atmospheric composition and 'scn' for natural resources on planets.
 * New: Shift+escape resets scan state.
 * New: Upgrade binary to MUSHclient 5.07-pre, based off of the tip of the current MUSHclient release tree (last updated in Aug 2025). Updater users will not receive this as part of the update process, and are encouraged but do not need to download the new executable from https://github.com/nickgammon/mushclient/releases, under the latest_commit (release) section.
@@ -32,7 +35,11 @@ Version 4.0.beta.6:
 * New: Add a sound for attempting to use a drive while it's still recharging.
 * New: Add four new FTL and jumpgate sounds.
 * New: Added wind sound for atmospheric instability.
-
+* New: Migrate master volume and mute to the config file.
+* New: Press F2 to open the changelog.
+* Changed: Renamed the toastush:config command to just conf, or config. (toastush:config still works for now, but will be removed later.)
+* Changed: Remove variable-based config migration code.
+* Changed: Master volume now initializes at 60% instead of 100.
 * Changed: No longer play a sound when in the middle of a wormhole. This was previously ship/move/flash.ogg.
 * Changed: Enable a wider swath of history buffers by default.
 * Changed: Standardized the grammar in the configuration menu labels.
@@ -40,8 +47,12 @@ Version 4.0.beta.6:
 * Changed: Lower asteroid rover ramp sounds by 25%.
 * Changed: Anomaly detection sound reverted to older version from Miriani 7.
 * Changed: The sound for being out of range has been reverted to the VIP Mud sound.
-* Changed: Interrupt on scan coordinates now only works for starships.
+* Changed: Interrupt on scan coordinates now provides three options: everything, only for starships, or off. We default to starships.
 * Changed: Remove "Launch complete." from spam reduction mode and replace it with the background sound and a random beep.
+* Fixed: Contribs no longer greedily eats any other contribution commands.
+* Fixed: Require baby names to be alphanumeric, as to prevent communicators from triggering baby sounds. (This still won't stop it from triggering for players, though. Don't be that guy. Or do. No judgment.)
+* Fixed: No longer try to play the weapon action sound if the outcome was unknown.
+* Fixed: Starmap filters work once again.
 * Fixed: Info bar now resets in more places.
 * Fixed: Ship locked on has been reverted to the classic sound. I accidentally wiped it out when merging classic in with main. Hurray regressions!
 * Fixed: Set the minimum number of shots to 7 instead of 8 for the bardenium counter, which should, in theory, fix the double shot remaining on the ravager.

@@ -96,6 +96,7 @@ function show_contributions(name, line, wildcards, styles)
   Note(string.rep("-", 60))
 
   -- Display each contributor
+  local grand_total = 0
   for _, contrib in ipairs(sorted) do
     local formatted_total = format_credits(contrib.total)
     local times_text = contrib.times == 1 and "time" or "times"
@@ -104,8 +105,11 @@ function show_contributions(name, line, wildcards, styles)
       formatted_total,
       contrib.times,
       times_text))
+    grand_total = add_credits(grand_total, contrib.total)
   end
 
+  Note(string.rep("-", 60))
+  Note(string.format("Total contributions: %s credits", format_credits(grand_total)))
   Note(string.rep("-", 60))
   Note("Use CONTRIBS CLEAR to reset.")
 end

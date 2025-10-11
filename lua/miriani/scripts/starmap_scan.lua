@@ -984,7 +984,7 @@ return 0
   <alias
    enabled="y"
    group="computer"
-   match="^sc([acdghilmnoprstvwyz]|\.help)(?:\s+(.+))?$"
+   match="^sc([afcdghilmnoprstvwyz]|\.help)(?:\s+(.+))?$"
    ignore_case="y"
    regexp="y"
    send_to="12"

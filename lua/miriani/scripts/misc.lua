@@ -4,14 +4,43 @@ ImportXML([=[
 
   <trigger
    enabled="y"
-   script="register_at_login"
    group="misc"
    match="^Username:$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>logged_in = false</send>
+  <send>Send("REGISTER_SOUNDPACK "..registry.." | "..VERSION.."")
+  mplay("music/theme", "other")
+-- Auto login functionality
+if config:get_option("auto_login").value == "yes" then
+  local username = config:get_option("auto_login_username").value
+  local password = config:get_option("auto_login_password").value
+  local menu_number = 1
+
+  if username and username ~= "" then
+    if password and password ~= "" then
+      -- Send connect command with username, password, and menu_hnumber
+      Send("connect " .. username .. " " .. password .. " " .. menu_number .. "")
+
+      if config:get_option("debug_mode").value == "yes" then
+        notify("info", "Auto login: Sent credentials for " .. username)
+      end
+    else
+      -- Just send the username if no password is set
+      Send(username)
+
+      if config:get_option("debug_mode").value == "yes" then
+        notify("info", "Auto login: Sent username " .. username .. " (no password configured)")
+      end
+    end
+  else
+    if config:get_option("debug_mode").value == "yes" then
+      notify("info", "Auto login enabled but no username configured")
+    end
+  end
+end
+  </send>
   </trigger>
 
   <trigger

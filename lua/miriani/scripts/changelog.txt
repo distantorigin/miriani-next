@@ -4,6 +4,7 @@ Version 4.0.beta.6:
 	- Master: Influences all volumes. Other volume groups are multiplied by this value.
 	- Sounds: All sound effects throughout.
 	- Environment: Ambiences, loops, potentially other things in the future.
+* New: Added automatic login feature with dedicated configuration category. Configure username and password under conf AUTO LOGIN, then enable auto login to automatically connect when you see the "Username:" prompt. Automatically selects character 1 from the menu. MUSHclient already has auto login, but there was no way to ensure the soundpack would be registered before it fired, so here we are.
 * New: Added sound offsets for various categories. Currently these are hardcoded, although they could become configurable later:
 	- Computer: -5% from default volume
 	- Notifications: -15% from default volume

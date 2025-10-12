@@ -1174,11 +1174,6 @@ function register()
   mplay("misc/negotiate", "notification")
 end -- register
 
-function register_at_login()
-  Send("REGISTER_SOUNDPACK "..registry.." | "..VERSION.."")
-  mplay("music/theme", "other")
-end -- register_at_login
-
 function GetAudioVolume(group_name)
   -- Function for other plugins to call directly
   if group_name and config.audio[group_name] then

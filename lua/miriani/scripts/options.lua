@@ -1,5 +1,8 @@
 
 local options = {
+  auto_login = {descr="Enable automatic login when connecting to the game.", value="no", group="auto_login", type="bool"},
+  auto_login_username = {descr="Username for auto login (use underscores for spaces).", value="", group="auto_login", type="string"},
+  auto_login_password = {descr="Password for auto login.", value="", group="auto_login", type="password"},
   automatic_changelog = {descr="Automatically open changelog after updates.", value="no", group="general", type="bool"},
   automatic_updates = {descr="Automatically apply updates quietly at login.", value="no", group="general", type="bool"},
   beep_on_keepalive = {descr="Play beep sound on keep-alive messages.", value="no", group="general", type="bool"},
@@ -116,16 +119,17 @@ scan_buffer = {descr="Starship Scans", value="yes", group="buffers", type="bool"
 -- Groups not listed here will appear at the bottom in alphabetical order
 local group_metadata = {
   {key = "general", title = "General Settings", order = 1},
-  {key = "ship", title = "Starship Options", order = 2},
-  {key = "room", title = "Room and Environment", order = 3},
-  {key = "archaeology", title = "Archaeology Helper", order = 4},
-  {key = "screen reader", title = "Screen Reader Integration", order = 5},
-  {key = "gags", title = "Spam and Gag Filters", order = 6},
-  {key = "scan_formats", title = "Configure Scan Templates", order = 7},
-  {key = "buffers", title = "Output Buffers", order = 8},
-  {key = "colors", title = "Color Customization", order = 9},
-  {key = "audio groups", title = "Toggle Sound Categories", order = 10},
-  {key = "developer", title = "Developer Options", order = 11},
+  {key = "auto_login", title = "Auto Login", order = 2},
+  {key = "ship", title = "Starship Options", order = 3},
+  {key = "room", title = "Room and Environment", order = 4},
+  {key = "archaeology", title = "Archaeology Helper", order = 5},
+  {key = "screen reader", title = "Screen Reader Integration", order = 6},
+  {key = "gags", title = "Spam and Gag Filters", order = 7},
+  {key = "scan_formats", title = "Configure Scan Templates", order = 8},
+  {key = "buffers", title = "Output Buffers", order = 9},
+  {key = "colors", title = "Color Customization", order = 10},
+  {key = "audio groups", title = "Toggle Sound Categories", order = 11},
+  {key = "developer", title = "Developer Options", order = 12},
 } -- group_metadata
 
 return {

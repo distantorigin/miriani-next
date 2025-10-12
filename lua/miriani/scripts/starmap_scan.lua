@@ -436,7 +436,6 @@ ImportXML([=[
    if not inActiveScan then
      return
    end
-
    local dashCount = string.len("%0")
 
    -- Check if we have a potential object name to confirm (for multi-object scans)
@@ -480,15 +479,20 @@ mplay("ship/computer/scan", "other")
      -- Store in scan channel buffer (but not when filtering)
      if not scanFiltering then
        channel("scan", formatted, {"scan"})
-     elseif scanFiltering and not scanData.field_found then
-      print("That object does not have a field for " .. scan .. ".")
-               mplay("ship/computer/noScan", "other")
      end
 
      -- Output formatted version if useFormatting is enabled (but not when filtering)
      if useFormatting and not scanFiltering then
        print(formatted)
        speech_interrupt(formatted)
+     end
+
+     -- Check if we were filtering and the field wasn't found
+     if scanFiltering and not scanData.field_found then
+       local message = "I couldn't find a field named '" .. scan .. "'."
+       print(message)
+       speech_interrupt(message)
+       mplay("ship/computer/noScan", "notification")
      end
 
      --local shouldGag = scanFiltering or useFormatting
@@ -601,7 +605,7 @@ mplay("ship/computer/scan", "other")
          end
        end
        scanData.field_found = true
-     end
+      end
           elseif useFormatting then
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then
@@ -609,6 +613,7 @@ mplay("ship/computer/scan", "other")
          mplay("ship/computer/oneUnit", "notification")
        end
      end
+     
      -- All other fields: do nothing (gagged by omit_from_output)
    else
      -- Normal mode: show all fields

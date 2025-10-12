@@ -183,6 +183,18 @@ function Config:init(options, audio)
 
   end -- if file_data
 
+  -- Also load auto_login settings from separate file
+  local auto_login_data = self:load_auto_login_from_file()
+
+  if auto_login_data and auto_login_data.options then
+    -- Apply auto_login settings to current config
+    for key, value in pairs(auto_login_data.options) do
+      if self.options[key] then
+        self.options[key].value = value
+      end
+    end
+  end
+
   return error
 end -- _init
 
@@ -290,11 +302,15 @@ function Config:save_to_file()
   local default_options = vars.options or {}
 
   -- Compare current options with defaults
+  -- Exclude auto_login options as they're saved separately
   for key, option in pairs(self.options) do
     local default = default_options[key]
-    if default and option.value ~= default.value then
-      -- Only save the value, not the entire option structure
-      user_options[key] = option.value
+    -- Skip auto_login options - they go in separate file
+    if not key:match("^auto_login") then
+      if default and option.value ~= default.value then
+        -- Only save the value, not the entire option structure
+        user_options[key] = option.value
+      end
     end
   end
 
@@ -343,6 +359,61 @@ function Config:save_to_file()
   return self.consts.error.OK
 end -- save_to_file
 
+function Config:save_auto_login_to_file()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
+  local settings_dir = path.join(mushclient_dir, "worlds", "settings")
+  local settings_file = path.join(settings_dir, "auto_login.conf")
+
+  -- Ensure directory exists
+  local dir_ok = utils.readdir(settings_dir)
+  if not dir_ok then
+    local worlds_dir = path.join(mushclient_dir, "worlds")
+    local ok = utils.shellexecute("cmd", "/C mkdir settings", worlds_dir, "open", 0)
+    if not ok then
+      return self.consts.error.NO_SAVE
+    end
+  end
+
+  -- Get default options from vars
+  local default_options = vars.options or {}
+
+  -- Only save auto_login options that differ from defaults
+  local auto_login_options = {}
+  for key, option in pairs(self.options) do
+    -- Only process auto_login options
+    if key:match("^auto_login") then
+      local default = default_options[key]
+      if default and option.value ~= default.value then
+        -- Only save the value, not the entire option structure
+        auto_login_options[key] = option.value
+      end
+    end
+  end
+
+  -- Create global variable for serialization
+  auto_login_config = {
+    options = auto_login_options,
+  }
+
+  local serialize = require("serialize")
+  local serial_config, error = serialize.save("auto_login_config")
+
+  if type(serial_config) ~= 'string' then
+    return error or self.consts.error.UNKNOWN
+  end
+
+  local file, err = io.open(settings_file, "w")
+  if not file then
+    return self.consts.error.NO_SAVE
+  end
+
+  file:write(serial_config)
+  file:close()
+
+  return self.consts.error.OK
+end -- save_auto_login_to_file
+
 function Config:load_from_file()
   local path = require("pl.path")
   local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
@@ -381,9 +452,54 @@ function Config:load_from_file()
   return nil
 end -- load_from_file
 
+function Config:load_auto_login_from_file()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
+  local settings_file = path.join(mushclient_dir, "worlds", "settings", "auto_login.conf")
+
+  if not path.isfile(settings_file) then
+    return nil -- File doesn't exist, not an error
+  end
+
+  local file, err = io.open(settings_file, "r")
+  if not file then
+    return nil
+  end
+
+  local content = file:read("*all")
+  file:close()
+
+  if not content or content == "" then
+    return nil
+  end
+
+  -- Load the serialized data
+  local load_func, load_err = loadstring(content)
+  if not load_func then
+    return nil
+  end
+
+  load_func()
+
+  if auto_login_config then
+    -- Return the auto_login configuration
+    return auto_login_config
+  end
+
+  return nil
+end -- load_auto_login_from_file
+
 function Config:save()
-  -- Only save to file now
-  return self:save_to_file()
+  -- Save both main config and auto_login config
+  local result1 = self:save_to_file()
+  local result2 = self:save_auto_login_to_file()
+
+  -- Return OK if both succeeded, otherwise return first error
+  if result1 == self.consts.error.OK and result2 == self.consts.error.OK then
+    return self.consts.error.OK
+  end
+
+  return result1 ~= self.consts.error.OK and result1 or result2
 end -- save
 
 function Config:get(var)
@@ -422,12 +538,19 @@ function Config:render_menu_list(option)
         -- Display enum values in brackets, capitalize first letter
         local display_value = tostring(v.value):gsub("^%l", string.upper)
         value = "[" .. display_value .. "]"
+      elseif v.type == "password" then
+        -- Don't show password values in menu
+        if v.value and v.value ~= "" then
+          value = "[Set]"
+        else
+          value = "[Not set]"
+        end
       else
         value = tostring(v.value)
       end -- if
 
-      -- For boolean and enum types, show status at end; otherwise show "Currently: value"
-      if v.type == "bool" or v.type == "boolean" or v.type == "enum" then
+      -- For boolean, enum, and password types, show status at end; otherwise show "Currently: value"
+      if v.type == "bool" or v.type == "boolean" or v.type == "enum" or v.type == "password" then
         menu[k] = v.descr .. " " .. value
       else
         menu[k] = v.descr .. " Currently: " .. value

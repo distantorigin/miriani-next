@@ -313,6 +313,7 @@ ImportXML([=[
    group="ship"
    match="^([\(\)\[\]a-zA-Z0-9'&quot; -]{1,99})$"
    regexp="y"
+   omit_from_output="y"
    send_to="14"
    sequence="101"
    keep_evaluating="y"
@@ -330,13 +331,22 @@ ImportXML([=[
      return
    end
 
-   -- Skip lines with colons (they're fields)
-   if string.find(line, ":") then
-     return
+     -- Store as potential object name for the next dash line to validate
+   scanData.potential_object_name = line
+
+   local useFormatting = scanData.force_formatting or false
+   if not useFormatting and config and config.get_option then
+     local opt = config:get_option("scan_formatting")
+     if opt and opt.value then
+       useFormatting = (opt.value == "yes")
+     end
    end
 
-   -- Store as potential object name for the next dash line to validate
-   scanData.potential_object_name = line
+   if scanFiltering or useFormatting then
+     -- Gag the line (we'll show it in formatted output if needed)
+   else
+     print(line)
+   end
   </send>
   </trigger>
 
@@ -412,61 +422,6 @@ ImportXML([=[
      -- Now enable the scan triggers to process the scan data
      EnableTriggerGroup("scan_triggers", true)
      EnableTrigger("prescan_potential_name", false)
-   end
-  </send>
-  </trigger>
-
-  <!-- Capture lines that look like object names (start with capital letter or "The") -->
-  <trigger
-   name="capture_potential_object_name"
-   enabled="n"
-   group="scan_triggers"
-   match="^(?:The |[A-Z])[A-Za-z0-9 ]+.*$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-   sequence="95"
-   keep_evaluating="y"
-  >
-  <send>
-   local line = "%0"
-
-   -- Only process if we're in an active scan
-   if not inActiveScan then
-     return
-   end
-
-   -- Skip if we already have an object name
-   if scanData.object_name then
-     return
-   end
-
-   -- Skip if line contains a colon (it's a field, already handled)
-   if string.find(line, ":") then
-     return
-   end
-
-   -- Skip blank lines
-   if string.match(line, "^%s*$") then
-     print(line)
-     return
-   end
-
-   -- Store as potential object name (will be confirmed by dash line)
-   scanData.potential_object_name = line
-
-   local useFormatting = scanData.force_formatting or false
-   if not useFormatting and config and config.get_option then
-     local opt = config:get_option("scan_formatting")
-     if opt and opt.value then
-       useFormatting = (opt.value == "yes")
-     end
-   end
-
-   if scanFiltering or useFormatting then
-     -- Gag the line (we'll show it in formatted output if needed)
-   else
-     print(line)
    end
   </send>
   </trigger>
@@ -557,52 +512,6 @@ mplay("ship/computer/scan", "other")
   </trigger>
 
   <!-- Capture special object types: Video Probe, Interdictor, Blockade, etc -->
-  <!-- Note: Special objects are now primarily handled in scan_start_dash_validator -->
-  <!-- This trigger remains as a fallback for edge cases -->
-  <trigger
-   name="capture_special_objects"
-   enabled="n"
-   group="scan_triggers"
-   match="^(Video Probe|Interdictor|Blockade|Automated Laser Turret|Space Mine|Push Pulse)$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-   sequence="50"
-   keep_evaluating="y"
-  >
-  <send>
-   local line = "%0"
-
-   -- Only process if we're in an active scan
-   if not inActiveScan then
-     return
-   end
-
-   -- Store object type and name (if not already set)
-   if not scanData.object_type then
-     scanData.object_type = "%1"
-   end
-   if not scanData.object_name then
-     scanData.object_name = line
-   end
-
-   local useFormatting = scanData.force_formatting or false
-   if not useFormatting and config and config.get_option then
-     local opt = config:get_option("scan_formatting")
-     if opt and opt.value then
-       useFormatting = (opt.value == "yes")
-     end
-   end
-
-   if scanFiltering or useFormatting then
-     -- Gag the line
-   else
-     print(line)
-   end
-  </send>
-  </trigger>
-
-
   <trigger
    enabled="n"
    group="scan_triggers"
@@ -697,15 +606,11 @@ mplay("ship/computer/scan", "other")
        end
        scanData.field_found = true
      end
-     -- Check if we're at Distance to see if field was found
-     if fieldName == "Distance" then
        -- Check if the requested field was found
        if not scanData.field_found then
-         print("That object does not have a " .. scan .. " field.")
+         print("That object does not have a field for " .. scan .. ".")
          mplay("ship/computer/noScan", "other")
        end
-       -- Don't clear scanFiltering/scan yet - wait for the ending dash line
-     end
    elseif useFormatting then
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then

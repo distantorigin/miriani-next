@@ -27,7 +27,8 @@ starmaptable = {
   a = "Asteroid",
   A = "Accelerator",
   b = "Blockade",
-  C = "Combat Drone",
+  c = "Combat Drone",
+  C = "Control Beacon",
   d = "Debris",
   e = "Relic",
   E = "Pellets",
@@ -131,18 +132,10 @@ function formatScanOutput()
       end
     end
 
-    -- Process cargo - skip "Indeterminate"
-    if scanData.cargo == "Indeterminate" then
-      scanData.cargo = nil
-    elseif scanData.cargo then
-      scanData.cargo = "Cargo: " .. scanData.cargo .. ". "
-    end
-
-    -- Process power - handle "Unknown"
+      -- Process power - handle "Unknown"
     if scanData.power and string.find(scanData.power, "Unknown") then
       scanData.power = "Charge Unknown"
     end
-
   elseif scanData.object_type == "Video Probe" or scanData.object_type == "Interdictor" then
     objectType = scanData.object_type == "Video Probe" and "Probe" or "Interdictor"
   elseif scanData.classification and string.match(scanData.classification or "", "[OBAFGKM]") then
@@ -925,7 +918,7 @@ return 0
   <alias
    enabled="y"
    group="starmap"
-   match="^sm([AbCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
+   match="^sm([AabCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
    regexp="y"
    send_to="12"
    sequence="100"

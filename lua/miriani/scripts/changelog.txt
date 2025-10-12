@@ -38,6 +38,8 @@ Version 4.0.beta.6:
 * New: Added wind sound for atmospheric instability.
 * New: Migrate master volume and mute to the config file.
 * New: Press F2 to open the changelog.
+* New: Added whisper support with dedicated sounds (whisperSent.ogg for sending whispers, whisperTo.ogg for receiving whispers directed at you).
+* New: Added optional whisper buffer to track whisperS separately (disabled by default, enable in conf BUFFERS).
 * Changed: Renamed the toastush:config command to just conf, or config. (toastush:config still works for now, but will be removed later.)
 * Changed: Remove variable-based config migration code.
 * Changed: Master volume now initializes at 60% instead of 100.

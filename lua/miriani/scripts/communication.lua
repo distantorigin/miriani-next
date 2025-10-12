@@ -337,6 +337,40 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
+   match="^You whisper &quot;(.+)&quot; to (.+)\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   mplay ("comm/whisperSent", "communication")
+   local message = "%1"
+   local target = "%2"
+   channel("whisper", "%0", {"whisper", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
+   match="^(.+) leans in close and whispers, &quot;(.+)&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   local speaker = "%1"
+   local message = "%2"
+
+   -- Whispered to you - use whisperTo sound and priv_comm color, bypass foreground sounds
+   mplay("comm/whisperTo", "communication", nil, nil, nil, nil, nil, true)
+   channel("whisper", "%0", {"whisper", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
    match="^You (.+?) into a small microphone and listen as (?:it is|it's) played through the ship's external PA\.$"
    regexp="y"
    omit_from_output="y"

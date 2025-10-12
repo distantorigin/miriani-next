@@ -480,6 +480,9 @@ mplay("ship/computer/scan", "other")
      -- Store in scan channel buffer (but not when filtering)
      if not scanFiltering then
        channel("scan", formatted, {"scan"})
+     elseif scanFiltering and not scanData.field_found then
+      print("That object does not have a field for " .. scan .. ".")
+               mplay("ship/computer/noScan", "other")
      end
 
      -- Output formatted version if useFormatting is enabled (but not when filtering)
@@ -599,12 +602,7 @@ mplay("ship/computer/scan", "other")
        end
        scanData.field_found = true
      end
-       -- Check if the requested field was found
-       if not scanData.field_found then
-         print("That object does not have a field for " .. scan .. ".")
-         mplay("ship/computer/noScan", "other")
-       end
-   elseif useFormatting then
+          elseif useFormatting then
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then
        if fieldValue == "1" then

@@ -31,7 +31,7 @@ function Config:init(options, audio)
   vars.group_metadata = group_metadata
 
   -- Initialize master volume and mute (will be loaded from file if present)
-  self.master_volume = 100
+  self.master_volume = 50
   self.master_mute = false
 
   -- Store audio offsets and category map separately if provided

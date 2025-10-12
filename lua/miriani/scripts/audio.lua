@@ -10,7 +10,7 @@
 -- - All other categories use fixed offsets applied to the sounds volume
 
 local audio = {
-  sounds = {volume=100, pan=0},
+  sounds = {volume=60, pan=0},
   environment = {volume=50, pan=0},
 }
 

@@ -281,7 +281,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="computer"
-   match="^Several short bleeps emit from .+ Lore computer, followed by .+$"
+   match="^Several short bleeps emit from .+ Lore computer.+,followed by .+$"
    regexp="y"
    send_to="12"
    sequence="100"

@@ -350,6 +350,28 @@ end
 
   <alias
    enabled="y"
+   match="^toastush:config(?:ure)? (\w+) (.+)$"
+   ignore_case="y"
+   regexp="y"
+   send_to="12"
+   sequence="90"
+  >
+  <send>config_option_direct("%1", "%2")</send>
+  </alias>
+
+  <alias
+   enabled="y"
+   match="^conf(?:ig)? (\w+) (.+)$"
+   ignore_case="y"
+   regexp="y"
+   send_to="12"
+   sequence="90"
+  >
+  <send>config_option_direct("%1", "%2")</send>
+  </alias>
+
+  <alias
+   enabled="y"
    script="notepad_changelog"
    match="^toastush:changes$"
    regexp="y"
@@ -1006,6 +1028,11 @@ function config_main_menu()
   -- Use new terminal-based menu system
   config_menu_module.show_main()
 end -- config_main_menu
+
+function config_option_direct(group, option)
+  -- Directly access an option by partial name or index
+  config_menu_module.find_and_edit(group, option)
+end -- config_option_direct
 
 link = {}
 infobar_t = {}

@@ -289,4 +289,103 @@ function config_menu.start(group)
   end
 end
 
+-- Find and edit option by partial name or numeric index
+function config_menu.find_and_edit(group_name, search_term)
+  -- If group_name is partial, try to find the actual group key
+  local actual_group_key = group_name
+  if group_name ~= "audio groups" then
+    -- Try to find a matching group by checking if any option's group contains this string
+    for key, option in pairs(config.options or {}) do
+      if string.find(string.lower(option.group), string.lower(group_name)) then
+        actual_group_key = option.group
+        break
+      end
+    end
+  end
+
+  -- Special handling for audio groups
+  if actual_group_key == "audio groups" then
+    local groups = get_all_sound_groups()
+
+    -- Try numeric index first
+    local index = tonumber(search_term)
+    if index and index >= 1 and index <= #groups then
+      local group = groups[index]
+      local enabled = is_group_enabled(group)
+      set_group_enabled(group, not enabled)
+      local status = (not enabled) and "on" or "off"
+      notify("info", string.format("%s sounds set to %s", group, status))
+      return
+    end
+
+    -- Try partial name match
+    for _, group in ipairs(groups) do
+      if string.find(string.lower(group), string.lower(search_term)) then
+        local enabled = is_group_enabled(group)
+        set_group_enabled(group, not enabled)
+        local status = (not enabled) and "on" or "off"
+        notify("info", string.format("%s sounds set to %s", group, status))
+        return
+      end
+    end
+
+    notify("error", string.format("Could not find sound group matching '%s'", search_term))
+    return
+  end
+
+  -- Get options for this group
+  local group_options = config:render_menu_list(actual_group_key)
+
+  if type(group_options) ~= 'table' then
+    notify("error", string.format("Could not find group '%s'", group_name))
+    return
+  end
+
+  -- Build a sorted list of option keys
+  local sorted_keys = {}
+  for key in pairs(group_options) do
+    table.insert(sorted_keys, key)
+  end
+  table.sort(sorted_keys, function(a, b)
+    return group_options[a] < group_options[b]
+  end)
+
+  -- Try numeric index first
+  local index = tonumber(search_term)
+  if index and index >= 1 and index <= #sorted_keys then
+    local option_key = sorted_keys[index]
+    config_menu.edit_option(option_key, actual_group_key)
+    return
+  end
+
+  -- Try partial name matching (case-insensitive)
+  local matches = {}
+  local search_lower = string.lower(search_term)
+
+  for _, key in ipairs(sorted_keys) do
+    local option = config:get_option(key)
+    local descr_lower = string.lower(option.descr or "")
+    local key_lower = string.lower(key)
+
+    if string.find(descr_lower, search_lower) or string.find(key_lower, search_lower) then
+      table.insert(matches, key)
+    end
+  end
+
+  if #matches == 0 then
+    notify("error", string.format("Could not find option matching '%s' in group '%s'", search_term, group_name))
+  elseif #matches == 1 then
+    -- Single match - edit it
+    config_menu.edit_option(matches[1], actual_group_key)
+  else
+    -- Multiple matches - show them
+    local match_names = {}
+    for i, key in ipairs(matches) do
+      local option = config:get_option(key)
+      match_names[i] = string.format("%d. %s", i, strip_trailing_punctuation(option.descr))
+    end
+    notify("info", string.format("Multiple matches found for '%s':\n%s", search_term, table.concat(match_names, "\n")))
+  end
+end
+
 return config_menu

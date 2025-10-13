@@ -54,9 +54,8 @@ end
    send_to="12"
    sequence="100"
   >
-  <send>EnableTrigger("url_catcher", true)>
-  logged_in = true
-  link = {}</send>
+  <send>EnableTrigger("url_catcher", true)
+  logged_in = true</send>
   </trigger>
 
   <trigger

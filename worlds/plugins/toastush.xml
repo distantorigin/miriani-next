@@ -582,6 +582,7 @@ end -- OnPluginConnect
 function OnPluginDisconnect()
   DeleteVariable("proxiani_enabled")
   logged_in = false
+  link = {}
   stop()
   stop() -- stop all audio.
 end -- OnPluginDisconnect

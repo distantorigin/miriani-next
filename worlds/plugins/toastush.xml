@@ -1083,6 +1083,13 @@ function show_paralyzed(roundtime, stuntime)
   infobar(id, string.format ("paralyzed: %d %s", paralyzed, sec))
   else
     infobar_t[id] = nil
+    -- Refresh the display to show remaining items
+    local refresh_id, refresh_msg = next(infobar_t)
+    if refresh_id then
+      infobar(refresh_id, refresh_msg)
+    else
+      InfoClear()
+    end
   end
 end -- show_paralyzed
 

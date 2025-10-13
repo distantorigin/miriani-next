@@ -279,6 +279,7 @@ ImportXML([=[
   >
   <send>
    SetVariable("proxiani_enabled", 1)
+   register()
    EnableGroup("starmap", 0)
   </send>
   </trigger>

@@ -1127,7 +1127,10 @@ end -- speech_interrupt
 
 function register()
   Send("#$#REGISTER_SOUNDPACK "..registry.." | "..VERSION.."\n")
-  mplay("misc/negotiate", "notification")
+  if not last_register_time or os.time() - last_register_time > 10 then
+    mplay("misc/negotiate", "notification")
+  end -- time
+  last_register_time = os.time()
 end -- register
 
 function GetAudioVolume(group_name)

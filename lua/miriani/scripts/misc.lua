@@ -10,7 +10,8 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>if GetVariable("logged_in") == "0" then
+  <send>
+  if GetVariable("logged_in") == "0" then
     Send("REGISTER_SOUNDPACK "..registry.." | "..VERSION.."")
   mplay("music/theme", "other")
 -- Auto login functionality
@@ -48,13 +49,14 @@ end
   <trigger
    enabled="y"
      group="misc"
-   match="^(\*{3} (?:Connected|Redirecting (?:old|new) connection to this port) \*{3}|Logged in\!)$"
+   match="^(Logged in\!|\*{3} (?:Connected|Redirecting (?:old|new) connection to this port) \*{3})$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>EnableTrigger("url_catcher", true)
-  SetVariable("logged_in", 1)</send>
+  SetVariable("logged_in", 1)
+  register()</send>
   </trigger>
 
   <trigger

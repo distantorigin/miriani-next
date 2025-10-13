@@ -527,7 +527,6 @@ AcceleratorTo("ALT+SHIFT+I", [[
 
 AcceleratorTo("SHIFT+Esc", [[
   -- Reset status bar
-  infobar_t = {}
   InfoClear()
 
   -- Stop all playing sounds
@@ -1044,8 +1043,8 @@ infobar_t = {}
 function infobar(id, message, clear)
   id = id or 1
 
-  if clear then
-    infobar_t = {}
+  if clear or not message then
+    infobar_t[id] = nil
   end -- if
 
 
@@ -1082,14 +1081,7 @@ function show_paralyzed(roundtime, stuntime)
   if (paralyzed > 0) then
   infobar(id, string.format ("paralyzed: %d %s", paralyzed, sec))
   else
-    infobar_t[id] = nil
-    -- Refresh the display to show remaining items
-    local refresh_id, refresh_msg = next(infobar_t)
-    if refresh_id then
-      infobar(refresh_id, refresh_msg)
-    else
-      InfoClear()
-    end
+    infobar(id, "")
   end
 end -- show_paralyzed
 

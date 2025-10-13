@@ -1,8 +1,3 @@
--- Global variables for tracking player coordinates
-player_x = nil
-player_y = nil
-player_z = nil
-
 ImportXML([=[
 <triggers>
 
@@ -275,9 +270,8 @@ mplay("activity/archaeology/nothing")
    if config:get_option("archaeology_helper_dig").value == "yes"
    and buried_artifact then
      print(string.format("%.2f feet.", buried_artifact))
-   end -- if
-   infobar_t["arch"] = nil
-  </send>
+     end -- if
+   </send>
   </trigger>
 </triggers>
 ]=])

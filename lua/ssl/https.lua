@@ -76,6 +76,8 @@ local function tcp(params)
       function conn:connect(host, port)
          try(self.sock:connect(host, port))
          self.sock = try(ssl.wrap(self.sock, params))
+         -- Set SNI (Server Name Indication) - required by modern servers
+         self.sock:sni(host)
          try(self.sock:dohandshake())
          reg(self, getmetatable(self.sock))
          return 1

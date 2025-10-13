@@ -134,7 +134,9 @@ update_dir = {
       [plugins.."channel_history"] = ".xml",
       [plugins.."output_functions"] = ".xml",
 [plugins.."updater"] = ".xml",
+[homedir.."lua/miriani/lib/"] = ".lua",
   [sounds.."miriani/"] = ".ogg",
+  [homedir.."lua/ssl/"] = ".lua",
     [homedir.."lua/miriani/lib/"] = ".lua",
 [homedir.."lua/miriani/scripts/"] = ".lua",
   [homedir.."lua/miriani/"] = ".txt",
@@ -349,6 +351,15 @@ function callback_download(res, page, status, headers, full_status, url)
 
   if (status == 200) then
     file = page
+  else
+    -- Debug: print all error details
+    print("DEBUG - res:", res)
+    print("DEBUG - page:", page)
+    print("DEBUG - status:", status)
+    print("DEBUG - full_status:", full_status)
+    if headers then
+      print("DEBUG - headers:", require("serialize").save_simple(headers))
+    end
   end -- if
 end -- callback_download
 

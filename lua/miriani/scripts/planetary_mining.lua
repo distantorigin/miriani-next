@@ -7,12 +7,13 @@ ImportXML([=[
    ignore_case="y"
    match="^A recorded voice on a large planetary mining drone whispers, &quot;A pocket of valuable minerals has been detected\.&quot; You set it on the ground and watch as it begins carefully digging\.$"
    regexp="y"
-   sequence="60"
+   sequence="100"
    send_to="12"
   >
   <send>
-   mplay("activity/PlanetaryMining/MineralsDetected", "sounds", true)
+   notify("info", "DEBUG: Minerals detected - stopping loop")
    stop("loop")
+   mplay("activity/PlanetaryMining/MineralsDetected")
   </send>
   </trigger>
 
@@ -49,8 +50,8 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   mplay("activity/PlanetaryMining/ScanningMinerals", "other")
-   mplay("activity/PlanetaryMining/ScanLoop", "environment", false, nil, true)
+   mplay("activity/PlanetaryMining/ScanningMinerals")
+   mplay("activity/PlanetaryMining/ScanLoop", "loop", false, nil, true)
   </send>
   </trigger>
 
@@ -64,8 +65,9 @@ ImportXML([=[
    send_to="12"
   >
   <send>
-   mplay("activity/PlanetaryMining/NoMinerals", "sounds", true)
+   notify("info", "DEBUG: No minerals - stopping loop")
    stop("loop")
+   mplay("activity/PlanetaryMining/NoMinerals")
   </send>
   </trigger>
 
@@ -78,10 +80,12 @@ ImportXML([=[
    sequence="60"
    send_to="12"
   >
-  <send>mplay("activity/PlanetaryMining/Exhausted", "other")</send>
-  stop("loop")
+  <send>
+   notify("info", "DEBUG: Area exhausted - stopping loop")
+   stop("loop")
+   mplay("activity/PlanetaryMining/Exhausted", "other")
+  </send>
   </trigger>
-
   <trigger
    enabled="y"
    group="planetary mining"

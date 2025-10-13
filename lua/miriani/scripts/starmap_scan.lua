@@ -27,7 +27,6 @@ starmaptable = {
   a = "Asteroid",
   A = "Accelerator",
   b = "Blockade",
-  c = "Combat Drone",
   C = "Control Beacon",
   d = "Debris",
   e = "Relic",
@@ -839,21 +838,46 @@ return 0
      end -- if
 
      if output ~= nil and starmap[i].distance ~= 0 then
-      print (Trim(output))
+      -- Check if we should show this match based on nearestIndex
+      local shouldShow = true
+      if nearestIndex then
+       -- Only show if this is the Nth match we want
+       shouldShow = (matches == nearestIndex)
+      end -- if nearestIndex
 
-      -- mplay a sound for range
-      if range == 0 and v.distance == 1 then
-       range = 1
-       mplay("ship/computer/oneUnit", "other")
-      end -- range
+      if shouldShow then
+       print (Trim(output))
+
+       -- mplay a sound for range
+       if range == 0 and v.distance == 1 then
+        range = 1
+        mplay("ship/computer/oneUnit", "other")
+       end -- range
+
+       -- If we have a nearestIndex, stop after showing this match
+       if nearestIndex and matches == nearestIndex then
+        break
+       end -- if nearestIndex
+      end -- if shouldShow
      end -- if output
     end -- for loop
 
     -- delete classFilter if set and print match count
     if classFilter then
-     print (matches, " Matches.")
+     if not nearestIndex then
+      print (matches, " Matches.")
+     elseif nearestIndex and matches &lt; nearestIndex then
+      -- User requested Nth match but there weren't enough matches
+      print ("Only found " .. matches .. " match(es).")
+     end -- if not nearestIndex
      classFilter = nil
     end -- if classFilter
+
+    -- Reset nearestIndex flag
+    if nearestIndex then
+     nearestIndex = nil
+    end -- if nearestIndex
+
     scan = nil
    end -- if Current Coordinates
   </send>
@@ -918,6 +942,36 @@ return 0
   </send>
   </alias>
 
+  <!-- Nearest ship by class filter - must come before general starmap alias -->
+  <alias
+   enabled="y"
+   group="starmap"
+   match="^smc\s+(?:(\d+)\.)?(\w+)$"
+   regexp="y"
+   send_to="12"
+   sequence="50"
+  >
+  <send>
+   -- Parse optional index (e.g., "2.muz" or just "muz")
+   local index = "%1"
+   local className = "%2"
+
+   -- Set up nearest-only class filter
+   searchingScan = true
+   scan = "Starship"
+   classFilter = string.lower(Trim(className))
+
+   -- Set which match to show (default to 1 if not specified)
+   if index ~= "" then
+    nearestIndex = tonumber(index)
+   else
+    nearestIndex = 1
+   end
+
+   Execute("starmap")
+  </send>
+  </alias>
+
   <alias
    enabled="y"
    group="starmap"
@@ -934,9 +988,14 @@ return 0
     print("Valid switches:")
     tprint(starmaptable)
     print("- sm.count to generate starmap breakdown summary.")
+    print("- smc [class name] to show only the nearest ship matching that class.")
+    print("- smc [N].[class name] to show the Nth nearest ship matching that class.")
     return 0
    elseif ("%1" == ".count") then
     count_ships = true
+   elseif ("%1" == "c" and "%2" == "") then
+    -- smc without arguments should be sent to the game
+    return Send("smc")
    end -- if help
 
    searchingScan = true

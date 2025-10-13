@@ -10,7 +10,8 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>Send("REGISTER_SOUNDPACK "..registry.." | "..VERSION.."")
+  <send>if logged_in == false then
+    Send("REGISTER_SOUNDPACK "..registry.." | "..VERSION.."")
   mplay("music/theme", "other")
 -- Auto login functionality
 if config:get_option("auto_login").value == "yes" then
@@ -29,7 +30,7 @@ if config:get_option("auto_login").value == "yes" then
     else
       -- Just send the username if no password is set
       Send(username)
-
+      
       if config:get_option("debug_mode").value == "yes" then
         notify("info", "Auto login: Sent username " .. username .. " (no password configured)")
       end
@@ -40,6 +41,7 @@ if config:get_option("auto_login").value == "yes" then
     end
   end
 end
+end
   </send>
   </trigger>
 
@@ -47,14 +49,14 @@ end
    enabled="y"
    script="register"
    group="misc"
-   match="\*{3} (?:Connected|Redirecting (?:old|new) connection to this port) \*{3}"
+   match="^(\*{3} (?:Connected|Redirecting (?:old|new) connection to this port) \*{3}|Logged in\!)$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>stop()
-  EnableTrigger("url_catcher", true)
-  logged_in = true</send>
+  <send>EnableTrigger("url_catcher", true)>
+  logged_in = true
+  link = {}</send>
   </trigger>
 
   <trigger

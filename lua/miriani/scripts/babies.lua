@@ -190,7 +190,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^[a-zA-Z][a-zA-Z0-9 '-]*? kicks.+?feet and waves.+?arms\.$"
+   match="^[a-zA-Z].+ kicks.+?feet and waves.+?arms\.$"
    regexp="y"
    send_to="12"
    sequence="100"

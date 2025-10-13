@@ -455,7 +455,6 @@ EnableTrigger("url_catcher", false)
 
 
 
-
 ---------------------
 -- Macros
 Accelerator('F1', 'toastush:config')
@@ -582,6 +581,8 @@ end -- OnPluginConnect
 
 function OnPluginDisconnect()
   DeleteVariable("proxiani_enabled")
+  logged_in = false
+  stop()
   stop() -- stop all audio.
 end -- OnPluginDisconnect
 
@@ -1125,8 +1126,7 @@ function OnURL(name, line, wc)
 end -- OnURL
 
 function open_url()
-
-  if (not link)
+  if not link or not link.timestamp
   or os.clock() - link.timestamp > timeout then
     notify("info", "No url to open.")
   else

@@ -130,6 +130,16 @@ end
        tostring(environment and environment.store or false)))
    end
 
+   -- Clear archaeology infobar when leaving digsite (regardless of digsite_detector option)
+   if config:get_option("archaeology_helper_dig").value == "yes"
+   and environment
+   and (buried_artifact or artifact_room) then
+     if not environment.digsite then
+       buried_artifact, artifact_room = nil
+       infobar_t["arch"] = nil
+     end -- if
+   end -- if
+
    if config:get_option("digsite_detector").value == "yes"
    and environment then
 

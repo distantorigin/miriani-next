@@ -139,7 +139,7 @@ function config_menu.show_group(group_name)
   end
 
   dialog.menu({
-    title = string.format("%s Menu", group_title),
+    title = string.format("%s", group_title),
     choices = choices,
     callback = function(result, reason)
       if result then

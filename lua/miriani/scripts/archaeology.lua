@@ -139,7 +139,7 @@ mplay("activity/archaeology/nothing")
    if config:get_option("archaeology_helper_dig").value == "yes" then
      buried_artifact = tonumber("%1")
      artifact_room = room
-     infobar("arch", string.format("Artifact: %.2f ft", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
   </send>
@@ -158,7 +158,7 @@ mplay("activity/archaeology/nothing")
    if buried_artifact
    and room == artifact_room then
      buried_artifact = buried_artifact - 0.5
-     infobar("arch", string.format("Artifact: %.2f ft", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
   </send>
@@ -177,7 +177,7 @@ mplay("activity/archaeology/nothing")
    if buried_artifact
    and room == artifact_room then
      buried_artifact = buried_artifact - 0.1
-     infobar("arch", string.format("Artifact: %.2f ft", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
   </send>
@@ -196,7 +196,7 @@ mplay("activity/archaeology/nothing")
    if buried_artifact
    and room == artifact_room then
      buried_artifact = buried_artifact - 0.3
-     infobar("arch", string.format("Artifact: %.2f ft", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
   </send>
@@ -214,7 +214,7 @@ mplay("activity/archaeology/nothing")
 
    if buried_artifact or artifact_room then
      buried_artifact, artifact_room = nil
-     infobar("arch", "")
+     infobar_t["arch"] = nil
    end -- if
   </send>
   </trigger>
@@ -230,7 +230,7 @@ mplay("activity/archaeology/nothing")
    mplay("activity/archaeology/shatter")
    if buried_artifact or artifact_room then
      buried_artifact, artifact_room = nil
-     infobar("arch", "")
+     infobar_t["arch"] = nil
    end -- if
   </send>
   </trigger>
@@ -248,7 +248,7 @@ mplay("activity/archaeology/nothing")
    if buried_artifact
    and room == artifact_room then
      buried_artifact = buried_artifact - 2.0
-     infobar("arch", string.format("Artifact: %.2f ft", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
   </send>
@@ -276,7 +276,7 @@ mplay("activity/archaeology/nothing")
    and buried_artifact then
      print(string.format("%.2f feet.", buried_artifact))
    end -- if
-   infobar("arch", "")
+   infobar_t["arch"] = nil
   </send>
   </trigger>
 </triggers>

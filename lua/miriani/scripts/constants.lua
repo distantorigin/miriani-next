@@ -2,7 +2,7 @@
 
 local constants = {}
 
-constants.VERSION = "4.0.beta.6"
+constants.VERSION = "4.0"
 constants.EXTENSION = ".ogg"
 constants.ALT_EXTENSION = ".ogg"
 constants.SOUNDPATH = "miriani/"
@@ -10,9 +10,9 @@ constants.ALTPATH = "alternate/"
 constants.TOASTUSH_ID = "843d2f53cb3685465bda7d4a"
 constants.UPDATE_ID = "508bd88f4d441f81466bf471"
 constants.INDEX = "index-v5.manifest"
-constants.DISCORD = "https://discord.gg/rpqbjd8bTt"
+
 constants.PROXIANI = "https://github.com/PsudoDeSudo/proxiani"
-constants.UPDATE_URL = "https://raw.githubusercontent.com/distantorigin/Toastush/main"
+constants.UPDATE_URL = "https://codeberg.org/miriani-next/miriani-next/raw/branch/main"
 constants.IDLE_CUTOFF = 1200
 
 

@@ -38,6 +38,8 @@ local namespace = {
   "contributions", -- Credit contribution tracking
   "babies", -- Baby emotes and sounds
   "sound_conflict_detector", -- Sound file conflict detection and cleanup
+  "devices", -- Device sounds and notifications (message board readers, etc.)
+  "dialog_handlers", -- Dialog system input handlers
 -- "mcp", -- MCP protocol
 } -- namespace
 

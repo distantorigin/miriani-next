@@ -138,7 +138,7 @@ function Menu:handle_input(input)
     if self.matches and match_count == #self.matches then
       Note("All options still match. Please be more specific.")
     else
-      Note(string.format("%d options match:", match_count))
+      Note(string.format("%d options match. Please choose one.", match_count))
     end
     self.matches = matches
     self:display()

@@ -114,7 +114,7 @@ timeout = 30
 download_size_limit = 20
 max_concurrent_downloads = 10
 
-update_url = "https://raw.githubusercontent.com/distantorigin/Toastush/main"
+update_url = "https://codeberg.org/miriani-next/miriani-next/raw/branch/main"
 index_file = "index-v5.manifest"
 check_update_url = string.format("%s/%s", update_url, index_file)
 indexf = utils.split(index_file, ".")

@@ -7,8 +7,8 @@
 
 <muclient>
 <plugin
-   name="toastush_ng"
-   author="Erick Rosso+community"
+   name="MirianiNext"
+   author="Miriani Next Developers"
    id="843d2f53cb3685465bda7d4a"
    language="Lua"
    date_written="2021-04-12 15:47:28"
@@ -19,30 +19,22 @@
 
  <description trim="y">
 
-    Welcome to the Miriani MUSHclient soundpack: Toastush-NG (Next Generation).
-    Enhanced with foreground audio controls, improved architecture, and bug fixes.
+    Welcome to MirianiNext! MirianiNext is a successor to the Toastush soundpack. Without the work by Eric Rosso and others, MirianiNext wouldn't exist in its current form today. Thank you for trying it out and do let us know how you like it!
+
+    ----------------------------------------
+
+As of October 13, 2025, Toastush-NG is now a hard fork of the Toastush soundpack and is known as MirianiNext. The plugin will continue to use the same ID and file name for compatibility, but otherwise you should expect functionality to break. Migrating from Toastush to MirianiNext is not possible and requires re-entering your settings from scratch.
     
-----------------------------------------
-
-    To get started with configuring the soundpack, type: `toastush:config or toastush:config [option]'
-    To view information about the currently running script type: `toastush:info'
-    To view the changelog, type: `toastush:changes'
-    To send the registration string, type: `toastush:register'
-    To reload the updater, type: `toastush:updater-reload or toastush:u-rel'
-    To toggle soundpack minimal mode type: `toastush:minimal or toastush:min'
-
-
+    To get started with configuring the soundpack, type 'conf'. To jump directly to a category, add the category name after the conf command like so: 'conf ship'. You can also press F1.
+    To view the changelog, type 'whatsnew' or press F2.
+      To toggle soundpack minimal mode type: `next:minimal or next:min.
 
     To fetch updates type: `update'
       - More help about using the updater can be found by typing `update --help'
 
-
     To view valid starmap filters type: `sm.help'
     To view valid scan filters type: `sc.help'
-
-    To view this help type: `'toastush:help'
-
-
+  
 -------------------Key Bindings--------------
 
     - Audio:
@@ -53,13 +45,27 @@
     F11: Decrease group volume.
     F12: Increase group volume.
 
+- Output Buffers:
+    alt+1 through alt+0 - read first through tenth latest message in buffer. pressing one of these keys twice within 0.5 seconds will copy the message to the clipboard, and 3 times will paste it into the command window.
+        alt+Up / Down arrow: read next or previous message in buffer
+            Alt + page up / down: move up or down 10 messages in buffer
+                Alt + Home / end: Move up / down 2000 messages in buffer
+                    Alt + Space: repeat current message
+                        Alt + Shift + Space: Copy current message to clipboard
+                            Alt + enter: open a URL in the current message if there is one, otherwise open world configuration
+                                Alt+shift+1-0: jump to first through tenth buffer
+    Alt + shift + ` (grave accent)( also works without shift): If you have some text typed in the command window, try to jump to a buffer starting with that text. Press the command with the window empty to return to where you were before the last jump. Effectively it lets you flip between two buffers this way.
+    Alt + Backslash: If you have some text typed in the command window, searches toward the bottom of the current buffer for that text. Add shift to search toward the top of the buffer. If a match is found, focus jumps to that message.
+    Alt+shift+enter; copy current buffer to a notepad
+    Alt + shift + t: toggle timestamp announcements
+    Alt + Q: Cycle through your quick list of buffers endlessly
+    Alt + Shift + Q: Add/remove current buffer from quick list, or remove missing buffers after "not found" messages
+
     - Miscellaneous:
-    ALT+SHIFT+U: Open last url.
+    ALT+SHIFT+U: Open last URL.
     CTRL+L: Initialize audio settings. (Helpful in the case of switching soundcards.)
     ALT+SHIFT+I: Read the info bar.
-
-
-
+    Shift+escape: Reset sounds and various other trigger groups, good for fixing temporary oddities.
 
 ----------------------------------------
  
@@ -201,96 +207,15 @@ show_paralyzed(roundtime, stuntime)
   </send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   name="MessageBoardNewMessage"
-   match="^A.+message board reader beeps quietly, indicating to you that there is a new message.+\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>play("miriani/device/NewPost" .. math.random(1,7) .. ".ogg")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   name="MessageBoardToggle"
-   match="^A.+message board reader will (now|no longer) notify you of new messages\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>-- PlayToggle functionality would need to be implemented</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   name="MessageBoardUnreadPosts"
-   match="^(There are new messages in.+\.|A.+message board reader beeps urgently, notifying you that there are new messages in .+\.)$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>play("miriani/device/UnreadPosts.ogg")</send>
-  </trigger>
-
 
 </triggers>
 
 <aliases>
-  <!-- Dialog input interceptor - only enabled when dialog is active -->
-  <alias
-   name="dialog_input_handler"
-   enabled="n"
-   match="^(.*)$"
-   regexp="y"
-   send_to="12"
-   sequence="10"
-   keep_evaluating="y"
-  >
-  <send>
--- Check if dialog is active
-if dialog and dialog.is_active() then
-  local input = "%1"
-
-  -- Allow volume, history, use, clear, and output function commands through
-  local bypass_patterns = {
-    "^vol",           -- Volume commands
-    "^history_",      -- Channel history commands
-"^tts",
-"^\#\$\#",
-    "^Line_Get",      -- Output functions
-    "^clearoutput",   -- Output functions
-    "^prevline",      -- Output functions
-    "^toggleoutput",  -- Output functions
-    "^toggleinterrupt", -- Output functions
-    "^curline",       -- Output functions
-    "^select",        -- Output functions
-    "^nextline",      -- Output functions
-    "^whichline",     -- Output functions
-    "^topline",       -- Output functions
-    "^snap_shot",     -- Output functions
-    "^endline",       -- Output functions
-  }
-
-  local should_bypass = false
-  for _, pattern in ipairs(bypass_patterns) do
-    if input:match(pattern) then
-      should_bypass = true
-      break
-    end
-  end
-
-  if not should_bypass then
-    -- Handle as dialog input
-    dialog.handle_input(input)
-  end
-  -- With keep_evaluating=y, bypassed commands will be processed by their actual aliases, so reading history doesn't cancel out a menu.
-end
-  </send>
-  </alias>
 
   <alias
    enabled="y"
    script="help"
-   match="^toastush:help$"
+   match="^next:help$"
    ignore_case="y"
    regexp="y"
    sequence="100"
@@ -300,7 +225,7 @@ end
   <alias
    enabled="y"
    script="info"
-   match="^toastush:info$"
+   match="^next:info$"
    ignore_case="y"
    regexp="y"
   >
@@ -309,7 +234,7 @@ end
   <alias
    enabled="y"
    script="config_main_menu"
-   match="^toastush:config(?:ure)?$"
+   match="^next:config(?:ure)?$"
    ignore_case="y"
    regexp="y"
    sequence="100"
@@ -318,7 +243,7 @@ end
 
   <alias
    enabled="y"
-   match="^toastush:config(?:ure)? (\w+)$"
+   match="^next:config(?:ure)? (\w+)$"
    ignore_case="y"
    regexp="y"
    send_to="12"
@@ -350,7 +275,7 @@ end
 
   <alias
    enabled="y"
-   match="^toastush:config(?:ure)? (\w+) (.+)$"
+   match="^next:config(?:ure)? (\w+) (.+)$"
    ignore_case="y"
    regexp="y"
    send_to="12"
@@ -373,7 +298,7 @@ end
   <alias
    enabled="y"
    script="notepad_changelog"
-   match="^toastush:changes$"
+   match="^(whatsnew|next:changes)$"
    regexp="y"
    ignore_case="y"
    send_to="12"
@@ -384,17 +309,17 @@ end
   <alias
    enabled="y"
    script="register"
-   match="^toastush:register$"
+   match="^next:register$"
    regexp="y"
    ignore_case="y"
    send_to="12"
   >
-  <send>notify("info", "Sending Toastush registration...", 1)</send>
+  <send>notify("info", "Sending MirianiNext registration...", 1)</send>
   </alias>
 
   <alias
    enabled="y"
-   match="^toastush:u(pdater)?-rel(oad)?$"
+   match="^next:u(pdater)?-rel(oad)?$"
    regexp="y"
    ignore_case="y"
    send_to="12"
@@ -417,7 +342,7 @@ end
    enabled="y"
     name="minimal_mode_alias"
    script="toggle_minimal_mode"
-   match="^toastush:min(?:imal)?$"
+   match="^next:min(?:imal)?$"
    regexp="y"
    send_to="12"
   >
@@ -450,7 +375,7 @@ end
    regexp="y"
    send_to="12"
   >
-  <send>Simulate("%1\\n")</send>
+  <send>replicate_line("%1")</send>
   </alias>
 
 </aliases>
@@ -466,21 +391,21 @@ require(scripts.."init")
 MSP, GMCP = 90, 201 
 timeout = 120
 script = 12
-registry = "Toastush-NG"
+registry = "MirianiNext"
 heartbeat = 0
 reset_heartbeat = 60
 ping_after_heartbeat = 30
 roundtime, stuntime = 0, 0
 stunned = false
-logged_in = false
+
 EnableTrigger("url_catcher", false)
 
 
 
 ---------------------
 -- Macros
-Accelerator('F1', 'toastush:config')
-Accelerator('F2', 'toastush:changes')
+Accelerator('F1', 'next:config')
+Accelerator('F2', 'next:changes')
 AcceleratorTo ("F10", 'forward_cycle_audio_groups()', script) -- cycle forward sound groups.
 AcceleratorTo ("SHIFT+F10", 'previous_cycle_audio_groups()', script) -- cycle previous sound groups.
 
@@ -569,12 +494,17 @@ end
 
 function OnPluginInstall()
   math.randomseed(os.time())
-  print("Welcome to the MUSHclient Miriani soundpac: [version: ", VERSION, "] For help see toastush:help.")
-  print("Toastush now offers a Discord community for support. View toastush:help to get more information.")
+  print("Welcome to MirianiNext ", VERSION, ", a MUSHclient Miriani soundpack! For help see next:help.")
+  print("MirianiNext is in beta. Please review 'next:help' and tune a metafrequency communicator to frequency 7.07 for bugs and discussion.")
+  print("Interested in contributing fixes or improvements? Please contact Noah Holland or ask more on the soundpacks' metafrequency channel.")
 
   initialize_audio()
-  if IsConnected() then
+    if (IsConnected() and GetVariable("logged_in") == "1") then
     register()
+    OnPluginGetFocus()
+    if (GetVariable("last_environment_line")) then
+  replicate_line(GetVariable("last_environment_line"))
+end
   end -- if
 
   -- janitor code
@@ -597,15 +527,14 @@ end -- OnPluginSave
 
 function OnPluginConnect()
   --register()
---  mplay("music/theme", "other", 1)
+SetVariable("logged_in", 0)
 end -- OnPluginConnect
 
 function OnPluginDisconnect()
   DeleteVariable("proxiani_enabled")
-  logged_in = false
+  SetVariable("logged_in", 0)
   link = {}
   stop()
-  stop() -- stop all audio.
 end -- OnPluginDisconnect
 
 function OnPluginClose()
@@ -1213,7 +1142,7 @@ function set_environment(name, line, wc)
   environment = {}
 
   environment.name = name
-  environment.line = line
+    SetVariable("last_environment_line", line)
 
   -- iterate through a table of flags
   -- and set all to true.

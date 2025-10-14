@@ -1,6 +1,35 @@
 # Miriani-Next
 
-Miriani-Next is a MUSHclient soundpack implementation specifically designed for [Miriani](https://toastsoft.net/). This soundpack enhances your gameplay experience by providing immersive audio feedback. Miriani-Next runs on Windows and is easy to set up, allowing you to jump into the pilot seat with better sound and communication capabilities.
+# Table of Contents
+
+- [About This Project](#about-this-project)
+- [New in Miriani-Next](#new-in-miriani-next)
+  - [Audio & Configuration](#audio--configuration)
+  - [Gameplay Enhancements](#gameplay-enhancements)
+  - [Communication & Buffers](#communication--buffers)
+  - [Quality of Life](#quality-of-life)
+  - [Technical Improvements](#technical-improvements)
+- [Installation](#installation)
+  - [Option 1: Installer (Recommended)](#option-1-installer-recommended)
+  - [Option 2: Manual Installation](#option-2-manual-installation)
+- [Getting Started](#getting-started)
+  - [Output and error windows](#output-and-error-windows)
+    - [History Buffers](#history-buffers)
+    - [Output Reviewing Functions](#output-reviewing-functions)
+  - [Automatic Logging](#automatic-logging)
+  - [Post-Installation Steps](#post-installation-steps)
+  - [Auto Login](#auto-login)
+  - [Configuration](#configuration)
+  - [Why Move Away from VIP Mud?](#why-move-away-from-vip-mud)
+  - [AI-Generated Content (AIGC)](#ai-generated-content-aigc)
+- [Sound Attribution](#sound-attribution)
+- [Contributions](#contributions)
+  - [Adding Custom Scripts](#adding-custom-scripts)
+  - [Fixes and Enhancements](#fixes-and-enhancements)
+- [Support](#support)
+- [License](#license)
+
+Miriani-Next is a MUSHclient soundpack implementation specifically designed for [Miriani](https://toastsoft.net/). This soundpack enhances your gameplay experience by providing immersive audio feedback and modern conveniences. Miriani-Next runs on Windows and is easy to set up, allowing you to jump into the pilot seat with better sound and communication capabilities.
 
 ## About This Project
 
@@ -67,24 +96,97 @@ Miriani-Next is a successor to the excellent work done by Erick Rosso on [Toastu
 4. (Optional) Configure your `worlds/Miriani.mcl` file to connect to `localhost` on port `1234` if you're using Proxiani.
 5. (Optional) Set up the Proxiani server by visiting the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for the latest supported versions and detailed setup instructions.
 
-## Building the Installer
+## Getting Started
 
-If you want to build the installer yourself or are contributing to the project, follow these steps:
+Below are some common questions that you may have when starting out. Special attention is given to VIP Mud specifically, although we encourage questions from all. If you're confused, join metafrequency channel 7.07 and someone will help you out.
 
-1. Download and install [Inno Setup](https://jrsoftware.org/isdl.php) (free and open source)
-2. Open `installer.iss` in Inno Setup
-3. Click "Build" > "Compile" (or press Ctrl+F9)
-4. The installer will be created in the `installer_output` directory as `Miriani-Next-Setup-X.X.X.exe`
+If you're transitioning from the original Toastush soundpack, you should use the latest installer. The installer contains a migration tool, which will prompt you to move Toastush settings and state files. Ensure you have MUSHclient closed first before doing this.
 
-**Note**: Before building, you may want to update the version number in `installer.iss` by changing the `MyAppVersion` define at the top of the file.
+Miriani-Next contains numerous configuration options that Toastush doesn't. In addition, the configuration system has been completely redesigned from the ground up. As a result, all settings from old Toastush installations may not fully transfer. Optimistically, you should expect at least some loss of configuration fidelity when migrating. Realistically it may not work at all. Very little time has been dedicated to testing this extensively, since reconfiguring the soundpack is a relatively painless process.
 
-The installer includes:
-- All application files (MUSHclient.exe and DLLs)
-- Lua scripts and plugins
-- Sound files and other assets
-- Optional Visual C++ Redistributable installation
-- Desktop and Start Menu shortcuts
-- Smart uninstaller that can preserve user settings
+Remember that this soundpack is rapidly evolving and problems may occur. We'll do our best to address these as quickly as possible. This said, I'm only one person and I'm presently the only developer. Please have patience as we grow! (And do consider contributing your expertise if you know things, too.)
+
+### Output and error windows
+
+MUSHclient doesn't have an output area in the same way that VIP Mud does; it can have an output notepad, which is what Miriani-Next uses to save the world's output to an easily reviewable location.
+VIP Mud users may be used to pressing Tab to enter the output area--in MUSHclient, the tab key acts as autocomplete. This feature analyzes recent output and rapidly finishes words or names for you. If you're using a screen reader, the autocompletion will be read automatically.
+
+To access the output notepad, press Ctrl+Tab. To switch back to the main window, press it again.
+
+Unlike VIP Mud, MUSHclient also doesn't have a dedicated log for errors. If you encounter errors, they'll initially appear as a dialog, but will also be logged to the output window. A checkbox in the error dialog allows you to tell MUSHclient to only log errors there instead of interrupting gameplay in the future. Similarly, debug messages for soundpack developers are also sent here.
+
+To read output while in the main window, you're encouraged to use history buffers or output functions. There are many of these that you can configure under 'conf buffers', but we've enabled a suite of them by default. For more information, skip to the Output Buffers section below. The 'next:help' command may contain more up-to-date information.
+
+Every so often, your output notepad may fill up and no more text will be added. Much like the primary world tab, you can press Ctrl+F4 to close the output window. Miriani-Next will automatically regenerate it upon the next line of text that's sent.
+
+#### History Buffers
+
+**Note**: For the most up-to-date list of keystrokes for buffer controls, type 'next:help' in Miriani-Next or review the info for the Channel History plugin in MUSHclient's plugins screen, accessible via Ctrl+Shift+P.
+
+| Shortcut                   | Action                                                                        |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| Alt + 1–0                  | Read 1st–10th latest message; double press = copy, triple press = paste       |
+| Alt + Up / Down            | Read next / previous message in buffer                                        |
+| Alt + Left / Right         | Move between your various buffers                                             |
+| Alt + Shift + Left / Right | Reorder the currently selected buffer by moving it left or right              |
+| Alt + Page Up / Down       | Move ±10 messages                                                             |
+| Alt + Home / End           | Move to top or end of buffer                                                  |
+| Alt + Space                | Repeat current message                                                        |
+| Alt + Shift + Space        | Copy current message                                                          |
+| Alt + Enter                | Open URL in the current message. If no URL, jump to MUSHclient's world config |
+| Alt + Shift + 1–0          | Jump to 1st–10th buffer                                                       |
+| Alt + Shift + `            | Jump to buffer starting with typed text or flip between buffers               |
+| Alt + Backslash            | Search buffer for typed text (Add Shift to search from top instead of bottom) |
+| Alt + Shift + Enter        | Copy current buffer to a notepad                                              |
+| Alt + Shift + T            | Toggle timestamp announcements when reading history                           |
+| Alt + Q                    | Cycle between quick buffers                                                   |
+| Alt + Shift + Q            | Add/remove buffer from your quick list                                        |
+
+---
+
+#### Output Reviewing Functions
+
+The following keystrokes will help you review and manipulate output.
+
+| Shortcut                   | Action                                                                                                   |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Ctrl + 1–0                 | Read the last 1 to 10 lines of output. Press twice to copy, thrice to paste into the command input field |
+| Ctrl + Tab                 | Switch between output and input windows                                                                  |
+| Ctrl + Shift + U           | Move to the previous line                                                                                |
+| Ctrl + Shift + O           | Move to the next line                                                                                    |
+| Ctrl + Shift + Y           | Move to top                                                                                              |
+| Ctrl + Shift + N           | Move to last line                                                                                        |
+| Ctrl + Shift + H           | Read which line is currently focused                                                                     |
+| Ctrl + Alt + Enter         | Toggle interrupt speech upon pressing Enter                                                              |
+| Ctrl + Alt + O             | Toggle the output notepad on and off                                                                     |
+| Ctrl + Shift + Space       | Begin selecting lines. Press it again to copy                                                            |
+| Ctrl + Shift + Alt + Space | Same as above, but will put a space between each line when copied                                        |
+| Ctrl + Shift + Alt + S     | Snapshot of the current output                                                                           |
+
+### Automatic Logging
+
+Logging is a work in progress! Ideally, this will be handled entirely for you behind the scenes, so please stay tuned for more information.
+
+### Post-Installation Steps
+
+Unlike the Miriani Soundpack for VIP Mud, no configuration is needed after installation, beyond the settings you'd like to change for your in-game experience in the 'conf' command. We assume a safe set of defaults for everyone—if you feel something should be turned on or off out of the box, let us know.
+
+### Auto Login
+
+Typically, the Miriani Soundpack for VIP Mud will use your VIP Mud character name and password for its auto login system.
+
+Unfortunately, while MUSHclient has an auto login system, it's impossible to retrieve your provided credentials. For the soundpack to work properly upon logging in, we need to tell Miriani that the soundpack is in use, and this must occur before we send your username and password. This ensures Miriani will send environmental information when you first connect.
+
+To navigate this complexity, Miriani-Next has its own login system, which you can configure under 'conf auto'.
+
+### Configuration
+
+All configuration for Miriani-Next is saved in the `worlds\settings` folder. This includes auto login credentials, so be careful! If you use auto login and are sharing your configurations, delete the auto_login.conf file first. Additionally, ensure that your Miriani-Next folder is in a safe place if you're using a shared machine.
+
+Miriani-Next is not responsible for client configuration (connection info, fonts, etc.). These are managed by MUSHclient and exist in both:
+
+* Global prefs file: `mushclient_prefs.sqlite`, `mushclient.ini`
+* World file: `worlds\Miriani.MCL`
 
 ### Why Move Away from VIP Mud?
 

@@ -64,7 +64,7 @@ end
    group="misc"
    match="^(([A-Z][a-z]+ ?)+) (?!stands?|sits?)(\w+) (?:in from the .+?|into the .+?|through the .+?|north|northeast|east|southeast|south|southwest|west|northwest|up|down|out)(?: on a .+?| of the ship)?\.$"
    regexp="y"
-   omit_from_output="n"
+   omit_from_output="y"
    keep_evaluating="y"
    send_to="14"
    sequence="100"
@@ -91,7 +91,8 @@ end
     playstep ()
    else
     -- Your movement will be picked up by room_title
-    gagline(name, "%0")
+    -- But still print it!
+    print("%0")
    end -- if movement
   </send>
   </trigger>

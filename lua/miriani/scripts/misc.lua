@@ -56,7 +56,8 @@ end
   >
   <send>EnableTrigger("url_catcher", true)
   SetVariable("logged_in", 1)
-  register()</send>
+  register()
+EndScan()</send>
   </trigger>
 
   <trigger
@@ -92,6 +93,7 @@ end
    else
     -- Your movement will be picked up by room_title
     -- But still print it!
+    EndScan()
     print("%0")
    end -- if movement
   </send>

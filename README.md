@@ -1,12 +1,12 @@
-# MirianiNext
+# Miriani-Next
 
-MirianiNext is a MUSHclient soundpack implementation specifically designed for [Miriani](https://toastsoft.net/). This soundpack enhances your gameplay experience by providing immersive audio feedback. MirianiNext runs on Windows and is easy to set up, allowing you to jump into the pilot seat with better sound and communication capabilities.
+Miriani-Next is a MUSHclient soundpack implementation specifically designed for [Miriani](https://toastsoft.net/). This soundpack enhances your gameplay experience by providing immersive audio feedback. Miriani-Next runs on Windows and is easy to set up, allowing you to jump into the pilot seat with better sound and communication capabilities.
 
 ## About This Project
 
-MirianiNext is a successor to the excellent work done by Eric Rosso on [Toastush](https://github.com/PsudoDeSudo/Toastush). With the advent of agentic coding tools, work is currently underway to migrate popular features from the VIP Mud soundpack to MUSHclient, making them more performant and maintainable.
+Miriani-Next is a successor to the excellent work done by Erick Rosso on [Toastush](https://github.com/PsudoDeSudo/Toastush). With the advent of agentic coding tools, work is currently underway to migrate popular features from the VIP Mud soundpack to MUSHclient, making them more performant and maintainable.
 
-## New in MirianiNext
+## New in Miriani-Next
 
 **Audio & Configuration**
 - Completely rewritten audio system with smarter muting, foreground sound support, and dynamic category management
@@ -47,13 +47,44 @@ MirianiNext is a successor to the excellent work done by Eric Rosso on [Toastush
 
 ## Installation
 
-**Note**: There is not yet a self-extracting installer with a desktop icon. Manual installation is required for now.
+### Option 1: Installer (Recommended)
+
+1. Download the latest installer from the [releases page](https://codeberg.org/miriani-next/miriani-next/releases).
+2. Run `Miriani-Next-Setup-X.X.X.exe` and follow the installation wizard.
+3. The installer will:
+   - Install all necessary files
+   - Optionally install Visual C++ Redistributables (if needed)
+   - Create desktop and start menu shortcuts
+   - Set up the application in your chosen directory
+4. (Optional) Configure your `worlds/Miriani.mcl` file to connect to `localhost` on port `1234` if you're using Proxiani.
+5. (Optional) Set up the Proxiani server by visiting the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for the latest supported versions and detailed setup instructions.
+
+### Option 2: Manual Installation
 
 1. Download the latest version from [here](https://codeberg.org/miriani-next/miriani-next/archive/main.zip).
 2. Extract the `miriani-next-main.zip` file to a location of your choice.
 3. Navigate to the extracted folder and run `mushclient.exe` to launch MUSHclient.
 4. (Optional) Configure your `worlds/Miriani.mcl` file to connect to `localhost` on port `1234` if you're using Proxiani.
 5. (Optional) Set up the Proxiani server by visiting the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for the latest supported versions and detailed setup instructions.
+
+## Building the Installer
+
+If you want to build the installer yourself or are contributing to the project, follow these steps:
+
+1. Download and install [Inno Setup](https://jrsoftware.org/isdl.php) (free and open source)
+2. Open `installer.iss` in Inno Setup
+3. Click "Build" > "Compile" (or press Ctrl+F9)
+4. The installer will be created in the `installer_output` directory as `Miriani-Next-Setup-X.X.X.exe`
+
+**Note**: Before building, you may want to update the version number in `installer.iss` by changing the `MyAppVersion` define at the top of the file.
+
+The installer includes:
+- All application files (MUSHclient.exe and DLLs)
+- Lua scripts and plugins
+- Sound files and other assets
+- Optional Visual C++ Redistributable installation
+- Desktop and Start Menu shortcuts
+- Smart uninstaller that can preserve user settings
 
 ### Why Move Away from VIP Mud?
 
@@ -106,7 +137,7 @@ Additionally, immense thanks goes to my initial testers that put up with numerou
 
 ## Contributions
 
-We welcome contributions to MirianiNext! To contribute:
+We welcome contributions to Miriani-Next! To contribute:
 
 1. **Adding Custom Scripts**:
    - Create a new file in the project directory titled `extras-<user>.lua`, replacing `<user>` with your username or handle.
@@ -117,7 +148,7 @@ We welcome contributions to MirianiNext! To contribute:
 
 ## Support
 
-For any issues, questions, or feedback, feel free to open an issue on this repository. If you'd like to talk to other MirianiNext users, tune a metafrequency communicator to channel 7.07 in-game.
+For any issues, questions, or feedback, feel free to open an issue on this repository. If you'd like to talk to other Miriani-Next users, tune a metafrequency communicator to channel 7.07 in-game.
 
 ## License
 

@@ -47,3 +47,6 @@ MUSHclient.ini
 
 # AIGC slop
 .claude/
+
+# Installer build output
+installer_output/

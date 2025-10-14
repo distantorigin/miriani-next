@@ -173,6 +173,18 @@ option_flags = {
 function OnPluginInstall()
   wait = assert(require("wait"))
   async_ok, async = pcall(require, "async")
+
+  -- Check for .run_updater file and run update if it exists
+  local path = require("pl.path")
+  local run_updater_file = path.join(homedir, ".run_updater")
+
+  if path.isfile(run_updater_file) then
+    print("- Found .run_updater file, running update...")
+    -- Delete the file first
+    os.remove(run_updater_file)
+    -- Run the update command
+    Execute("update")
+  end
 end -- OnPluginInstall
 
 

@@ -8,7 +8,7 @@
 <muclient>
 <plugin
    name="MirianiNext"
-   author="Miriani Next Developers"
+   author="Miriani-Next Developers"
    id="843d2f53cb3685465bda7d4a"
    language="Lua"
    date_written="2021-04-12 15:47:28"
@@ -19,11 +19,11 @@
 
  <description trim="y">
 
-    Welcome to MirianiNext! MirianiNext is a successor to the Toastush soundpack. Without the work by Eric Rosso and others, MirianiNext wouldn't exist in its current form today. Thank you for trying it out and do let us know how you like it!
+    Welcome to Miriani-Next! Miriani-Next is a successor to the Toastush soundpack. Without the work by Erick Rosso and others, Miriani-Next wouldn't exist in its current form today. Thank you for trying it out and do let us know how you like it!
 
     ----------------------------------------
 
-As of October 13, 2025, Toastush-NG is now a hard fork of the Toastush soundpack and is known as MirianiNext. The plugin will continue to use the same ID and file name for compatibility, but otherwise you should expect functionality to break. Migrating from Toastush to MirianiNext is not possible and requires re-entering your settings from scratch.
+As of October 13, 2025, Toastush-NG is now a hard fork of the Toastush soundpack and is known as Miriani-Next. The plugin will continue to use the same ID and file name for compatibility, but otherwise you should expect functionality to break. Migrating from Toastush to Miriani-Next is not possible and requires re-entering your settings from scratch.
     
     To get started with configuring the soundpack, type 'conf'. To jump directly to a category, add the category name after the conf command like so: 'conf ship'. You can also press F1.
     To view the changelog, type 'whatsnew' or press F2.
@@ -314,7 +314,7 @@ show_paralyzed(roundtime, stuntime)
    ignore_case="y"
    send_to="12"
   >
-  <send>notify("info", "Sending MirianiNext registration...", 1)</send>
+  <send>notify("info", "Sending Miriani-Next registration...", 1)</send>
   </alias>
 
   <alias
@@ -391,7 +391,7 @@ require(scripts.."init")
 MSP, GMCP = 90, 201 
 timeout = 120
 script = 12
-registry = "MirianiNext"
+registry = "Miriani-Next"
 heartbeat = 0
 reset_heartbeat = 60
 ping_after_heartbeat = 30
@@ -494,8 +494,8 @@ end
 
 function OnPluginInstall()
   math.randomseed(os.time())
-  print("Welcome to MirianiNext ", VERSION, ", a MUSHclient Miriani soundpack! For help see next:help.")
-  print("MirianiNext is in beta. Please review 'next:help' and tune a metafrequency communicator to frequency 7.07 for bugs and discussion.")
+  print("Welcome to Miriani-Next ", VERSION, ", a MUSHclient Miriani soundpack! For help see next:help.")
+  print("Miriani-Next is in beta. Please review 'next:help' and tune a metafrequency communicator to frequency 7.07 for bugs and discussion.")
   print("Interested in contributing fixes or improvements? Please contact Noah Holland or ask more on the soundpacks' metafrequency channel.")
 
   initialize_audio()

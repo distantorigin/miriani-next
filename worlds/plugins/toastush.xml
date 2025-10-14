@@ -1143,6 +1143,7 @@ function set_environment(name, line, wc)
   environment = {}
 
   environment.name = name
+  environment.line = line
     SetVariable("last_environment_line", line)
 
   -- iterate through a table of flags

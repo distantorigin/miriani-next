@@ -185,7 +185,7 @@ Miriani-Next is not responsible for client configuration (connection info, fonts
 * Global prefs file: `mushclient_prefs.sqlite`, `mushclient.ini`
 * World file: `worlds\Miriani.MCL`
 
-### Why Move Away from VIP Mud?
+## Why Move Away from VIP Mud?
 
 VIP Mud has been the traditional choice for Miriani players for good reason - the **Miriani Soundpack for VIP Mud** (previously known as the Offline Cloud Soundpack) is stellar. It continues to provide an incredibly rich, immersive audio experience that makes the game come alive. For years, it's been the gold standard for Miriani gameplay.
 
@@ -205,7 +205,7 @@ However, VIP Mud itself comes with significant limitations that make it increasi
 
 MUSHclient, in contrast, is free, open source, actively maintained, and supports Lua scripting out of the box. This makes it a far more future-proof platform for Miriani players. Our goal is to bring the same stellar experience from the VIP Mud soundpack to this more sustainable platform. While MUSHclient still lacks some modern features, such as built-in TLS, work is ongoing to find solutions to this. MUSHclient has a much richer catalog of plugins and features, and doesn't require knowledge of a proprietary, esoteric scripting language to maintain.
 
-### AI-Generated Content (AIGC)
+## AI-Generated Content (AIGC)
 
 This project leverages modern agentic AI coding tools to accelerate development and feature migration. However, we take code quality seriously:
 

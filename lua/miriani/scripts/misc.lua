@@ -70,8 +70,7 @@ EndScan()</send>
    send_to="14"
    sequence="100"
   >
-  <send>
-   foundstep, footstep = false, string.gsub ("%3", "%a+",
+  <send>foundstep, footstep = false, string.gsub ("%3", "%a+",
     function (walk)
      return walkStyle[walk]
     end -- function replace walk
@@ -95,8 +94,7 @@ EndScan()</send>
     -- But still print it!
     EndScan()
     print("%0")
-   end -- if movement
-  </send>
+   end -- if movement</send>
   </trigger>
 
   <trigger

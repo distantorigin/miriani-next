@@ -458,7 +458,7 @@ AcceleratorTo("SHIFT+Esc", [[
   stop()
 
   -- Reset scan state
-  resetScan()
+  endScan()
 
   -- Say "Reset"
   Execute("tts_interrupt Reset")

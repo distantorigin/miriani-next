@@ -290,11 +290,6 @@ function endScan()
     EnableTrigger("prescan_potential_name", false)
 end
 
--- Manual reset function
-function resetScan()
-  endScan()
-end
-
 ImportXML([=[
 <triggers>
 
@@ -1027,7 +1022,7 @@ return 0
    sequence="100"
   >
   <send>
-   resetScan()
+   endScan()
   </send>
   </alias>
 

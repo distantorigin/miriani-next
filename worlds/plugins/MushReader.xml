@@ -110,7 +110,7 @@ tts_enabled=false
 end
 function OnPluginGetFocus()
 if focusnote then
-DoAfterSpecial(5,'Note("You can type ftts to control whether mush-z speech should be silenced when switching windows on your computer.")',12)
+DoAfterSpecial(5,'Note("You can type ftts to control whether incoming speech should be silenced when switching windows on your computer.")',12)
 focusnote=false
 end
 if (etts==false) then

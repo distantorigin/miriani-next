@@ -6,43 +6,7 @@ MirianiNext is a MUSHclient soundpack implementation specifically designed for [
 
 MirianiNext is a successor to the excellent work done by Eric Rosso on [Toastush](https://github.com/PsudoDeSudo/Toastush). With the advent of agentic coding tools, work is currently underway to migrate popular features from the VIP Mud soundpack to MUSHclient, making them more performant and maintainable.
 
-### Why Move Away from VIP Mud?
-
-VIP Mud has been the traditional choice for Miriani players for good reason - the **Miriani Soundpack for VIP Mud** (previously known as the Offline Cloud Soundpack) is stellar. It continues to provide an incredibly rich, immersive audio experience that makes the game come alive. For years, it's been the gold standard for Miriani gameplay.
-
-However, VIP Mud itself comes with significant limitations that make it increasingly problematic:
-
-- **Dead Technology**: VIP Mud is written in VB6 (Visual Basic 6), which reached end-of-life in 2008. The runtime dependencies are legacy components that Windows may stop supporting at any time. Even if the current maintainer were to continue doing so, there are no modern development tools, debuggers, or libraries that work with VB6
-
- - **Performance Problems**: VIP Mud suffers from poor performance that impacts gameplay. The performance issues were so severe that they led to the creation of tools like [Proxiani](https://github.com/tms88/proxiani), which acts as a local proxy to work around VIP Mud's performance limitations.
-
-- **Limited Trigger System**: VIP Mud has a hard limit on the number of triggers you can create, which severely restricts how complex your soundpack or automation can be. This artificial limitation forces compromises in functionality.
-
-- **Commercial Software for a Niche Market**: VIP Mud is commercial software. Who pays for MUD clients these days? Most MUD clients are free and open source, making this an increasingly hard sell. In fact, every other single popular client that's still maintained is completely free.
-
-- **Abandoned Development**: VIP Mud is no longer actively maintained. The original owner transferred it to someone else, but no meaningful updates have been made, which should concern anyone continuing to use the software. There have been only 3 major version releases since 2008 (1.0, 1.1, and 2.0). Nearly two decades of stagnation while still charging the same price does not bode well for the future
-
-- **No Modern Scripting**: VIP Mud lacks support for modern scripting languages like Lua, Python, or JavaScript. This makes it difficult for players to customize their experience or add new features without diving into the outdated, proprietary scripting language
-
-MUSHclient, in contrast, is free, open source, actively maintained, and supports Lua scripting out of the box. This makes it a far more future-proof platform for Miriani players. Our goal is to bring the same stellar experience from the VIP Mud soundpack to this more sustainable platform. While MUSHclient still lacks some modern features, such as built-in TLS, work is ongoing to find solutions to this. MUSHclient has a much richer catalog of plugins and features, and doesn't require knowledge of a proprietary, esoteric scripting language to maintain.
-
-### AI-Generated Content (AIGC)
-
-This project leverages modern agentic AI coding tools to accelerate development and feature migration. However, we take code quality seriously:
-
-- **All AI-generated code is reviewed**: Every piece of AI-generated content goes through human review before being committed to the repository.
-- **Testing and validation**: AIGC is tested to ensure it works correctly and integrates properly with existing systems. Updates are carefully tested in a small group of alpha testers prior to being pushed to the public.
-- **Quality over speed**: While AI helps us move faster, we prioritize code quality, maintainability, and the user experience.
-
-We believe in transparency about our development process. The combination of AI assistance and human oversight allows us to rapidly migrate features from the VIP Mud soundpack while maintaining high standards.
-
-These scripts are **not** vibe-coded; while ~70% of the codebase is written by AI, commits are not blindly accepted and the process remains collaborative. Outside of the development process, the codebase is routinely reviewed for cruft or AI "slop". We prioritize security and performance over feature bloat.
-
-**Disclaimer**: I don't actively play the game anymore, so things may break and I may be slow to fix them. If you're interested in helping maintain the soundpack, please let me know! This is a community project.
-
-## Features
-
-### Miriani-Next Highlights
+## New in MirianiNext
 
 **Audio & Configuration**
 - Completely rewritten audio system with smarter muting, foreground sound support, and dynamic category management
@@ -91,6 +55,40 @@ These scripts are **not** vibe-coded; while ~70% of the codebase is written by A
 4. (Optional) Configure your `worlds/Miriani.mcl` file to connect to `localhost` on port `1234` if you're using Proxiani.
 5. (Optional) Set up the Proxiani server by visiting the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for the latest supported versions and detailed setup instructions.
 
+### Why Move Away from VIP Mud?
+
+VIP Mud has been the traditional choice for Miriani players for good reason - the **Miriani Soundpack for VIP Mud** (previously known as the Offline Cloud Soundpack) is stellar. It continues to provide an incredibly rich, immersive audio experience that makes the game come alive. For years, it's been the gold standard for Miriani gameplay.
+
+However, VIP Mud itself comes with significant limitations that make it increasingly problematic:
+
+- **Dead Technology**: VIP Mud is written in VB6 (Visual Basic 6), which reached end-of-life in 2008. The runtime dependencies are legacy components that Windows may stop supporting at any time. Even if the current maintainer were to continue doing so, there are no modern development tools, debuggers, or libraries that work with VB6
+
+ - **Performance Problems**: VIP Mud suffers from poor performance that impacts gameplay. The performance issues were so severe that they led to the creation of tools like [Proxiani](https://github.com/tms88/proxiani), which acts as a local proxy to work around VIP Mud's performance limitations.
+
+- **Limited Trigger System**: VIP Mud has a hard limit on the number of triggers you can create, which severely restricts how complex your soundpack or automation can be. This artificial limitation forces compromises in functionality.
+
+- **Commercial Software for a Niche Market**: VIP Mud is commercial software. Who pays for MUD clients these days? Most MUD clients are free and open source, making this an increasingly hard sell. In fact, every other single popular client that's still maintained is completely free.
+
+- **Abandoned Development**: VIP Mud is no longer actively maintained. The original owner transferred it to someone else, but no meaningful updates have been made, which should concern anyone continuing to use the software. There have been only 3 major version releases since 2008 (1.0, 1.1, and 2.0). Nearly two decades of stagnation while still charging the same price does not bode well for the future
+
+- **No Modern Scripting**: VIP Mud lacks support for modern scripting languages like Lua, Python, or JavaScript. This makes it difficult for players to customize their experience or add new features without diving into the outdated, proprietary scripting language
+
+MUSHclient, in contrast, is free, open source, actively maintained, and supports Lua scripting out of the box. This makes it a far more future-proof platform for Miriani players. Our goal is to bring the same stellar experience from the VIP Mud soundpack to this more sustainable platform. While MUSHclient still lacks some modern features, such as built-in TLS, work is ongoing to find solutions to this. MUSHclient has a much richer catalog of plugins and features, and doesn't require knowledge of a proprietary, esoteric scripting language to maintain.
+
+### AI-Generated Content (AIGC)
+
+This project leverages modern agentic AI coding tools to accelerate development and feature migration. However, we take code quality seriously:
+
+- **All AI-generated code is reviewed**: Every piece of AI-generated content goes through human review before being committed to the repository.
+- **Testing and validation**: AIGC is tested to ensure it works correctly and integrates properly with existing systems. Updates are carefully tested in a small group of alpha testers prior to being pushed to the public.
+- **Quality over speed**: While AI helps us move faster, we prioritize code quality, maintainability, and the user experience.
+
+We believe in transparency about our development process. The combination of AI assistance and human oversight allows us to rapidly migrate features from the VIP Mud soundpack while maintaining high standards.
+
+These scripts are **not** vibe-coded; while ~70% of the codebase is written by AI, commits are not blindly accepted and the process remains collaborative. Outside of the development process, the codebase is routinely reviewed for cruft or AI "slop". We prioritize security and performance over feature bloat.
+
+**Disclaimer**: I don't actively play the game anymore, so things may break and I may be slow to fix them. If you're interested in helping maintain the soundpack, please let me know! This is a community project.
+
 ## Sound Attribution
 
 We stand on the shoulders of giants. This project utilizes sounds from the following sources:
@@ -100,10 +98,11 @@ We stand on the shoulders of giants. This project utilizes sounds from the follo
 - Miriani6 (Liam Erven, Chris Nestrud, and others)
 - Miriani 7
 - MTMiriani
+- Miriani Soundpack for VIP Mud
 
 We extend our gratitude to these projects for providing high-quality audio resources.
 
-Additionally, immense thanks goes to my initial testers that put up with my numerous questions and many hours of bug-hunting: Gage Vieraah, Ryan Salvatore, Mark Sainsbury, Jason Harkness, Hannah Holloway, Buck Hadford, and Alan Nez.
+Additionally, immense thanks goes to my initial testers that put up with numerous questions and many hours of bug-hunting: Gage Vieraah, Ryan Salvatore, Mark Sainsbury, Jason Harkness, Hannah Holloway, Buck Hadford, and Alan Nez.
 
 ## Contributions
 

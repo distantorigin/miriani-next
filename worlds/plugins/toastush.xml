@@ -1016,8 +1016,6 @@ end -- show_paralyzed
 
 function help(name, line, wc)
   notify("info", string.format("%s", GetPluginInfo(GetPluginID(), 3)))
-  ColourTell("silver", "black", "For Discord:     ")
-print_hyperlink(DISCORD, DISCORD, "Click to join Discord")
 end-- help
 
 function info(name, line, wc)

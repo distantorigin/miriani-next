@@ -80,11 +80,8 @@ Miriani-Next is a successor to the excellent work done by Erick Rosso on [Toastu
 
 1. Download the latest installer from the [releases page](https://codeberg.org/miriani-next/miriani-next/releases).
 2. Run `Miriani-Next-Setup-X.X.X.exe` and follow the installation wizard.
-3. The installer will:
-   - Install all necessary files
-   - Optionally install Visual C++ Redistributables (if needed)
-   - Create desktop and start menu shortcuts
-   - Set up the application in your chosen directory
+**Note**: Unless you've been specifically instructed to do so, you don't need to install the Visual C++ Redistributable.
+3. The installer will install Miriani-Next to your current user's Documents folder.
 4. (Optional) Configure your `worlds/Miriani.mcl` file to connect to `localhost` on port `1234` if you're using Proxiani.
 5. (Optional) Set up the Proxiani server by visiting the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for the latest supported versions and detailed setup instructions.
 

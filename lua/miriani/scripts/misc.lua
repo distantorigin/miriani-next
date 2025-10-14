@@ -64,7 +64,7 @@ end
    group="misc"
    match="^(([A-Z][a-z]+ ?)+) (?!stands?|sits?)(\w+) (?:in from the .+?|into the .+?|through the .+?|north|northeast|east|southeast|south|southwest|west|northwest|up|down|out)(?: on a .+?| of the ship)?\.$"
    regexp="y"
-   omit_from_output="y"
+   omit_from_output="n"
    keep_evaluating="y"
    send_to="14"
    sequence="100"

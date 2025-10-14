@@ -48,7 +48,7 @@ computer_actions = {
 }
 
 computer_actions_wildcard = {
-  ["(.+) h[a][sv]e been detected in the sector%."] = {
+  ["(.+) been detected in the sector%."] = {
     func = function(match1)
       if string.find(string.lower(match1), "artifact") then mplay("ship/computer/artifact", "notification") end
       if string.find(match1, "planet") then mplay("ship/computer/planet", "notification") end

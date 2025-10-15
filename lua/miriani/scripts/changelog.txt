@@ -3,6 +3,7 @@ Version 4.0.02:
 	- Blade combat sounds: unsheathing, sheathing, stabbing, swiping, slashing, blocking, and wiping blades clean
 	- Slime machine/puddle interaction sounds: slime hits and puddle splats
 	- Paint canister explosion sounds
+* Fixed: Archaeology nothing nearby sound now plays.
 
 Version 4.0.01:
 * New: Reorganized configuration menu with new "Helpers and Extras" category:

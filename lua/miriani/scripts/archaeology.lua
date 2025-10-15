@@ -108,18 +108,14 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="archaeology"
-   match="^A level \w+ archaeological dig site scanner reports (nothing nearby)\.$"
+   match="^A level \w+ archaeological dig site scanner indicates that nothing is buried nearby\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
   >
   <send>
 mplay("activity/archaeology/nothing")
-
-   if gagline("archaeology_text", "%0") then
-     print("%1")
-   end -- if
-  </send>
+   </send>
   </trigger>
 
   <trigger

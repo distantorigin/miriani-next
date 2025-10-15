@@ -61,7 +61,6 @@
    input_font_height="9"
    input_font_weight="400"
    input_text_colour="black"
-   keypad_enable="y"
    log_output="y"
    max_output_lines="5000"
    mud_can_change_link_colour="y"

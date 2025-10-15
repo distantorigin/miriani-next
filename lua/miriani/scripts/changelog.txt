@@ -16,8 +16,10 @@ Version 4.0.01:
 * New: Play cancel sound when conf matches fail.
 * New: Enable Camera buffer by default for new users.
 * New: Replicate external camera and droid camera lines, as to trigger on them as if the action happened in your own room. This is a way to both get the camera sound and reliably trigger on things performed via camera, rather than needing custom triggers for each action or loosening up regular expressions.
+* New: Disable keypad in world preferences by default.
 * Changed: Suppress the source from external camera and droid messages in output. The location is still included in the mesage when reviewed in the camera buffer.
 * Changed: Replaced the archaeology artifact found sound.
+* Fixed: Don't perform any parsing before printing and storing say messages.
 * Fixed: Menus now play the prompt sound when matching to multiple items.
 * Fixed: GMU notifications now play if there is only one of a thing detected.
 * Fixed: Conf no longer errors upon not being able to match to an option name.

@@ -278,7 +278,8 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/cancel")</send>
+  <send>mplay ("misc/cancel")
+  endScan()</send>
   </trigger>
 
 
@@ -372,13 +373,7 @@ if config:get_option("external_camera").value == "no" then
    send_to="12"
    sequence="100"
   >
-  <send>
-   -- If we were in a scan, play cancel sound instead
-   if searchingScan then
-     mplay("misc/cancel")
-   else
-     mplay("misc/command")
-   end
+  <send>mplay("misc/command")
    endScan()
   </send>
   </trigger>

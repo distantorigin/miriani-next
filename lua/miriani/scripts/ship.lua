@@ -157,7 +157,11 @@ ImportXML([=[
   send_to="14"
   sequence="100"
   >
-  <send>mplay ("ship/move/%1", "ship")</send>
+  <send>if not originating_from_camera("%0") then
+  mplay ("ship/move/%1", "ship")
+  else
+    print("%0")
+  end</send>
   </trigger>
 
   <trigger
@@ -170,7 +174,11 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/BiasStart", "ship")</send>
+  <send>if not originating_from_camera("%0") then
+  mplay ("ship/move/BiasStart", "ship")
+  else
+    print("%0")
+  end</send>
   </trigger>
 
   <trigger
@@ -209,12 +217,15 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay("misc/beep/beep", "ship")
+  <send>IF not originating_from_camera("%0") THEN
+  mplay("misc/beep/beep", "ship")
   mplay ("ship/misc/background", "ship")
   if config:get_option("spam").value ~= "yes" then
     print ("%0")
   end -- if
-  </send>
+else
+  print("%0")
+end -- camera</send>
   </trigger>
 
   <trigger
@@ -255,11 +266,12 @@ ImportXML([=[
   >
   <send>mplay("misc/beep/beep", "ship")
   mplay ("ship/misc/background", "ship")
+  if not originating_from_camera("%0") then
    -- Clear destination and focus infobar when ship finishes jumping
    infobar("dest", "")
    infobar("focus", "")
    infobar("scan", "")
-  </send>
+  end</send>
   </trigger>
 
   <trigger
@@ -352,7 +364,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>if GetVariable("last_camera_line") and "%0" ~= GetVariable("last_camera_line")then
+  <send>if not originating_from_camera("%0") then
      mplay ("ship/misc/blastSettle", "ship")
    if "%1" == "disappears" then
     print("%2 unlocked")
@@ -457,7 +469,11 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/orbit", "ship")</send>
+  <send>if not originating_from_camera("%0") then
+      mplay ("ship/move/orbit", "ship")
+  else
+    print("%0")
+  end</send>
   </trigger>
 
   <trigger
@@ -470,7 +486,11 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/misc/repair", "ship")</send>
+  <send>if not originating_from_camera("%0") then
+  mplay ("ship/misc/repair", "ship")
+  else
+    print("%0")
+  end</send>
   </trigger>
   <trigger
    enabled="y"

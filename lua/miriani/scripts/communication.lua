@@ -236,13 +236,13 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^(.+?)'s voice comes over the intercom, (.+?), (&quot;.+?&quot;)$"
+   match="^([a-zA-Z].+)'s voice comes over the intercom, (.+?), (&quot;.+?&quot;)$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
    sequence="100"
   >
-  <send>
+  <send>if not originating_from_camera("%0") then
    mplay("comm/paOther", "communication")
    if environment and config:get_option("pa_interrupt").value == "yes" and environment["parent"] == "starship" then
     Execute("tts_stop")
@@ -252,24 +252,28 @@ ImportXML([=[
    local msg = prefix.."%3"
    channel(name, msg, {"pa", "communication"})
    print_color({prefix, "default"}, {"%3", "pub_comm"})
-  </send>
+  else
+  print("%0")
+  end</send>
   </trigger>
   <trigger
    enabled="y"
    group="comm"
-   match="^(.+) (\w+) over the intercom\.$"
+   match="^([a-zA-Z].+) (\w+) over the intercom\.$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
    sequence="100"
   >
-  <send>
+  <send>if not originating_from_camera("%0") then
    mplay("comm/paOther", "communication")
    local prefix = "[PA] %1 "
    local msg = prefix.."%2."
    channel(name, msg, {"pa", "communication"})
    print_color({prefix, "default"}, {"%2", "pub_comm"})
-  </send>
+   else
+    print("%0")
+   end</send>
   </trigger>
 
   <trigger

@@ -1033,10 +1033,9 @@ function channel(name, line, wc)
 
   assert (IsPluginInstalled ("6000a4c6f0e71d31fecf523d"), "channel_history could not be found")
 
-  if GetVariable("last_camera_line") and line == GetVariable("last_camera_line") and name ~= "camera" then
+  if originating_from_camera(line) and name ~= "camera" then
   -- Don't duplicate camera messages in other buffers.
-    DeleteVariable("last_camera_line")
-    return
+        return
   end -- camera
   -- add record table of channel arguments
    for k,v in ipairs(wc) do
@@ -1449,6 +1448,14 @@ function print_color(...)
   end -- for
   ColourNote(unpack(content))
 end -- print_color
+
+function originating_from_camera(line)
+  if GetVariable("last_camera_line") and GetVariable("last_camera_line") == line then
+  DeleteVariable("last_camera_line")
+  return true
+  end -- GetVariable
+  return false
+  end -- originating_from_camera
 ]]>
 </script>
 

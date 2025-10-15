@@ -293,7 +293,7 @@ endScan()</send>
   >
   <send>
    mplay ("device/camera")
-SetVariable("channel_message_camera", 1)
+SetVariable("last_camera_line", "%2")
      if config:get_option("internal_camera").value == "no" then
     replicate_line("%2")
    end -- if filtering camera
@@ -312,8 +312,8 @@ SetVariable("channel_message_camera", 1)
   >
   <send>
    mplay ("device/camera")
-   SetVariable("channel_message_camera", 1)
-   if config:get_option("external_camera").value == "no" then
+   SetVariable("last_camera_line", "%2")
+if config:get_option("external_camera").value == "no" then
     replicate_line("%1")
    end -- if
    channel("camera", "%0", {"camera"})

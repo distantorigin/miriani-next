@@ -352,13 +352,17 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>
-   mplay ("ship/misc/blastSettle", "ship")
+  <send>if GetVariable("last_camera_line") and "%0" ~= GetVariable("last_camera_line")then
+     mplay ("ship/misc/blastSettle", "ship")
    if "%1" == "disappears" then
     print("%2 unlocked")
    else
     print("%2 locked")
    end -- if
+  else
+    DeleteVariable("last_camera_line")
+    print("%0")
+  end -- camera
   </send>
   </trigger>
 

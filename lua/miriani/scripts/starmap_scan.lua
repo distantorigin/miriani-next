@@ -638,19 +638,6 @@ mplay("ship/computer/scan", "other")
   <trigger
    enabled="y"
    group="computer"
-   match="^That object was not found\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-   endScan()
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="computer"
    match="^You'll have better results scanning in space\.$"
    regexp="y"
    send_to="12"

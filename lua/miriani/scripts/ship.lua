@@ -569,6 +569,7 @@ ImportXML([=[
    enabled="y"
    group="ship"
    match="^(Scanning is made much more difficult by the lack of sensors|That object was not found|There is nothing here to scan|There are no ships here|Nothing was detected at those coordinates)\.$"
+   script="endScan"
    regexp="y"
    send_to="12"
    sequence="100"

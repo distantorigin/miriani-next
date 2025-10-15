@@ -14,7 +14,8 @@ function config_menu.show_main()
   local main_menu = config:render_menu_list()
 
   if type(main_menu) ~= 'table' then
-    notify("error", "Unable to load configuration menu.")
+    mplay("misc/cancel")
+    notify("critical", "Unable to load configuration menu.")
     return
   end
 
@@ -181,7 +182,8 @@ function config_menu.edit_option(option_key, group_name)
   end
 
   if not config:is_option(option_key) then
-    notify("error", string.format("Invalid option: %s", option_key))
+    mplay("misc/cancel")
+    notify("critical", string.format("Invalid option: %s.", option_key))
     config_menu.show_group(group_name)
     return
   end
@@ -205,7 +207,8 @@ function config_menu.edit_option(option_key, group_name)
   elseif opt_type == "enum" then
     -- Enum option - show menu of choices
     if not option.options or #option.options == 0 then
-      notify("error", "No options defined for this enum")
+      mplay("misc/cancel")
+      notify("critical", "No options defined for this enum.")
       config_menu.show_group(group_name)
       return
     end
@@ -329,7 +332,8 @@ function config_menu.find_and_edit(group_name, search_term)
       end
     end
 
-    notify("error", string.format("Could not find sound group matching '%s'", search_term))
+    mplay("misc/cancel")
+    notify("critical", string.format("Could not find sound group matching '%s'.", search_term))
     return
   end
 
@@ -337,7 +341,8 @@ function config_menu.find_and_edit(group_name, search_term)
   local group_options = config:render_menu_list(actual_group_key)
 
   if type(group_options) ~= 'table' then
-    notify("error", string.format("Could not find group '%s'", group_name))
+    mplay("misc/cancel")
+    notify("critical", string.format("Could not find group '%s'.", group_name))
     return
   end
 
@@ -373,7 +378,8 @@ function config_menu.find_and_edit(group_name, search_term)
   end
 
   if #matches == 0 then
-    notify("error", string.format("Could not find option matching '%s' in group '%s'", search_term, group_name))
+    mplay("misc/cancel")
+    notify("critical", string.format("Could not find option matching '%s' in group '%s'.", search_term, group_name))
   elseif #matches == 1 then
     -- Single match - edit it
     config_menu.edit_option(matches[1], actual_group_key)

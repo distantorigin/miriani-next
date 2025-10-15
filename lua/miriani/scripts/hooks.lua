@@ -341,9 +341,11 @@ function handle_coordinates(name, line, wildcards)
     z = z
   }
 
-  -- Debug output if enabled
-  if config:get_option("debug_mode").value == "yes" then
-    notify("info", string.format("Coordinates received: X=%d, Y=%d, Z=%d", x, y, z))
+  -- Check if we've arrived at artifact coordinates
+  if artifact_coordinates and artifact_coordinates.x == x and artifact_coordinates.y == y then
+    mplay("activity/archaeology/artifactHere")
+    -- Clear the artifact coordinates so we don't keep playing the sound
+    artifact_coordinates = nil
   end
 
   -- Channel to hooks buffer if enabled

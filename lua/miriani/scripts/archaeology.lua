@@ -50,6 +50,13 @@ ImportXML([=[
        target_y = tonumber(target_y)
        target_z = target_z ~= "" and tonumber(target_z) or player_z
 
+       -- Store artifact coordinates globally for coordinate hook to check
+       artifact_coordinates = {
+         x = target_x,
+         y = target_y,
+         z = target_z
+       }
+
        -- Calculate direction
        local directions = {}
        local x_diff = target_x - player_x
@@ -125,7 +132,7 @@ mplay("activity/archaeology/nothing")
    send_to="14"
   >
   <send>
-   mplay("activity/archaeology/artifact")
+   mplay("activity/archaeology/artifactHere")
 
    if config:get_option("spam").value == "yes" then
      print("%1 feet")
@@ -233,7 +240,7 @@ mplay("activity/archaeology/nothing")
   <trigger
    enabled="y"
    group="archaeology"
-   match="^You firmly wedge a sleek metallic digging apparatus into the ground and press a trigger on the handle\. The attached shovel immediately goes to work, sending debris| (?:flying into the air around it|floating away into the surrounding water)\.$"
+   match="^You firmly wedge a sleek metallic digging apparatus into the ground and press a trigger on the handle\. The attached shovel immediately goes to work, sending debris.+$"
    regexp="y"
    send_to="12"
   >

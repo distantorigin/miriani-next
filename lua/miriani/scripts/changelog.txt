@@ -1,3 +1,28 @@
+Version 4.0.01:
+* New: Reorganized configuration menu with new "Helpers and Extras" category:
+	- Moved archaeology helper options (buried artifact depth tracker and direction calculator) from general category to helpers
+	- Moved point calculator from general category to helpers
+* New: Added additional asteroid mining sounds:
+	- Cable and tubing attachment/detachment sounds
+	- Reactor activation/deactivation sounds
+	- Additional drill sounds
+	- Additional micro sealer sound
+	- Warning sounds for equipment failures (coolant leaks, drill bit issues, contamination)
+	- Ramp end sound
+* New: Reset scan filter capture when you move, to prevent oddities where the state might get stuck. (Commonly seen when duplicate lines appear.)
+* New: Archaeology directional helper now plays artifactHere sound when you arrive at the artifact coordinates.
+* new: SMC <ship class> now gets handled by Miriani-Next if Proxiani isn't being used, since the in-game version doesn't support arguments.
+* New: If .run_updater is present in the main directory, we now run the updater at startup. Primarily used by the installer to prompt an update at first run.
+* New: Play cancel sound when conf matches fail.
+* New: Enable Camera buffer by default for new users.
+* New: Replicate external camera and droid camera lines, as to trigger on them as if the action happened in your own room. This is a way to both get the camera sound and reliably trigger on things performed via camera, rather than needing custom triggers for each action or loosening up regular expressions.
+* Changed: Suppress the source from external camera and droid messages in output. The location is still included in the mesage when reviewed in the camera buffer.
+* Changed: Replaced the archaeology artifact found sound.
+* Fixed: Menus now play the prompt sound when matching to multiple items.
+* Fixed: GMU notifications now play if there is only one of a thing detected.
+* Fixed: Conf no longer errors upon not being able to match to an option name.
+* Removed: Jumpgate sounds that were too long or too short.
+
 Version 4.0.beta.6:
 * New: Replaced  the dialog-based configuration system with a new menu-based one. This menu behaves in the same manner as any menu on Miriani itself--it supports number-based selection, entering part of the name of a selection, or @abort to back out.
 * New: Removed most of the volume categories from the settings available in F10. Now, volume is split among the following groups:
@@ -40,7 +65,7 @@ Version 4.0.beta.6:
 * New: Migrate master volume and mute to the config file.
 * New: Press F2 to open the changelog.
 * New: Added whisper support with dedicated sounds (whisperSent.ogg for sending whispers, whisperTo.ogg for receiving whispers directed at you).
-* New: Added optional whisper buffer to track whisperS separately (disabled by default, enable in conf BUFFERS).
+* New: Added optional whisper buffer to track whispers separately (disabled by default, enable in conf BUFFERS).
 * Changed: Renamed the toastush:config command to just conf, or config. (toastush:config still works for now, but will be removed later.)
 * Changed: Remove variable-based config migration code.
 * Changed: Master volume now initializes at 60% instead of 100.

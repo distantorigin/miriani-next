@@ -155,7 +155,67 @@ ImportXML([=[
    send_to="14"
    omit_from_output="y"
   >
-  <send>mplay("activity/asteroid/diag", "other")</send>
+  <send>mplay("activity/asteroid/diag")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="asteroid"
+   match="^(.+?) carefully (secure|secures|disconnect|disconnects) the end of a (cable|tubing) (.+?)\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+   local action = "%2"
+   local item = "%3"
+
+   if string.find(action, "secure") then
+     if item == "cable" then
+       mplay("activity/asteroid/wireAttach", "other")
+     else
+       mplay("activity/asteroid/tubingAttach", "other", nil, nil, nil, nil, nil, nil, -15)
+     end
+   else
+     mplay("activity/asteroid/cableDetach", "other", nil, nil, nil, nil, nil, nil, -20)
+   end
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="asteroid"
+   match="^.+? input.+? (an activation|a deactivation|s an activation|s a deactivation) command into .+?\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+   local action = "%1"
+   if string.find(action, "deactivation") then
+     mplay("activity/asteroid/reactorDisable", "other")
+   else
+     mplay("activity/asteroid/reactorEnable", "other")
+   end
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="asteroid"
+   match="^WARNING: (Coolant leak detected!|Drill bit is not properly secure in the unit\.|Contaminants have been detected in the storage unit\.|Drill bit has become dull\.).+?$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("activity/asteroid/dump")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="asteroid"
+   match="^FAILURE: The motor powering this unit has been destroyed beyond repair\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("activity/asteroid/dump")</send>
   </trigger>
 
 

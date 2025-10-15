@@ -293,11 +293,11 @@ endScan()</send>
   >
   <send>
    mplay ("device/camera")
-
-   if config:get_option("internal_camera").value == "no" then
-    print_color({"%2", "camera"}, {" %1", "default"})
+SetVariable("channel_message_camera", 1)
+     if config:get_option("internal_camera").value == "no" then
+    replicate_line("%2")
    end -- if filtering camera
-   channel ("camera", "%2 %1", {"camera"})
+   channel ("camera", "%0", {"camera"})
 </send>
   </trigger>
 
@@ -312,11 +312,12 @@ endScan()</send>
   >
   <send>
    mplay ("device/camera")
+   SetVariable("channel_message_camera", 1)
    if config:get_option("external_camera").value == "no" then
-    print_color({" %1", "camera"}, {" [Outside]", "default"})
+    replicate_line("%1")
    end -- if
-   channel("camera", "%1 [Outside]", {"camera"})
-  </send>
+   channel("camera", "%0", {"camera"})
+     </send>
   </trigger>
 
 <trigger

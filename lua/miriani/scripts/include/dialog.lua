@@ -141,6 +141,7 @@ function Menu:handle_input(input)
       Note(string.format("%d options match. Please choose one.", match_count))
     end
     self.matches = matches
+    mplay("misc/prompt")
     self:display()
     return false
   end

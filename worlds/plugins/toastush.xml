@@ -1033,6 +1033,11 @@ function channel(name, line, wc)
 
   assert (IsPluginInstalled ("6000a4c6f0e71d31fecf523d"), "channel_history could not be found")
 
+  if GetVariable("channel_message_camera") and name ~= "camera" then
+  -- Don't duplicate camera messages in other buffers.
+    DeleteVariable("channel_message_camera")
+    return
+  end -- camera
   -- add record table of channel arguments
    for k,v in ipairs(wc) do
     -- Handle metaf buffers

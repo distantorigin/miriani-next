@@ -84,8 +84,8 @@ See the changelog for version 4.0 and later [here](lua/miriani/scripts/changelog
 2. Run `Miriani-Next-Setup-X.X.X.exe` and follow the installation wizard.
 **Note**: Unless you've been specifically instructed to do so, you don't need to install the Visual C++ Redistributable.
 3. The installer will install Miriani-Next to your current user's Documents folder.
-4. (Optional) Configure your `worlds/Miriani.mcl` file to connect to `localhost` on port `1234` if you're using Proxiani.
-5. (Optional) Set up the Proxiani server by visiting the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for the latest supported versions and detailed setup instructions.
+4. (Optional) Configure your `worlds/Miriani.mcl` file to connect to `localhost` on port `1234` if you're using Proxiani. This is as simple as pressing alt+enter once Miriani-Next opens for the first time, and changing the connection info in the dialog that appears. Once you've updated the host and port, click OK and save. Press Ctrl+K to reconnect. Miriani-Next will automatically detect when Proxiani is in use and handle the rest for you.
+5. (Optional) If you haven't already, you can set up the Proxiani server by visiting the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for the latest supported versions and detailed setup instructions.
 
 ### Option 2: Manual Installation
 

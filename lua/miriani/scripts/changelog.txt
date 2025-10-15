@@ -1,3 +1,9 @@
+Version 4.0.02:
+* New: Added sounds for various RP Shenanigans (credit to the Miriani Soundpack for VIP Mud):
+	- Blade combat sounds: unsheathing, sheathing, stabbing, swiping, slashing, blocking, and wiping blades clean
+	- Slime machine/puddle interaction sounds: slime hits and puddle splats
+	- Paint canister explosion sounds
+
 Version 4.0.01:
 * New: Reorganized configuration menu with new "Helpers and Extras" category:
 	- Moved archaeology helper options (buried artifact depth tracker and direction calculator) from general category to helpers

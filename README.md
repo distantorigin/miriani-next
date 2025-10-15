@@ -37,6 +37,8 @@ Miriani-Next is a successor to the excellent work done by Erick Rosso on [Toastu
 
 ## New in Miriani-Next
 
+See the changelog for version 4.0 and later [here](lua/miriani/scripts/changelog.txt) for a more comprehensive list of changes since Toastush 3.0.
+
 **Audio & Configuration**
 - Completely rewritten audio system with smarter muting, foreground sound support, and dynamic category management
 - New menu-based configuration system (replaces the old dialog boxes in Toastush) with intuitive number-based or text selection. Type 'conf' to get started
@@ -193,9 +195,11 @@ However, VIP Mud itself comes with significant limitations that make it increasi
 
 - **Dead Technology**: VIP Mud is written in VB6 (Visual Basic 6), which reached end-of-life in 2008. The runtime dependencies are legacy components that Windows may stop supporting at any time. Even if the current maintainer were to continue doing so, there are no modern development tools, debuggers, or libraries that work with VB6
 
+- **Storage Requirements**: VB6 doesn't natively support modern audio formats like OGG Vorbis. While VB6 applications can use ActiveX controls or COM components to add this functionality, VIP Mud's closed architecture doesn't expose these capabilities to soundpack developers. The result is a forced reliance on WAV and MP3 files, neither of which is lean and still retains reasonable quality. VIP Mud's lack of extensibility means you're stuck with what the client provides out of the box. The practical impact: the Miriani Soundpack for VIP Mud weighs in at approximately 850 MB compared to 200 MB for equivalent OGG versions, over 4 times larger for audio that sounds effectively identical during gameplay
+
  - **Performance Problems**: VIP Mud suffers from poor performance that impacts gameplay. The performance issues were so severe that they led to the creation of tools like [Proxiani](https://github.com/tms88/proxiani), which acts as a local proxy to work around VIP Mud's performance limitations.
 
-- **Limited Trigger System**: VIP Mud has a hard limit on the number of triggers you can create, which severely restricts how complex your soundpack or automation can be. This artificial limitation forces compromises in functionality.
+- **Limited Trigger System**: VIP Mud has a hard limit on the number of triggers you can create, which severely restricts how complex your soundpack or automation can be. This also forces developers to spend time circumventing limitations that simply shouldn't exist in 2025, while hurting the user experience when otherwise perfectly working functionality needs to be altered or removed.
 
 - **Commercial Software for a Niche Market**: VIP Mud is commercial software. Who pays for MUD clients these days? Most MUD clients are free and open source, making this an increasingly hard sell. In fact, every other single popular client that's still maintained is completely free.
 
@@ -203,7 +207,7 @@ However, VIP Mud itself comes with significant limitations that make it increasi
 
 - **No Modern Scripting**: VIP Mud lacks support for modern scripting languages like Lua, Python, or JavaScript. This makes it difficult for players to customize their experience or add new features without diving into the outdated, proprietary scripting language
 
-MUSHclient, in contrast, is free, open source, actively maintained, and supports Lua scripting out of the box. This makes it a far more future-proof platform for Miriani players. Our goal is to bring the same stellar experience from the VIP Mud soundpack to this more sustainable platform. While MUSHclient still lacks some modern features, such as built-in TLS, work is ongoing to find solutions to this. MUSHclient has a much richer catalog of plugins and features, and doesn't require knowledge of a proprietary, esoteric scripting language to maintain.
+MUSHclient, in contrast, is free, open source, [semi-actively maintained](https://github.com/nickgammon/mushclient/commits), and supports Lua scripting out of the box. This makes it a far more future-proof platform for Miriani players. Our goal is to bring the same stellar experience from the VIP Mud soundpack to this more sustainable platform. While MUSHclient still lacks some modern features, such as built-in TLS, work is ongoing to find solutions to this. MUSHclient has a much richer catalog of plugins and features, and doesn't require knowledge of a proprietary, esoteric scripting language to maintain.
 
 ## AI-Generated Content (AIGC)
 

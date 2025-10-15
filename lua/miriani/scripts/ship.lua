@@ -217,7 +217,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>IF not originating_from_camera("%0") THEN
+  <send>if not originating_from_camera("%0") then
   mplay("misc/beep/beep", "ship")
   mplay ("ship/misc/background", "ship")
   if config:get_option("spam").value ~= "yes" then

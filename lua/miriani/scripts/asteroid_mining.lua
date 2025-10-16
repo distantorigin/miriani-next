@@ -161,7 +161,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="asteroid"
-   match="^(.+?) carefully (secure|secures|disconnect|disconnects) the end of a (cable|tubing) (.+?)\.$"
+   match="^(.+?) carefully (secure|secures|disconnect|disconnects) the end of.+(cable|tubing).+\.$"
    regexp="y"
    send_to="12"
   >
@@ -171,12 +171,12 @@ ImportXML([=[
 
    if string.find(action, "secure") then
      if item == "cable" then
-       mplay("activity/asteroid/wireAttach", "other")
+       mplay("activity/asteroid/cableAttach")
      else
-       mplay("activity/asteroid/tubingAttach", "other", nil, nil, nil, nil, nil, nil, -15)
+       mplay("activity/asteroid/tubingAttach")
      end
    else
-     mplay("activity/asteroid/cableDetach", "other", nil, nil, nil, nil, nil, nil, -20)
+     mplay("activity/asteroid/cableDetach")
    end
   </send>
   </trigger>
@@ -184,7 +184,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="asteroid"
-   match="^.+? input.+? (an activation|a deactivation|s an activation|s a deactivation) command into .+?\.$"
+   match="^[a-zA-Z].+ input.+ (an activation|a deactivation).+command into .+\.$"
    regexp="y"
    send_to="12"
   >
@@ -201,7 +201,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="asteroid"
-   match="^WARNING: (Coolant leak detected!|Drill bit is not properly secure in the unit\.|Contaminants have been detected in the storage unit\.|Drill bit has become dull\.).+?$"
+   match="^WARNING: (Coolant leak detected!|Drill bit is not properly secure in the unit\.|Contaminants have been detected in the storage unit\.|Drill bit has become dull\.).+$"
    regexp="y"
    send_to="12"
   >

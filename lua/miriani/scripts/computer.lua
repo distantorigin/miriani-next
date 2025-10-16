@@ -144,7 +144,7 @@ computer_actions_wildcard = {
     group = "computer"
   },
   ["Mission objective has been completed in approximately (.+)%. Return to base%."] = {
-    sound = "music/mission",
+    sound = "music/theme",
     group = "computer"
   },
   ["Weapon launch sequence initiated%. Bomb's away!"] = {

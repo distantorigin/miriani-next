@@ -1101,15 +1101,12 @@ end -- camera</send>
    match="^You feel a mighty shaking as something seemingly large impacts the hull\.$"
    regexp="y"
    send_to="14"
-   omit_from_output="y"
+   
    sequence="100"
   >
   <send>
-   mplay("ship/misc/debrisHit", "ship")
-   if (config:get_option("spam")).value == "no" then
-    print("%0")
-   end -- spam
-  </send>
+   mplay("ship/COMBAT/hit/youHit6")
+     </send>
   </trigger>
 
   <trigger

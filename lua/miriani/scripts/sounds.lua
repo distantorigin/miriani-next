@@ -250,6 +250,127 @@ end
 -- Initialize group registry on module load
 load_group_registry()
 
+-- Default variants for sounds (defines which variant is used by default)
+local variant_defaults = {
+  ["miriani/ship/move/accelerate.ogg"] = 3,
+  ["miriani/ship/move/decelerate.ogg"] = 3,
+  ["miriani/activity/archaeology/artifactHere.ogg"] = 1,
+}
+
+-- Sound variant preferences: maps sound base name to selected variant number
+-- e.g., { ["miriani/ship/accelerate"] = 2 } means always use accelerate2.ogg
+-- nil means use the default variant, 0 means random selection
+local variant_preferences = {}
+
+-- Load sound variant preferences from config
+local function load_variant_preferences()
+  if not config then
+    return
+  end
+
+  local loaded = config:load_from_file()
+  if loaded and loaded.sound_variants then
+    variant_preferences = loaded.sound_variants
+  end
+end
+
+-- Save variant preferences to config
+local function save_variant_preferences()
+  if not config then
+    return
+  end
+
+  -- Update the config's internal state
+  config.sound_variants = variant_preferences
+
+  -- Save to toastush.conf
+  config:save()
+end
+
+-- Get the variant preference for a sound
+-- Returns: variant number (1, 2, 3, etc.) or 0 for random
+-- If no preference is set, returns the default variant for that sound
+function get_variant_preference(sound_path)
+  local pref = variant_preferences[sound_path]
+
+  -- If a preference is explicitly set, use it (even if it's 0 for random)
+  if pref ~= nil then
+    return pref
+  end
+
+  -- Otherwise, use the default for this sound (or 0 if no default is defined)
+  return variant_defaults[sound_path] or 0
+end
+
+-- Set the variant preference for a sound
+-- variant: variant number (1, 2, 3, etc.) or 0 for random
+function set_variant_preference(sound_path, variant)
+  variant = tonumber(variant) or 0
+
+  if variant == 0 then
+    -- Remove preference to use default random behavior
+    variant_preferences[sound_path] = nil
+  else
+    variant_preferences[sound_path] = variant
+  end
+
+  save_variant_preferences()
+end
+
+-- Scan for available variants of a sound file
+-- Returns: table of available variant numbers, or empty table if none found
+function scan_sound_variants(file)
+  local path = require("pl.path")
+  local sound_dir = config:get("SOUND_DIRECTORY")
+  local file_base, ext = path.splitext(file)
+
+  -- Check if the base filename already ends with a number
+  local has_number = string.match(file_base, "%d+$")
+  if has_number then
+    -- This is already a numbered variant, don't scan
+    return {}
+  end
+
+  -- Extract just the filename without directory
+  local file_dir = path.dirname(file)
+  local just_filename = path.basename(file_base)
+
+  -- Build search pattern: sound_dir + file_dir + "/" + just_filename + "*" + ext
+  local search_pattern
+  if file_dir == "." then
+    search_pattern = sound_dir .. just_filename .. "*" .. ext
+  else
+    search_pattern = sound_dir .. file_dir .. "/" .. just_filename .. "*" .. ext
+  end
+
+  local search = utils.readdir(search_pattern)
+
+  if not search or type(search) ~= "table" or not next(search) then
+    return {}
+  end
+
+  local variants = {}
+  for filename, metadata in pairs(search) do
+    if not metadata.directory then
+      -- Extract variant number from filename
+      -- e.g., "accelerate2.ogg" -> 2
+      -- Strip extension manually since path.basename isn't doing it
+      local base_name = filename:gsub("%.ogg$", ""):gsub("%.wav$", "")
+      local variant_num = base_name:match("^" .. just_filename .. "(%d+)$")
+
+      if variant_num then
+        table.insert(variants, tonumber(variant_num))
+      end
+    end
+  end
+
+  table.sort(variants)
+  return variants
+end
+
+-- Initialize variant preferences on module load
+load_variant_preferences()
+
 
 function find_sound_file(file)
   local path = require("pl.path")
@@ -265,6 +386,23 @@ function find_sound_file(file)
   local has_number = string.match(file_base, "%d+$")
   if has_number then
     return nil -- Don't randomize numbered files that don't exist
+  end
+
+  -- Check for user variant preference
+  local preference = get_variant_preference(file)
+  if preference and preference > 0 then
+    -- User has selected a specific variant
+    local variant_file = file_base .. tostring(preference) .. ext
+    local variant_path = sound_dir .. variant_file
+
+    if path.isfile(variant_path) then
+      return variant_path
+    else
+      -- Variant preference is set but file doesn't exist, fall through to random
+      if config:get_option("debug_mode").value == "yes" then
+        notify("important", string.format("Preferred variant %d not found for: %s", preference, file))
+      end
+    end
   end
 
   -- Use utils.readdir to find files with wildcards

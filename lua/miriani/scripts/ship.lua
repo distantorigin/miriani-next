@@ -238,7 +238,7 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/relStart", "ship")</send>
+  <send>mplay ("ship/move/accelerate", "ship")</send>
   </trigger>
 
   <trigger
@@ -251,7 +251,7 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/relStop", "ship")</send>
+  <send>mplay ("ship/move/decelerate", "ship")</send>
 </trigger>
 
   <trigger

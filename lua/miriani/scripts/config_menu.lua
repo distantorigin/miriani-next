@@ -1,6 +1,5 @@
 -- @module config_menu
 -- Terminal-based configuration menu using dialog system
--- Uses global 'dialog' variable set in toastush.xml
 
 local config_menu = {}
 
@@ -19,16 +18,19 @@ function config_menu.show_main()
     return
   end
 
-  -- Add "audio groups" to the menu even though it has no regular options
-  local has_audio_groups = false
-  for _, title in ipairs(main_menu) do
-    if config:get_group_key_from_title(title) == "audio groups" then
-      has_audio_groups = true
-      break
+  -- Add "audio groups" and "sound variants" to the menu even though they have no regular options
+  local special_groups = {"audio groups", "sound variants"}
+  for _, group_key in ipairs(special_groups) do
+    local found = false
+    for _, title in ipairs(main_menu) do
+      if config:get_group_key_from_title(title) == group_key then
+        found = true
+        break
+      end
     end
-  end
-  if not has_audio_groups then
-    table.insert(main_menu, config:get_group_title("audio groups"))
+    if not found then
+      table.insert(main_menu, config:get_group_title(group_key))
+    end
   end
 
   -- Custom sort based on group order metadata
@@ -76,10 +78,22 @@ function config_menu.show_group(group_name)
 
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
-  if group_name ~= "audio groups" then
-    -- Try to find a matching group by checking if any option's group contains this string
+  local special_groups = {"audio groups", "sound variants"}
+
+  -- First check if it's a partial match for special groups
+  local matched_special = false
+  for _, special_group in ipairs(special_groups) do
+    if string.find(string.lower(special_group), string.lower(group_name)) then
+      actual_group_key = special_group
+      matched_special = true
+      break
+    end
+  end
+
+  -- If not a special group, try to find a matching regular group
+  if not matched_special then
     for key, option in pairs(config.options or {}) do
-      if string.find(option.group, group_name) then
+      if string.find(string.lower(option.group), string.lower(group_name)) then
         actual_group_key = option.group
         break
       end
@@ -88,7 +102,28 @@ function config_menu.show_group(group_name)
 
   local group_title = config:get_group_title(actual_group_key)
 
-  if actual_group_key == "audio groups" then
+  if actual_group_key == "sound variants" then
+    -- Predefined list of sounds that support variants with their defaults
+    local variant_sounds = {
+      {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
+      {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
+      {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
+    }
+
+    for _, sound in ipairs(variant_sounds) do
+      local sound_key = "_sound_variant_" .. sound.path:gsub("/", "_"):gsub("%.", "_")
+      local preference = get_variant_preference(sound.path)
+
+      -- If no preference is set, use the default
+      if preference == 0 or not preference then
+        preference = sound.default
+      end
+
+      local status = "Variant " .. preference
+
+      secondary_menu[sound_key] = string.format("%s [%s]", sound.name, status)
+    end
+  elseif actual_group_key == "audio groups" then
     -- Get all discovered sound groups
     local groups = get_all_sound_groups()
 
@@ -163,6 +198,63 @@ end
 
 -- Edit a specific option
 function config_menu.edit_option(option_key, group_name)
+  -- Special handling for sound variants
+  if option_key:match("^_sound_variant_") then
+    local sound_path = option_key:match("^_sound_variant_(.+)$"):gsub("_", "/"):gsub("/ogg$", ".ogg")
+    if sound_path then
+      -- Get available variants
+      local variants = scan_sound_variants(sound_path)
+
+      -- Check if we found any variants
+      if #variants == 0 then
+        notify("critical", string.format("No variants found for %s", sound_path))
+        config_menu.show_group(group_name)
+        return
+      end
+
+      -- Build menu choices with numbered options
+      local choices = {}
+      local current_preference = get_variant_preference(sound_path)
+
+      -- Get display name
+      local display_name = sound_path:match("([^/]+)$"):gsub("^%l", string.upper)
+
+      -- Add each variant as a numbered menu option
+      for i, variant_num in ipairs(variants) do
+        local choice_key = tostring(i)
+        if current_preference == variant_num then
+          choices[choice_key] = string.format("Variant %d (Currently selected)", variant_num)
+        else
+          choices[choice_key] = string.format("Variant %d", variant_num)
+        end
+      end
+
+      dialog.menu({
+        title = string.format("Select variant for %s", display_name),
+        message = string.format("%d variants available. Select one:", #variants),
+        choices = choices,
+        callback = function(result, reason)
+          if result then
+            local menu_index = tonumber(result.key)
+            local selected_variant = variants[menu_index]
+            set_variant_preference(sound_path, selected_variant)
+
+            -- Play preview of the selected sound
+            -- Remove .ogg extension, add variant number, then add .ogg back
+            local path_without_ext = sound_path:gsub("%.ogg$", "")
+            local preview_file = path_without_ext .. tostring(selected_variant) .. ".ogg"
+            play(preview_file)
+
+            notify("info", string.format("%s set to Variant %d", display_name, selected_variant))
+          end
+          -- Return to sound variants menu
+          config_menu.show_group(group_name)
+        end
+      })
+      return
+    end
+  end
+
   -- Special handling for dynamic sound groups
   if option_key:match("^_sound_group_") then
     local sound_group = option_key:match("^_sound_group_(.+)$")
@@ -296,8 +388,20 @@ end
 function config_menu.find_and_edit(group_name, search_term)
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
-  if group_name ~= "audio groups" then
-    -- Try to find a matching group by checking if any option's group contains this string
+  local special_groups = {"audio groups", "sound variants"}
+
+  -- First check if it's a partial match for special groups
+  local matched_special = false
+  for _, special_group in ipairs(special_groups) do
+    if string.find(string.lower(special_group), string.lower(group_name)) then
+      actual_group_key = special_group
+      matched_special = true
+      break
+    end
+  end
+
+  -- If not a special group, try to find a matching regular group
+  if not matched_special then
     for key, option in pairs(config.options or {}) do
       if string.find(string.lower(option.group), string.lower(group_name)) then
         actual_group_key = option.group
@@ -334,6 +438,39 @@ function config_menu.find_and_edit(group_name, search_term)
 
     mplay("misc/cancel")
     notify("critical", string.format("Could not find sound group matching '%s'.", search_term))
+    return
+  end
+
+  -- Special handling for sound variants
+  if actual_group_key == "sound variants" then
+    -- Predefined list of sounds that support variants
+    local variant_sounds = {
+      {path = "miriani/ship/accelerate.ogg", name = "Ship Accelerate", default = 3},
+      {path = "miriani/ship/decelerate.ogg", name = "Ship Decelerate", default = 3},
+      {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
+    }
+
+    -- Try numeric index first
+    local index = tonumber(search_term)
+    if index and index >= 1 and index <= #variant_sounds then
+      local sound = variant_sounds[index]
+      local sound_key = "_sound_variant_" .. sound.path:gsub("/", "_"):gsub("%.", "_")
+      config_menu.edit_option(sound_key, actual_group_key)
+      return
+    end
+
+    -- Try partial name match
+    for _, sound in ipairs(variant_sounds) do
+      if string.find(string.lower(sound.name), string.lower(search_term)) or
+         string.find(string.lower(sound.path), string.lower(search_term)) then
+        local sound_key = "_sound_variant_" .. sound.path:gsub("/", "_"):gsub("%.", "_")
+        config_menu.edit_option(sound_key, actual_group_key)
+        return
+      end
+    end
+
+    mplay("misc/cancel")
+    notify("critical", string.format("Could not find sound variant matching '%s'.", search_term))
     return
   end
 

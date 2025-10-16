@@ -139,6 +139,11 @@ function Config:init(options, audio)
         self.master_mute = file_data.master_mute
       end
 
+      -- Load sound variants
+      if file_data.sound_variants then
+        self.sound_variants = file_data.sound_variants
+      end
+
       -- Convert to new format by saving
       self:save_to_file()
     else
@@ -178,6 +183,11 @@ function Config:init(options, audio)
       end
       if file_data.master_mute ~= nil then
         self.master_mute = file_data.master_mute
+      end
+
+      -- Load sound variants
+      if file_data.sound_variants then
+        self.sound_variants = file_data.sound_variants
       end
     end
 
@@ -338,6 +348,7 @@ function Config:save_to_file()
     audio = user_audio,
     master_volume = self.master_volume ~= 100 and self.master_volume or nil,
     master_mute = self.master_mute or nil,
+    sound_variants = self.sound_variants or nil,
     -- Note: we don't save consts anymore as they should come from code
   }
 

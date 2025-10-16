@@ -4,6 +4,8 @@ Version 4.0.02:
 	- Slime machine/puddle interaction sounds: slime hits and puddle splats
 	- Paint canister explosion sounds
 * Fixed: Archaeology nothing nearby sound now plays.
+* New: Sound variant selection system that let's you set the variant for a sound. These are different versions of a sound that may either be legacy or preferred by certain users. The sounds that you can set initially include shipa ccelerate, ship decelerate, and archaeology artifact detected.
+* New: Added 2 new accelerate and decelerate sounds.
 
 Version 4.0.01:
 * New: Reorganized configuration menu with new "Helpers and Extras" category:

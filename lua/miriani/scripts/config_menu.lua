@@ -445,8 +445,8 @@ function config_menu.find_and_edit(group_name, search_term)
   if actual_group_key == "sound variants" then
     -- Predefined list of sounds that support variants
     local variant_sounds = {
-      {path = "miriani/ship/accelerate.ogg", name = "Ship Accelerate", default = 3},
-      {path = "miriani/ship/decelerate.ogg", name = "Ship Decelerate", default = 3},
+      {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
+      {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
       {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
     }
 

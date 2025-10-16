@@ -9,7 +9,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
-   match="^You remove .+ from a .+?sheath.+?$"
+   match="^.+ (remove|unsheathe).+ (from a .+sheath|with lightning speed).$"
    regexp="y"
    send_to="12"
    sequence="100"

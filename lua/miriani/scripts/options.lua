@@ -15,7 +15,7 @@ local options = {
   show_point_calculations = {descr="Show point difference calculations when using your portable point unit.", value="yes", group="helpers", type="bool"},
   background_ambiance = {descr="Play background ambiances.", value="yes", group="room", type="bool"},
   foreground_sounds = {descr="Restrict sounds to only when window has focus.", value="no", group="general", type="bool"},
-  count_cannon = {descr="Print remaining cannon shots (use WEAPON command in weapon room to initialize).", value="yes", group="ship", type="bool"},
+  count_cannon = {descr="Print remaining cannon shots (use WEAPON command in weapon room to initialize).", value="yes", group="helpers", type="bool"},
   count_praelor = {descr="Print the number of insectoids detected in a room.", value="no", group="room", type="bool"},
   digsite_detector = {descr="Play a sound when detecting a digsite.", value="yes", group="room", type="bool"},
   external_camera = {descr="Gag external camera output.", value="no", group="gags", type="bool"},

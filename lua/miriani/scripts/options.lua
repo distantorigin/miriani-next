@@ -11,6 +11,7 @@ local options = {
   archaeology_helper_dig = {descr="Buried artifact depth tracker.", value="yes", group="helpers", type="bool"},
   archaeology_calculate_direction = {descr="Calculate direction from scanner instead of showing coordinates.", value="yes", group="helpers", type="bool"},
   alternate_audio = {descr="Access alternative audio files before soundpack files (requires sounds/alternate directory).", value="no", group="general", type="bool"},
+  fc_sector_numbers = {descr="Show sector numbers instead of names in flight control messages.", value="no", group="helpers", type="bool"},
   show_point_calculations = {descr="Show point difference calculations when using your portable point unit.", value="yes", group="helpers", type="bool"},
   background_ambiance = {descr="Play background ambiances.", value="yes", group="room", type="bool"},
   foreground_sounds = {descr="Restrict sounds to only when window has focus.", value="no", group="general", type="bool"},

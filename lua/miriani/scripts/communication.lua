@@ -26,35 +26,6 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^(?:A|From).* flight control scanner \w+, &quot;(.+?)&quot;$"
-   regexp="y"
-  omit_from_output="y"
-   send_to="14"
-   sequence="100"
-    >
-  <send>
-   local scanner_name = GetVariable("fc_scanner_name") or "flight control"
-   local message = "%1"
-
-   -- Always truncate "A flight monitor announces, " or similar
-   local clean_message = message:gsub("^[Aa] flight .* announces, ", ""):gsub("^From .* flight control scanner .*, ", "")
-
-   print_color({clean_message, "flight"})
-   channel("flight", clean_message, {"flight"})
-
-   if string.find (clean_message, "we detect.+Ontanka") then
-     mplay ("comm/praelorInbound", "communication")
-   end -- if praelor activity
-   mplay ("comm/flight", "communication")
-
-   -- Clear the stored scanner name
-   DeleteVariable("fc_scanner_name")
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
    match="^\[Private \| Auction Service\] Auction Service transmits, &quot;(.+?) has bid ([0-9,.]+) credits on auction ([a-z0-9]+): (.+?)!&quot;$"
    regexp="y"
    send_to="14"

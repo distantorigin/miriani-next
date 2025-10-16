@@ -14,7 +14,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Unsheathe")</send>
+  <send>mplay("misc/blades/unsheathe")</send>
   </trigger>
 
   <trigger
@@ -36,7 +36,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Swipe")</send>
+  <send>mplay("misc/blades/swipe")</send>
   </trigger>
 
   <trigger
@@ -47,7 +47,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Stab")</send>
+  <send>mplay("misc/blades/stab")</send>
   </trigger>
 
   <trigger
@@ -58,7 +58,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Swipe")</send>
+  <send>mplay("misc/blades/swipe")</send>
   </trigger>
 
   <trigger
@@ -69,7 +69,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Swipe")</send>
+  <send>mplay("misc/blades/swipe")</send>
   </trigger>
 
   <trigger
@@ -80,7 +80,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Wipe")</send>
+  <send>mplay("misc/blades/wipe")</send>
   </trigger>
 
   <trigger
@@ -91,7 +91,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Block")</send>
+  <send>mplay("misc/blades/block")</send>
   </trigger>
 
   <trigger
@@ -102,7 +102,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/blades/Sheathe")</send>
+  <send>mplay("misc/blades/sheathe")</send>
   </trigger>
 
   <!-- Slime Machine Sounds -->

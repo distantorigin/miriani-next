@@ -753,7 +753,7 @@ end -- camera</send>
    enabled="y"
    group="ship"
    script="gagline"
-   match="^The noises coming from the storage room gradually cease until they can be heard no more\.$"
+   match="^(The noises coming from the storage room gradually cease until they can be heard no more\.|The commotion from the storage bay stops as the cargo transfer is completed\.)$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

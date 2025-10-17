@@ -255,6 +255,8 @@ local variant_defaults = {
   ["miriani/ship/move/accelerate.ogg"] = 3,
   ["miriani/ship/move/decelerate.ogg"] = 3,
   ["miriani/activity/archaeology/artifactHere.ogg"] = 1,
+["miriani/vehicle/accelerate.ogg"] = 1,
+["miriani/vehicle/decelerate.ogg"] = 1,
 }
 
 -- Sound variant preferences: maps sound base name to selected variant number

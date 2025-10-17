@@ -79,7 +79,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay("activity/atmo/salvagestop", "vehicle")</send>
+  <send>mplay("activity/atmo/decelerate", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -142,7 +142,7 @@ gagline()</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay("activity/atmo/salvagestop", "vehicle")</send>
+  <send>mplay("activity/atmo/decelerate", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -173,7 +173,7 @@ gagline()</send>
    enabled="y"
    group="vehicle"
    script="gagline"
-   match="^The craft makes a tremendous splash as it lands in the planet's watery atmosphere\. It turns a few times and then the stabilizers kick in, righting the craft.+?$"
+   match="^The craft makes a tremendous splash as it lands in the planet's watery atmosphere\. It turns a few times and then the stabilizers kick in, righting the craft.+$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -185,7 +185,7 @@ gagline()</send>
   <trigger
    enabled="y"
    group="vehicle"
-   match="^.+?The craft has slammed into a massive life form\. A breach in the outer hull has been detected.+?$"
+   match="^.+?The craft has slammed into a massive life form\. A breach in the outer hull has been detected.+$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -203,7 +203,7 @@ gagline()</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay("vehicle/moveStart", "vehicle")</send>
+  <send>mplay("vehicle/accelerate", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -216,7 +216,7 @@ gagline()</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay("vehicle/moveStop", "vehicle")</send>
+  <send>mplay("vehicle/decelerate", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -314,7 +314,7 @@ gagline()</send>
    send_to="14"
    omit_from_output="y"
   >
-  <send>mplay("vehicle/moveStop", "vehicle")</send>
+  <send>mplay("vehicle/decelerate", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -369,23 +369,8 @@ gagline()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("vehicle/moveStop", "vehicle")</send>
+  <send>mplay("vehicle/decelerate", "vehicle")</send>
   </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
-   match="^You hear a gentle thud as the salvager sets down in the docking bay\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>
-   mplay("vehicle/returnThud", "vehicle")
-   -- Clear destination infobar when salvager lands
-   infobar("dest", "")
-  </send>
-  </trigger>
-
 
   <trigger
    enabled="y"
@@ -405,6 +390,35 @@ gagline()</send>
    end -- if
   </send>
   </trigger>
+<trigger
+   enabled="y"
+   group="vehicle"
+   match="^The computer announces, &quot;Warning, avian lifeform in processing chamber. Expelling\.\.\.&quot;"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("activity/atmo/salvageLifeform", "vehicle")
+   mplay("activity/atmo/avianExpulsion", "vehicle")</send>
+  </trigger>
 
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^You hear a gentle thud as the salvager sets down in the docking bay\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("vehicle/salvageLands", "vehicle")</send>
+  </trigger>
+  
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^The vehicle carefully maneuvers into the docking bay\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("activity/atmo/salvageReturn", "vehicle")</send>
+</trigger>
 </triggers>
 ]=])

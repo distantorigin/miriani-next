@@ -107,7 +107,9 @@ function config_menu.show_group(group_name)
     local variant_sounds = {
       {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
       {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
-      {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
+      {path = "miriani/vehicle/accelerate.ogg", name = "Vehicle Accelerate (Salvagers and ACVs)", default = 1},
+   {path = "miriani/vehicle/decelerate.ogg", name = "Vehicle Decelerate (Salvagers and ACVs)", default = 1},
+   {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1}
     }
 
     for _, sound in ipairs(variant_sounds) do

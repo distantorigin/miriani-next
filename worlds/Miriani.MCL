@@ -108,7 +108,7 @@
 <!-- triggers -->
 
 <triggers
-   muclient_version="5.07-pre"
+   muclient_version="5.07ll-pre"
    world_file_version="15"
    date_saved="2025-10-09 12:11:42"
   >
@@ -442,4 +442,5 @@
 <include name="channel_history.xml" plugin="y" />
 <include name="updater.xml" plugin="y" />
 <include name="toastush.xml" plugin="y" />
+<include name="mushclient_help.xml" plugin="y" />
 </muclient>

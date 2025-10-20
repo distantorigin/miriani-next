@@ -24,6 +24,7 @@ Note: This release was initially going to be the debut for the new updater, but 
   * New: Got rid of the announcement in MUSH Reader that mentions speech being initialized.
 * New: New sound for asteroid hauling begin, line start, line end, anchor start, anchor end, and ship anchor. Reworked gagging of lines a bit here as well.
 * New: The output tab is now read only by default.
+* New: The installer executable now looks for Dropbox and forces the install to go to local documents instead, similarly to OneDrive.
 * New: If escape is set to send @abort to the game, it will now send 0 when in conf and other menus. This has the side effect of resulting in an invalid selection if there's nothing to go back to, but it's all the same in the end, really.
 * New: Output will now automatically truncate ~40% once it reaches around 1 MB in size.
 * New: Add log_manager, a plugin I've written that sets up sane logging defaults:

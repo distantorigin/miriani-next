@@ -1367,6 +1367,7 @@ function ambiance(roomtype)
       -- probably a roid.
       file = "asteroid"
     end -- if
+
   elseif environment.indoors and environment.lift then
     file = "lift"
   elseif (environment.name == "planet") then

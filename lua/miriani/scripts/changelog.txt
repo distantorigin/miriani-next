@@ -1,15 +1,52 @@
 Version 4.0.02:
+
+Note: This release was initially going to be the debut for the new updater, but I'm pushing this ahead of time to get some bug fixes and nice-to-have features out there. Lots of work is going on behind the scenes on:
+	- Brand new updater that runs outside of MUSHclient, coming in version 4.0.03. Much more stable and quick.
+	- Socials framework
+	- Splitting all extras into MUSHclient plugins
+	- And more! Primarily, lots of technical debt catchup and reorganization of files.
+
 * New: Added sounds for various RP Shenanigans (credit to the Miriani Soundpack for VIP Mud):
 	- Blade combat sounds: unsheathing, sheathing, stabbing, swiping, slashing, blocking, and wiping blades clean
 	- Slime machine/puddle interaction sounds: slime hits and puddle splats
 	- Paint canister explosion sounds
 * New: Added missing theme music and cleared out the mission music files for mission complete.
+* New: Added MUSHclient builtin help to the default world file. You may access it with the 'mchelp' command.
+* New: URLs will now become visually clickable with the mouse in the primary world tab.
 * New: Sound variant selection system that let's you set the variant for a sound. These are different versions of a sound that may either be legacy or preferred by certain users. The sounds that you can set initially include shipa ccelerate, ship decelerate, and archaeology artifact detected.
-* New: Added 2 new accelerate and decelerate sounds.
+* New: Added 2 new accelerate and decelerate sounds for ships.
 * New: Added back old archaeology artifact sound as a variant option
 * New: Added flight control sector number substitution option (migrated from VIP Mud soundpack). Enable under "conf helpers" to show sector numbers instead of sector names in flight control messages (e.g., "Flight control in sector 15" instead of Miriani.)
+* New: Added an experimental, potentially useless option in conf gen to make the tab key shift focus to the output window. There are some caveats, which may or may not have resolution in the future:
+	- This overrides tab autocomplete, and there's no way to map another key to do that instead.
+	- MUSHclient doesn't provide a way to intercept keys when focused on a notepad, which makes it impossible for us to bind to tab or shift+tab in this area. Thus, once you've pressed tab, you'll need to press ctrl+1 or ctrl+tab to snap back to the input field.
+	- This requires a full client restart when enablign and disabling the option.
+  * New: Got rid of the announcement in MUSH Reader that mentions speech being initialized.
+* New: New sound for asteroid hauling begin, line start, line end, anchor start, anchor end, and ship anchor. Reworked gagging of lines a bit here as well.
+* New: The output tab is now read only by default.
+* New: If escape is set to send @abort to the game, it will now send 0 when in conf and other menus. This has the side effect of resulting in an invalid selection if there's nothing to go back to, but it's all the same in the end, really.
+* New: Output will now automatically truncate ~40% once it reaches around 1 MB in size.
+* New: Add log_manager, a plugin I've written that sets up sane logging defaults:
+  - All logs go to a logs\WorldName folder
+  - Under each world, logs are organized under year\month\day.txt.
+  - For example, my Miriani log for today is under: logs\miriani\2025\10\19 October 2025.txt.
+  - Normally, MUSHclient will log an entire session to the same log file, never reopening the log when the date changes until you close the entire client. This can easily become useless when you stay connected for multiple days, since MUSHclient will never try to write a new dated file (if you have it set up this way, which most do not). To combat this, we ensure the log file is rotated exactly at midnight via timers, closing it and reopening the new file.
+  - Basic alias: vlog to open the current log, vlog <number of days ago> to open the log from <x> days ago. This will also force the current log to be written to disk.
+  - Closes the log file when you disconnect, reopens it when you reconnect.
+* New: Add several new rocky planet ambiances.
+* New: Add a lift ambiance (thanks Mark for the sound suggestion and Claude Code for various audio editing shenanigans)
+* New: Added a basic archaeology artifact counter. More to come for other activities soon.
+* New: You can now press Ctrl+F8 to toggle whether the client speaks incoming text while the world is out of focus.
+* Changed: The output tab will no longer promtp you to save when you close it.
+* Changed: MUSHclient will no longer prompt you to "Save internal variables" when you close the world. Saving is now automatic.
+* Changed: MUSHclient will no longer prompt you to save the world file separtely from the internal variables. Instead, the only prompt you will receive is if all worlds have been closed and you're attempting to close MUSHclient itself.
+* Changed: The point calculator should now save through reloads. (We're just saving in variables here, so if it's not saving, you should ensure MUSHclient's worlds\plugins\state folder is populating with data.)
 * Changed: Moved flight control scanner trigger from communication.lua to devices.lua.
 * Changed: Debris impacting the hull now plays youHit6.ogg instead and shows the corresponding message.
+* Changed: You can now use F8 to toggle speech, instead of Ctrl+Shift+F12
+* Changed: Disabled some of the babywave triggers until I finish the big socials update.
+* Fixed: Re-added aquatic salvager move sound.
+* Fixed: Reloading toastush.xml while logged in will no longer result in the URL catcher being disabled. Primarily seen when updating via the updater.
 * Fixed: Archaeology nothing nearby sound now plays.
 * Fix: Conf now matches correctly to some of the newer menus.
 * Fixed: Triggers for tubing and cabling in asteroi dmining should be slightly more reliable.

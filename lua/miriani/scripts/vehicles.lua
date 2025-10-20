@@ -97,19 +97,6 @@ ImportXML([=[
    enabled="y"
    group="vehicle"
    script="gagline"
-   match="^The pull of acceleration eases off as the ship ceases its .+?\.$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-   sequence="100"
-  >
-  <send>mplay("activity/atmo/salvagestop", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
-   script="gagline"
    match="^The vehicle shudders violently as it makes contact with the topmost gas clouds\. .+$"
    regexp="y"
    omit_from_output="y"
@@ -314,7 +301,7 @@ gagline()</send>
    send_to="14"
    omit_from_output="y"
   >
-  <send>mplay("vehicle/decelerate", "vehicle")</send>
+  <send>mplay("activity/atmo/stop", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -351,14 +338,12 @@ gagline()</send>
   <trigger
    enabled="y"
    group="vehicle"
-   match="^The craft makes a tremendous splash as it lands in the planet's watery atmosphere\. It turns a few times and then the stabilizers kick in, righting the craft.+?\.$"
+   match="^The craft makes a tremendous splash as it lands in the planet's watery atmosphere\. It turns a few times and then the stabilizers kick in, righting the craft.+$"
    regexp="y"
    send_to="12"
   >
   <send>
    mplay("vehicle/landingSplash", "vehicle")
-   -- Clear destination infobar when vehicle lands
-   infobar("dest", "")
   </send>
   </trigger>
 

@@ -170,6 +170,7 @@ omit_from_command_history="y"
 send_to="12"
 sequence="100">
 </alias>
+
 </aliases>
 
 
@@ -279,18 +280,26 @@ function OnPluginCommandEntered(s)
  if world.GetVariable("interrupt") == "1" then
   Execute("tts_stop")
  end
+ if world.GetVariable("output") == "1" then
+  AppendToNotepad("output", "> "..s.."\r\n")
+ end
 end
 
 function OnPluginInstall()
  if GetVariable("output") == nil then
   SetVariable("output","1")
  end
+
  modes = {}
  msgbuffer = {}
  cline = 1
  lastcount=0
  line = 0
  selecting = 0
+ -- Create the output notepad and make it read-only
+ AppendToNotepad("output", "")
+ NotepadReadOnly("output", true)
+ NotepadSaveMethod("output", 2)  -- Never prompt to save
 end
 
 function OnPluginScreendraw(t,l,line)
@@ -300,6 +309,7 @@ function OnPluginScreendraw(t,l,line)
  end
  if GetInfo(113) then
   AppendToNotepad("output", line.."\r\n")
+  check_notepad_size()
  else
   table.insert(msgbuffer, line.."\r\n")
  end
@@ -312,8 +322,10 @@ function OnPluginGetFocus()
   local concat_buffer
   if #msgbuffer > 0 then
   concat_buffer = table.concat(msgbuffer)
+check_notepad_size()
   AppendToNotepad("output", concat_buffer.."\r\n")
   msgbuffer={}
+  check_notepad_size()
  end
 end
 
@@ -366,7 +378,7 @@ function snapshot()
  require "wait"
  wait.make(function()
   Execute("tts_interrupt Beginning snapshot, please wait....")
-  wait.time(0.5)
+--  wait.time(0.5) (Commented out; temporary test, Oct 2025, to see if this is now fast enough without the wait)
 buf=""
   for snapline=1, GetLinesInBufferCount() - 1 do
 buf=buf..GetLineInfo(snapline,1).."\r\n"
@@ -435,6 +447,27 @@ function buffercheck()
   end
  end
  lastcount = curcount
+end
+
+function check_notepad_size()
+ -- Check size on every line
+ local max_size = 1480000  -- 1.48 million characters threshold
+ local current_size = GetNotepadLength("output")
+
+ if current_size >= max_size then
+  -- Get current content
+  local content = GetNotepadText("output")
+  -- Truncate 40% (keep the last 60% of the content)
+  local keep_from = math.floor(current_size * 0.4)
+  local new_content = string.sub(content, keep_from)
+
+  -- Replace notepad content
+  ReplaceNotepad("output", new_content)
+  NotepadReadOnly("output", true)  -- Re-apply read-only after replace
+
+  -- Notify user
+  Note("Output notepad truncated (was approaching 1.5MB)")
+ end
 end
 
 ]]>

@@ -56,6 +56,7 @@ local options = {
 
   roundtime = {descr="Play a sound when roundtime is up.", value="no", group="general", type="bool"},
   escape_abort = {descr="Use Escape key to send @abort command.", value="yes", group="general", type="bool"},
+  tab_activates_notepad = {descr="Use Tab key to activate output notepad window (requires restart).", value="no", group="general", type="bool"},
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},
   spam = {descr="Reduce spam by gagging flavored text.", value="yes", group="gags", type="bool"},
   store_detector = {descr="Play a sound when detecting stores.", value="no", group="room", type="bool"},

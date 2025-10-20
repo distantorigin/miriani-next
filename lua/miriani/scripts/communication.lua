@@ -70,7 +70,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^\[(Newbie|Chatter|OOC|General Communication|Short-range Communication)\]:? (.+)$"
+   match="^\[(Newbie|Chatter|Design|OOC|General Communication|Short-range Communication)\]:? (.+)$"
    regexp="y"
    send_to="14"
    omit_from_output="y"
@@ -529,36 +529,30 @@ regexp="y"
   <trigger
    enabled="y"
    group="comm"
-   match="^You have access to the following channels:$"
+   match="^You have access to the following channels:|You are averaging \d+ points and \d+ combat points per day\.$"
    regexp="y"
    send_to="14"
    sequence="50"
   >
   <send>
-   -- Start looking for organization in channel list
-   SetVariable("looking_for_org", "1")
-  </send>
+   -- Start looking for our organization name in either score or tr channels
+   EnableTrigger("detect_org", 1)</send>
   </trigger>
 
   <trigger
-   enabled="y"
-   group="comm"
-   match="^\[Organization\] (.+)$"
+   enabled="n"
+   name="detect_org"
+   match="^(Private Organization: .+|\[Organization\]) (.+)$"
    regexp="y"
    send_to="14"
    sequence="50"
   >
-  <send>
-   -- Only capture org if we're in a channel list
-   if GetVariable("looking_for_org") == "1" then
-     local current_org = GetVariable("org_name")
+  <send>local current_org = GetVariable("org_name")
      if current_org ~= "%1" then
-       SetVariable("org_name", "%1")
+       SetVariable("org_name", "%2")
        print_color({"Organization set: ", "default"}, {"%1", "priv_comm"})
      end
-     DeleteVariable("looking_for_org")
-   end
-  </send>
+            EnableTrigger("detect_org", 0)</send>
   </trigger>
 
   <trigger

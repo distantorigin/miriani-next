@@ -542,7 +542,7 @@ regexp="y"
   <trigger
    enabled="n"
    name="detect_org"
-   match="^(Private Organization: .+|\[Organization\]) (.+)$"
+   match="^Private Organization: .+ \((.+)\)|\[Organization\] (.+)$"
    regexp="y"
    send_to="14"
    sequence="50"

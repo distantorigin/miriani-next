@@ -21,6 +21,7 @@ local options = {
   external_camera = {descr="Gag external camera output.", value="no", group="gags", type="bool"},
   internal_camera = {descr="Gag internal camera output.", value="no", group="gags", type="bool"},
   follow_interrupt = {descr="Interrupt speech when following.", value="no", group="screen reader", type="bool"},
+  follow_direction_sounds = {descr="Play direction sounds when following or being dragged.", value="yes", group="general", type="bool"},
   friendly_combat = {descr="Gag friendly (non-praelor) sector combat messages.", value="no", group="gags", type="bool"},
   pa_interrupt = {descr="Interrupt speech for public address (PA) messages.", value="no", group="screen reader", type="bool"},
   praelor_interrupt = {descr="Interrupt speech when detecting insectoid activity.", value="no", group="screen reader", type="bool"},

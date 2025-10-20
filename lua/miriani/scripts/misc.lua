@@ -676,8 +676,8 @@ if config:get_option("external_camera").value == "no" then
    local direction = string.lower("%1")
    local sound_file = direction_map[direction]
 
-   if sound_file then
-     -- Always play the direction sound with interrupt (interrupts previous direction announcements)
+   if sound_file and config:get_option("follow_direction_sounds").value == "yes" then
+     -- Play the direction sound with interrupt (interrupts previous direction announcements)
      mplay("misc/directions/" .. sound_file, "direction", true)
    end -- sound
    if config:get_option("follow_interrupt").value == "yes" then
@@ -717,7 +717,7 @@ if config:get_option("external_camera").value == "no" then
    local direction = string.lower("%2")
    local sound_file = direction_map[direction]
 
-   if sound_file then
+   if sound_file and config:get_option("follow_direction_sounds").value == "yes" then
      -- Play the direction sound with interrupt (interrupts previous direction announcements)
      mplay("misc/directions/" .. sound_file, "direction", true)
    end -- sound

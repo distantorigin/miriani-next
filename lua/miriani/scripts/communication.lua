@@ -549,7 +549,7 @@ regexp="y"
   >
   <send>local current_org = GetVariable("org_name")
      if current_org ~= "%1" then
-       SetVariable("org_name", "%2")
+       SetVariable("org_name", "%1")
        print_color({"Organization set: ", "default"}, {"%1", "priv_comm"})
      end
             EnableTrigger("detect_org", 0)</send>

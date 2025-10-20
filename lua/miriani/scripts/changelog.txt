@@ -1,3 +1,9 @@
+Version 4.0.03:
+
+* New: Added the directional TTS audio files from the Miriani Soundpack for VIP Mud, which get played when you follow someone.
+* Fixed: Interrupt on follow (in conf reader) now works correctly, and also works for being dragged.
+* Fixed: Lore printing sound
+
 Version 4.0.02:
 
 Note: This release was initially going to be the debut for the new updater, but I'm pushing this ahead of time to get some bug fixes and nice-to-have features out there. Lots of work is going on behind the scenes on:
@@ -6,6 +12,7 @@ Note: This release was initially going to be the debut for the new updater, but 
 	- Splitting all extras into MUSHclient plugins
 	- And more! Primarily, lots of technical debt catchup and reorganization of files.
 
+* New: Added direction announcement sounds when following or being dragged (migrated from VIP Mud soundpack). When the "Interrupt speech when following" option is enabled in "conf screen reader", direction sounds (north, south, east, west, up, down, etc.) will play when you follow someone or are dragged. These sounds interrupt previous direction announcements to ensure clarity during rapid movement.
 * New: Added sounds for various RP Shenanigans (credit to the Miriani Soundpack for VIP Mud):
 	- Blade combat sounds: unsheathing, sheathing, stabbing, swiping, slashing, blocking, and wiping blades clean
 	- Slime machine/puddle interaction sounds: slime hits and puddle splats

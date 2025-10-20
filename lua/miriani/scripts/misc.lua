@@ -648,18 +648,83 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    name="interruptFollow"
    group="misc"
-   match="^You follow [A-Z][a-z]+[\s\w]+ (north|south|east|west|up|down|into|out|through)(.*)\.$"
+   match="^You follow [A-Z][a-z]+[\s\w]+ (north|south|east|west|northeast|northwest|southeast|southwest|up|down|into|out|through)(.*)\.$"
+   regexp="y"
+   enabled="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   -- Map direction words to sound file names
+   local direction_map = {
+     north = "north",
+     south = "south",
+     east = "east",
+     west = "west",
+     northeast = "northeast",
+     northwest = "northwest",
+     southeast = "southeast",
+     southwest = "southwest",
+     up = "up",
+     down = "down",
+     into = "enter",
+     out = "out",
+     through = "go"
+   }
+
+   local direction = string.lower("%1")
+   local sound_file = direction_map[direction]
+
+   if sound_file then
+     -- Always play the direction sound with interrupt (interrupts previous direction announcements)
+     mplay("misc/directions/" .. sound_file, "direction", true)
+   end -- sound
+   if config:get_option("follow_interrupt").value == "yes" then
+     Execute("tts_stop")
+   end -- follow interrupt
+   print("%0")</send>
+  </trigger>
+
+  <trigger
+   name="interruptDrag"
+   group="misc"
+   match="^(.+?) drags you (north|south|east|west|northeast|northwest|southeast|southwest|up|down|into|out|through)(.*)\.$"
+      enabled="y"
    regexp="y"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
   <send>
-   print("%0")
-  if config:get_option("follow_interrupt").value == "yes" then
-    speech_interrupt("%1%2")
-   end -- if
-  </send>
+   -- Map direction words to sound file names
+   local direction_map = {
+     north = "north",
+     south = "south",
+     east = "east",
+     west = "west",
+     northeast = "northeast",
+     northwest = "northwest",
+     southeast = "southeast",
+     southwest = "southwest",
+     up = "up",
+     down = "down",
+     into = "enter",
+     out = "out",
+     through = "go"
+   }
+
+   local direction = string.lower("%2")
+   local sound_file = direction_map[direction]
+
+   if sound_file then
+     -- Play the direction sound with interrupt (interrupts previous direction announcements)
+     mplay("misc/directions/" .. sound_file, "direction", true)
+   end -- sound
+   if config:get_option("follow_interrupt").value == "yes" then
+     Execute("tts_stop")
+   end
+   print("%0")</send>
   </trigger>
 
   <trigger

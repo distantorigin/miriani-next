@@ -13,7 +13,6 @@ Note: This release was initially going to be the debut for the new updater, but 
 	- Splitting all extras into MUSHclient plugins
 	- And more! Primarily, lots of technical debt catchup and reorganization of files.
 
-* New: Added direction announcement sounds when following or being dragged (migrated from VIP Mud soundpack). When the "Interrupt speech when following" option is enabled in "conf screen reader", direction sounds (north, south, east, west, up, down, etc.) will play when you follow someone or are dragged. These sounds interrupt previous direction announcements to ensure clarity during rapid movement.
 * New: Added sounds for various RP Shenanigans (credit to the Miriani Soundpack for VIP Mud):
 	- Blade combat sounds: unsheathing, sheathing, stabbing, swiping, slashing, blocking, and wiping blades clean
 	- Slime machine/puddle interaction sounds: slime hits and puddle splats
@@ -34,6 +33,7 @@ Note: This release was initially going to be the debut for the new updater, but 
 * New: The output tab is now read only by default.
 * New: The installer executable now looks for Dropbox and forces the install to go to local documents instead, similarly to OneDrive.
 * New: If escape is set to send @abort to the game, it will now send 0 when in conf and other menus. This has the side effect of resulting in an invalid selection if there's nothing to go back to, but it's all the same in the end, really.
+* New: Design channel sounnd.
 * New: Output will now automatically truncate ~40% once it reaches around 1 MB in size.
 * New: Add log_manager, a plugin I've written that sets up sane logging defaults:
   - All logs go to a logs\WorldName folder

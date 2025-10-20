@@ -1,6 +1,7 @@
-Version 4.0.03:
+Version 4.0.03-dev:
 
 * New: Added the directional TTS audio files from the Miriani Soundpack for VIP Mud, which get played when you follow someone.
+* New: Added conf gen 8, to control follow directional audio.
 * Fixed: Interrupt on follow (in conf reader) now works correctly, and also works for being dragged.
 * Fixed: Lore printing sound
 

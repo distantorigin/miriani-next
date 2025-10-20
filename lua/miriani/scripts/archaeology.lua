@@ -207,13 +207,18 @@ mplay("activity/archaeology/nothing")
    regexp="y"
    send_to="12"
   >
-  <send>
-   mplay("activity/archaeology/find")
+  <send>  mplay("activity/archaeology/find")
 
    if buried_artifact or artifact_room then
      buried_artifact, artifact_room = nil
      infobar_t["arch"] = nil
    end -- if
+   if not artifacts_found then
+    artifacts_found = 1
+   else
+   artifacts_found = artifacts_found + 1
+   end --artifacts_found
+   print("Artifacts: "..artifacts_found)
   </send>
   </trigger>
 

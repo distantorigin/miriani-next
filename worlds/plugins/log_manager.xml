@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+<!-- Daily Rotating Log Plugin -->
+
+<muclient>
+<plugin
+   name="log_manager"
+   author="distantorigin"
+   id="23a603753436e54efaec41dc"
+   language="Lua"
+   purpose="Automatically manages daily log files with rotation at midnight"
+   date_written="2025-10-19 16:09:00"
+   requires="4.46"
+   version="1.0"
+   save_state="n"
+   >
+
+<description trim="y">
+<![CDATA[
+This plugin automatically manages log files with the following features enabled and set up for you. If you wish to disable logging, remove the plugin.
+
+1. Daily rotation - Creates a new log file each day
+2. Organized directory structure - logs/worldname/YYYY/MM/DD Month YYYY.txt
+3. Automatically opens log on connect and closes on disconnect
+4. Handles the year/month folder creation for you
+5. Broadcasts log rotation events to other plugins
+
+The log files are stored in: your MUSHclient directory/logs/<worldname>/<year>/<month_number>/<day> <Month> <year>.txt
+For example: logs/miriani/2025/01/29 January 2025.txt
+]]>
+</description>
+
+</plugin>
+
+<!--  Aliases  -->
+
+<aliases>
+<alias
+   match="^vlog|vlog $"
+   enabled="y"
+   script="ViewCurrentLog"
+   sequence="100"
+   regexp="y"
+>
+</alias>
+
+<alias
+   match="^vlog (.+)$"
+   enabled="y"
+   script="ViewLogDaysAgo"
+   regexp="y"
+   sequence="100"
+>
+</alias>
+</aliases>
+
+<!--  Script  -->
+
+<script>
+<![CDATA[
+
+-- Get the sanitized world name for use in paths
+function GetWorldName()
+  local world_name = WorldName()
+  -- Sanitize world name for use in file paths (remove invalid chars)
+  world_name = string.gsub(world_name, "[\\/:*?\"<>|]", "_")
+  world_name = string.gsub(world_name, "%s+", "_")
+  return string.lower(world_name)
+end
+
+-- Get current date information
+function GetDateInfo()
+  return {
+    year = os.date("%Y"),
+    month = os.date("%m"),  -- Month number (01-12)
+    month_name = os.date("%B"),  -- Full month name (January, February, etc.)
+    day = os.date("%d"),
+    full_date = os.date("%Y-%m-%d")  -- For comparison
+  }
+end
+
+-- Build the full log file path
+function BuildLogPath()
+  local date_info = GetDateInfo()
+  local world_name = GetWorldName()
+
+  -- Get the absolute log directory from MUSHclient settings
+  local base_log_dir = GetInfo(56).."logs"
+  -- Remove trailing slash/backslash if present
+  base_log_dir = string.gsub(base_log_dir, "[/\\]$", "")
+
+  local log_dir = base_log_dir .. "\\" .. world_name .. "\\" ..
+                  date_info.year .. "\\" .. date_info.month
+  local log_file = log_dir .. "\\" .. date_info.day .. " " ..
+                   date_info.month_name .. " " .. date_info.year .. ".txt"
+
+  return log_file, log_dir
+end
+
+-- Create year/month directory structure if it doesn't exist
+-- MUSHclient won't create subdirs, so we need to create them recursively
+function EnsureLogDirectory(log_dir)
+  local lfs = require "lfs"
+
+  -- log_dir is already the full absolute path, use it directly
+  local path_parts = {}
+  for part in string.gmatch(log_dir, "[^/\\]+") do
+    table.insert(path_parts, part)
+  end
+
+  -- Build and create each level of the directory tree
+  local current_path = ""
+  for i, part in ipairs(path_parts) do
+    if i == 1 then
+      current_path = part
+    else
+      current_path = current_path .. "\\" .. part
+    end
+
+    -- Try to create directory (will fail silently if it exists)
+    local success, err = pcall(function() lfs.mkdir(current_path) end)
+    if not success then
+      Note("DEBUG: Could not create directory: " .. current_path .. " - " .. tostring(err))
+    end
+  end
+end
+
+function EnableLogging(state)
+  if state then
+    SetLogOutput(true)
+    SetLogInput(true)
+    SetLogNotes(false)
+  else
+    SetLogOutput(false)
+    SetLogInput(false)
+    SetLogNotes(false)
+    if IsLogOpen() then
+      CloseLog()
+    end
+  end
+end
+
+function ToggleLogging()
+  if IsLogOutput() then
+    EnableLogging(false)
+    Note("Session logging disabled.")
+  else
+    EnableLogging(true)
+    OpenDailyLog()
+    Note("Session logging enabled.")
+  end
+end
+
+-- Open the log file for the current day
+function OpenDailyLog()
+  local log_file, log_dir = BuildLogPath()
+
+  -- Ensure directory exists
+  EnsureLogDirectory(log_dir)
+
+  -- Close any existing log
+  if IsLogOpen() then
+    CloseLog()
+  end
+
+  -- Open new log file with ABSOLUTE path (append mode in case we're reopening same day)
+  local result = OpenLog(log_file, true)
+
+  if result == 0 then  -- eOK
+    -- Store current date for rotation detection
+    SetVariable("current_log_date", GetDateInfo().full_date)
+    WriteLog("\n"..string.rep("=", 70) )
+    WriteLog("Log opened on "..os.date("%Y-%m-%d %H:%M:%S") .. "")
+    WriteLog(string.rep("=", 70) .. "\n")
+  else
+    Note("ERROR: Could not open log file: " .. log_file)
+  end
+end
+
+-- Check if we need to rotate the log (date changed)
+function CheckLogRotation()
+  local current_date = GetDateInfo().full_date
+  local stored_date = GetVariable("current_log_date")
+
+  if stored_date ~= current_date then
+    -- Date changed, rotate log
+    Note("Date changed - rotating log file...")
+
+    local old_date = stored_date
+    local log_file, log_dir = BuildLogPath()
+
+    -- Open new log for new day (this will force logging settings)
+    OpenDailyLog()
+
+    -- Broadcast to other plugins that log has rotated
+    -- Message: 1 = log rotation event
+    BroadcastPlugin(1, "log_rotated")
+  end
+end
+
+-- Called when plugin is installed
+function OnPluginInstall()
+  if GetVariable("current_log_date") == nil then
+    SetVariable("current_log_date", "")
+  end
+
+  -- Force logging settings
+  EnableLogging(true)
+
+  -- Create a timer to fire at midnight (00:00:00) every day
+  -- AtTime flag means it fires at this specific time, not every X seconds
+  AddTimer("log_rotation_check", 0, 0, 0, "",
+           timer_flag.Enabled + timer_flag.AtTime + timer_flag.ActiveWhenClosed + timer_flag.Replace+timer_flag.Temporary,
+           "CheckLogRotation")
+
+ if IsConnected()  then
+  OpenDailyLog()
+ end
+end
+
+-- Called when world connects
+function OnPluginConnect()
+  -- Open log file for today
+  OpenDailyLog()
+end
+
+-- Called when world disconnects
+function OnPluginDisconnect()
+  -- Write footer and close log
+  if IsLogOpen() then
+    WriteLog("\n"..string.rep("=", 70))
+    WriteLog("Log closed (disconnected) on " .. os.date("%Y-%m-%d %H:%M:%S") .. "\n")
+    WriteLog(string.rep("=", 70) .."\n")
+    CloseLog()
+  end
+end
+
+-- Open the current log file in an external editor
+function ViewCurrentLog()
+  local current_log = GetInfo(51)
+
+  if not current_log or current_log == "" then
+    Note("No log file is currently set")
+    return
+  end
+
+  if IsLogOpen() then
+    FlushLog()
+  end
+
+  -- Check if the file exists
+  local lfs = require "lfs"
+  local attr = lfs.attributes(current_log)
+
+  if not attr then
+    Note("Log file does not exist: " .. current_log)
+    return
+  end
+
+  -- Open the file with the default application
+  Note("Opening "..WorldName().." log for today...")
+  utils.shellexecute(current_log, "", "", "open", 1)
+end
+
+-- Open a log file from X days ago
+function ViewLogDaysAgo(name, line, wildcards)
+  local days_ago = tonumber(wildcards[1])
+
+  if not days_ago then
+    Note("Usage: ViewLogDaysAgo <number_of_days>")
+    return
+  end
+
+  -- Calculate the date X days ago
+  local target_time = os.time() - (days_ago * 24 * 60 * 60)
+  local target_date = {
+    year = os.date("%Y", target_time),
+    month = os.date("%m", target_time),
+    month_name = os.date("%B", target_time),
+    day = os.date("%d", target_time)
+  }
+
+  -- Build the log file path for that date
+  local world_name = GetWorldName()
+  local base_log_dir = GetInfo(56) .. "logs"
+  base_log_dir = string.gsub(base_log_dir, "[/\\]$", "")
+
+  local log_dir = base_log_dir .. "\\" .. world_name .. "\\" ..
+                  target_date.year .. "\\" .. target_date.month
+  local log_file = log_dir .. "\\" .. target_date.day .. " " ..
+                   target_date.month_name .. " " .. target_date.year .. ".txt"
+
+  -- Check if the file exists
+  local lfs = require "lfs"
+  local attr = lfs.attributes(log_file)
+
+  if not attr then
+    Note("No log file exists for " .. target_date.month_name.." "..target_date.day..".")
+    return
+  end
+
+  -- Open the file with the default application
+  Note("Opening "..WorldName().." log file from " .. days_ago .. " days ago: " .. log_file)
+  utils.shellexecute(log_file, "", "", "open", 1)
+end
+
+-- Called when plugin is being removed/closed
+function OnPluginClose()
+  -- Close any open log
+  if IsLogOpen() == true then
+    CloseLog()
+  end
+  EnableLogging(false)
+end
+
+]]>
+</script>
+
+</muclient>

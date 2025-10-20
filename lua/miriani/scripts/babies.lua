@@ -168,12 +168,12 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^[a-zA-Z][a-zA-Z0-9 '-]*? flails.+?limbs\.\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-] flails.+limbs\.$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywave", "babies")</send>
+  <send>--mplay("misc/baby/babywave", "babies")</send>
   </trigger>
 
   <trigger
@@ -190,23 +190,23 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^[a-zA-Z].+ kicks.+?feet and waves.+?arms\.$"
+   match="^[a-zA-Z].+ kicks.+feet and waves.+arms\.$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywave", "babies")</send>
+  <send>--mplay("misc/baby/babywave", "babies")</send>
   </trigger>
 
   <trigger
    enabled="y"
    group="babies"
-   match="^[a-zA-Z][a-zA-Z0-9 '-]*? kicks one foot\.$"
+   match="^[a-zA-Z][a-zA-Z0-9 '-] kicks one foot\.$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywave", "babies")</send>
+  <send>--mplay("misc/baby/babywave", "babies")</send>
   </trigger>
 
   <trigger
@@ -371,7 +371,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywave", "babies")</send>
+  <send>--mplay("misc/baby/babywave", "babies")</send>
   </trigger>
 
   <trigger

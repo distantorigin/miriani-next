@@ -6,8 +6,9 @@ ImportXML([=[
    match="^You feel a mild vibration as the starship's asteroid anchor buries itself into the asteroid's surface\.$"
    regexp="y"
    send_to="12"
+   omit_from_output="y"
  >
-  <send>mplay("activity/hauling/shipAnchor")</send>
+  <send>mplay("activity/asteroid/shipAnchorStart")</send>
   </trigger>
 
   <trigger
@@ -16,8 +17,9 @@ ImportXML([=[
    match="^Upon finding a suitable location, you press a small button on the side of an asteroid anchor, which forcefully buries itself into the ground\.$"
    regexp="y"
    send_to="12"
+   omit_from_output="y"
  >
-  <send>mplay("activity/hauling/singleAnchor")</send>
+  <send>mplay("activity/asteroid/anchorEnd")</send>
   </trigger>
 
   <trigger
@@ -26,8 +28,9 @@ ImportXML([=[
    match="^You begin to painstakingly tie a coil of sturdy line to an asteroid anchor\.$"
    regexp="y"
    send_to="12"
+   omit_from_output="y"
  >
-  <send>mplay("activity/hauling/connectWire")</send>
+  <send>mplay("activity/asteroid/lineStart")</send>
   </trigger>
 
   <trigger
@@ -38,7 +41,7 @@ ImportXML([=[
    omit_from_output="y"
    send_to="14"
  >
-  <send>mplay("activity/hauling/haulRoid")</send>
+  <send>mplay("SHIP/MOVE/HAUL")</send>
   </trigger>
 
   <trigger
@@ -49,8 +52,48 @@ ImportXML([=[
    omit_from_output="y"
    send_to="14"
  >
-  <send>mplay("activity/hauling/kitRetrieve")</send>
+  <send>mplay("activity/asteroid/kitRetrieve")</send>
   </trigger>
 
-</triggers>
+  <trigger
+   enabled="y"
+   group="hauling"
+   match="^You spend a moment searching for a suitable location to deploy an asteroid anchor\.$"
+   regexp="y"
+   send_to="12"
+   omit_from_output="y"
+ >
+  <send>mplay("activity/asteroid/anchorStart")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="hauling"
+   match="^You step back and admire your handiwork\.$"
+   regexp="y"
+   send_to="12"
+ >  
+  <send>mplay("activity/asteroid/lineEnd")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="hauling"
+   match="^You press a button on the side of an asteroid anchor, which works its way out of the ground\. You pick it up\.$"
+   regexp="y"
+   send_to="12"
+ >
+  <send>mplay("activity/asteroid/anchorRemove")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="hauling"
+   match="^.+announces,.+Lifting anchor and establishing standard dock.+$"
+   regexp="y"
+   send_to="12"
+   >
+   <send>mplay("activity/asteroid/shipAnchorEnd")</send>
+  </trigger>
+  </triggers>
 ]=])

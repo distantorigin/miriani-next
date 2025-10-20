@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE muclient>
-<!-- Saved on Thursday, October 09, 2025, 12:11 PM -->
+<!-- Saved on Sunday, October 19, 2025, 8:52 PM -->
 <!-- MuClient version 5.07-pre -->
 <!-- Written by Nick Gammon -->
 <!-- Home Page: http://www.mushclient.com/ -->
@@ -8,7 +8,7 @@
 <world
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
 
    auto_say_override_prefix="-"
    auto_say_string="say "
@@ -61,6 +61,7 @@
    input_font_height="9"
    input_font_weight="400"
    input_text_colour="black"
+   log_input="y"
    log_output="y"
    max_output_lines="5000"
    mud_can_change_link_colour="y"
@@ -108,9 +109,9 @@
 <!-- triggers -->
 
 <triggers
-   muclient_version="5.07ll-pre"
+   muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 </triggers>
 
@@ -119,7 +120,7 @@
 <aliases
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 </aliases>
 
@@ -128,7 +129,7 @@
 <timers
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 </timers>
 
@@ -137,7 +138,7 @@
 <macros
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 
   <macro name="up" type="send_now" >
@@ -231,7 +232,7 @@
 <variables
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 </variables>
 
@@ -240,7 +241,7 @@
 <colours
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 
 <ansi>
@@ -297,7 +298,7 @@
 <keypad
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 
   <key name="0" >
@@ -411,7 +412,7 @@
 <printing
    muclient_version="5.07-pre"
    world_file_version="15"
-   date_saved="2025-10-09 12:11:42"
+   date_saved="2025-10-19 20:52:24"
   >
 
 <ansi>
@@ -441,6 +442,8 @@
 <include name="Omit_Blank_Lines.xml" plugin="y" />
 <include name="channel_history.xml" plugin="y" />
 <include name="updater.xml" plugin="y" />
-<include name="toastush.xml" plugin="y" />
 <include name="mushclient_help.xml" plugin="y" />
+<include name="toastush.xml" plugin="y" />
+<include name="log_manager.xml" plugin="y" />
+<include name="Hyperlink_URL2.xml" plugin="y" />
 </muclient>

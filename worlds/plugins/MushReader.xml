@@ -210,7 +210,7 @@ end
 function OnPluginInstall ()
 assert(package.loadlib("MushReader.dll", "luaopen_audio"))()
 stop()
-say("mush reader initialized")
+--say("mush reader initialized")
 end
 function say(str)
 nvda.say("       "..str)
@@ -267,7 +267,8 @@ if tts_enabled then
 say(word)
 end
 end
-Accelerator("ctrl+shift+f12","tts")
+Accelerator("f8","tts")
+Accelerator("ctrl+f8","ftts")
 ]]>            
  </script> 
 </muclient>

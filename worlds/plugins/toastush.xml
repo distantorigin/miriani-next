@@ -113,7 +113,7 @@ As of October 13, 2025, Toastush-NG is now a hard fork of the Toastush soundpack
     mplay("misc/roundtime")
    end -- if round time
 
-  
+
    if (roundtime &gt; 0) then
     roundtime = roundtime - 1
    end -- if
@@ -144,7 +144,7 @@ show_paralyzed(roundtime, stuntime)
 
    end -- if
 
-   if (heartbeat &gt;= reset_heartbeat) then
+   if (heartbeat &lt;= reset_heartbeat) then
        heartbeat = 0
    end -- if
 
@@ -400,8 +400,6 @@ stunned = false
 
 EnableTrigger("url_catcher", false)
 
-
-
 ---------------------
 -- Macros
 Accelerator('F1', 'next:config')
@@ -426,11 +424,21 @@ AcceleratorTo("F11", 'decrease_attribute("volume")', script)
 AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
 AcceleratorTo("Esc", [[
-  if config:get_option("escape_abort").value == "yes" then
+  if dialog and dialog.is_active() then
+    -- In a dialog: go back with "0"
+    dialog.handle_input("0")
+  elseif config:get_option("escape_abort").value == "yes" then
+    -- Not in dialog: send @abort to game
     Send("@abort")
   else
+    -- Select all and clear command text
     SetCommandSelection(1, #GetCommand())
     PasteCommand("")
+  end
+]], script)
+AcceleratorTo("Tab", [[
+  if config:get_option("tab_activates_notepad").value == "yes" then
+    ActivateNotepad("output")
   end
 ]], script)
 AcceleratorTo("ctrl+l", [[
@@ -500,6 +508,7 @@ function OnPluginInstall()
 
   initialize_audio()
     if (IsConnected() and GetVariable("logged_in") == "1") then
+    EnableTrigger("url_catcher", true) -- Temporary fix before I rip it all out
     register()
     OnPluginGetFocus()
     if (GetVariable("last_environment_line")) then
@@ -795,10 +804,16 @@ function janitor()
   end -- if
 
 
-  -- Disable F1 windows help:
-  if (GetGlobalOption("F1macro") == 0) then
+  -- Configure MUSHclient preferences:
+  if (GetGlobalOption("F1macro") == 0)
+  or (GetGlobalOption("ConfirmBeforeClosingMushclient") == 0)
+  or (GetGlobalOption("ConfirmBeforeClosingWorld") == 1)
+  or (GetGlobalOption("ConfirmBeforeSavingVariables") == 1) then
     db = sqlite3.open(GetInfo (82))  -- open preferences
     db:exec('UPDATE prefs SET value = 1 WHERE name = "F1macro"')
+    db:exec('UPDATE prefs SET value = 1 WHERE name = "ConfirmBeforeClosingMushclient"')
+    db:exec('UPDATE prefs SET value = 0 WHERE name = "ConfirmBeforeClosingWorld"')
+    db:exec('UPDATE prefs SET value = 0 WHERE name = "ConfirmBeforeSavingVariables"')
     db:close()  -- close
     utils.reload_global_prefs ()
   end -- if
@@ -967,7 +982,6 @@ infobar_t = {}
 
 
 ---------------------------------
-
 
 function infobar(id, message, clear)
   id = id or 1
@@ -1348,11 +1362,14 @@ function ambiance(roomtype)
     end -- if
 
   elseif (environment.name == "room") then
+
     if (environment.outdoors) then
       -- probably a roid.
       file = "asteroid"
     end -- if
 
+  elseif environment.indoors and environment.lift then
+    file = "liftd"
   elseif (environment.name == "planet") then
     if environment.marine then
       file = "marine"
@@ -1368,7 +1385,6 @@ function ambiance(roomtype)
       file = "transterrestrial"
     elseif environment.ice and environment.outdoors then
       file = "ice"
-
     end -- if
 
   elseif (environment.name == "vehicle") then

@@ -134,6 +134,7 @@ update_dir = {
       [plugins.."channel_history"] = ".xml",
       [plugins.."output_functions"] = ".xml",
 [plugins.."updater"] = ".xml",
+  [plugins.."log_manager"] = ".xml",
 [homedir.."lua/miriani/lib/"] = ".lua",
   [sounds.."miriani/"] = ".ogg",
   [homedir.."lua/ssl/"] = ".lua",

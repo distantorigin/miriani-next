@@ -464,9 +464,6 @@ function check_notepad_size()
   -- Replace notepad content
   ReplaceNotepad("output", new_content)
   NotepadReadOnly("output", true)  -- Re-apply read-only after replace
-
-  -- Notify user
-  Note("Output notepad truncated (was approaching 1.5MB)")
  end
 end
 

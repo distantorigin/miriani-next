@@ -308,20 +308,18 @@ function config_menu.edit_option(option_key, group_name)
         if first_time == nil or first_time == "1" then
           SetVariable("tab_output_first_time", "0")
 
-          dialog.menu({
-            title = "Welcome to Accessible Output Mode!",
-            message = "Hi! Since this is your first time enabling this feature, here's what's changed:\n\n" ..
-                     "Pressing Tab or Shift+Tab will now switch focus to the accessible output window, making it easier to review game text with your screen reader.\n\n" ..
-                     "Don't worry about tab completion though - we've moved that to Ctrl+Space so you can still use it whenever you need it.\n\n" ..
-                     "You can toggle this mode on or off anytime from the config menu. Enjoy!",
-            choices = {
-              ["1"] = "Got it, thanks!"
-            },
-            callback = function(result, reason)
-              config_menu.show_group(group_name)
-            end
-          })
-          return -- Don't show group menu yet, callback will handle it
+          -- Show a message box for first-time users
+          utils.msgbox(
+            "Hi! Since this is your first time enabling this feature, here's what's changed:\n\n" ..
+            "Pressing Tab or Shift+Tab will now switch focus to the accessible output window, " ..
+            "making it easier to review game text with your screen reader.\n\n" ..
+            "Don't worry about tab completion though - we've moved that to Ctrl+Space so you can still use it whenever you need it.\n\n" ..
+            "You can toggle this mode on or off anytime from the config menu. Enjoy!",
+            "Welcome to Accessible Output Mode!",
+            "ok",
+            "i",
+            1
+          )
         end
       end
     end

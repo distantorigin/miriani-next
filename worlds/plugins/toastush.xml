@@ -525,7 +525,9 @@ function update_tab_accelerators()
     Note("Warning: config not initialized yet, tab accelerators not set")
     return
   end
-
+  if not GetVariable("tab_output_first_time") then
+    config:get_option("tab_activates_notepad", "yes")
+      end
   local option = config:get_option("tab_activates_notepad")
   if not option then
     Note("Warning: tab_activates_notepad option not found")

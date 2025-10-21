@@ -526,7 +526,7 @@ function update_tab_accelerators()
     return
   end
   if not GetVariable("tab_output_first_time") then
-    config:get_option("tab_activates_notepad", "yes")
+    config:set_option("tab_activates_notepad", "yes")
       end
   local option = config:get_option("tab_activates_notepad")
   if not option then

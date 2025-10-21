@@ -436,11 +436,7 @@ AcceleratorTo("Esc", [[
     PasteCommand("")
   end
 ]], script)
-AcceleratorTo("Tab", [[
-  if config:get_option("tab_activates_notepad").value == "yes" then
-    ActivateNotepad("output")
-  end
-]], script)
+-- Tab accelerators are set up by update_tab_accelerators() function
 AcceleratorTo("ctrl+l", [[
   notify("info", "Reloading audio settings...")
   initialize_audio()
@@ -477,6 +473,82 @@ AcceleratorTo("SHIFT+Esc", [[
 
 
 
+
+---------------------
+-- Tab key functions
+---------------------
+
+-- Function to handle tab key press for accessible output
+function HandleTabForOutput()
+  -- Check if this is the first time using tab for output
+  local first_time = GetVariable("tab_output_first_time")
+
+  if first_time == nil or first_time == "1" then
+    SetVariable("tab_output_first_time", "0")
+
+    -- Ask if they want to enable this feature
+    local result = utils.umsgbox(
+      "👋 It looks like you pressed Tab.\n\n" ..
+      "Would you like to enable Accessible Output Mode? This will make Tab and Shift+Tab switch focus to the accessible output window, making it easier to review game text with your screen reader.\n\n" ..
+      "Tab completion will be moved to Ctrl+Space instead.\n\n" ..
+      "You can change this anytime in the config menu (conf). This message will only appear once.",
+      "Enable Accessible Output Mode?",
+      "yesno",
+      "?",
+      1
+    )
+
+    if result == "yes" then
+      -- Enable the option
+      config:set_option("tab_activates_notepad", "yes")
+      config:save()
+      update_tab_accelerators()
+      ActivateAccessibleOutput()
+    else
+      -- They said no, disable the option
+      config:set_option("tab_activates_notepad", "no")
+      config:save()
+      update_tab_accelerators()
+      -- Do default tab completion instead
+      DoCommand("KeysTab")
+    end
+  else
+    -- Not first time, just activate
+    ActivateAccessibleOutput()
+  end
+end
+
+-- Function to update tab accelerators based on option state
+function update_tab_accelerators()
+  -- Make sure config is available
+  if not config then
+    Note("Warning: config not initialized yet, tab accelerators not set")
+    return
+  end
+
+  local option = config:get_option("tab_activates_notepad")
+  if not option then
+    Note("Warning: tab_activates_notepad option not found")
+    return
+  end
+
+  local option_value = option.value
+
+  if option_value == "yes" then
+    -- Tab activates accessible output
+    world.AcceleratorTo("Tab", "HandleTabForOutput()", sendto.script)
+    world.AcceleratorTo("Shift+Tab", "HandleTabForOutput()", sendto.script)
+    -- Ctrl+Space does tab completion
+    world.AcceleratorTo("Ctrl+Space", "DoCommand('KeysTab')", sendto.script)
+  else
+    -- Tab does default tab completion
+    world.AcceleratorTo("Tab", "DoCommand('KeysTab')", sendto.script)
+    -- Clear Shift+Tab
+    world.AcceleratorTo("Tab", "DoCommand('KeysShiftTab')", sendto.script)
+    -- Clear Ctrl+Space
+    world.Accelerator("Ctrl+Space", "")
+  end
+end
 
 ---------------------
 -- script routines
@@ -527,6 +599,9 @@ end
   if (GetVariable("minimal_mode") == "1") then
     toggle_minimal_groups(0)
   end -- if
+
+  -- Set up tab accelerators based on current option
+  update_tab_accelerators()
 
 end -- OnPluginInstall
 

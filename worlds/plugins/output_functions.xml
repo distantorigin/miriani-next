@@ -226,7 +226,7 @@ selecttime = os.time()
 end
 
 function output_toggle()
-note("This function has been disabled in favor of the accessible output window.")
+Note("This function has been disabled in favor of the accessible output window.")
 end
 
 function interrupt_toggle()

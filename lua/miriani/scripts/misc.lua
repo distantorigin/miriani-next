@@ -747,7 +747,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^You access a \w+ portable point unit and note you have ([0-9,.]+) license points? and ([0-9,.]+) combat points?\.$"
+   match="^You access.+portable point unit and note you have ([0-9,.]+) license points? and ([0-9,.]+) combat points?\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

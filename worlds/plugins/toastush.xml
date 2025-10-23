@@ -446,7 +446,6 @@ AcceleratorTo("ALT+SHIFT+I", [[
   local line = ""
 
 
-
   for k,v in pairs(infobar_t) do
     line = line..v.." - "
   end -- for
@@ -1063,7 +1062,7 @@ infobar_t = {}
 function infobar(id, message, clear)
   id = id or 1
 
-  if clear or not message then
+  if clear or message == "" then
     infobar_t[id] = nil
   end -- if
 

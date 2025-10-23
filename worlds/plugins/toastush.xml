@@ -144,7 +144,7 @@ show_paralyzed(roundtime, stuntime)
 
    end -- if
 
-   if (heartbeat &lt;= reset_heartbeat) then
+   if (heartbeat &gt;= reset_heartbeat) then
        heartbeat = 0
    end -- if
 

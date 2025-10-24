@@ -1109,29 +1109,30 @@ function open_url()
 end -- open_url
 
 function mplay(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
-  -- Miriani only play:
+  -- Miriani only play: try alternate audio first, then fallback to standard path
+
   local filepath
 
+  -- Try alternate audio if enabled
   if (config:get_option("alternate_audio").value == "yes") then
     local path = require("pl.path")
     local dir, fn = path.splitpath(file)
-    local alt_file = ALTPATH..fn..ALT_EXTENSION
+    local alt_file = ALTPATH..file
 
-    -- Use find_sound_file for alternate audio to handle numbered variants
+    -- Check if alternate audio exists by trying to find it
     if find_sound_file then
       local alt_path = find_sound_file(alt_file)
+
       if alt_path then
         filepath = alt_file
       end
-    elseif (path.isfile(config:get("SOUND_DIRECTORY")..alt_file)) then
-      filepath = alt_file
-    end -- if
-  end -- if
+    end
+  end
 
-  -- Handle classic/modern audio selection - let the play function handle the logic
+  -- Fall back to standard audio if alternate not found
   if (not filepath) then
-    filepath = string.format(SOUNDPATH.."%s%s", file, EXTENSION)
-  end -- if
+    filepath = SOUNDPATH..file
+  end
 
   play(filepath, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
 end -- mplay

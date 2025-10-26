@@ -109,8 +109,10 @@ function state_ops.end_object(self)
 end
 
 function state_ops.new_call(self, name, func)
-	-- TODO setup properly
 	local new_call = {}
+	if jsonutil.InitCall then
+		new_call = jsonutil.InitCall(new_call) or new_call
+	end
 	new_call.name = name
 	new_call.func = func
 	self.active = new_call

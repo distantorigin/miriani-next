@@ -1108,43 +1108,23 @@ function open_url()
   end -- if
 end -- open_url
 
-function mplay(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
-  -- Miriani only play: check for miriani variants first, then alternate audio (no variants), then fallback
-
+function mplay(file, group, interrupt, pan, loop, slide, sec)
+  -- Miriani only play:
   local filepath
-  local path = require("pl.path")
 
-  -- First, always check the standard miriani path for variants
-  local miriani_file = SOUNDPATH..file
+  if (config:get_option("alternate_audio").value == "yes") then
+    local path = require("pl.path")
+    local dir, fn = path.splitpath(file)
+    if (path.isfile(config:get("SOUND_DIRECTORY")..ALTPATH..dir.."/"..fn..ALT_EXTENSION)) then
+      filepath = ALTPATH..dir.."/"..fn..ALT_EXTENSION
+    end -- if
+  end -- if
 
-  if find_sound_file then
-    -- This will check for variants in the miriani folder
-    local miriani_path = find_sound_file(miriani_file)
-
-    if miriani_path then
-      -- Found the file (possibly with variant) in miriani folder
-      filepath = miriani_file
-    elseif config:get_option("alternate_audio").value == "yes" then
-      -- No miriani variant found, try alternate audio (without variants)
-      local alt_file = ALTPATH..file
-      local file_base, ext = path.splitext(file)
-
-      -- For alternate audio, only check for the base file, not variants
-      local sound_dir = config:get("SOUND_DIRECTORY")
-      local alt_full_path = sound_dir .. alt_file
-
-      if path.isfile(alt_full_path) then
-        filepath = alt_file
-      end
-    end
-  end
-
-  -- Fall back to standard audio if nothing found
   if (not filepath) then
-    filepath = SOUNDPATH..file
-  end
+    filepath = string.format(SOUNDPATH.."%s%s", file, EXTENSION)
+  end -- if
 
-  play(filepath, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
+  play(filepath, group, interrupt, pan, loop, slide, sec)
 end -- mplay
 
 function speech_interrupt(line)

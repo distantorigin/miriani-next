@@ -293,7 +293,14 @@ end
 -- Returns: variant number (1, 2, 3, etc.) or 0 for random
 -- If no preference is set, returns the default variant for that sound
 function get_variant_preference(sound_path)
-  local pref = variant_preferences[sound_path]
+  -- Normalize path: convert alternate audio paths to standard paths for preference lookup
+  -- This ensures alternate and standard audio share the same variant preferences
+  local normalized_path = sound_path
+  if sound_path:match("^alternate/") then
+    normalized_path = sound_path:gsub("^alternate/", "miriani/")
+  end
+
+  local pref = variant_preferences[normalized_path]
 
   -- If a preference is explicitly set, use it (even if it's 0 for random)
   if pref ~= nil then
@@ -301,19 +308,26 @@ function get_variant_preference(sound_path)
   end
 
   -- Otherwise, use the default for this sound (or 0 if no default is defined)
-  return variant_defaults[sound_path] or 0
+  return variant_defaults[normalized_path] or 0
 end
 
 -- Set the variant preference for a sound
 -- variant: variant number (1, 2, 3, etc.) or 0 for random
 function set_variant_preference(sound_path, variant)
+  -- Normalize path: convert alternate audio paths to standard paths
+  -- This ensures alternate and standard audio share the same variant preferences
+  local normalized_path = sound_path
+  if sound_path:match("^alternate/") then
+    normalized_path = sound_path:gsub("^alternate/", "miriani/")
+  end
+
   variant = tonumber(variant) or 0
 
   if variant == 0 then
     -- Remove preference to use default random behavior
-    variant_preferences[sound_path] = nil
+    variant_preferences[normalized_path] = nil
   else
-    variant_preferences[sound_path] = variant
+    variant_preferences[normalized_path] = variant
   end
 
   save_variant_preferences()

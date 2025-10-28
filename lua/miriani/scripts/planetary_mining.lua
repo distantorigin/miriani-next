@@ -5,16 +5,13 @@ ImportXML([=[
    enabled="y"
    group="planetary mining"
    ignore_case="y"
-   match="^A recorded voice on a large planetary mining drone whispers, &quot;A pocket of valuable minerals has been detected\.&quot; You set it on the ground and watch as it begins carefully digging\.$"
+   match="^A recorded voice on a large planetary mining drone whispers, &quot;A pocket of (.+) has been detected\.&quot; You set it on the ground and watch as it begins carefully digging\.$"
    regexp="y"
    sequence="100"
    send_to="12"
   >
-  <send>
-   notify("info", "DEBUG: Minerals detected - stopping loop")
-   stop("loop")
-   mplay("activity/PlanetaryMining/MineralsDetected")
-  </send>
+  <send>stop("loop")
+   mplay("activity/PlanetaryMining/MineralsDetected")</send>
   </trigger>
 
   <trigger
@@ -64,11 +61,8 @@ ImportXML([=[
    sequence="60"
    send_to="12"
   >
-  <send>
-   notify("info", "DEBUG: No minerals - stopping loop")
-   stop("loop")
-   mplay("activity/PlanetaryMining/NoMinerals")
-  </send>
+  <send>stop("loop")
+   mplay("activity/PlanetaryMining/NoMinerals")</send>
   </trigger>
 
   <trigger
@@ -80,11 +74,8 @@ ImportXML([=[
    sequence="60"
    send_to="12"
   >
-  <send>
-   notify("info", "DEBUG: Area exhausted - stopping loop")
-   stop("loop")
-   mplay("activity/PlanetaryMining/Exhausted", "other")
-  </send>
+  <send>stop("loop")
+   mplay("activity/PlanetaryMining/Exhausted", "other")</send>
   </trigger>
   <trigger
    enabled="y"

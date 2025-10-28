@@ -105,6 +105,11 @@ end
 
 local CallMT = {}
 
+local function InitCall(call)
+	setmetatable(call, CallMT)
+	return call
+end
+
 local function isCall(value)
 	return CallMT == getmetatable(value)
 end
@@ -143,6 +148,7 @@ local json_util = {
 	undefined = undefined,
 	IsArray = IsArray,
 	InitArray = InitArray,
+	InitCall = InitCall,
 	isCall = isCall,
 	buildCall = buildCall,
 	decodeCall = decodeCall,

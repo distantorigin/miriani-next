@@ -255,8 +255,8 @@ local variant_defaults = {
   ["miriani/ship/move/accelerate.ogg"] = 3,
   ["miriani/ship/move/decelerate.ogg"] = 3,
   ["miriani/activity/archaeology/artifactHere.ogg"] = 1,
-["miriani/vehicle/accelerate.ogg"] = 1,
-["miriani/vehicle/decelerate.ogg"] = 1,
+  ["miriani/vehicle/accelerate.ogg"] = 1,
+  ["miriani/vehicle/decelerate.ogg"] = 1,
 }
 
 -- Sound variant preferences: maps sound base name to selected variant number
@@ -293,9 +293,11 @@ end
 -- Returns: variant number (1, 2, 3, etc.) or 0 for random
 -- If no preference is set, returns the default variant for that sound
 function get_variant_preference(sound_path)
+  -- Since variants are only in the miriani folder, we don't need to normalize alternate paths
+  -- Alternate audio never has variants
+
   local pref = variant_preferences[sound_path]
 
-  -- If a preference is explicitly set, use it (even if it's 0 for random)
   if pref ~= nil then
     return pref
   end
@@ -307,6 +309,7 @@ end
 -- Set the variant preference for a sound
 -- variant: variant number (1, 2, 3, etc.) or 0 for random
 function set_variant_preference(sound_path, variant)
+  -- Variants are only for miriani sounds, not alternate audio
   variant = tonumber(variant) or 0
 
   if variant == 0 then

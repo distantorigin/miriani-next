@@ -31,10 +31,11 @@ When found, processes update results and reloads plugins as needed.
 
 <script>
 <![CDATA[
-dofile("lua/reload_all.lua")
+
+require("reload_all")
 function OnPluginInstall()
   -- Check immediately on startup
-  check_update_result()
+--  check_update_result()
 end
 
 function check_update_result()
@@ -139,7 +140,7 @@ BroadcastPlugin(666, data.message)
 BroadcastPlugin(666, "unknown")
   end
 end
-reload_all_plugins()
+
 ]]>
 </script>
 </muclient>

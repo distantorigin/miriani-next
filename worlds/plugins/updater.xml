@@ -69,7 +69,7 @@ function download_updater(callback)
   local homedir = GetInfo(66)
   local download_url = "https://anomalousabode.com/next/updater"
 
-  Note("Downloading update.exe from " .. download_url .. "...")
+  Note("Downloading updater...")
 
   async.doAsyncRemoteRequest(download_url, function(retval, page, status, headers, full_status, requested_url)
     if not retval or status ~= 200 then

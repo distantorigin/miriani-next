@@ -29,7 +29,7 @@ required_plugins = {
    ["520bc4f29806f7af0017985f"] = "Hyperlink_URL2",
    ["706cd88f4d441a81439bd421"] = "updater",
    ["79772f9b67c1e42f22a3eb95"] = "update_watcher",
-   ["a40aefb9acf23ddd2dd12c0b"] = "next_dev"
+--   ["a40aefb9acf23ddd2dd12c0b"] = "next_dev"
 }
 
 -- Optional plugins can be added here as needed

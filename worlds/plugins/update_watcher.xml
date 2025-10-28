@@ -31,7 +31,7 @@ When found, processes update results and reloads plugins as needed.
 
 <script>
 <![CDATA[
-
+dofile("lua/reload_all.lua")
 function OnPluginInstall()
   -- Check immediately on startup
   check_update_result()
@@ -70,7 +70,7 @@ function process_update_result(filepath)
   end
 
   -- Handle based on result
-  if data.result == "Success" then
+  if data.result == "success" then
     handle_success(data)
   elseif data.result == "Failure" then
     handle_failure(data)
@@ -133,26 +133,13 @@ end
 function handle_failure(data)
   if data.message then
     ColourNote("red", "", "Update failed: " .. data.message)
+BroadcastPlugin(666, data.message)
   else
     ColourNote("red", "", "Update failed with unknown error")
+BroadcastPlugin(666, "unknown")
   end
 end
-
-function reload_all_plugins()
-  local pid = GetPluginID()
-  local plugins = GetPluginList()
-
-  for _, id in ipairs(plugins) do
-    if id ~= pid then
-      local ok, msg = ReloadPlugin(id)
-      if ok ~= 0 then
-        -- Could not reload
-        Note("Warning: Could not reload plugin " .. id .. ": " .. tostring(msg))
-      end
-    end
-  end
-end
-
+reload_all_plugins()
 ]]>
 </script>
 </muclient>

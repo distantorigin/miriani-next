@@ -387,7 +387,7 @@ done = false
 scripts = "lua/miriani/scripts/"
 
 function OnPluginListChanged()
- if NOT IsPluginInstalled("6773a4c6f0e71d32feac526e") && not done then
+ if not IsPluginInstalled("6773a4c6f0e71d32feac526e") && not done then
   -- Make sure current users have the requirements plugin
   done = true
   dofile("lua/requirements.lua")

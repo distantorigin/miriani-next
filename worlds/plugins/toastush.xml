@@ -382,10 +382,17 @@ show_paralyzed(roundtime, stuntime)
 
 <script>
 <![CDATA[
-dofile "lua/requirements.lua"
 require("json")
-
+done = false
 scripts = "lua/miriani/scripts/"
+
+function OnPluginListChanged()
+ if NOT IsPluginInstalled("6773a4c6f0e71d32feac526e") and not done THEN
+  -- Make sure current users have the requirements plugin
+  done = true
+  dofile("lua/requirements.lua")
+  end
+ end
 
 require(scripts.."init")
 

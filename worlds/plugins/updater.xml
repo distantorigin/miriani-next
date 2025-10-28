@@ -204,6 +204,17 @@ function update_dispatcher(name, line, wildcards)
         end)
       end
 
+    if cmd == "install" then
+        download_updater(function(success)
+          if success then
+            Note("Reinstallation complete. Running update check...")
+            update_run()
+          else
+            Note("Reinstallation failed.")
+          end
+        end)
+      end
+
     elseif cmd == "switch" then
       if params == "" then
         -- Interactive switch

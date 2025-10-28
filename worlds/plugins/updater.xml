@@ -22,6 +22,7 @@ Commands:
   update switch &lt;dev|stable&gt; - Switches to specified channel non-interactively
   update check               - Checks for updates without installing
   update version             - Shows the updater version
+  update install             - Downloads and installs the updater if not present
   update help                - Shows this help
   update                     - With no arguments, checks for and performs an update with restart confirmation if needed
 </description>
@@ -46,9 +47,54 @@ Commands:
 <![CDATA[
 
 execute = require("execute")
+async = require("async")
 
 function OnPluginInstall()
  AcceleratorTo("ctrl+u", "update_run()", sendto.script)
+end
+
+function check_updater_exists()
+  local homedir = GetInfo(66)
+  local updater_path = homedir .. "update.exe"
+
+  local file = io.open(updater_path, "r")
+  if file then
+    file:close()
+    return true
+  end
+  return false
+end
+
+function download_updater(callback)
+  local homedir = GetInfo(66)
+  local download_url = "https://anomalousabode.com/next/updater"
+
+  Note("Downloading update.exe from " .. download_url .. "...")
+
+  async.doAsyncRemoteRequest(download_url, function(retval, page, status, headers, full_status, requested_url)
+    if not retval or status ~= 200 then
+      Note("Error: Failed to download update.exe (HTTP " .. tostring(status) .. ")")
+      if callback then callback(false) end
+      return
+    end
+
+    local updater_path = homedir .. "update.exe"
+    local file = io.open(updater_path, "wb")
+    if not file then
+      Note("Error: Failed to write update.exe to " .. updater_path)
+      if callback then callback(false) end
+      return
+    end
+
+    file:write(page)
+    file:close()
+
+    Note("Successfully downloaded update.exe to " .. homedir)
+    if callback then callback(true) end
+  end, "HTTPS", 60, function(url, timeout)
+    Note("Error: Download timed out after " .. timeout .. " seconds")
+    if callback then callback(false) end
+  end)
 end
 
 function get_current_channel()
@@ -94,6 +140,12 @@ function parse_check_output(output_lines)
 end
 
 function run_updater_hidden(args, callback)
+  if not check_updater_exists() then
+    Note("Error: update.exe not found. Please run 'update install' to download it.")
+    if callback then callback(false, {}, -1) end
+    return
+  end
+
   local homedir = GetInfo(66)
   local cmd = homedir .. "update.exe " .. args .. " -non-interactive"
 
@@ -112,6 +164,11 @@ function run_updater_hidden(args, callback)
 end
 
 function run_updater_visible(args)
+  if not check_updater_exists() then
+    Note("Error: update.exe not found. Please run 'update install' to download it.")
+    return
+  end
+
   local homedir = GetInfo(66)
   local cmd = "update.exe"
   utils.shellexecute(cmd, args, homedir, "open", 1)
@@ -133,7 +190,21 @@ function update_dispatcher(name, line, wildcards)
     -- Split args into command and parameters
     local cmd, params = args:match("^(%S+)%s*(.-)$")
 
-    if cmd == "switch" then
+    if cmd == "install" then
+      if check_updater_exists() then
+        Note("update.exe already exists. No need to download.")
+      else
+        download_updater(function(success)
+          if success then
+            Note("Installation complete. Running update check...")
+            update_run()
+          else
+            Note("Installation failed.")
+          end
+        end)
+      end
+
+    elseif cmd == "switch" then
       if params == "" then
         -- Interactive switch
         run_updater_visible("switch")

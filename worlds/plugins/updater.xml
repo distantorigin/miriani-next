@@ -30,7 +30,6 @@ Commands:
 
 <aliases>
 
-<!-- Single update alias that handles all commands -->
 <alias
   enabled="y"
   match="^update( .*)?$"
@@ -46,13 +45,12 @@ Commands:
 <script>
 <![CDATA[
 
--- Load the execute module for async command execution
 execute = require("execute")
 
 function OnPluginInstall()
  AcceleratorTo("ctrl+u", "update_run()", sendto.script)
 end
--- Get current update channel
+
 function get_current_channel()
   local homedir = GetInfo(66)
   local channel_file = homedir .. ".update-channel"
@@ -69,7 +67,6 @@ function get_current_channel()
   return channel or "stable"
 end
 
--- Parse check output for update information
 function parse_check_output(output_lines)
   local info = {
     update_available = false,
@@ -96,17 +93,16 @@ function parse_check_output(output_lines)
   return info
 end
 
--- Run updater hidden (no console window)
 function run_updater_hidden(args, callback)
   local homedir = GetInfo(66)
   local cmd = homedir .. "update.exe " .. args .. " -non-interactive"
 
   execute.doAsyncExecute(cmd, function(success, output, exit_code, err)
     if success then
-      if callback then callback(output, exit_code) end
+      if callback then callback(success, output, exit_code) end
     else
       Note("Updater error: " .. (err or "Unknown error"))
-      if callback then callback({}, exit_code or -1) end
+      if callback then callback(false, {}, exit_code or -1) end
     end
   end, {
     hide_window = true,
@@ -115,19 +111,16 @@ function run_updater_hidden(args, callback)
   })
 end
 
--- Run updater visible (with console window)
 function run_updater_visible(args)
   local homedir = GetInfo(66)
   local cmd = "update.exe"
   utils.shellexecute(cmd, args, homedir, "open", 1)
 end
 
--- Main dispatcher function
 function update_dispatcher(name, line, wildcards)
-  -- Extract arguments (everything after "update")
+
   local args = wildcards[1]
 
-  -- Trim leading/trailing whitespace
   if args then
     args = args:match("^%s*(.-)%s*$")
   end
@@ -146,8 +139,8 @@ function update_dispatcher(name, line, wildcards)
         run_updater_visible("switch")
       elseif params == "dev" or params == "stable" then
         -- Switch to specific channel
-        run_updater_hidden("switch " .. params, function(output, exit_code)
-          if #output > 0 then
+        run_updater_hidden("switch " .. params, function(success, output, exit_code)
+          if success and #output > 0 then
             for _, line in ipairs(output) do
               Note(line)
             end
@@ -160,8 +153,8 @@ function update_dispatcher(name, line, wildcards)
       end
 
     elseif cmd == "check" then
-      run_updater_hidden("check", function(output, exit_code)
-        if #output > 0 then
+      run_updater_hidden("check", function(success, output, exit_code)
+        if success and #output > 0 then
           for _, line in ipairs(output) do
             Note(line)
           end
@@ -171,8 +164,8 @@ function update_dispatcher(name, line, wildcards)
       end)
 
     elseif cmd == "version" or cmd == "-v" then
-      run_updater_hidden("-version", function(output, exit_code)
-        if #output > 0 then
+      run_updater_hidden("-version", function(success, output, exit_code)
+        if success and #output > 0 then
           for _, line in ipairs(output) do
             Note(line)
           end
@@ -195,8 +188,8 @@ function update_run()
   Note("Checking for updates...")
 
   -- First, check if updates are available (hidden, no console flash!)
-  run_updater_hidden("check", function(output, exit_code)
-    if not output or #output == 0 then
+  run_updater_hidden("check", function(success, output, exit_code)
+    if not success or not output or #output == 0 then
       Note("Error: Failed to check for updates")
       return
     end

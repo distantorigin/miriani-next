@@ -75,7 +75,7 @@ function __checkCompletionFor(thread_id)
       DoAfterSpecial(0.2,"execute.__checkCompletionFor('"..thread_id.."')",sendto.script)
     end
   else
-    local success,output_lines,error_message,exit_code=thread_pool[thread_id]:join()
+    local thread_success,success,output_lines,error_message,exit_code=thread_pool[thread_id]:join()
     local cb=result_callbacks[thread_id]
     result_callbacks[thread_id]=nil
     timeout_callbacks[thread_id]=nil
@@ -85,7 +85,7 @@ function __checkCompletionFor(thread_id)
     command_args[thread_id]=nil
     if cb then
       if success then
-        cb(true,output_lines,exit_code)
+        cb(true,output_lines,exit_code,error_message)
       else
         cb(false,output_lines or{},exit_code,error_message)
       end

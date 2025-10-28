@@ -382,6 +382,7 @@ show_paralyzed(roundtime, stuntime)
 
 <script>
 <![CDATA[
+dofile "lua/requirements.lua"
 require("json")
 
 scripts = "lua/miriani/scripts/"

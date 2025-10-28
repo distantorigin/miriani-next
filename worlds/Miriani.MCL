@@ -437,13 +437,5 @@
 </printing>
 
 <!-- plugins -->
-<include name="output_functions.xml" plugin="y" />
-<include name="MushReader.xml" plugin="y" />
-<include name="Omit_Blank_Lines.xml" plugin="y" />
-<include name="channel_history.xml" plugin="y" />
-<include name="updater.xml" plugin="y" />
-<include name="mushclient_help.xml" plugin="y" />
-<include name="toastush.xml" plugin="y" />
-<include name="log_manager.xml" plugin="y" />
-<include name="Hyperlink_URL2.xml" plugin="y" />
+<include name="requirements.xml" plugin="y" />
 </muclient>

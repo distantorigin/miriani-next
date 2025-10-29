@@ -1261,5 +1261,17 @@ end -- camera</send>
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="ship"
+      match="^You hear the distinct hiss of water being pumped through the ship's piping\. Moments later, a flurry of frozen water crystals begins to drift down from vents in the ceiling, lazily swirling through currents of air being pumped out until it settles on the deck plating, where it immediately melts into a hazardous water puddle\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/waterCrystals", "ship")
+  </send>
+  </trigger>
+
 </triggers>
 ]=])

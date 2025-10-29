@@ -26,6 +26,29 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
+   match="^\[Admin Message\]: (.+)$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="50"
+  >
+  <send>
+   local message = "%1"
+
+   -- Play admin message sound
+   mplay("comm/adminPrivateMessage", "communication")
+
+   -- Display the message
+   print_color({"[Admin Message] ", "default"}, {message, "priv_comm"})
+
+   -- Add to main communications buffer
+   channel(name, "[Admin Message] " .. message, {"admin", "communication"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
    match="^\[Private \| Auction Service\] Auction Service transmits, &quot;(.+?) has bid ([0-9,.]+) credits on auction ([a-z0-9]+): (.+?)!&quot;$"
    regexp="y"
    send_to="14"

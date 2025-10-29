@@ -284,13 +284,15 @@ function update_run()
     local info = parse_check_output(output)
 
     if not info.update_available then
+   BroadcastPlugin(999, "")
       Note("Already up to date!")
       return
     end
 
+BroadcastPlugin(888, info.version)
+
     -- Get the current channel
     local channel = get_current_channel()
-
     -- Build the message
     local message = "A new update is available on the " .. channel .. " channel! Would you like to install it now?"
 

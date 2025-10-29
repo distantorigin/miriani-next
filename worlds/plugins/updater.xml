@@ -51,6 +51,10 @@ async = require("async")
 
 function OnPluginInstall()
  AcceleratorTo("ctrl+u", "update_run()", sendto.script)
+  if not check_updater_exists() then
+ Note("The updater is not installed. Automatically installing...")
+ Execute("update install")
+end
 end
 
 function check_updater_exists()
@@ -192,19 +196,20 @@ function update_dispatcher(name, line, wildcards)
 
     if cmd == "install" then
       if check_updater_exists() then
-        Note("update.exe already exists. No need to download.")
+        Note("update.exe already exists. No need to download. If you wish to force the updater to reinstall itself, use 'update reinstall'.")
       else
         download_updater(function(success)
           if success then
-            Note("Installation complete. Running update check...")
-            update_run()
+            Note("Installation complete. Running update check and generating manifest...")
+run_updater_visible("-generate-manifest")
+            DoAfterSpecial(5, "update_run()", sendto.script)
           else
             Note("Installation failed.")
           end
         end)
       end
 
-    if cmd == "install" then
+    if cmd == "reinstall" then
         download_updater(function(success)
           if success then
             Note("Reinstallation complete. Running update check...")
@@ -279,13 +284,15 @@ function update_run()
     local info = parse_check_output(output)
 
     if not info.update_available then
+   BroadcastPlugin(999, "")
       Note("Already up to date!")
       return
     end
 
+BroadcastPlugin(888, info.version)
+
     -- Get the current channel
     local channel = get_current_channel()
-
     -- Build the message
     local message = "A new update is available on the " .. channel .. " channel! Would you like to install it now?"
 

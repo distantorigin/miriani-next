@@ -717,6 +717,15 @@ function OnPluginBroadcast(msg, id, name, text)
     if text=="output_boundary" then
       mplay("misc/boundary")
           end
+  elseif id == "706cd88f4d441a81439bd421" or id == "79772f9b67c1e42f22a3eb95" then
+    if msg == 777 then
+      -- successful update
+      mplay("music/theme")
+    elseif msg == 888 then
+      mplay("misc/updateAvailable")
+    elseif msg == 999 then
+      mplay("misc/alreadyUpToDate")
+end
   elseif id == "843d2f53cb3685465bda7d4c" then
     local message_type, data = text:match("([^|]+)|?(.*)")
     message_type = message_type or text

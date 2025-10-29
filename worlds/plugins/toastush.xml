@@ -30,7 +30,7 @@ As of October 13, 2025, Toastush-NG is now a hard fork of the Toastush soundpack
       To toggle soundpack minimal mode type: `next:minimal or next:min.
 
     To fetch updates type: `update'
-      - More help about using the updater can be found by typing `update --help'
+      - More help about using the updater can be found by typing `update help'
 
     To view valid starmap filters type: `sm.help'
     To view valid scan filters type: `sc.help'
@@ -316,27 +316,6 @@ show_paralyzed(roundtime, stuntime)
   >
   <send>notify("info", "Sending Miriani-Next registration...", 1)</send>
   </alias>
-
-  <alias
-   enabled="y"
-   match="^next:u(pdater)?-rel(oad)?$"
-   regexp="y"
-   ignore_case="y"
-   send_to="12"
-  >
-  <send>
-   notify("info", "Reloading updater...")
-   local ok, msg = ReloadPlugin(UPDATE_ID)
-   if (ok == 0) then
-     notify("info", "Updater reload complete.")
-   else
-     notify("info", "Updater reload failed.")
-   end -- if
-
-  </send>
-  </alias>
-
-
 
   <alias
    enabled="y"
@@ -841,21 +820,6 @@ function janitor()
   ["55e1d330539761f176fa0815"] = "indexer.xml", 
   } -- old_plugins
 
-  table.foreach(old_plugins,
-  function(id, name)
-    if (IsPluginInstalled(id)) then
-    print("plugin ", name, " is no longer in use. Unloading.")
-    UnloadPlugin(id)
-    end -- if
-  end ) -- foreach
-
-  -- need an index.
-  local path = require("pl.path")
-  if (not path.isfile(INDEX)) then
-    notify("critical", string.format(
-    "Warning: You appear to be missing the index file, '%s'. This file is necessary for updates. To generate the file now, type `index %s'", INDEX, INDEX))
-  end -- if
-
   -- old version downloaded messy files.
   local dir = utils.readdir("*.ogg")
   local js = require("json.decode")
@@ -885,7 +849,7 @@ function detect_update_when_idle()
   and IsPluginInstalled(UPDATE_ID)
   and last_command_time ~= nil
   and (os.time() - last_command_time) >= IDLE_CUTOFF then
-    Execute("update -q -f")
+    Execute("update quietly")
 end -- if
 
 end -- detect_update_when_idle

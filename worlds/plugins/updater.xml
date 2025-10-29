@@ -187,9 +187,9 @@ function update_dispatcher(name, line, wildcards)
   end
 
   -- Parse the command
-  if not args or args == "" then
-    -- No arguments, run update
-    update_run()
+  if not args or args == "" or args == "quietly" then
+    -- No arguments or ran with quietly--run update
+    update_run(args == "quietly")
   else
     -- Split args into command and parameters
     local cmd, params = args:match("^(%S+)%s*(.-)$")
@@ -202,23 +202,22 @@ function update_dispatcher(name, line, wildcards)
           if success then
             Note("Installation complete. Running update check and generating manifest...")
 run_updater_visible("-generate-manifest")
-            DoAfterSpecial(5, "update_run()", sendto.script)
+            DoAfterSpecial(5, "update_run(0)", sendto.script)
           else
             Note("Installation failed.")
           end
         end)
       end
 
-    if cmd == "reinstall" then
-        download_updater(function(success)
-          if success then
-            Note("Reinstallation complete. Running update check...")
-            update_run()
-          else
-            Note("Reinstallation failed.")
-          end
-        end)
-      end
+    elseif cmd == "reinstall" then
+      download_updater(function(success)
+        if success then
+          Note("Reinstallation complete. Running update check...")
+          update_run(0)
+        else
+          Note("Reinstallation failed.")
+        end
+      end)
 
     elseif cmd == "switch" then
       if params == "" then
@@ -271,46 +270,61 @@ run_updater_visible("-generate-manifest")
 end
 
 -- Main update function (with restart check)
-function update_run()
-  Note("Checking for updates...")
+function update_run(quiet)
+  if not quiet then
+    Note("Checking for updates...")
+  end
 
   -- First, check if updates are available (hidden, no console flash!)
-  run_updater_hidden("check", function(success, output, exit_code)
-    if not success or not output or #output == 0 then
-      Note("Error: Failed to check for updates")
-      return
-    end
+    run_updater_hidden("check", function(success, output, exit_code)
+      if not success or not output or #output == 0 then
+        Note("Error: Failed to check for updates")
+        return
+      end
+
 
     local info = parse_check_output(output)
 
     if not info.update_available then
-   BroadcastPlugin(999, "")
-      Note("Already up to date!")
+      if not quiet then
+        BroadcastPlugin(999, "")
+        Note("Already up to date!")
+      end
       return
     end
 
-BroadcastPlugin(888, info.version)
+    BroadcastPlugin(888, info.version)
+
+    Note("Updating to version "..info.version)
 
     -- Get the current channel
     local channel = get_current_channel()
-    -- Build the message
-    local message = "A new update is available on the " .. channel .. " channel! Would you like to install it now?"
 
-    if info.restart_required then
-      message = message .. "\n\nNote: This update requires MUSHclient to be restarted."
+    local response
+    if not quiet then
+      -- Build the message
+      local message = "A new update is available on the " .. channel .. " channel! Would you like to install it now?"
+
+      if info.restart_required then
+        message = message .. "\n\nNote: This update requires MUSHclient to be restarted."
+      end
+
+      -- Build the title
+      local title = "Update Available"
+      if info.version then
+        title = "Update to Version " .. info.version
+      end
+
+      -- Ask user for confirmation
+      response = utils.msgbox(message, title, "yesno", "?", 1)
+    else
+      response = "yes"
     end
-
-    -- Build the title
-    local title = "Update Available"
-    if info.version then
-      title = "Update to Version " .. info.version
-    end
-
-    -- Ask user for confirmation
-    local response = utils.msgbox(message, title, "yesno", "?", 1)
 
     if response == "yes" then
-      Note("Starting update...")
+      if not quiet then
+        Note("Starting update...")
+      end
 
       -- Run the update
       if info.restart_required then
@@ -334,7 +348,9 @@ run_updater_visible("-non-interactive")
 --        end)
       end
     else
-      Note("Update cancelled.")
+      if not quiet then
+        Note("Update cancelled.")
+      end
     end
   end)
 end

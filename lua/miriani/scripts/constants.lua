@@ -1,8 +1,9 @@
 -- Defines shared constants across Miriani plugins.
 
+local version = require("miriani.scripts.version")
 local constants = {}
 
-constants.VERSION = "4.0.02"
+constants.VERSION = version.version_string()
 constants.EXTENSION = ".ogg"
 constants.ALT_EXTENSION = ".ogg"
 constants.SOUNDPATH = "miriani/"

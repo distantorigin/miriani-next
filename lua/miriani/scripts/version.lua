@@ -1,5 +1,5 @@
 -- Version management functions for Miriani Next
--- Reads version information from version.json and .update_channel
+-- Reads version information from version.json and .update-channel
 
 require("json")
 version = {}
@@ -32,7 +32,7 @@ function load_update_channel()
     return update_channel
   end
 
-  local file = io.open(GetInfo(66)..".update_channel", "r")
+  local file = io.open(GetInfo(66)..".update-channel", "r")
   if not file then
     update_channel = "unknown"
     return update_channel
@@ -71,7 +71,7 @@ end
 
 -- Get the update channel
 -- Returns: "dev", "stable", or a specific tag/branch name
-function version.update_channel()
+function version.update-channel()
   return load_update_channel()
 end
 

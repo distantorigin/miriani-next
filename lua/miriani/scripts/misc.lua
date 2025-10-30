@@ -394,7 +394,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^[A-Z][a-z]+?\s?[A-Za-z\s]*? (stand|sit|pull|leap)s? (?:(?:[A-Z]?[a-zA-Z\s]+ )?to \w+ feet|up|feet|down(?: (?:on|at) .+?)?)\.$"
+   match="^[A-Z][\w\s]+? (stand|sit|pull|leap)(?:s)? (?:(?:[A-Z]?[a-zA-Z\s]+ )?to \w+ feet|up|feet|down(?: (?:on|at) .+?)?)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -477,7 +477,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^(?:[A-Z][a-z ]*)+ (coalesces into being nearby|suddenly steps from the background)\.$"
+   match="^[A-Z][\w\s]+? (coalesces into being nearby|suddenly steps from the background)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -488,7 +488,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^(?:[A-Z][a-z ]*)+ (dissolves into billions of constituent particles and disperses into a hitherto unnoticed breeze|suddenly seems to disappear into the background)\.$"
+   match="^[A-Z][\w\s]+? (dissolves into billions of constituent particles and disperses into a hitherto unnoticed breeze|suddenly seems to disappear into the background)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -527,7 +527,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^You (?:find yourself )?disconnect[ed]{0,2} from (?:your avatar|the simulator as the simulated starship is destroyed)\.$"
+   match="^You (?:find yourself )?disconnect(?:ed)? from (?:your avatar|the simulator as the simulated starship is destroyed)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -549,7 +549,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^[A-Z][A-Za-z\s]+? crumples? .+? and throws? it away\.$"
+   match="^[A-Z][\w\s]+? crumple(?:s)? .+? and throw(?:s)? it away\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -560,7 +560,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^[A-Z][a-z]+?[A-Za-z\s]*? (?:push[es]{0,2}|pulls?|flips?) a (?:heavy|small) (?:switch,|lever) (?:away from .+?,|towards? .+?,)?.+?\.$"
+   match="^[A-Z][\w\s]+? (?:push(?:es)?|pull(?:s)?|flip(?:s)?) a (?:heavy|small) (?:switch,|lever) (?:away from .+?,|towards? .+?,)?.+?\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -593,7 +593,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^[A-Z][a-z]+\s?[A-Za-z\s]* (gestures? (?:towards?|for) .+?, (?:who|which) (?:you)?\s?promptly (?:joins \w+ group|do)|takes? control of .+? group|joins? [A-Za-z\s'-]+ group|begins? following [A-Za-z\s'-]+)\.$"
+   match="^[A-Z][\w\s]+? (gesture(?:s)? (?:towards?|for) .+?, (?:who|which) (?:you)?\s?promptly (?:joins \w+ group|do)|take(?:s)? control of .+? group|join(?:s)? [A-Z][\w\s'-]+? group|begin(?:s)? following [A-Z][\w\s'-]+?)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -604,7 +604,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^[A-Z][a-z]+?\s?[A-Za-z\s]*? (?:indicate|inform|leave)s?.+(?:group|that \w+ no longer wish[es]{0,2} (?:\w+|for \w+?) to follow \w+)\.$"
+   match="^[A-Z][\w\s]+? (?:indicate(?:s)?|inform(?:s)?|leave(?:s)?) .+(?:group|that \w+ no longer wish(?:es)? (?:\w+|for \w+?) to follow \w+)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -840,7 +840,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^You access a \w+ portable point unit and note you had ([0-9,.]+) license points? and ([0-9,.]+) combat points?\. This information was current as of (.+?)\. No new information can be obtained until you return to communications range\.$"
+   match="^You access.+portable point unit and note you had ([0-9,.]+) license points? and ([0-9,.]+) combat points?\. This information was current as of (.+?)\. No new information can be obtained until you return to communications range\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

@@ -1,9 +1,31 @@
 Version 4.0.03-dev:
 
+* New: Added atmospheric vehicle descent trigger sound.
+* New: Added air pocket trigger - "You are thrown back against your seat as the craft hits an air pocket in the atmosphere and then breaks free." now plays a wind sound effect.
+* New: Complete updater system overhaul - now uses external update.exe binary instead of Lua-based system:
+	- Simplified update commands: just type 'update' to check and install
+	- Channel switching support: 'update switch dev' or 'update switch stable'
+	- Automatic updater installation if missing
+	- Better feedback with version information in dialogs
+	- Silent background update checks
+* New: Plugin requirements system - automatically loads and manages required plugins. Missing plugins show with clickable links to enable them.
+* New: Added admin message sound.
+* New: Added ice water crystals sound effect for Santa boxes.
 * New: Added the directional TTS audio files from the Miriani Soundpack for VIP Mud, which get played when you follow someone.
 * New: Added conf gen 8, to control follow directional audio.
+* New: Developer plugin with 'spreload' command to quickly reload all plugins.
+* Changed: Improved trigger patterns for better name matching in various events (standing, sitting, group actions, etc).
+* Fixed: Aquatic stop.
+* Fixed: Planetary mining infinite loop when finding mineral pockets.
+* Fixed: Alternate audio variant selection now works correctly.
+* Fixed: Organization channel detection works properly again with tr channels.
+* Fixed: Baby interaction triggers now match names correctly (35+ triggers updated).
+* Fixed: Info bar no longer clears involuntarily.
+* Fixed: Asteroid mining warnings detect more accurately.
 * Fixed: Interrupt on follow (in conf reader) now works correctly, and also works for being dragged.
-* Fixed: Lore printing sound
+* Fixed: Lore printing sound.
+* Fixed: Blade unsheath sound.
+* Removed: Legacy index-v5.manifest and old Lua-based updater system
 
 Version 4.0.02:
 

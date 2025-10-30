@@ -79,7 +79,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay("activity/atmo/decelerate", "vehicle")</send>
+  <send>mplay("vehicle/decelerate", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -129,7 +129,7 @@ gagline()</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay("activity/atmo/decelerate", "vehicle")</send>
+  <send>mplay("vehicle/decelerate", "vehicle")</send>
   </trigger>
 
   <trigger
@@ -209,6 +209,19 @@ gagline()</send>
   <trigger
    enabled="y"
    group="vehicle"
+   script="gagline"
+   match="^You hear a sharp whine as the vehicle accelerates through the.+?\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("activity/atmo/salvagerDescend", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
    match="^You input a command into the navigational controls to return to the ship\.$"
    regexp="y"
    send_to="12"
@@ -266,6 +279,19 @@ gagline()</send>
    match="^The vehicle suddenly hits a pocket of fierce wind.+?\.$"
    regexp="y"
    send_to="12"
+  >
+  <send>mplay("vehicle/wind", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^You are thrown back against your seat as the craft hits an air pocket in the atmosphere and then breaks free\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
   >
   <send>mplay("vehicle/wind", "vehicle")</send>
   </trigger>
@@ -393,7 +419,7 @@ gagline()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("vehicle/salvageLands", "vehicle")</send>
+  <send>mplay("activity/atmo/salvageLands", "vehicle")</send>
   </trigger>
   
   <trigger
@@ -405,5 +431,15 @@ gagline()</send>
   >
   <send>mplay("activity/atmo/salvageReturn", "vehicle")</send>
 </trigger>
+<trigger
+   enabled="y"
+   group="vehicle"
+   match="^You hear scrapes and scratching coming from the storage compartment as debris is transferred\.|A slight breeze enters the cockpit as the storage compartment is opened and closed\.|A series of drones lift canisters of atmospheric debris and cart them off\.$"
+   regexp="y"
+script = "gagline"
+   send_to="12"
+   sequence="100"
+  >
+  </trigger>
 </triggers>
 ]=])

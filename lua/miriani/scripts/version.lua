@@ -71,7 +71,7 @@ end
 
 -- Get the update channel
 -- Returns: "dev", "stable", or a specific tag/branch name
-function version.update-channel()
+function version.update_channel()
   return load_update_channel()
 end
 

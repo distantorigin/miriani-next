@@ -1093,7 +1093,7 @@ function info(name, line, wc)
   local ID = GetPluginID()
   notify("info", string.format("%s  --  version %s  --  Scripting-language: %s  -- Script-time: %s seconds",
   GetPluginInfo(ID, 1),
-  VERSION,
+  version.full_version_string(),
   GetPluginInfo(ID, 5),
   GetPluginInfo(ID, 24)))
 end -- info

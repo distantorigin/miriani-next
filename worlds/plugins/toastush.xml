@@ -700,6 +700,27 @@ function OnPluginBroadcast(msg, id, name, text)
     if msg == 777 then
       -- successful update
       mplay("music/theme")
+
+      -- Check if we should open the changelog
+      if config:get_option("automatic_changelog").value == "yes" then
+        -- Try to parse the broadcast data as JSON to get file list and channel
+        local files = nil
+        local channel = nil
+        if text and text ~= "success" then
+          local ok, data = pcall(json.decode.decode, text)
+          if ok and data then
+            if data.files then
+              files = data.files
+            end
+            if data.channel then
+              channel = data.channel
+            end
+          end
+        end
+
+        -- Open changelog with optional file list and channel
+        notepad_changelog(nil, nil, nil, files, channel)
+      end
     elseif msg == 888 then
       mplay("misc/updateAvailable")
     elseif msg == 999 then
@@ -757,7 +778,7 @@ end
       end
     end
   elseif id == UPDATE_ID then
-    -- Updater plugin communication
+    -- Updater plugin communication (legacy support)
     local info = json.decode.decode(text)
 
     for i, u in pairs(info.update) do
@@ -769,9 +790,8 @@ end
       end -- if
     end -- for
 
-    if config:get_option("automatic_changelog").value == "yes" then
-      notepad_changelog()
-    end -- if
+    -- Note: automatic_changelog is now handled by update_watcher.xml (msg 777)
+    -- to include the list of updated files
   else
     -- Other generic plugin communication handlers
     if msg == "register_audio_group" then
@@ -1460,15 +1480,36 @@ function gagline(name, line, wc)
 
 end -- gagline
 
-function notepad_changelog(name, line, wc)
+function notepad_changelog(name, line, wc, updated_files, channel)
 
-  local f = io.open(GetInfo(66).."docs/changelog.txt", "r")
-  if (f) then
-    local text = f:read("*all")
-    f:close()
-    AppendToNotepad("Changelog", string.gsub(text, "\n", "\r\n"), "\r\n")
+  local content = ""
+
+  -- If updated files list is provided, add it at the top
+  if updated_files and type(updated_files) == "table" and #updated_files > 0 then
+    content = "Updated Files:\r\n"
+    content = content .. string.rep("-", 50) .. "\r\n"
+    for i, file in ipairs(updated_files) do
+      content = content .. i .. ". " .. file .. "\r\n"
+    end
+    content = content .. string.rep("-", 50) .. "\r\n\r\n"
+  end
+
+  -- For dev channel, only show the file list
+  -- For stable (or if channel not specified), also show the changelog
+  if channel ~= "dev" then
+    local f = io.open(GetInfo(66).."docs/changelog.txt", "r")
+    if (f) then
+      local text = f:read("*all")
+      f:close()
+      content = content .. string.gsub(text, "\n", "\r\n")
+    end -- if
+  end
+
+  -- Only open the notepad if we have content to show
+  if content ~= "" then
+    AppendToNotepad("Changelog", content, "\r\n")
     ActivateNotepad("changelog")
-  end -- if
+  end
 end -- notepad_changelog
 
 function replicate_line(line)

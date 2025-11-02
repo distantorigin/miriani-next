@@ -123,10 +123,41 @@ function handle_success(data)
       local message = table.concat(parts, ", ")
       Note("Update complete: " .. message .. ". Reloading...")
       reload_all_plugins()
-BroadcastPlugin(777, "success")
+
+      -- Combine all changed files for the changelog
+      local all_changed_files = {}
+      for _, file in ipairs(files_updated) do
+        table.insert(all_changed_files, file)
+      end
+      for _, file in ipairs(files_added) do
+        table.insert(all_changed_files, file)
+      end
+      for _, file in ipairs(files_deleted) do
+        table.insert(all_changed_files, file)
+      end
+
+      -- Get the current channel
+      local homedir = GetInfo(66)
+      local channel_file = homedir .. ".update-channel"
+      local channel = "stable"  -- default
+      local file = io.open(channel_file, "r")
+      if file then
+        channel = file:read("*all")
+        file:close()
+        channel = channel:match("^%s*(.-)%s*$") or "stable"
+      end
+
+      -- Broadcast success with file list and channel as JSON
+      local json_encode = require("json.encode")
+      local broadcast_data = json_encode.encode({
+        result = "success",
+        files = all_changed_files,
+        channel = channel
+      })
+      BroadcastPlugin(777, broadcast_data)
     else
       Note("Update complete with no file changes.")
-BroadcastPlugin(777, "success")
+      BroadcastPlugin(777, "success")
     end
   end
 end

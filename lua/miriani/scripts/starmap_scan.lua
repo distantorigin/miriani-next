@@ -509,7 +509,7 @@ mplay("ship/computer/scan", "other")
   <trigger
    enabled="n"
    group="scan_triggers"
-   match="^(Hull Damage|Average Component Damage|Occupancy|Weapons|Power|Cargo|Coordinates|Classification|Natural Resources|Atmospheric Composition|Composition|Integrity|Identifiable Power Sources|IFF|Surface Conditions|Hostile Military Occupation|Size|Type|Distance|Damage|Orbiting): (.+?)$"
+   match="^(Hull Damage|Average Component Damage|Occupancy|Weapons|Power|Cargo|Coordinates|Classification|Natural Resources|Atmospheric Composition|Composition|Integrity|Identifiable Power Sources|IFF|Surface Conditions|Hostile Military Occupation|Size|Type|Distance|Starships|Damage|Orbiting): (.+?)$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -598,17 +598,22 @@ mplay("ship/computer/scan", "other")
            mplay("ship/computer/oneUnit", "notification")
          end
        end
+	     	 if fieldName == "Starships" then
+          mplay("ship/computer/starship", "notification")
+end          
        scanData.field_found = true
       end
           elseif useFormatting then
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then
        if fieldValue == "1" then
-         mplay("ship/computer/oneUnit", "notification")
+        mplay("ship/computer/oneUnit", "notification")
        end
      end
-     
-     -- All other fields: do nothing (gagged by omit_from_output)
+  	 if fieldName == "Starships" then
+          mplay("ship/computer/starship", "notification")
+end          
+   
    else
      -- Normal mode: show all fields
      print(fieldName .. ": " .. fieldValue)

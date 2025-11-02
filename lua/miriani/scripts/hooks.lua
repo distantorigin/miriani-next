@@ -178,7 +178,7 @@ ImportXML([=[
     notify("info", "** Updater detected: You may type update to apply pending updates. **")
  
      if config:get_option("automatic_updates").value == "yes" then
-        Execute("update --quiet")
+        Execute("update quietly")
      end -- if
    else
      notify("important", "Missing updater.xml plugin. Unable to fetch updates.")

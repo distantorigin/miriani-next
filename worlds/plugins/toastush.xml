@@ -875,21 +875,6 @@ function janitor()
 
   end -- if
 
-
-  -- Configure MUSHclient preferences:
-  if (GetGlobalOption("F1macro") == 0)
-  or (GetGlobalOption("ConfirmBeforeClosingMushclient") == 0)
-  or (GetGlobalOption("ConfirmBeforeClosingWorld") == 1)
-  or (GetGlobalOption("ConfirmBeforeSavingVariables") == 1) then
-    db = sqlite3.open(GetInfo (82))  -- open preferences
-    db:exec('UPDATE prefs SET value = 1 WHERE name = "F1macro"')
-    db:exec('UPDATE prefs SET value = 1 WHERE name = "ConfirmBeforeClosingMushclient"')
-    db:exec('UPDATE prefs SET value = 0 WHERE name = "ConfirmBeforeClosingWorld"')
-    db:exec('UPDATE prefs SET value = 0 WHERE name = "ConfirmBeforeSavingVariables"')
-    db:close()  -- close
-    utils.reload_global_prefs ()
-  end -- if
-
   -- plugins_updater no longer in use.
 
   local old_plugins = {

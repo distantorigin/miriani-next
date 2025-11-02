@@ -178,21 +178,11 @@ show_paralyzed(roundtime, stuntime)
    script="OnURL"
      match="((?:https?|ftp|telnet|rsync|mailto|gopher)://[[:graph:]]+[^&quot;])"
    regexp="y"
-   send_to="12"
+   send_to="14"
    keep_evaluating="y"
   >
   </trigger>
 
-  <trigger
-   enabled="y"
-   match="^\^(Creating|Deleting|Updating) Files: \d+%\.{3}$"
-   regexp="y"
-   omit_from_output="y"
-   omit_from_log="y"
-   send_to="14"
-  >
-  <send>notify("info", "%0", 1)</send>
-  </trigger>
   <trigger
    enabled="n"
    name="MCP"

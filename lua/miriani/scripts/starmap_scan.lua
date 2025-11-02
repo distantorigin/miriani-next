@@ -613,8 +613,7 @@ end
   	 if fieldName == "Starships" then
           mplay("ship/computer/starship", "notification")
 end          
-   
-   else
+     else
      -- Normal mode: show all fields
      print(fieldName .. ": " .. fieldValue)
      if fieldName == "Distance" then
@@ -622,6 +621,9 @@ end
          mplay("ship/computer/oneUnit", "notification")
        end
       end
+	  	     	 if fieldName == "Starships" then
+          mplay("ship/computer/starship", "notification")
+end          
    end
   </send>
   </trigger>

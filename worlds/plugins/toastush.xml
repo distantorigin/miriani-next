@@ -1462,7 +1462,7 @@ end -- gagline
 
 function notepad_changelog(name, line, wc)
 
-  local f = io.open(GetInfo(66).."docs\changelog.txt", "r")
+  local f = io.open(GetInfo(66).."docs\\changelog.txt", "r")
   if (f) then
     local text = f:read("*all")
     f:close()

@@ -1,21 +1,20 @@
-Version 4.0.03-dev:
+Version 4.0.03:
 
 * New: Added atmospheric vehicle descent trigger sound.
 * New: Added air pocket trigger - "You are thrown back against your seat as the craft hits an air pocket in the atmosphere and then breaks free." now plays a wind sound effect.
 * New: Complete updater system overhaul - now uses external update.exe binary instead of Lua-based system:
-	- Simplified update commands: just type 'update' to check and install
-	- Channel switching support: 'update switch dev' or 'update switch stable'
+	- Simplified update commands: just type 'update' to check and install, or press CTRL+U.
+	- Channel switching support: 'update switch dev' or 'update switch stable'. For an up-to-date list of channels, type 'update switch' by itself to be sent to a menu-based interface
 	- Automatic updater installation if missing
-	- Better feedback with version information in dialogs
-	- Silent background update checks
-* New: Plugin requirements system - automatically loads and manages required plugins. Missing plugins show with clickable links to enable them.
-* New: Added admin message sound.
+* New: Plugin requirements system - automatically loads and manages required plugins. Missing plugins show with clickable links to enable them. Required plugins are re-added upon the plugin list changing, ensuring a unified set of core plugins.
+* New: Added an admin message sound.
 * New: Added ice water crystals sound effect for Santa boxes.
 * New: Added the directional TTS audio files from the Miriani Soundpack for VIP Mud, which get played when you follow someone.
 * New: Added conf gen 8, to control follow directional audio.
 * New: Developer plugin with 'spreload' command to quickly reload all plugins.
+* New: Brand new accessible output window, built directly into MUSHclient. Type 'conf gen 11' or press tab to learn more.
 * Changed: Improved trigger patterns for better name matching in various events (standing, sitting, group actions, etc).
-* Fixed: Aquatic stop.
+* Fixed: Aquatic salvagre stop.
 * Fixed: Planetary mining infinite loop when finding mineral pockets.
 * Fixed: Alternate audio variant selection now works correctly.
 * Fixed: Organization channel detection works properly again with tr channels.

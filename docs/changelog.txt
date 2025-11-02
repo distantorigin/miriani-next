@@ -2,29 +2,31 @@ Version 4.0.03:
 
 * New: Added atmospheric vehicle descent trigger sound.
 * New: Added air pocket trigger - "You are thrown back against your seat as the craft hits an air pocket in the atmosphere and then breaks free." now plays a wind sound effect.
-* New: Complete updater system overhaul - now uses external update.exe binary instead of Lua-based system:
+* New: Complete updater system overhaul - now uses an external update.exe binary written in Golang instead of the LuaJit-based system:
 	- Simplified update commands: just type 'update' to check and install, or press CTRL+U.
 	- Channel switching support: 'update switch dev' or 'update switch stable'. For an up-to-date list of channels, type 'update switch' by itself to be sent to a menu-based interface
-	- Automatic updater installation if missing
+	- Automatic updater installation and manifest generation if missing
+	- The updater can also act as an installer, allowing you to download the latest version of a stable or dev build on a new machine.
+	- Reinstall latest version of the updater with 'update reinstall'.
 * New: Plugin requirements system - automatically loads and manages required plugins. Missing plugins show with clickable links to enable them. Required plugins are re-added upon the plugin list changing, ensuring a unified set of core plugins.
 * New: Added an admin message sound.
 * New: Added ice water crystals sound effect for Santa boxes.
 * New: Added the directional TTS audio files from the Miriani Soundpack for VIP Mud, which get played when you follow someone.
 * New: Added conf gen 8, to control follow directional audio.
 * New: Developer plugin with 'spreload' command to quickly reload all plugins.
-* New: Brand new accessible output window, built directly into MUSHclient. Type 'conf gen 11' or press tab to learn more.
+* New: A brand new accessible output window, built directly into MUSHclient. Type 'conf gen 11' or press tab to learn more.
+	Note: This feature is compiled directly into MUSHclient and is controlled via the ActivateAccessibelOutput() scripting function. It is intended to bridge the gap on VIP Mud functionality that simply cannot be replicated via plugins, such as typing directly into the output notepad. More work on this is ongoing.
 * Changed: Improved trigger patterns for better name matching in various events (standing, sitting, group actions, etc).
 * Fixed: Aquatic salvagre stop.
 * Fixed: Planetary mining infinite loop when finding mineral pockets.
 * Fixed: Alternate audio variant selection now works correctly.
 * Fixed: Organization channel detection works properly again with tr channels.
-* Fixed: Baby interaction triggers now match names correctly (35+ triggers updated).
-* Fixed: Info bar no longer clears involuntarily.
+* Fixed: Info bar no longer clears unexpectedly.
 * Fixed: Asteroid mining warnings detect more accurately.
 * Fixed: Interrupt on follow (in conf reader) now works correctly, and also works for being dragged.
 * Fixed: Lore printing sound.
 * Fixed: Blade unsheath sound.
-* Removed: Legacy index-v5.manifest and old Lua-based updater system
+* Removed: Legacy index-v5.manifest and old Lua-based updater system.
 
 Version 4.0.02:
 

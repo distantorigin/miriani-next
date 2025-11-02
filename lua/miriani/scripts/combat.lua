@@ -322,7 +322,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
-   match="^A loud clicking is followed by the clatter of an empty cartridge to the floor\.$"
+   match="^A loud clicking is heard from your weapon followed by the clatter of an empty cartridge to the floor\.$"
    regexp="y"
    send_to="12"
    sequence="100"

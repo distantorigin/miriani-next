@@ -222,7 +222,7 @@ ImportXML([=[
    if "%2" == "ship-wide" or "%2" == "structure-wide" then
     print_color({"[SOOC] %1 ", "default"}, {"%3", "pub_comm"})
     channel("sooc", "[SOOC] %1 %3", {"ooc", "communication"})
-    mplay ("comm/rooc", "communication")
+    mplay ("comm/sooc", "communication")
    else
     print_color({"[ROOC] %1 ", "default"}, {"%3", "pub_comm"})
    channel(name, "[ROOC] %1 %3", {"ooc", "communication"})

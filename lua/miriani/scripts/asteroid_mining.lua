@@ -217,6 +217,15 @@ ImportXML([=[
   >
   <send>mplay("activity/asteroid/dump")</send>
   </trigger>
+<trigger
+   enabled="y"
+   group="asteroid"
+   match="^A computerized voice coming from (.+) reports, &quot;Completed construction of (.+)\.&quot;$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("activity/asteroid/manufacturingComplete")</send>
+  </trigger>
 
 
 </triggers>

@@ -9,6 +9,7 @@
 - Users on the dev channel will now see the updated files in addition to the main changelog if 'conf gen 4' is enabled.
 - Changelog is now available in markdown.
 - Scanning now plays a sound for starships being on the surface of an asteroid.
+- Asteroid mining manufacturing facilities now have a sound for completing things. (Thanks Jason!)
 
 ### Fixed
 - The sound trigger for last stun shot (eject).

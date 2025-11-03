@@ -579,7 +579,9 @@ regexp="y"
   >
   <send>
    -- Start looking for our organization name in either score or tr channels
-   EnableTrigger("detect_org", 1)</send>
+   EnableTrigger("detect_org", 1)
+   -- Also look for courier
+   EnableTrigger("detect_courier", 1)</send>
   </trigger>
 
   <trigger
@@ -599,6 +601,22 @@ regexp="y"
   </trigger>
 
   <trigger
+   enabled="n"
+   name="detect_courier"
+   match="^Courier Company: (.+)$"
+   regexp="y"
+   send_to="14"
+   sequence="50"
+  >
+  <send>local current_courier = GetVariable("courier_company")
+     if current_courier ~= "%1" and "%1" ~= "" then
+       SetVariable("courier_company", "%1")
+       print_color({"Courier company set: ", "default"}, {"%1", "priv_comm"})
+     end
+     EnableTrigger("detect_courier", 0)</send>
+  </trigger>
+
+  <trigger
    enabled="y"
    group="comm"
    match="^\[(\w+)\] .+$"
@@ -608,12 +626,18 @@ regexp="y"
   >
   <send>
    local detected_org = GetVariable("org_name")
+   local detected_courier = GetVariable("courier_company")
+
    if detected_org and "%1" == detected_org then
-     -- This is our organization - play org sound
+     -- This is our organization
      local file = require("pl.path").isfile(
-     config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/%1"..config:get("EXTENSION")) and "%1" or "organization"
+     config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/%1"..EXTENSION) and "%1" or "organization"
      mplay("comm/"..file, "communication")
      channel(name, "%0", {file .. " %1", file, "communication"})
+   elseif detected_courier and "%1" == detected_courier then
+     -- This is our courier company
+     mplay("comm/courier", "communication")
+     channel(name, "%0", {"courier %1", "courier", "communication"})
    end
   </send>
   </trigger>

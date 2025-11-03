@@ -7,6 +7,8 @@
 - We now automatically set your courier company when viewing output from the INFO command, and the courier channel will now play a sound accordingly.
 - SOOC now has a dedicated sound.
 - Users on the dev channel will now see the updated files in addition to the main changelog if 'conf gen 4' is enabled.
+- Changelog is now available in markdown.
+- Scanning now plays a sound for starships being on the surface of an asteroid.
 
 ### Fixed
 - The sound trigger for last stun shot (eject).

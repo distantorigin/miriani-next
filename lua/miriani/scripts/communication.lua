@@ -632,11 +632,11 @@ regexp="y"
      local file = require("pl.path").isfile(
      config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/%1"..EXTENSION) and "%1" or "organization"
      mplay("comm/"..file, "communication")
-     channel(name, "%0", {file .. " %1", file, "organization", "communication"})
+     channel(name, "%0", {"organization", "communication"})
    elseif detected_courier and "%1" == detected_courier then
      -- This is our courier company
      mplay("comm/courier", "communication")
-     channel(name, "%0", {"courier %1", "courier", "courier", "communication"})
+     channel(name, "%0", {"courier", "communication"})
    end
   </send>
   </trigger>

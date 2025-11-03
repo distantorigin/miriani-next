@@ -1484,16 +1484,12 @@ function notepad_changelog(name, line, wc, updated_files, channel)
     content = content .. string.rep("-", 50) .. "\r\n\r\n"
   end
 
-  -- For dev channel, only show the file list
-  -- For stable (or if channel not specified), also show the changelog
-  if channel ~= "dev" then
     local f = io.open(GetInfo(66).."docs/changelog.txt", "r")
     if (f) then
       local text = f:read("*all")
       f:close()
       content = content .. string.gsub(text, "\n", "\r\n")
     end -- if
-  end
 
   -- Only open the notepad if we have content to show
   if content ~= "" then

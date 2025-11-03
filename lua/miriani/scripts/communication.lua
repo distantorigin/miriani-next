@@ -618,7 +618,7 @@ regexp="y"
   <trigger
    enabled="y"
    group="comm"
-   match="^\[(\w+)\] .+$"
+   match="^\[([\w ]+)\] .+$"
    regexp="y"
    send_to="12"
    sequence="110"

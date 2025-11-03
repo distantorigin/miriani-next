@@ -219,13 +219,14 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("comm/rooc", "communication")
    if "%2" == "ship-wide" or "%2" == "structure-wide" then
     print_color({"[SOOC] %1 ", "default"}, {"%3", "pub_comm"})
     channel("sooc", "[SOOC] %1 %3", {"ooc", "communication"})
+    mplay ("comm/rooc", "communication")
    else
     print_color({"[ROOC] %1 ", "default"}, {"%3", "pub_comm"})
    channel(name, "[ROOC] %1 %3", {"ooc", "communication"})
+   mplay ("comm/rooc", "communication")
    end -- if ship wide
   </send>
   </trigger>

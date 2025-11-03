@@ -1484,7 +1484,7 @@ function notepad_changelog(name, line, wc, updated_files, channel)
     content = content .. string.rep("-", 50) .. "\r\n\r\n"
   end
 
-    local f = io.open(GetInfo(66).."docs/changelog.txt", "r")
+    local f = io.open(GetInfo(66).."docs/changelog.md", "r")
     if (f) then
       local text = f:read("*all")
       f:close()

@@ -1,6 +1,11 @@
 # Miriani-Next Changelog
 
-## Version 4.0.04 (In Progress)
+## Version 4.0.05 (In Progress)
+
+### New
+- Asteroid mining manufacturing facilities now have a sound for completing things. (Thanks Jason!)
+
+## Version 4.0.04
 
 ### New
 - You can now add a file to the sounds/miriani/comm/ directory that will be played for a particular metafrequency channel. Name the file using either the channel's given label, or the frequency number without periods, and it will be played instead of the standard metaf.ogg. For example, 707.ogg will be played for channel 7.07. 50000.ogg would be played for 500.00, etc. If you have channel 7.07 labeled soundpack, you could also use soundpack.ogg instead of 707.ogg.
@@ -9,7 +14,6 @@
 - Users on the dev channel will now see the updated files in addition to the main changelog if 'conf gen 4' is enabled.
 - Changelog is now available in markdown.
 - Scanning now plays a sound for starships being on the surface of an asteroid.
-- Asteroid mining manufacturing facilities now have a sound for completing things. (Thanks Jason!)
 
 ### Fixed
 - The sound trigger for last stun shot (eject).

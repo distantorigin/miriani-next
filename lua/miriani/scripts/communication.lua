@@ -11,7 +11,26 @@ ImportXML([=[
    sequence="75"
   >
   <send>
-   mplay ("comm/metaf", "communication")
+   -- Determine custom sound file based on label or frequency number
+   local sound_file = "metaf"
+   local label = "%3"
+   local frequency = "%2"
+
+   if label ~= "" then
+     -- Check if custom sound exists for the label
+     local custom_label = string.lower(label)
+     if require("pl.path").isfile(config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/"..custom_label..EXTENSION) then
+       sound_file = custom_label
+     end
+   else
+     
+     local custom_freq = frequency:gsub("%.", "")
+     if require("pl.path").isfile(config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/"..custom_freq..EXTENSION) then
+       sound_file = custom_freq
+     end
+   end
+
+   mplay ("comm/"..sound_file, "communication")
 
    if "%3" ~= "" then
     print_color({"[%3] %4 ", "default"}, {"%5", "priv_comm"})

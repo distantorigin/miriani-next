@@ -611,8 +611,7 @@ regexp="y"
   <send>local current_courier = GetVariable("courier_company")
      if current_courier ~= "%1" and "%1" ~= "" then
        SetVariable("courier_company", "%1")
-       print_color({"Courier company set: ", "default"}, {"%1", "priv_comm"})
-     end
+            end
      EnableTrigger("detect_courier", 0)</send>
   </trigger>
 

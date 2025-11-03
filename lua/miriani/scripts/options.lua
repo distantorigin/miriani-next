@@ -93,6 +93,8 @@ local options = {
   design_buffer = {descr="Architectural design channel.", value="yes", group="buffers", type="bool"},
   contributions_buffer = {descr="Credit contributions.", value="yes", group="buffers", type="bool"},
   auction_buffer = {descr="Auctions.", value="yes", group="buffers", type="bool"},
+  organization_buffer = {descr="Organization channel.", value="yes", group="buffers", type="bool"},
+  courier_buffer = {descr="Courier company channel.", value="yes", group="buffers", type="bool"},
   hooks_buffer = {descr="Soundpack hooks buffer.", value="no", group="developer", type="bool"},
 scan_buffer = {descr="Starship Scans", value="yes", group="buffers", type="bool"},
   

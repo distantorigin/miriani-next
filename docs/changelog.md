@@ -4,6 +4,7 @@
 
 ### New
 - Asteroid mining manufacturing facilities now have a sound for completing things. (Thanks Jason!)
+- Private organization and courier channels now have buffers.
 
 ## Version 4.0.04
 
@@ -28,8 +29,8 @@
   - Channel switching support: 'update switch dev' or 'update switch stable'. For an up-to-date list of channels, type 'update switch' by itself to be sent to a menu-based interface
   - Automatic updater installation and manifest generation if missing
   - The updater can also act as an installer, allowing you to download the latest version of a stable or dev build on a new machine.
-  - Reinstall latest version of the updater with 'update reinstall'.
 - Plugin requirements system - automatically loads and manages required plugins. Missing plugins show with clickable links to enable them. Required plugins are re-added upon the plugin list changing, ensuring a unified set of core plugins.
+  - Reinstall latest version of the updater with 'update reinstall'.
 - Added an admin message sound.
 - Added ice water crystals sound effect for Santa boxes.
 - Added the directional TTS audio files from the Miriani Soundpack for VIP Mud, which get played when you follow someone.

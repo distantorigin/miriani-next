@@ -4,6 +4,7 @@
 
 ### New
 - You can now add a file to the sounds/miriani/comm/ directory that will be played for a particular metafrequency channel. Name the file using either the channel's given label, or the frequency number without periods, and it will be played instead of the standard metaf.ogg. For example, 707.ogg will be played for channel 7.07. 50000.ogg would be played for 500.00, etc. If you have channel 7.07 labeled soundpack, you could also use soundpack.ogg instead of 707.ogg.
+- We now automatically set your courier company when viewing output from the INFO command, and the courier channel will now play a sound accordingly.
 - SOOC now has a dedicated sound.
 - Users on the dev channel will now see the updated files in addition to the main changelog if 'conf gen 4' is enabled.
 

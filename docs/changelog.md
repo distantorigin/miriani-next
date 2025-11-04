@@ -5,6 +5,7 @@
 ### New
 - Asteroid mining manufacturing facilities now have a sound for completing things. (Thanks Jason!)
 - Private organization and courier channels now have buffers.
+- Added history buffer aliases: spr (read), spc (copy), sps (switch), and SPHB (back/forward, among other things). Primarily added for VIP Mud soundpack compatibility and user-friendliness.
 
 ## Version 4.0.04
 

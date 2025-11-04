@@ -272,6 +272,55 @@ end</send>
    sequence="100"
   >
   </alias>
+
+  <alias
+   script="SPHB"
+   match="^sphb\s*(.*)"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   script="history_get"
+   match="^spr\s+(\d+)$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   script="history_msgcopy"
+   match="^spc$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   omit_from_output="y"
+   sequence="100"
+   send_to="12"
+  >
+  </alias>
+
+  <alias
+   script="sps_handler"
+   match="^sps(?:\s+(.+))?$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+   send_to="12"
+  >
+  </alias>
 </aliases>
 
 <!--  Script  -->
@@ -958,6 +1007,88 @@ end
 
 -- Call this on plugin load to initialize quick buffers
 load_quick_buffers()
+
+function sps_handler(name, line, wc)
+  local buffer_name = wc[1]
+
+  if not buffer_name or buffer_name == "" then
+    history_catnext(name, line, wc)
+  else
+    buffer_name = buffer_name:gsub("^%s+|%s+$", "")
+
+    if #categories == 0 then
+      say("no categories")
+      return
+    end
+
+    local selected = 0
+    local possibles = {}
+
+    for k, v in ipairs(categories) do
+      if v:sub(1, #buffer_name) == buffer_name or v:find("%f[^/]" .. buffer_name, 1) then
+        table.insert(possibles, v)
+      end
+    end
+
+    if #possibles == 0 then
+      say("buffer not found")
+      return
+    elseif #possibles == 1 then
+      for k, v in ipairs(categories) do
+        if v == possibles[1] then
+          selected = k
+          break
+        end
+      end
+    else
+      local choice = Menu(table.concat(possibles, "|"))
+      if choice then
+        for k, v in ipairs(categories) do
+          if v == possibles[choice] then
+            selected = k
+            break
+          end
+        end
+      else
+        return
+      end
+    end
+
+    if selected > 0 then
+      current_category = selected
+      if indices[categories[current_category]] == 0 then
+        indices[categories[current_category]] = 1
+      end
+      say(categories[current_category] .. ": " .. indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+    else
+      say("buffer not found")
+    end
+  end
+end
+
+function SPHB(name, line, wc)
+  local subcommand = wc[1] or ""
+  subcommand = string.lower(subcommand:gsub("^%s+|%s+$", ""))
+
+  if subcommand == "" then
+    say("Valid arguments are back, forward, copy, read, and switch.")
+    return
+  end
+
+  if subcommand == "read" or subcommand == "r" then
+    history_get(name, line, {wc[2] or "1"})
+  elseif subcommand == "copy" or subcommand == "c" then
+    history_msgcopy(name, line, wc)
+  elseif subcommand == "switch" or subcommand == "s" then
+    history_catnext(name, line, wc)
+  elseif subcommand == "back" or subcommand == "b" then
+    history_catprev(name, line, wc)
+  elseif subcommand == "forward" or subcommand == "f" then
+    history_catnext(name, line, wc)
+  else
+    say("Valid arguments are back, forward, copy, read, and switch.")
+  end
+end
 
 ]]>
 </script>

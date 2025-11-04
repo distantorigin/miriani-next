@@ -238,7 +238,10 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/accelerate", "ship")</send>
+  <send>
+  local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
+  mplay ("ship/move/accelerate", "ship", false, nil, false, false, nil, frequency)
+  </send>
   </trigger>
 
   <trigger
@@ -251,7 +254,10 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/decelerate", "ship")</send>
+  <send>
+  local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
+  mplay ("ship/move/decelerate", "ship", false, nil, false, false, nil, frequency)
+  </send>
 </trigger>
 
   <trigger

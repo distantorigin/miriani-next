@@ -59,6 +59,7 @@ local options = {
   escape_abort = {descr="Use Escape key to send @abort command.", value="yes", group="general", type="bool"},
   tab_activates_notepad = {descr="Use Tab to activate output window instead of tab completion.", value="no", group="general", type="bool"},
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},
+  relativity_drive_freq = {descr="Relativity drive frequency.", value="44100", group="ship", type="string"},
   spam = {descr="Reduce spam by gagging flavored text.", value="yes", group="gags", type="bool"},
   store_detector = {descr="Play a sound when detecting stores.", value="no", group="room", type="bool"},
   unchange_coords = {descr="Print 'unchanged' before coordinates if the target has not moved since its last scan.", value="no", group="ship", type="bool"},

@@ -233,7 +233,6 @@ function Config:set_option(key, val)
     -- Get the default value from vars.options (the original defaults)
     if vars.options and vars.options[key] and vars.options[key].value then
       self.options[key].value = vars.options[key].value
-      print("Reset to default: " .. key)
     else
       -- Fallback if we can't find the default
       return self.consts.error.INVALID_ARG

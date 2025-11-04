@@ -436,10 +436,11 @@ function find_sound_file(file)
   return nil
 end
 
-function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset)
+function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset, frequency)
   local path = require("pl.path")
   group = group or "other"
   sec = tonumber(sec) or 1 -- 1 second fadeout by default
+  frequency = tonumber(frequency) or 44100 -- playback frequency in Hz (44100 = normal)
 
   -- Periodic device health check
   periodic_device_check()
@@ -596,6 +597,11 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
   -- Only set pan if it's not zero (avoid unnecessary panning)
   if final_pan ~= 0 then
     stream:SetAttribute(Audio.CONST.attribute.pan, final_pan / 100.0) -- Convert to -1 to 1 range
+  end
+
+  -- Set frequency if not normal (44100 Hz)
+  if frequency ~= 44100 then
+    stream:SetAttribute(Audio.CONST.attribute.frequency, frequency)
   end
 
   -- Play the stream

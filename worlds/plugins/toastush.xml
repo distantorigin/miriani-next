@@ -1161,7 +1161,7 @@ function open_url()
   end -- if
 end -- open_url
 
-function mplay(file, group, interrupt, pan, loop, slide, sec)
+function mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
   -- Miriani only play:
   local filepath
 
@@ -1177,7 +1177,7 @@ function mplay(file, group, interrupt, pan, loop, slide, sec)
     filepath = string.format(SOUNDPATH.."%s%s", file, EXTENSION)
   end -- if
 
-  play(filepath, group, interrupt, pan, loop, slide, sec)
+  play(filepath, group, interrupt, pan, loop, slide, sec, nil, nil, frequency)
 end -- mplay
 
 function speech_interrupt(line)

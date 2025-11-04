@@ -379,9 +379,16 @@ function config_menu.edit_option(option_key, group_name)
 
   else
     -- String or other type - use prompt
+    local prompt_message
+    if option_key == "relativity_drive_freq" then
+      prompt_message = "Presets: 22050=half, 44100=normal, 88200=double\n\nEnter a blank line to reset to default."
+    else
+      prompt_message = string.format("Current value: %s\n\nEnter a blank line to reset to default.", tostring(option.value))
+    end
+
     dialog.prompt({
       title = string.format("Set %s", option.descr),
-      message = string.format("Current value: %s\n\nEnter a blank line to reset to default.", tostring(option.value)),
+      message = prompt_message,
       allow_blank = true,
       callback = function(result, reason)
         if reason == "aborted" then

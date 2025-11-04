@@ -1,11 +1,14 @@
 # Miriani-Next Changelog
 
-## Version 4.0.05 (In Progress)
+## Version 4.0.05
 
 ### New
-- Asteroid mining manufacturing facilities now have a sound for completing things. (Thanks Jason!)
+- Asteroid mining manufacturing facilities now have a sound for completing things. (Thanks Mark!)
+- Added a new lift ambience.
 - Private organization and courier channels now have buffers.
-- Added history buffer aliases: spr (read), spc (copy), sps (switch), and SPHB (back/forward, among other things). Primarily added for VIP Mud soundpack compatibility and user-friendliness.
+- Added history buffer aliases: spr (read), spc (copy), sps (switch), and SPHB (buffer back/forward, among other things). Primarily added for VIP Mud soundpack compatibility and user-friendliness.
+- Added relativity drive frequency option under 'conf ship'.
+- Added various batch scripts for developers.
 
 ## Version 4.0.04
 

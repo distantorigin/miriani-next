@@ -300,6 +300,7 @@ end</send>
   <alias
    script="history_msgcopy"
    match="^spc$"
+   regexp="y"
    enabled="y"
    omit_from_command_history="y"
    omit_from_log="y"

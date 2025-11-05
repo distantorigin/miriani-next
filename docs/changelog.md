@@ -4,9 +4,10 @@
 
 ### New
 - Expanded the counters system (as seen in archaeology) to track multiple activities: spatial artifacts, asteroids hauled, missions completed, debris salvaged (atmospheric, space, aquatic, and gas variants), and planetary mining expeditions.
-- Added counters command for easy access: 'counters' displays all activity counters, 'counters reset' resets all counters, 'counters reset <name>' resets a specific counter.
+- Added a counters command for easy access: 'counters' displays all activity counters, 'counters reset' resets all counters, 'counters reset <name>' resets a specific counter.
 - Added an option to toggle whether counter values are displayed when the activity completes (defaults to off).
 - Added an option to reset all counters upon startup or updating (defaults to on).
+- Added a sound for snatching artifacts from space.
 
 ## Version 4.0.05
 

@@ -1582,12 +1582,11 @@ if config:get_option("external_camera").value == "no" then
 
   <trigger
    enabled="y"
-   group="misc"
    match="^You snatch (.+) from the cold, cruel hands of space\.$"
    regexp="y"
    send_to="12"
   >
-  <send>
+  <send>mplay("activity/artifacting/snatchArtifact")
    increment_counter("spatial_artifacts")
   </send>
   </trigger>

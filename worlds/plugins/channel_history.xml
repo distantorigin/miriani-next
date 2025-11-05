@@ -298,16 +298,14 @@ end</send>
   </alias>
 
   <alias
-   script="history_msgcopy"
    match="^spc$"
    regexp="y"
    enabled="y"
    omit_from_command_history="y"
    omit_from_log="y"
-   omit_from_output="y"
    sequence="100"
    send_to="12"
-  >
+  >Execute("sphb copy")
   </alias>
 
   <alias

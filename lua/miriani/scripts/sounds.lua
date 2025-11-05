@@ -9,16 +9,15 @@ local window_has_focus = true
 -- Group audio IDs for management
 local group_sounds = {}
 
--- Group registry for sound filtering
--- Tracks discovered sound groups (notification, computer, babies, etc.) and their enabled state
-local group_registry = {}
-local registry_file = "worlds/settings/sound_groups.conf"
+-- Load sound preferences module (handles groups and variants)
+local sound_prefs = require("miriani.scripts.include.sound_preferences")
 
--- Groups that should not be filterable (they have their own volume controls)
-local excluded_groups = {
-  ambiance = true,
-  environment = true,
-}
+-- Initialize sound preferences with config (will be called when config is ready)
+local function init_sound_prefs()
+  if config then
+    sound_prefs.init(config)
+  end
+end
 
 
 
@@ -138,243 +137,37 @@ local function periodic_device_check()
   end
 end
 
--- Group registry functions
-
--- Load group registry from file
-local function load_group_registry()
-  local path = require("pl.path")
-  local file_path = registry_file
-
-  if path.isfile(file_path) then
-    local f = io.open(file_path, "r")
-    if f then
-      local content = f:read("*all")
-      f:close()
-
-      -- Parse the registry file (format: group=enabled)
-      for line in content:gmatch("[^\r\n]+") do
-        local group, enabled = line:match("^([^=]+)=([^=]+)$")
-        if group and enabled then
-          group_registry[group] = (enabled == "true")
-        end
-      end
-    end
-  end
-end
-
--- Save group registry to file
-local function save_group_registry()
-  local path = require("pl.path")
-  local dir = path.dirname(registry_file)
-
-  -- Ensure directory exists
-  if not path.isdir(dir) then
-    path.mkdir(dir)
-  end
-
-  local f = io.open(registry_file, "w")
-  if f then
-    for group, enabled in pairs(group_registry) do
-      f:write(string.format("%s=%s\n", group, tostring(enabled)))
-    end
-    f:close()
-  end
-end
-
--- Register a group if not already registered
--- New groups default to enabled (true)
--- Excluded groups (ambiance, environment) are not registered
-local function register_group(group)
-  if not group or group == "" then
-    return
-  end
-
-  -- Skip excluded groups
-  if excluded_groups[group] then
-    return
-  end
-
-  -- If group is not in registry, add it as enabled
-  if group_registry[group] == nil then
-    group_registry[group] = true
-    save_group_registry()
-  end
-end
-
--- Check if a group is enabled
--- Returns true if enabled or not yet registered (default enabled)
--- Excluded groups always return true
+-- Expose sound group functions from preferences module
+-- These are called by config_menu.lua and other parts of the plugin
 function is_group_enabled(group)
-  if not group or group == "" then
-    return true -- Unknown groups are enabled by default
-  end
-
-  -- Excluded groups are always enabled (they have their own controls)
-  if excluded_groups[group] then
-    return true
-  end
-
-  -- If not in registry, it's enabled by default
-  if group_registry[group] == nil then
-    return true
-  end
-
-  return group_registry[group]
+  return sound_prefs.is_group_enabled(group)
 end
 
--- Get all registered groups
 function get_all_sound_groups()
-  local groups = {}
-  for group, _ in pairs(group_registry) do
-    table.insert(groups, group)
-  end
-  table.sort(groups)
-  return groups
+  return sound_prefs.get_all_sound_groups()
 end
 
--- Set group enabled state
 function set_group_enabled(group, enabled)
-  if not group or group == "" then
-    return
-  end
-
-  -- Don't allow changing excluded groups
-  if excluded_groups[group] then
-    return
-  end
-
-  group_registry[group] = enabled
-  save_group_registry()
+  return sound_prefs.set_group_enabled(group, enabled)
 end
 
--- Initialize group registry on module load
-load_group_registry()
-
--- Default variants for sounds (defines which variant is used by default)
-local variant_defaults = {
-  ["miriani/ship/move/accelerate.ogg"] = 3,
-  ["miriani/ship/move/decelerate.ogg"] = 3,
-  ["miriani/activity/archaeology/artifactHere.ogg"] = 1,
-  ["miriani/vehicle/accelerate.ogg"] = 1,
-  ["miriani/vehicle/decelerate.ogg"] = 1,
-}
-
--- Sound variant preferences: maps sound base name to selected variant number
--- e.g., { ["miriani/ship/accelerate"] = 2 } means always use accelerate2.ogg
--- nil means use the default variant, 0 means random selection
-local variant_preferences = {}
-
--- Load sound variant preferences from config
-local function load_variant_preferences()
-  if not config then
-    return
-  end
-
-  local loaded = config:load_from_file()
-  if loaded and loaded.sound_variants then
-    variant_preferences = loaded.sound_variants
-  end
+-- Helper function to register a group when a sound is played
+local function register_group(group)
+  sound_prefs.register_group(group)
 end
 
--- Save variant preferences to config
-local function save_variant_preferences()
-  if not config then
-    return
-  end
-
-  -- Update the config's internal state
-  config.sound_variants = variant_preferences
-
-  -- Save to toastush.conf
-  config:save()
-end
-
--- Get the variant preference for a sound
--- Returns: variant number (1, 2, 3, etc.) or 0 for random
--- If no preference is set, returns the default variant for that sound
+-- Expose sound variant functions from preferences module
 function get_variant_preference(sound_path)
-  -- Since variants are only in the miriani folder, we don't need to normalize alternate paths
-  -- Alternate audio never has variants
-
-  local pref = variant_preferences[sound_path]
-
-  if pref ~= nil then
-    return pref
-  end
-
-  -- Otherwise, use the default for this sound (or 0 if no default is defined)
-  return variant_defaults[sound_path] or 0
+  return sound_prefs.get_variant_preference(sound_path)
 end
 
--- Set the variant preference for a sound
--- variant: variant number (1, 2, 3, etc.) or 0 for random
 function set_variant_preference(sound_path, variant)
-  -- Variants are only for miriani sounds, not alternate audio
-  variant = tonumber(variant) or 0
-
-  if variant == 0 then
-    -- Remove preference to use default random behavior
-    variant_preferences[sound_path] = nil
-  else
-    variant_preferences[sound_path] = variant
-  end
-
-  save_variant_preferences()
+  return sound_prefs.set_variant_preference(sound_path, variant)
 end
 
--- Scan for available variants of a sound file
--- Returns: table of available variant numbers, or empty table if none found
 function scan_sound_variants(file)
-  local path = require("pl.path")
-  local sound_dir = config:get("SOUND_DIRECTORY")
-  local file_base, ext = path.splitext(file)
-
-  -- Check if the base filename already ends with a number
-  local has_number = string.match(file_base, "%d+$")
-  if has_number then
-    -- This is already a numbered variant, don't scan
-    return {}
-  end
-
-  -- Extract just the filename without directory
-  local file_dir = path.dirname(file)
-  local just_filename = path.basename(file_base)
-
-  -- Build search pattern: sound_dir + file_dir + "/" + just_filename + "*" + ext
-  local search_pattern
-  if file_dir == "." then
-    search_pattern = sound_dir .. just_filename .. "*" .. ext
-  else
-    search_pattern = sound_dir .. file_dir .. "/" .. just_filename .. "*" .. ext
-  end
-
-  local search = utils.readdir(search_pattern)
-
-  if not search or type(search) ~= "table" or not next(search) then
-    return {}
-  end
-
-  local variants = {}
-  for filename, metadata in pairs(search) do
-    if not metadata.directory then
-      -- Extract variant number from filename
-      -- e.g., "accelerate2.ogg" -> 2
-      -- Strip extension manually since path.basename isn't doing it
-      local base_name = filename:gsub("%.ogg$", ""):gsub("%.wav$", "")
-      local variant_num = base_name:match("^" .. just_filename .. "(%d+)$")
-
-      if variant_num then
-        table.insert(variants, tonumber(variant_num))
-      end
-    end
-  end
-
-  table.sort(variants)
-  return variants
+  return sound_prefs.scan_sound_variants(file)
 end
-
--- Initialize variant preferences on module load
-load_variant_preferences()
 
 
 function find_sound_file(file)
@@ -441,6 +234,12 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
   group = group or "other"
   sec = tonumber(sec) or 1 -- 1 second fadeout by default
   frequency = tonumber(frequency) or 44100 -- playback frequency in Hz (44100 = normal)
+
+  -- Initialize sound preferences on first use if needed
+  if config and not sound_prefs.initialized then
+    init_sound_prefs()
+    sound_prefs.initialized = true
+  end
 
   -- Periodic device health check
   periodic_device_check()
@@ -1044,5 +843,12 @@ function resume_group(group)
       sound_data.stream:Play()
     end
   end
+end
+
+-- Initialize sound preferences when module loads
+-- This will be called again in play() if config wasn't ready yet
+if config then
+  init_sound_prefs()
+  sound_prefs.initialized = true
 end
 

@@ -1,0 +1,117 @@
+-- Example miriani.conf structure
+-- This file shows the unified configuration format that replaces:
+--   - toastush.conf (main settings)
+--   - auto_login.conf (login credentials)
+--   - sound_groups.conf (sound group toggles)
+--
+-- The Config class will only save values that differ from defaults
+-- This example shows the complete structure for reference
+
+miriani_config = {
+  -- Configuration format version
+  _version = "2.0",
+
+  -- All options (only non-default values are saved)
+  options = {
+    -- Auto login options
+    auto_login = "yes",
+    auto_login_username = "player_name",
+    auto_login_password = "encrypted_password",
+
+    -- General settings
+    automatic_changelog = "yes",
+    automatic_updates = "no",
+    roundtime = "yes",
+    foreground_sounds = "no",
+
+    -- Ship options
+    scan_formatting = "yes",
+    secondary_lock = "yes",
+    relativity_drive_freq = "44100",
+
+    -- Room options
+    background_ambiance = "yes",
+    count_praelor = "yes",
+
+    -- Helpers
+    archaeology_helper_dig = "yes",
+    fc_sector_numbers = "no",
+
+    -- Screen reader
+    scan_interrupt = "everything",  -- enum value
+    follow_interrupt = "yes",
+
+    -- Gags
+    spam = "no",
+    external_camera = "yes",
+
+    -- Scan formats (long strings)
+    scan_format_starship = "{name} at {coordinates}, hull {hull_damage}",
+
+    -- Buffers
+    communication_buffer = "yes",
+    combat_buffer = "yes",
+    metaf_buffer = "yes",
+
+    -- Colors (numeric RGB values)
+    background_color = 16777215,  -- white
+    combat_color = 255,            -- red
+    default_color = 0,             -- black
+
+    -- Developer
+    debug_mode = "yes",
+    sounds_buffer = "yes",
+  },
+
+  -- Audio configuration
+  audio = {
+    -- Master volume controls
+    master_volume = 75,
+    master_mute = false,
+
+    -- Category volumes (if different from defaults)
+    sounds = {
+      volume = 80,
+      pan = 0
+    },
+    environment = {
+      volume = 60,
+      pan = 0
+    },
+
+    -- Note: offsets and category_map are part of the schema defaults
+    -- They're not typically saved unless modified
+  },
+
+  -- Sound groups (integrated from sound_groups.conf)
+  sound_groups = {
+    notification = true,
+    communication = true,
+    computer = true,
+    ship = true,
+    melee = false,      -- User disabled this group
+    socials = true,
+    vehicle = true,
+    other = true,
+    babies = false,     -- User disabled this group
+    praelor = true,
+    archaeology = true,
+    -- Additional groups discovered at runtime will be added here
+  },
+
+  -- Sound variant preferences
+  sound_variants = {
+    ["miriani/ship/move/accelerate.ogg"] = 2,  -- User chose variant 2
+    ["miriani/ship/move/decelerate.ogg"] = 3,  -- Default
+    ["miriani/vehicle/accelerate.ogg"] = 1,    -- Default
+    ["miriani/vehicle/decelerate.ogg"] = 1,    -- Default
+    ["miriani/activity/archaeology/artifactHere.ogg"] = 3,  -- User chose variant 3
+  },
+}
+
+-- Notes:
+-- 1. Only non-default values are saved to reduce file size
+-- 2. The Config class handles migration from old format automatically
+-- 3. Backup files (.bak) are created during migration
+-- 4. Invalid values are logged and replaced with defaults
+-- 5. New options added to schema automatically get their defaults

@@ -3,6 +3,121 @@
 
 local config_menu = {}
 
+-- UI handler registry for different option types
+-- Maps option types to their handler functions
+local type_handlers = {
+  -- Boolean handler
+  ["bool"] = function(option_key, option, group_name)
+    local current = option.value == "yes" or option.value == true
+    config:set_option(option_key, current and "no" or "yes")
+    config:save()
+    mplay("misc/menu_open")
+    config_menu.show_group(group_name)
+  end,
+
+  ["boolean"] = function(option_key, option, group_name)
+    type_handlers["bool"](option_key, option, group_name)
+  end,
+
+  -- String handler
+  ["string"] = function(option_key, option, group_name)
+    local current_value = option.value or ""
+    dialog.prompt({
+      title = strip_trailing_punctuation(option.descr),
+      default = current_value,
+      callback = function(result, reason)
+        if result then
+          config:set_option(option_key, result)
+          config:save()
+          mplay("misc/menu_open")
+        end
+        config_menu.show_group(group_name)
+      end
+    })
+  end,
+
+  -- Password handler
+  ["password"] = function(option_key, option, group_name)
+    dialog.prompt({
+      title = strip_trailing_punctuation(option.descr),
+      default = "",
+      mask = "*",
+      callback = function(result, reason)
+        if result then
+          config:set_option(option_key, result)
+          config:save()
+          mplay("misc/menu_open")
+        end
+        config_menu.show_group(group_name)
+      end
+    })
+  end,
+
+  -- Enum handler
+  ["enum"] = function(option_key, option, group_name)
+    if not option.options then
+      notify("error", "No options defined for enum type")
+      config_menu.show_group(group_name)
+      return
+    end
+
+    local choices = {}
+    choices["0"] = "Go back"
+
+    for i, value in ipairs(option.options) do
+      local display = value:gsub("^%l", string.upper)
+      local marker = (option.value == value) and " (current)" or ""
+      choices[tostring(i)] = display .. marker
+    end
+
+    dialog.menu({
+      title = strip_trailing_punctuation(option.descr),
+      choices = choices,
+      callback = function(result, reason)
+        if result and result.key ~= "0" then
+          local index = tonumber(result.key)
+          if index and option.options[index] then
+            config:set_option(option_key, option.options[index])
+            config:save()
+            mplay("misc/menu_open")
+          end
+        end
+        config_menu.show_group(group_name)
+      end
+    })
+  end,
+
+  -- Color handler (replaces function type for colors)
+  ["color"] = function(option_key, option, group_name)
+    local color = PickColour(-1)
+    if color ~= -1 then
+      config:set_option(option_key, color)
+      config:save()
+      mplay("misc/menu_open")
+    end
+    config_menu.show_group(group_name)
+  end,
+
+  -- Legacy function handler (temporary, will be removed)
+  ["function"] = function(option_key, option, group_name)
+    -- For now, detect if it's a color picker by the action string
+    if option.action and option.action:match("PickColour") then
+      type_handlers["color"](option_key, option, group_name)
+    else
+      notify("error", "Function type not supported")
+      config_menu.show_group(group_name)
+    end
+  end,
+}
+
+-- Helper function to get the appropriate handler for an option type
+local function get_type_handler(option_type)
+  return type_handlers[option_type] or function(key, opt, group)
+    notify("error", "Unknown option type: " .. tostring(option_type))
+    config_menu.show_group(group)
+  end
+end
+
 -- Helper function to strip trailing punctuation from option descriptions
 local function strip_trailing_punctuation(text)
   return text:gsub("[%.,:;!?]+%s*$", "")
@@ -10,47 +125,59 @@ end
 
 -- Main configuration menu
 function config_menu.show_main()
-  local main_menu = config:render_menu_list()
+  local main_menu = {}
 
-  if type(main_menu) ~= 'table' then
-    mplay("misc/cancel")
-    notify("critical", "Unable to load configuration menu.")
-    return
-  end
+  -- Use schema groups if available, otherwise fall back to old method
+  local schema = require("miriani.scripts.config_schema")
+  if schema and schema.groups then
+    -- Use schema-defined groups in order
+    for _, group in ipairs(schema.groups) do
+      table.insert(main_menu, group.title)
+    end
+  else
+    -- Fall back to old method
+    main_menu = config:render_menu_list()
 
-  -- Add "audio groups" and "sound variants" to the menu even though they have no regular options
-  local special_groups = {"audio groups", "sound variants"}
-  for _, group_key in ipairs(special_groups) do
-    local found = false
-    for _, title in ipairs(main_menu) do
-      if config:get_group_key_from_title(title) == group_key then
-        found = true
-        break
+    if type(main_menu) ~= 'table' then
+      mplay("misc/cancel")
+      notify("critical", "Unable to load configuration menu.")
+      return
+    end
+
+    -- Add "audio groups" and "sound variants" to the menu even though they have no regular options
+    local special_groups = {"audio groups", "sound variants"}
+    for _, group_key in ipairs(special_groups) do
+      local found = false
+      for _, title in ipairs(main_menu) do
+        if config:get_group_key_from_title(title) == group_key then
+          found = true
+          break
+        end
+      end
+      if not found then
+        table.insert(main_menu, config:get_group_title(group_key))
       end
     end
-    if not found then
-      table.insert(main_menu, config:get_group_title(group_key))
-    end
+
+    -- Custom sort based on group order metadata
+    table.sort(main_menu, function(a, b)
+      -- Get group keys from titles
+      local key_a = config:get_group_key_from_title(a)
+      local key_b = config:get_group_key_from_title(b)
+
+      -- Get sort orders
+      local order_a = config:get_group_order(key_a)
+      local order_b = config:get_group_order(key_b)
+
+      -- If orders are different, sort by order
+      if order_a ~= order_b then
+        return order_a < order_b
+      end
+
+      -- If orders are the same (both undefined), sort alphabetically
+      return a < b
+    end)
   end
-
-  -- Custom sort based on group order metadata
-  table.sort(main_menu, function(a, b)
-    -- Get group keys from titles
-    local key_a = config:get_group_key_from_title(a)
-    local key_b = config:get_group_key_from_title(b)
-
-    -- Get sort orders
-    local order_a = config:get_group_order(key_a)
-    local order_b = config:get_group_order(key_b)
-
-    -- If orders are different, sort by order
-    if order_a ~= order_b then
-      return order_a < order_b
-    end
-
-    -- If orders are the same (both undefined), sort alphabetically
-    return a < b
-  end)
 
   -- Convert to choices format for dialog
   local choices = {}
@@ -103,24 +230,15 @@ function config_menu.show_group(group_name)
   local group_title = config:get_group_title(actual_group_key)
 
   if actual_group_key == "sound variants" then
-    -- Predefined list of sounds that support variants with their defaults
-    local variant_sounds = {
-      {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
-      {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
-      {path = "miriani/vehicle/accelerate.ogg", name = "Vehicle Accelerate (Salvagers and ACVs)", default = 1},
-   {path = "miriani/vehicle/decelerate.ogg", name = "Vehicle Decelerate (Salvagers and ACVs)", default = 1},
-   {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1}
-    }
+    -- Get variant-capable sounds from schema
+    local sound_prefs = require("miriani.scripts.include.sound_preferences")
+    local variant_sounds = sound_prefs.get_variant_capable_sounds()
 
     for _, sound in ipairs(variant_sounds) do
       local sound_key = "_sound_variant_" .. sound.path:gsub("/", "_"):gsub("%.", "_")
-      local preference = get_variant_preference(sound.path)
 
-      -- If no preference is set, use the default
-      if preference == 0 or not preference then
-        preference = sound.default
-      end
-
+      -- sound.current already has the current preference from get_variant_capable_sounds()
+      local preference = sound.current or sound.default
       local status = "Variant " .. preference
 
       secondary_menu[sound_key] = string.format("%s [%s]", sound.name, status)
@@ -285,6 +403,14 @@ function config_menu.edit_option(option_key, group_name)
   local option = config:get_option(option_key)
   local opt_type = option.type or config:option_type(option_key)
 
+  -- Use the type handler registry
+  local handler = get_type_handler(opt_type)
+  if handler then
+    handler(option_key, option, group_name)
+    return
+  end
+
+  -- Legacy code below (will be removed once all types are handled)
   if opt_type == "boolean" or opt_type == "bool" then
     -- Boolean option - toggle directly
     local current_is_on = (option.value == "yes" or option.value == true)
@@ -482,11 +608,9 @@ function config_menu.find_and_edit(group_name, search_term)
   -- Special handling for sound variants
   if actual_group_key == "sound variants" then
     -- Predefined list of sounds that support variants
-    local variant_sounds = {
-      {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
-      {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
-      {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
-    }
+    -- Get variant-capable sounds from schema
+    local sound_prefs = require("miriani.scripts.include.sound_preferences")
+    local variant_sounds = sound_prefs.get_variant_capable_sounds()
 
     -- Try numeric index first
     local index = tonumber(search_term)

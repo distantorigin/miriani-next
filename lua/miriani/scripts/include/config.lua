@@ -19,8 +19,39 @@ function Config:init(options, audio)
 
   -- Handle new options format (with group_metadata)
   local group_metadata = nil
-  if options and options.options and options.group_metadata then
-    -- New format: {options = {...}, group_metadata = {...}}
+  local schema = nil
+
+  -- Check if we're being passed the new schema format
+  if options and options.version and options.groups and options.options then
+    -- New unified schema format
+    schema = options
+    vars.schema = schema
+
+    -- Convert schema options to Config format
+    local converted_options = {}
+    for key, opt in pairs(schema.options) do
+      converted_options[key] = {
+        descr = opt.descr,
+        value = opt.default,  -- Use default as initial value
+        group = opt.group,
+        type = opt.type,
+        options = opt.options,  -- For enum types
+        action = opt.action,    -- For function types (temporary, will remove in Phase 3)
+        read = opt.read,        -- For function types (temporary, will remove in Phase 3)
+      }
+    end
+
+    options = converted_options
+    group_metadata = schema.groups
+
+    -- Convert schema audio to Config format
+    if schema.audio and schema.audio.categories then
+      audio = schema.audio.categories
+    else
+      audio = schema.audio
+    end
+  elseif options and options.options and options.group_metadata then
+    -- Old format: {options = {...}, group_metadata = {...}}
     group_metadata = options.group_metadata
     options = options.options
   end
@@ -29,13 +60,23 @@ function Config:init(options, audio)
   vars.options = options or {}
   vars.audio = audio or {}
   vars.group_metadata = group_metadata
+  vars.schema = schema
 
   -- Initialize master volume and mute (will be loaded from file if present)
   self.master_volume = 50
   self.master_mute = false
 
   -- Store audio offsets and category map separately if provided
-  if audio then
+  if schema and schema.audio then
+    -- From schema
+    if schema.audio.offsets then
+      self.audio_offsets = schema.audio.offsets
+    end
+    if schema.audio.category_map then
+      self.category_map = schema.audio.category_map
+    end
+  elseif audio then
+    -- From old format
     if audio.offsets then
       self.audio_offsets = audio.offsets
     end
@@ -84,7 +125,108 @@ function Config:init(options, audio)
 
   local error = vars.consts.error.OK
 
-  -- Try loading from file
+  -- Try loading unified config first
+  local unified_data = self:load_unified_config()
+
+  if unified_data then
+    -- Load from unified miriani.conf with validation
+    if unified_data.options then
+      for key, value in pairs(unified_data.options) do
+        if self.options[key] then
+          -- Validate before applying
+          local valid, err_msg = self:validate_option(key, value)
+          if valid then
+            self.options[key].value = value
+          else
+            Note("Config load warning - invalid value for " .. key .. ": " .. tostring(value))
+            Note("  Using default value instead")
+            -- Keep default value (already set)
+          end
+        end
+      end
+    end
+
+    if unified_data.audio then
+      -- Load master volume and mute
+      if unified_data.audio.master_volume then
+        self.master_volume = unified_data.audio.master_volume
+      end
+      if unified_data.audio.master_mute ~= nil then
+        self.master_mute = unified_data.audio.master_mute
+      end
+
+      -- Load category settings
+      for group, attrs in pairs(unified_data.audio) do
+        if group ~= "master_volume" and group ~= "master_mute" and self.audio[group] and type(attrs) == "table" then
+          for attr, value in pairs(attrs) do
+            if self.audio[group][attr] ~= nil then
+              self.audio[group][attr] = value
+            end
+          end
+        end
+      end
+    end
+
+    -- Load sound groups
+    if unified_data.sound_groups then
+      self.sound_groups = unified_data.sound_groups
+    end
+
+    -- Load sound variants
+    if unified_data.sound_variants then
+      self.sound_variants = unified_data.sound_variants
+    end
+
+    return error -- Successfully loaded unified config
+  end
+
+  -- Otherwise, try to migrate old configs
+  local migrated = self:migrate_old_configs()
+  if migrated then
+    -- Reload after migration
+    unified_data = self:load_unified_config()
+    if unified_data then
+      -- Apply migrated data (same as above)
+      if unified_data.options then
+        for key, value in pairs(unified_data.options) do
+          if self.options[key] then
+            self.options[key].value = value
+          end
+        end
+      end
+
+      if unified_data.audio then
+        if unified_data.audio.master_volume then
+          self.master_volume = unified_data.audio.master_volume
+        end
+        if unified_data.audio.master_mute ~= nil then
+          self.master_mute = unified_data.audio.master_mute
+        end
+
+        for group, attrs in pairs(unified_data.audio) do
+          if group ~= "master_volume" and group ~= "master_mute" and self.audio[group] and type(attrs) == "table" then
+            for attr, value in pairs(attrs) do
+              if self.audio[group][attr] ~= nil then
+                self.audio[group][attr] = value
+              end
+            end
+          end
+        end
+      end
+
+      if unified_data.sound_groups then
+        self.sound_groups = unified_data.sound_groups
+      end
+
+      if unified_data.sound_variants then
+        self.sound_variants = unified_data.sound_variants
+      end
+
+      return error
+    end
+  end
+
+  -- Fall back to old loading method if no unified config and no migration
   local file_data = self:load_from_file()
 
   if file_data then
@@ -223,15 +365,86 @@ function Config:get_attribute(group, attr)
   return self.consts.error.INVALID_ARG
 end -- get_attribute
 
+function Config:validate_option(key, val)
+  if not self.options[key] then
+    return false, "Unknown option: " .. tostring(key)
+  end
+
+  local option = self.options[key]
+  local opt_type = option.type
+
+  -- Type-specific validation
+  if opt_type == "bool" or opt_type == "boolean" then
+    -- Accept various boolean representations
+    local valid_values = {
+      ["yes"] = true, ["no"] = true,
+      ["true"] = true, ["false"] = true,
+      ["on"] = true, ["off"] = true,
+      ["1"] = true, ["0"] = true
+    }
+    if type(val) == "boolean" then
+      return true
+    elseif type(val) == "string" and valid_values[val:lower()] then
+      return true
+    else
+      return false, "Boolean value must be yes/no, true/false, on/off, or 1/0"
+    end
+
+  elseif opt_type == "enum" then
+    -- Check if value is in allowed options
+    if option.options then
+      for _, allowed in ipairs(option.options) do
+        if val == allowed then
+          return true
+        end
+      end
+      return false, "Value must be one of: " .. table.concat(option.options, ", ")
+    end
+
+  elseif opt_type == "string" or opt_type == "password" then
+    -- Strings can be anything, but check for reasonable length
+    if type(val) ~= "string" then
+      return false, "Value must be a string"
+    end
+    if #val > 1000 then
+      return false, "String value too long (max 1000 characters)"
+    end
+    return true
+
+  elseif opt_type == "function" or opt_type == "color" then
+    -- Color values should be numbers
+    if type(val) ~= "number" then
+      return false, "Color value must be a number"
+    end
+    -- RGB color range
+    if val < 0 or val > 16777215 then
+      return false, "Color value out of range (0-16777215)"
+    end
+    return true
+  end
+
+  -- Default: accept anything for unknown types
+  return true
+end
+
 function Config:set_option(key, val)
   if not self.options[key] then
     return self.consts.error.INVALID_ARG
   end -- if
 
+  -- Validate the value
+  local valid, err_msg = self:validate_option(key, val)
+  if not valid then
+    Note("Config validation error for " .. key .. ": " .. (err_msg or "Invalid value"))
+    return self.consts.error.INVALID_ARG
+  end
+
   -- If empty string is provided, reset to default value
   if val == "" and self.options[key].type == "string" then
-    -- Get the default value from vars.options (the original defaults)
-    if vars.options and vars.options[key] and vars.options[key].value then
+    -- Get the default value from schema or vars.options
+    if vars.schema and vars.schema.options and vars.schema.options[key] then
+      self.options[key].value = vars.schema.options[key].default
+    elseif vars.options and vars.options[key] and vars.options[key].value then
       self.options[key].value = vars.options[key].value
     else
       -- Fallback if we can't find the default
@@ -288,6 +501,11 @@ function Config:get_base_category(group)
 end -- get_base_category
 
 function Config:save_to_file()
+  -- Don't save old format if we're using unified config
+  if vars.schema then
+    return self.consts.error.OK  -- Silently succeed, unified save handles it
+  end
+
   local path = require("pl.path")
   local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
   local settings_dir = path.join(mushclient_dir, "worlds", "settings")
@@ -370,6 +588,11 @@ function Config:save_to_file()
 end -- save_to_file
 
 function Config:save_auto_login_to_file()
+  -- Don't save old format if we're using unified config
+  if vars.schema then
+    return self.consts.error.OK  -- Silently succeed, unified save handles it
+  end
+
   local path = require("pl.path")
   local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
   local settings_dir = path.join(mushclient_dir, "worlds", "settings")
@@ -499,8 +722,313 @@ function Config:load_auto_login_from_file()
   return nil
 end -- load_auto_login_from_file
 
+-- New unified config methods
+function Config:load_unified_config()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
+  local settings_file = path.join(mushclient_dir, "worlds", "settings", "miriani.conf")
+
+  if not path.isfile(settings_file) then
+    return nil -- File doesn't exist, not an error
+  end
+
+  local file, err = io.open(settings_file, "r")
+  if not file then
+    return nil
+  end
+
+  local content = file:read("*all")
+  file:close()
+
+  if not content or content == "" then
+    return nil
+  end
+
+  -- Load the serialized data
+  local load_func, load_err = loadstring(content)
+  if not load_func then
+    return nil
+  end
+
+  load_func()
+
+  if miriani_config then
+    return miriani_config
+  end
+
+  return nil
+end -- load_unified_config
+
+function Config:save_unified_config()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
+  local settings_dir = path.join(mushclient_dir, "worlds", "settings")
+  local settings_file = path.join(settings_dir, "miriani.conf")
+
+  -- Ensure directory exists
+  local dir_ok = utils.readdir(settings_dir)
+  if not dir_ok then
+    local worlds_dir = path.join(mushclient_dir, "worlds")
+    local ok = utils.shellexecute("cmd", "/C mkdir settings", worlds_dir, "open", 0)
+    if not ok then
+      return self.consts.error.NO_SAVE
+    end
+  end
+
+  -- Build unified config structure
+  local user_options = {}
+  local user_audio = {}
+
+  -- Get defaults from schema or old vars
+  local default_options = (vars.schema and vars.schema.options) or vars.options or {}
+  local default_audio = (vars.schema and vars.schema.audio) or vars.audio or {}
+
+  -- Compare current options with defaults (including auto_login now)
+  for key, option in pairs(self.options) do
+    local default = default_options[key]
+    if default and option.value ~= default.default then
+      -- For schema format, compare with default field
+      user_options[key] = option.value
+    elseif default and option.value ~= default.value then
+      -- For old format, compare with value field
+      user_options[key] = option.value
+    end
+  end
+
+  -- Compare current audio settings with defaults
+  if default_audio.categories then
+    -- Schema format
+    for group, attrs in pairs(self.audio) do
+      local default_group = default_audio.categories[group]
+      if default_group and type(attrs) == "table" then
+        for attr, value in pairs(attrs) do
+          if default_group[attr] ~= nil and value ~= default_group[attr] then
+            if not user_audio[group] then
+              user_audio[group] = {}
+            end
+            user_audio[group][attr] = value
+          end
+        end
+      end
+    end
+  else
+    -- Old format
+    for group, attrs in pairs(self.audio) do
+      local default_group = default_audio[group]
+      if default_group and type(attrs) == "table" then
+        for attr, value in pairs(attrs) do
+          if default_group[attr] ~= nil and value ~= default_group[attr] then
+            if not user_audio[group] then
+              user_audio[group] = {}
+            end
+            user_audio[group][attr] = value
+          end
+        end
+      end
+    end
+  end
+
+  -- Create unified config structure
+  miriani_config = {
+    _version = vars.schema and vars.schema.version or "2.0",
+    options = user_options,
+    audio = {
+      master_volume = self.master_volume ~= 50 and self.master_volume or nil,
+      master_mute = self.master_mute or nil,
+    }
+  }
+
+  -- Add audio category settings if changed
+  if next(user_audio) then
+    for group, attrs in pairs(user_audio) do
+      miriani_config.audio[group] = attrs
+    end
+  end
+
+  -- Add sound groups if they exist
+  if self.sound_groups then
+    miriani_config.sound_groups = self.sound_groups
+  end
+
+  -- Add sound variants if they exist
+  if self.sound_variants then
+    miriani_config.sound_variants = self.sound_variants
+  end
+
+  local serialize = require("serialize")
+  local serial_config, error = serialize.save("miriani_config")
+
+  if type(serial_config) ~= 'string' then
+    return error or self.consts.error.UNKNOWN
+  end
+
+  local file, err = io.open(settings_file, "w")
+  if not file then
+    return self.consts.error.NO_SAVE
+  end
+
+  file:write(serial_config)
+  file:close()
+
+  return self.consts.error.OK
+end -- save_unified_config
+
+function Config:migrate_old_configs()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59)
+  local settings_dir = path.join(mushclient_dir, "worlds", "settings")
+
+  local toastush_file = path.join(settings_dir, "toastush.conf")
+  local autologin_file = path.join(settings_dir, "auto_login.conf")
+  local soundgroups_file = path.join(settings_dir, "sound_groups.conf")
+  local miriani_file = path.join(settings_dir, "miriani.conf")
+
+  -- If miriani.conf already exists, no migration needed
+  if path.isfile(miriani_file) then
+    return true
+  end
+
+  -- Check if we have any old files to migrate
+  local has_old_files = path.isfile(toastush_file) or path.isfile(autologin_file) or path.isfile(soundgroups_file)
+
+  if not has_old_files then
+    -- No old files, nothing to migrate
+    return false
+  end
+
+  Note("Migrating old configuration files to unified miriani.conf...")
+
+  -- Create backup of old files
+  if path.isfile(toastush_file) then
+    local backup_file = toastush_file .. ".bak"
+    os.execute('copy "' .. toastush_file .. '" "' .. backup_file .. '"')
+  end
+  if path.isfile(autologin_file) then
+    local backup_file = autologin_file .. ".bak"
+    os.execute('copy "' .. autologin_file .. '" "' .. backup_file .. '"')
+  end
+  if path.isfile(soundgroups_file) then
+    local backup_file = soundgroups_file .. ".bak"
+    os.execute('copy "' .. soundgroups_file .. '" "' .. backup_file .. '"')
+  end
+
+  -- Load and merge old configs
+  local merged_config = {
+    _version = "2.0",
+    options = {},
+    audio = {},
+    sound_groups = {},
+    sound_variants = {}
+  }
+
+  -- Load toastush.conf
+  local toastush_data = self:load_from_file()
+  if toastush_data then
+    if toastush_data.options then
+      for k, v in pairs(toastush_data.options) do
+        merged_config.options[k] = v
+      end
+    end
+    if toastush_data.audio then
+      merged_config.audio = toastush_data.audio
+    end
+    if toastush_data.master_volume then
+      merged_config.audio.master_volume = toastush_data.master_volume
+    end
+    if toastush_data.master_mute ~= nil then
+      merged_config.audio.master_mute = toastush_data.master_mute
+    end
+    if toastush_data.sound_variants then
+      merged_config.sound_variants = toastush_data.sound_variants
+    end
+  end
+
+  -- Load auto_login.conf
+  local autologin_data = self:load_auto_login_from_file()
+  if autologin_data and autologin_data.options then
+    for k, v in pairs(autologin_data.options) do
+      merged_config.options[k] = v
+    end
+  end
+
+  -- Load sound_groups.conf (simple key=value format)
+  if path.isfile(soundgroups_file) then
+    local file = io.open(soundgroups_file, "r")
+    if file then
+      for line in file:lines() do
+        local group, enabled = line:match("^([^=]+)=(.+)$")
+        if group and enabled then
+          merged_config.sound_groups[group] = enabled == "true"
+        end
+      end
+      file:close()
+    end
+  end
+
+  -- Save merged config
+  miriani_config = merged_config
+  local serialize = require("serialize")
+  local serial_config = serialize.save("miriani_config")
+
+  if type(serial_config) == 'string' then
+    local file = io.open(miriani_file, "w")
+    if file then
+      file:write(serial_config)
+      file:close()
+
+      Note("========================================")
+      Note("Configuration Migration Complete!")
+      Note("========================================")
+      Note("✓ Created unified miriani.conf")
+      Note("✓ Old config files backed up with .bak extension:")
+      if path.isfile(toastush_file) then
+        Note("  - toastush.conf.bak")
+      end
+      if path.isfile(autologin_file) then
+        Note("  - auto_login.conf.bak")
+      end
+      if path.isfile(soundgroups_file) then
+        Note("  - sound_groups.conf.bak")
+      end
+
+      -- Delete old config files after successful migration
+      local files_deleted = {}
+      if path.isfile(toastush_file) then
+        os.remove(toastush_file)
+        table.insert(files_deleted, "toastush.conf")
+      end
+      if path.isfile(autologin_file) then
+        os.remove(autologin_file)
+        table.insert(files_deleted, "auto_login.conf")
+      end
+      if path.isfile(soundgroups_file) then
+        os.remove(soundgroups_file)
+        table.insert(files_deleted, "sound_groups.conf")
+      end
+
+      if #files_deleted > 0 then
+        Note("✓ Removed old config files: " .. table.concat(files_deleted, ", "))
+        Note("")
+        Note("Your settings have been preserved in miriani.conf")
+        Note("Backups are available if needed (.bak files)")
+      end
+      Note("========================================")
+
+      return true
+    end
+  end
+
+  Note("Migration failed - old configs still in use.")
+  return false
+end -- migrate_old_configs
+
 function Config:save()
-  -- Save both main config and auto_login config
+  -- Use unified save if schema is available
+  if vars.schema then
+    return self:save_unified_config()
+  end
+
+  -- Otherwise fall back to old save methods
   local result1 = self:save_to_file()
   local result2 = self:save_auto_login_to_file()
 
@@ -666,5 +1194,65 @@ function Config:get_group_key_from_title(title)
   -- Last resort: return title as-is (might be a group key already)
   return title:lower()
 end -- get_group_key_from_title
+
+-- Sound group management methods (for unified config)
+function Config:get_sound_group(group)
+  if self.sound_groups and self.sound_groups[group] ~= nil then
+    return self.sound_groups[group]
+  end
+  -- Check schema defaults
+  if vars.schema and vars.schema.sound_groups and vars.schema.sound_groups[group] ~= nil then
+    return vars.schema.sound_groups[group]
+  end
+  return true -- Default to enabled for unknown groups
+end -- get_sound_group
+
+function Config:set_sound_group(group, enabled)
+  if not self.sound_groups then
+    self.sound_groups = {}
+  end
+  self.sound_groups[group] = enabled
+  return self.consts.error.OK
+end -- set_sound_group
+
+function Config:get_all_sound_groups()
+  local groups = {}
+
+  -- Start with schema-defined groups
+  if vars.schema and vars.schema.sound_groups then
+    for group, _ in pairs(vars.schema.sound_groups) do
+      groups[group] = self:get_sound_group(group)
+    end
+  end
+
+  -- Add any dynamically discovered groups
+  if self.sound_groups then
+    for group, enabled in pairs(self.sound_groups) do
+      groups[group] = enabled
+    end
+  end
+
+  return groups
+end -- get_all_sound_groups
+
+-- Sound variant management methods
+function Config:get_sound_variant(path)
+  if self.sound_variants and self.sound_variants[path] then
+    return self.sound_variants[path]
+  end
+  -- Check schema defaults
+  if vars.schema and vars.schema.sound_variants and vars.schema.sound_variants[path] then
+    return vars.schema.sound_variants[path].default
+  end
+  return 1 -- Default variant
+end -- get_sound_variant
+
+function Config:set_sound_variant(path, variant)
+  if not self.sound_variants then
+    self.sound_variants = {}
+  end
+  self.sound_variants[path] = variant
+  return self.consts.error.OK
+end -- set_sound_variant
 
 return Config

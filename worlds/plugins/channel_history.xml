@@ -305,6 +305,7 @@ end</send>
    omit_from_log="y"
    sequence="100"
    send_to="12"
+>
 <send>Execute("sphb copy")
 </send>
   </alias>

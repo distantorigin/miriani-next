@@ -1580,6 +1580,18 @@ if config:get_option("external_camera").value == "no" then
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^You snatch (.+) from the cold, cruel hands of space\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+   increment_counter("spatial_artifacts")
+  </send>
+  </trigger>
+
 </triggers>
 ]=])
 

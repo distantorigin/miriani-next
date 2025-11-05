@@ -21,6 +21,7 @@ local namespace = {
   "sounds", -- specific audio functions.
   "constants", -- Global constants
   "options", -- global options
+  "counters", -- Activity counters system
   "hooks", -- Miriani soundpack hooks:
   "misc", -- misc triggers without any specific categorization
   "market", -- tradesman market procedures

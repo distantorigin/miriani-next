@@ -569,6 +569,10 @@ end
   -- janitor code
   janitor()
 
+if config:get_option("reset_counters_on_startup").value == "yes" then
+    reset_counters(1)
+  end
+
   if (GetVariable("proxiani_enabled")) then
     EnableGroup("starmap", 0)
   end -- if

@@ -213,12 +213,8 @@ mplay("activity/archaeology/nothing")
      buried_artifact, artifact_room = nil
      infobar_t["arch"] = nil
    end -- if
-   if not artifacts_found then
-    artifacts_found = 1
-   else
-   artifacts_found = artifacts_found + 1
-   end --artifacts_found
-   print("Artifacts: "..artifacts_found)
+
+   increment_counter("artifacts")
   </send>
   </trigger>
 

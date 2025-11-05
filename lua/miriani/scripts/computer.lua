@@ -44,10 +44,62 @@ computer_actions = {
   ["Warning! Aquatic life form has entered scooper chamber. Expulsion in progress..."] = {
     sound = "ship/computer/warning",
     group = "computer"
+  },
+  ["We have arrived at the target destination. Lifting anchor and establishing standard dock."] = {
+    func = function()
+      increment_counter("asteroids_hauled")
+    end
+  },
+  ["You receive ([0-9,.]+) credits for the minerals you mined%."] = {
+    func = function(credits)
+      increment_counter("mining_expeditions")
+    end
   }
 }
 
 computer_actions_wildcard = {
+  ["Mission objective has been completed in approximately (.+)%. Return to base%."] = {
+    func = function(time_taken)
+      increment_counter("missions")
+    end
+  },
+  ["Processing complete%. One unit of (.+) has been secured%."] = {
+    func = function(material_type)
+      -- Define material categories
+      local atmospheric_materials = {
+        nitrogen = true, oxygen = true, ["water vapor"] = true, ozone = true,
+        argon = true, neon = true, helium = true, krypton = true,
+        xenon = true, hydrogen = true
+      }
+
+      local gas_materials = {
+        methane = true, ammonia = true, ["sulphur dioxide"] = true,
+        germanium = true, phosphorus = true
+      }
+
+      local aquatic_materials = {
+        ["octopus ink"] = true, ["fish scales"] = true, seaweed = true,
+        kelp = true, sponge = true, algae = true, plankton = true,
+        ["seashells"] = true, ["carbon dioxide"] = true, ["fish eggs"] = true,
+        ["raw sewage"] = true, ["shark teeth"] = true, mercury = true,
+        coral = true, barnacles = true, ["starfish arms"] = true
+      }
+
+      local material_lower = string.lower(material_type)
+
+      -- Check which category the material falls into
+      if atmospheric_materials[material_lower] then
+        increment_counter("atmospheric_debris")
+      elseif gas_materials[material_lower] then
+        increment_counter("gas_debris")
+      elseif aquatic_materials[material_lower] then
+        increment_counter("water_debris")
+      else
+        -- Default to atmospheric for anything else
+        increment_counter("atmospheric_debris")
+      end
+    end
+  },
   ["(.+) been detected in the sector%."] = {
     func = function(match1)
       if string.find(string.lower(match1), "artifact") then mplay("ship/computer/artifact", "notification") end

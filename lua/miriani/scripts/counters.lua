@@ -120,7 +120,7 @@ ImportXML([=[
         if parts[2] then
           reset_counter(parts[2])
         else
-          reset_counters(0)
+          reset_counters()
         end
       end
     end

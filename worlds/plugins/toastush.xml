@@ -382,6 +382,48 @@ show_paralyzed(roundtime, stuntime)
   <send>handle_alt_space()</send>
   </alias>
 
+  <alias
+   enabled="y"
+   name="MirianiSoundPlay"
+   match="^MirianiSoundPlay (.+)$"
+   regexp="y"
+   send_to="12"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   omit_from_output="y"
+  >
+  <send>
+    -- Parse arguments: file [group] [interrupt] [pan] [loop] [slide] [sec] [frequency]
+    local args_str = "%1"
+    local args = {}
+
+    -- Split by comma or space, handling quoted strings
+    for arg in args_str:gmatch("[^,]+") do
+      arg = arg:match("^%s*(.-)%s*$") -- trim whitespace
+      if arg ~= "" and arg ~= "nil" then
+        table.insert(args, arg)
+      else
+        table.insert(args, nil)
+      end
+    end
+
+    -- Convert numeric strings to numbers for appropriate parameters
+    local file = args[1]
+    local group = args[2]
+    local interrupt = args[3] and tonumber(args[3])
+    local pan = args[4] and tonumber(args[4])
+    local loop = args[5] and tonumber(args[5])
+    local slide = args[6] and tonumber(args[6])
+    local sec = args[7] and tonumber(args[7])
+    local frequency = args[8] and (args[8] == "true" or tonumber(args[8]) == 1)
+
+    -- Call mplay with parsed arguments
+    if file then
+      mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
+    end
+  </send>
+  </alias>
+
 </aliases>
 
 <script>

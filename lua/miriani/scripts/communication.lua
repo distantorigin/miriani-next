@@ -102,7 +102,17 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("comm/private", "communication", nil, nil, nil, nil, nil, true)
+   local sender_name = string.lower("%2")
+   local sound_file = "private"
+   local bypass_foreground = true
+
+   if sender_name:find("service") or sender_name:find("recipient") then
+     sound_file = "services"
+     -- Service comms default to NOT bypassing foreground sounds unless option is enabled
+     bypass_foreground = config:get_option("service_comm_interrupt").value == "yes"
+   end
+
+   mplay ("comm/"..sound_file, "communication", nil, nil, nil, nil, nil, bypass_foreground)
    channel("private", "[%2] %3", {"private %2", "private", "communication"})
    print_color({"[%2] ", "default"}, {"%3", "priv_comm"})
   </send>

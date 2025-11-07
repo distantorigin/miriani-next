@@ -1,5 +1,15 @@
 # Miriani-Next Changelog
 
+## Version 4.0.07
+
+### New
+- Private comms from services (names containing "service" or "recipient") now play a dedicated `comm/services.ogg` sound instead of the standard private comm sound. Examples include: Auction Service, combat mission notification service, communication loopback recipient.
+- Added `service_comm_interrupt` option under general sound settings to control whether service comms bypass foreground sounds (defaults to off). Service comms now respect the foreground sounds setting by default, unlike regular private comms.
+- Added social sounds: screech, slowclap, golfclap.
+
+### Fixed
+- Fixed counters reset to properly display output.
+
 ## Version 4.0.06
 
 ### New

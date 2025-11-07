@@ -3,6 +3,7 @@
 ## Version 4.0.08 (In Progress)
 
 ###new
+- Added a buffer option for the Newbie channel.
 - Added sounds for the headdesk social.
 - Moved some more baby sounds under the babies audio group.
 

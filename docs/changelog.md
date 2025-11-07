@@ -3,9 +3,12 @@
 ## Version 4.0.07
 
 ### New
-- Private comms from services (names containing "service" or "recipient") now play a dedicated `comm/services.ogg` sound instead of the standard private comm sound. Examples include: Auction Service, combat mission notification service, communication loopback recipient.
-- Added `service_comm_interrupt` option under general sound settings to control whether service comms bypass foreground sounds (defaults to off). Service comms now respect the foreground sounds setting by default, unlike regular private comms.
-- Added social sounds: screech, slowclap, golfclap.
+- Private comms from link recipients (mainly names containing "service" or "recipient") now play a different sound instead of the standard private comm sound. Examples include: Auction Service, combat mission notification service, communication loopback recipient, etc.
+- Added an option under 'conf general' to control whether service comms bypass foreground sounds (defaults to off). Service comms now respect the foreground sounds setting by default, unlike regular private comms.
+- Social sounds for screech, slowclap, and golfclap. (Thanks Jason!)
+
+### Changed
+- Alternate audio detection is now automatic. The soundpack checks for the `sounds/alternate/` folder at startup and uses alternate sounds when available, eliminating the need for manual configuration. The "Access alternative audio files" option has been removed.
 
 ### Fixed
 - Fixed counters reset to properly display output.

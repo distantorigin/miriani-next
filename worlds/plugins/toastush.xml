@@ -374,6 +374,7 @@ reset_heartbeat = 60
 ping_after_heartbeat = 30
 roundtime, stuntime = 0, 0
 stunned = false
+has_alternate_audio = false
 
 EnableTrigger("url_catcher", false)
 
@@ -557,6 +558,15 @@ function OnPluginInstall()
   print("Interested in contributing fixes or improvements? Please contact Noah Holland or ask more on the soundpacks' metafrequency channel.")
 
   initialize_audio()
+
+  -- Check if alternate audio folder exists
+  local path = require("pl.path")
+  local alt_path = (config:get("SOUND_DIRECTORY") .. ALTPATH):gsub("/$", "")
+  has_alternate_audio = path.isdir(alt_path)
+  if has_alternate_audio then
+    print("Alternate audio folder detected. Alternate sounds will be used when available.")
+  end
+
     if (IsConnected() and GetVariable("logged_in") == "1") then
     EnableTrigger("url_catcher", true) -- Temporary fix before I rip it all out
     register()
@@ -1169,7 +1179,8 @@ function mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
   -- Miriani only play:
   local filepath
 
-  if (config:get_option("alternate_audio").value == "yes") then
+  -- Only check for alternate files if the alternate folder exists
+  if has_alternate_audio then
     local path = require("pl.path")
     local dir, fn = path.splitpath(file)
     if (path.isfile(config:get("SOUND_DIRECTORY")..ALTPATH..dir.."/"..fn..ALT_EXTENSION)) then

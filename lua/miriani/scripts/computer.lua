@@ -75,13 +75,13 @@ computer_actions_wildcard = {
 
       local gas_materials = {
         methane = true, ammonia = true, ["sulphur dioxide"] = true,
-        germanium = true, phosphorus = true
+        germanium = true, ["carbon dioxide"] = true, phosphorus = true
       }
 
       local aquatic_materials = {
         ["octopus ink"] = true, ["fish scales"] = true, seaweed = true,
         kelp = true, sponge = true, algae = true, plankton = true,
-        ["seashells"] = true, ["carbon dioxide"] = true, ["fish eggs"] = true,
+        ["seashells"] = true, ["fish eggs"] = true,
         ["raw sewage"] = true, ["shark teeth"] = true, mercury = true,
         coral = true, barnacles = true, ["starfish arms"] = true
       }

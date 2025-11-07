@@ -45,7 +45,13 @@ computer_actions = {
     sound = "ship/computer/warning",
     group = "computer"
   },
-  ["You receive ([0-9,.]+) credits for the minerals you mined%."] = {
+  ["We have arrived at the target destination. Lifting anchor and establishing standard dock."] = {
+    func = function()
+      increment_counter("asteroids_hauled")
+	  mplay("activity/asteroid/shipAnchorEnd")
+    end
+  },
+  [""] = {
     func = function(credits)
       increment_counter("mining_expeditions")
     end

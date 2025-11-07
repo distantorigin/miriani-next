@@ -360,7 +360,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywail"..math.random(1,3))</send>
+  <send>mplay("misc/baby/babywail"..math.random(1,3), "babies")</send>
   </trigger>
 
   <trigger

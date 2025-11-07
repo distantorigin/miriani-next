@@ -39,7 +39,6 @@ local namespace = {
   "contributions", -- Credit contribution tracking
   "babies", -- Baby emotes and sounds
   "shenanigans", -- Blade combat, slime machines, and other RP shenanigans
-  "sound_conflict_detector", -- Sound file conflict detection and cleanup
   "devices", -- Device sounds and notifications (message board readers, etc.)
   "dialog_handlers", -- Dialog system input handlers
 -- "mcp", -- MCP protocol

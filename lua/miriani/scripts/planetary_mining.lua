@@ -99,5 +99,5 @@ ImportXML([=[
   >
   <send>increment_counter("mining_expeditions")</send>
   </trigger>
-triggers>
+</triggers>
 ]=])

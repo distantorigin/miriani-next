@@ -1,5 +1,14 @@
 # Miriani-Next Changelog
 
+## Version 4.0.08 (In Progress)
+
+###new
+- Added sounds for the headdesk social.
+- Moved some more baby sounds under the babies audio group.
+
+### Fixed
+- Fixed the asteroid hauling counter.
+
 ## Version 4.0.07
 
 ### New

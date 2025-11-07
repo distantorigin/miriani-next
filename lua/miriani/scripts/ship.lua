@@ -849,8 +849,7 @@ end -- camera</send>
   <trigger
    enabled="y"
    group="ship"
-   script="gagline"
-   match="^A loud klaxon sounds as (red|blue) lights (continue to )?flash overhead\.$"
+   match="^A loud klaxon sounds as (red|blue|purple|orange) lights (continue to )?flash overhead\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -860,7 +859,7 @@ end -- camera</send>
 
    if "%1" == "red" and "%2" == "" then
     mplay ("ship/alarm/redStart", "notification", 1)
-   elseif "%1" == "red" and "%2" == "continue to " and config:get_option ("spam").value == "no" then
+   elseif "%1" == "red" and "%2" == "continue to " then
     mplay ("ship/alarm/redContinue", "notification", 1)
    elseif "%1" == "blue" then
     mplay ("ship/alarm/blue", "notification", 1)

@@ -1,9 +1,11 @@
 # Miriani-Next Changelog
 
-## Version 4.0.08 (In Progress)
+## Version 4.0.08
 
 ###new
 - Added a buffer option for the Newbie channel.
+- Properly categorize carbon dioxide as a gas for purposes of counting. (Thanks Rose for catching this!)
+- Add atmospheric debris transfer messages to the reduce spam option.
 - Add a new option to 'conf gen' to make alt+space show exits instead of current history item. (Defaults to on)
 - Record the exits in each room for use in things such as alt+space.
 - Added sounds for the headdesk and mock socials.
@@ -11,6 +13,9 @@
 
 ### Fixed
 - Fixed the asteroid hauling counter.
+
+### Changed
+- Alert klaxons are no longer completely suppressed when reduce flavor text is enabled. The text will always be gagged by default, and will play its corresponding sound.
 
 ## Version 4.0.07
 

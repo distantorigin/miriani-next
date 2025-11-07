@@ -95,6 +95,6 @@ ImportXML([=[
    >
    <send>mplay("activity/asteroid/shipAnchorEnd")
    increment_counter("asteroids_hauled")</send>
-   /trigger>
+   </trigger>
   </triggers>
 ]=])

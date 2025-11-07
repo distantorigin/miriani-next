@@ -63,7 +63,3 @@ if path.isdir(classic_dir) then
     end
   end
 end
-
--- Check and cleanup sound file conflicts
-check_and_cleanup_sound_conflicts()
-     

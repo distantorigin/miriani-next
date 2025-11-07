@@ -60,6 +60,7 @@ local options = {
   roundtime = {descr="Play a sound when roundtime is up.", value="no", group="general", type="bool"},
   escape_abort = {descr="Use Escape key to send @abort command.", value="yes", group="general", type="bool"},
   tab_activates_notepad = {descr="Use Tab to activate output window instead of tab completion.", value="no", group="general", type="bool"},
+  alt_space_shows_exits = {descr="Alt+Space shows exits instead of current history item.", value="yes", group="general", type="bool"},
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},
   relativity_drive_freq = {descr="Relativity drive frequency.", value="44100", group="ship", type="string"},
   spam = {descr="Reduce spam by gagging flavored text.", value="yes", group="gags", type="bool"},

@@ -197,6 +197,28 @@ show_paralyzed(roundtime, stuntime)
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   name="exits_tracker"
+   match="^You can go (.+)\.$"
+   regexp="y"
+   script="capture_exits"
+   send_to="14"
+   keep_evaluating="y"
+  >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="no_exits_tracker"
+   match="^You can go nowhere\.$"
+   regexp="y"
+   script="capture_no_exits"
+   send_to="14"
+   keep_evaluating="y"
+  >
+  </trigger>
+
 
 </triggers>
 
@@ -347,6 +369,19 @@ show_paralyzed(roundtime, stuntime)
   <send>replicate_line("%1")</send>
   </alias>
 
+  <alias
+   enabled="y"
+   name="alt_space_handler"
+   match="^altspace$"
+   regexp="y"
+   send_to="12"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   omit_from_output="y"
+  >
+  <send>handle_alt_space()</send>
+  </alias>
+
 </aliases>
 
 <script>
@@ -444,6 +479,8 @@ AcceleratorTo("SHIFT+Esc", [[
   -- Say "Reset"
   Execute("tts_interrupt Reset")
 ]], script)
+
+Accelerator("alt+space", "altspace")
 
 
 
@@ -1551,6 +1588,47 @@ function originating_from_camera(line)
   end -- GetVariable
   return false
   end -- originating_from_camera
+
+-- Exits tracking functionality
+current_exits = nil
+
+function capture_exits(name, line, wildcards)
+  local exits_string = wildcards[1]
+
+  -- Parse the exits string (handles "east, south, and west" or "east" or "west and south" etc)
+  current_exits = {}
+
+  -- Remove "and" and split by commas and spaces
+  exits_string = exits_string:gsub(" and ", ", ")
+
+  -- Split by comma and extract direction words
+  for exit in exits_string:gmatch("[%w]+") do
+    table.insert(current_exits, exit)
+  end
+end -- capture_exits
+
+function capture_no_exits(name, line, wildcards)
+  current_exits = {}
+end -- capture_no_exits
+
+function handle_alt_space()
+  -- Check config option
+  if config:get_option("alt_space_shows_exits").value == "yes" then
+    -- Show exits
+    if current_exits == nil then
+      Execute("tts_note No exit information available.")
+    elseif #current_exits == 0 then
+      Execute("tts_note No exits.")
+    else
+      -- Join exits with spaces only (no commas or "and")
+      local exits_list = table.concat(current_exits, " ")
+      Execute("tts_note " .. exits_list)
+    end
+  else
+    -- Fall back to history behavior
+    Execute("history_msgprev 0")
+  end
+end -- handle_alt_space
 ]]>
 </script>
 

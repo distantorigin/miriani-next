@@ -438,8 +438,9 @@ gagline()</send>
    regexp="y"
 script = "gagline"
    send_to="12"
+   omit_from_output="y"
    sequence="100"
-  >
+   >
   </trigger>
 </triggers>
 ]=])

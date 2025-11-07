@@ -4,7 +4,9 @@
 
 ###new
 - Added a buffer option for the Newbie channel.
-- Added sounds for the headdesk social.
+- Add a new option to 'conf gen' to make alt+space show exits instead of current history item. (Defaults to on)
+- Record the exits in each room for use in things such as alt+space.
+- Added sounds for the headdesk and mock socials.
 - Moved some more baby sounds under the babies audio group.
 
 ### Fixed

@@ -93,7 +93,8 @@ ImportXML([=[
    regexp="y"
    send_to="12"
    >
-   <send>mplay("activity/asteroid/shipAnchorEnd")</send>
-  </trigger>
+   <send>mplay("activity/asteroid/shipAnchorEnd")
+   increment_counter("asteroids_hauled")</send>
+   /trigger>
   </triggers>
 ]=])

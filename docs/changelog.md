@@ -7,6 +7,7 @@
 
 ### Fixed
 - Don't disable ECO_AUTOVSCROLL in the accessibel output window. This may address some of the selection issues.
+- Add an extra clause for "into the airlock" to ensure follow directional audio says out instead of enter.
 
 ## Version 4.0.08
 

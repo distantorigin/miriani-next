@@ -1,5 +1,13 @@
 # Miriani-Next Changelog
 
+## Version 4.0.09
+
+### New
+- Add find functionality (ctrl+f, f3, shift+f3) to the accessible output window.
+
+### Fixed
+- Don't disable ECO_AUTOVSCROLL in the accessibel output window. This may address some of the selection issues.
+
 ## Version 4.0.08
 
 ###new

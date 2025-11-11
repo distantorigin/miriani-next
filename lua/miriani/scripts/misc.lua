@@ -1591,7 +1591,30 @@ if config:get_option("external_camera").value == "no" then
    increment_counter("spatial_artifacts")
   </send>
   </trigger>
-
+<trigger
+   enabled="y"
+   match="^You seem to have left .+ behind\!$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/leftPerson")</send>
+  </trigger>
+<trigger
+   enabled="y"
+   match="^.+ gives you a mysterious lump of coal\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/leftPerson")</send>
+  </trigger>
+<trigger
+   enabled="y"
+   match="^.+ removes? .+ from you\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/leftPerson")</send>
+  </trigger>
 </triggers>
 ]=])
 

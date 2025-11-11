@@ -153,5 +153,18 @@ ImportXML([=[
   <send>mplay("activity/atmo/gasExplodes")</send>
   </trigger>
 
+  <!-- Toilet Flush Sounds -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^[A-Za-z]+ press(?:es)? the flushing mechanism on .*\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/toiletFlush")</send>
+  </trigger>
+
 </triggers>
 ]=])

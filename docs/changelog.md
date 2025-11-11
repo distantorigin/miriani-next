@@ -3,11 +3,11 @@
 ## Version 4.0.09
 
 ### New
-- Add find functionality (ctrl+f, f3, shift+f3) to the accessible output window.
-- The find functionality actually works now. Disabled regular expression searching in the output viewer for now.
+- Add find functionality (ctrl+f, f3, shift+f3) to the accessible output window. Regular expression searching is currently a work-in-progress.
 - Added a label for the regexp help button in the default MUSHclient find dialog.
+
 ### Fixed
-- Don't disable ECO_AUTOVSCROLL in the accessibel output window. This may address some of the selection issues.
+- Don't disable ECO_AUTOVSCROLL in the accessibel output window. This may address some of the selection issues some have been having.
 - Add an extra clause for "into the airlock" to ensure follow directional audio says out instead of enter.
 
 ## Version 4.0.08

@@ -1616,7 +1616,7 @@ if config:get_option("external_camera").value == "no" then
   <send>mplay("misc/leftPerson")</send>
   </trigger>
   <trigger
-   enabled=y"
+   enabled="y"
    match="^(Announcement.+\:|Multi-line Announce).+$"
    regexp="y"
    send_to="12"

@@ -3,11 +3,15 @@
 ## Version 4.0.1 (In Progress)
 
 ### New
-- Social sounds for khan and spoon.
+- Social sounds for khan, spoon, frog, and no.
 - Sound for toilets flushing.
 - Sound for things being removed from you.
 - Sound for leaving someone behind (You seem to have left X behind!)
 - Sound for receiving coal from Santa.
+- Sound for announcements from hosts.
+
+### Changed
+- The male snicker sound has been updated.
 
 ## Version 4.0.09
 

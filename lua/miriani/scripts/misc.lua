@@ -1615,6 +1615,14 @@ if config:get_option("external_camera").value == "no" then
   >
   <send>mplay("misc/leftPerson")</send>
   </trigger>
+  <trigger
+   enabled=y"
+   match="^(Announcement.+\:|Multi-line Announce).+$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/hosts/announcement")</send>
+  </trigger>
 </triggers>
 ]=])
 

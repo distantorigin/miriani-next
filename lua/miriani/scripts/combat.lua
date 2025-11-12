@@ -669,8 +669,8 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
-   match="^You see (.+) here$"
-   regexp="y"
+   match="You see *."
+   regexp="n"
    send_to="12"
    sequence="100"
   >

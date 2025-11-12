@@ -420,7 +420,7 @@ end -- camera</send>
   <trigger
    enabled="y"
    group="ship"
-   match="^The [a-z-\s]+person .+? touches down smoothly on the (?:ground|docking bay floor)\.$"
+   match="^The [a-z-\s]+person .+? (touches down smoothly on the|sets down on the) (?:ground|docking bay floor|hangar floor)\.$"
    regexp="y"
    send_to="12"
    sequence="100"

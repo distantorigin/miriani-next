@@ -166,5 +166,18 @@ ImportXML([=[
   <send>mplay("misc/toiletFlush")</send>
   </trigger>
 
+  <!-- Poo Accident -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^.+ strains? so hard to .+ that .+$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/oops")</send>
+  </trigger>
+
 </triggers>
 ]=])

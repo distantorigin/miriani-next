@@ -13,6 +13,9 @@
 ### Changed
 - The male snicker sound has been updated.
 
+### Fixed
+- The sound for another ship landing in front of you will now be played while on an asteroid.
+
 ## Version 4.0.09
 
 ### New

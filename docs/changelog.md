@@ -9,6 +9,8 @@
 - Sound for leaving someone behind (You seem to have left X behind!)
 - Sound for receiving coal from Santa.
 - Sound for announcements from hosts.
+- Sounds for fuzzy creatures slinking, being hit, and being killed.
+- Sound for tunnel rats being shot.
 
 ### Changed
 - The male snicker sound has been updated.

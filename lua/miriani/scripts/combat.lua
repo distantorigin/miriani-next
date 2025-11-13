@@ -752,7 +752,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
-   match="^An? .+ (?:fuzzy creature|tunnel rat) slinks in\.$"
+   match="^(A|An) .+(fuzzy creature|tunnel rat) slinks in\.$"
    regexp="y"
    send_to="12"
    sequence="100"

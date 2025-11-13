@@ -741,6 +741,39 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
+   match="^.+ lets out a .+ screech before collapsing to the ground\. It lifts its head weakly, staring at .+ with black, beady, .+, completing its life\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("combat/fuzzy/FuzzyDeath", "melee")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
+   match="^An? .+ (?:fuzzy creature|tunnel rat) slinks in\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("combat/fuzzy/scream", "melee")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
+   match="^The shot hits an? .+ (?:fuzzy creature|tunnel rat)'s .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("combat/fuzzy/FuzzyHit", "melee")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
    match="^You hear a crackling burst of sound as an immobilization pulse builds up, before it is ejected from its emitter with a loud whine\.$"
    regexp="y"
    send_to="14"

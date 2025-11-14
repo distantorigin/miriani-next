@@ -155,13 +155,13 @@ Which Lua file do I edit?
 How to add a trigger:
 
 1. Open the appropriate Lua file in Notepad
-2. Find a similar existing trigger (search for <trigger in the file)
+2. Find a similar existing trigger (search for \<trigger in the file)
 3. Copy an existing trigger and modify it
 
 Example - adding a grenade explosion:
 
 Find this kind of section in 'combat.lua':
-
+```
 <trigger
  enabled="y"
  group="combat"
@@ -171,9 +171,10 @@ Find this kind of section in 'combat.lua':
 >
 <send>mplay("combat/some/path", "combat")</send>
 </trigger>
+```
 
 Add your own after it:
-
+```
 <trigger
  enabled="y"
  group="combat"
@@ -183,7 +184,7 @@ Add your own after it:
 >
 <send>mplay("combat/explosions/grenade1", "combat")</send>
 </trigger>
-
+```
 Important notes:
 - match= is the game text that triggers the sound
 - mplay("combat/explosions/grenade1", "combat")' is the path to your sound

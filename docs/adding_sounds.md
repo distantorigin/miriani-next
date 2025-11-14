@@ -86,7 +86,7 @@ Method 2: Clone with Git (if you're comfortable with Git)
 
 1. Open Command Prompt (Win + R, type 'cmd', press Enter)
 2. Type: 'cd Documents' (this goes to your Documents folder)
-3. Type: 'git clone https://github.com/distantorigin/miriani-next.git miriani-next4. Press Enter
+3. Type: 'git clone https://github.com/distantorigin/miriani-next.git miriani-next-dev' Press Enter
 5. Wait for it to finish - you'll see lines of text as it downloads
 6. When it's done, the path is: 'C:\Users\YourName\Documents\miriani-next
 ---
@@ -155,7 +155,7 @@ Which Lua file do I edit?
 How to add a trigger:
 
 1. Open the appropriate Lua file in Notepad
-2. Find a similar existing trigger (search for \<trigger in the file)
+2. Find a similar existing trigger (search for \<trigLger in the file)
 3. Copy an existing trigger and modify it
 
 Example - adding a grenade explosion:

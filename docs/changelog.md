@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.0.10 (In Progress)
+## Version 4.0.10
 
 ### New
 

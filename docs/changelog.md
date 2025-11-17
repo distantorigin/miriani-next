@@ -4,6 +4,7 @@
 
 ### New
 
+- Added new beep sound and new oops sound.
 - Added airguitar and new quack sounds.
 - Added bounce social sounds.
 - Added sounds for the beep social as requested by Gage.

@@ -2,11 +2,11 @@
 
 ## Version 4.0.1 (In Progress)
 
-New
+### New
 
-Added bounce social sounds.
-Added sounds for the beep social as requested by Gage.
-Over a dozen new social sounds, added new fuzzy creature death screams, modified the ship relay channel sound to not be the same used for direct say, plus a bit of housekeeping.
+- Added bounce social sounds.
+- Added sounds for the beep social as requested by Gage.
+- Over a dozen new social sounds, added new fuzzy creature death screams, modified the ship relay channel sound to not be the same used for direct say, plus a bit of housekeeping.
 - Social sounds for khan, spoon, frog, and no.
 - Sound for toilets flushing.
 - Sound for things being removed from you.

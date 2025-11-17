@@ -51,3 +51,6 @@ logs/*
 
 # Installer build output
 installer_output/
+
+# Versioning
+version.json

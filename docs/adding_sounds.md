@@ -185,7 +185,7 @@ What it does: Tells Git to ignore your personal MUSHclient settings files so the
 
 You only need to do this ONCE, the first time you start working with the soundpack.
 
-**Important:** Before you start adding sounds each session, you should update your local copy to get the latest changes from other maintainers. See the [Keeping Your Copy Up to Date](#keeping-your-copy-up-to-date) section for details on when and how to do this.
+**Important:** Before you start adding sounds each session, run `update.bat` to get the latest changes from other maintainers. This ensures you're working with the most recent version of the soundpack. See the [Keeping Your Copy Up to Date](#keeping-your-copy-up-to-date) section for details.
 
 ---
 
@@ -359,7 +359,7 @@ This means something went wrong. Copy the error message and check the Troublesho
 
 ## Understanding the Batch Files
 
-The `development\` folder has three batch files:
+The `development\` folder has four batch files:
 
 ### setup-dev.bat
 
@@ -427,11 +427,30 @@ When to run it: When you want to increase the version number. This is for mainta
 
 ---
 
+### update.bat
+
+What it does: Pulls the latest changes from GitHub and updates your local copy of the soundpack.
+
+When to run it:
+- At the start of each work session before adding sounds
+- Before running commit.bat if you haven't worked in a few days
+- When another maintainer tells you they pushed changes
+- If your push fails because your local copy is out of date
+
+The batch file will:
+- Check if you have uncommitted changes and warn you
+- Pull updates using fast-forward only (safer, avoids unexpected merges)
+- Show clear error messages if something goes wrong
+
+**Important:** If you have uncommitted changes, it's best to run commit.bat first, then run update.bat.
+
+---
+
 ## Keeping Your Copy Up to Date
 
 When multiple people work on the soundpack, changes happen all the time. Someone might add new sounds, fix triggers, or update scripts while you're working on your own changes. To avoid conflicts and make sure you're working with the latest version, you need to regularly update your local copy with changes from GitHub.
 
-### When Should I Run git pull?
+### When Should I Update?
 
 You should update your local copy in these situations:
 
@@ -446,7 +465,21 @@ Think of it like this: You're working on a shared document. Before you add your 
 
 ### How to Pull Changes
 
-Here's how to update your local copy with the latest changes from GitHub:
+**The Easy Way: Using update.bat (Recommended)**
+
+1. Navigate to your miriani-next-dev folder in File Explorer
+2. Go to the `development\` folder
+3. Double-click `update.bat`
+4. Follow the prompts
+
+The batch file will automatically:
+- Check if you have uncommitted changes
+- Pull the latest updates from GitHub
+- Show you clear error messages if something goes wrong
+
+**The Manual Way: Using git pull**
+
+If you prefer to run the git command yourself:
 
 1. Open Command Prompt (Win + R, type `cmd`, press Enter)
 2. Navigate to your miriani-next-dev folder:
@@ -497,16 +530,16 @@ This means there are no new changes to download. You're good to go!
 
 Follow this order to avoid problems:
 
-1. **PULL FIRST** - Run `git pull` to get the latest changes
+1. **UPDATE FIRST** - Run `update.bat` to get the latest changes
 2. **Add your sounds** - Copy files, edit triggers, etc.
 3. **Test them** - Make sure everything works
 4. **Commit** - Run `commit.bat` to save your changes
-5. **Push** - Upload your changes to GitHub
+5. **Push** - Type `y` when commit.bat asks if you want to push to remote
 
 Why this order matters:
-- If you add sounds without pulling first, someone else might have already modified the same files
+- If you add sounds without updating first, someone else might have already modified the same files
 - You could create a conflict that's harder to fix later
-- Pulling first ensures you're building on the latest version
+- Updating first ensures you're building on the latest version
 
 ---
 

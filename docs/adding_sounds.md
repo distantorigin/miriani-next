@@ -44,7 +44,8 @@ Then you can add sounds. No coding experience required.
 To install Git:
 
 1. Go to this website: https://git-scm.com/download/win
-2. The download should start automatically - you'll get a file like 'Git-2.43.0-64-bit.exe3. Double-click the installer file
+2. The download should start automatically - you'll get a file like 'Git-2.43.0-64-bit.exe
+3. Double-click the installer file
 4. Click "Next" on every screen - don't change anything, the defaults are fine
 5. Wait for it to finish installing (takes about 30 seconds)
 6. Click "Finish"
@@ -52,7 +53,8 @@ To install Git:
 To check if Git is working:
 
 1. Press Windows key + R
-2. Type: 'cmd3. Press Enter - this opens a window called Command Prompt
+2. Type: 'cmd
+3. Press Enter - this opens a window called Command Prompt
 4. Type: 'git --version' (the hyphens are important!)
 5. Press Enter
 
@@ -155,7 +157,7 @@ Which Lua file do I edit?
 How to add a trigger:
 
 1. Open the appropriate Lua file in Notepad
-2. Find a similar existing trigger (search for \<trigLger in the file)
+2. Find a similar existing trigger (search for \<trigger in the file)
 3. Copy an existing trigger and modify it
 
 Example - adding a grenade explosion:

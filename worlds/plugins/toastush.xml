@@ -1588,7 +1588,8 @@ function notepad_changelog(name, line, wc, updated_files, channel)
   -- Only open the notepad if we have content to show
   if content ~= "" then
     AppendToNotepad("Changelog", content, "\r\n")
-    ActivateNotepad("changelog")
+    ActivateNotepad("Changelog")
+    NotepadSaveMethod ("Changelog", 2)
   end
 end -- notepad_changelog
 

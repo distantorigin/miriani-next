@@ -3,6 +3,7 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- Added new stun baton sounds and a new message board post sound.
 - Added new beep sound and new oops sound.
 - Added airguitar and new quack sounds.
 

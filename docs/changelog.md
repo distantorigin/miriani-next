@@ -1,11 +1,17 @@
 # Miriani-Next Changelog
 
+## Version 4.0.11 (In Progress)
+
+### New
+- Added new beep sound and new oops sound.
+- Added airguitar and new quack sounds.
+
+### Changed
+- The changelog will no longer prompt to save when it's closed.
+
 ## Version 4.0.10
 
 ### New
-
-- Added new beep sound and new oops sound.
-- Added airguitar and new quack sounds.
 - Added bounce social sounds.
 - Added sounds for the beep social as requested by Gage.
 - Over a dozen new social sounds, added new fuzzy creature death screams, modified the ship relay channel sound to not be the same used for direct say, plus a bit of housekeeping.

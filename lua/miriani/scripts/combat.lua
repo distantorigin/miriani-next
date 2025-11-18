@@ -741,12 +741,12 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
-   match="^.+ lets out a .+ screech before collapsing to the ground\. It lifts its head weakly, staring at .+ with black, beady, .+, completing its life\.$"
+   match="^.+ lets out a .+ screech before collapsing to the ground\. It lifts its head weakly, staring at .+ with black, beady.+completing its life\.$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
-  <send>mplay("combat/fuzzy/FuzzyDeath", "melee")</send>
+  <send>mplay("combat/fuzzy/FuzzyDeath", "melee")</send>z
   </trigger>
 
   <trigger

@@ -3,6 +3,7 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- Added new fart, poke and nudge sounds.
 - Added new rountime and failed command sounds.
 - Swapped the hoot sound for a much shorter one.
 - Added new stun baton sounds and a new message board post sound.

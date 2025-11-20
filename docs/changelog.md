@@ -3,6 +3,7 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- Moved scream sounds out of neuter and renamed them to various shrieks because I didn't account for people being obnoxious screaming on channels.
 - Added new fart, poke and nudge sounds.
 - Added new rountime and failed command sounds.
 - Swapped the hoot sound for a much shorter one.

@@ -293,6 +293,11 @@ endScan()</send>
   sequence="100"
   >
   <send>
+   -- Filter out context messages from AI
+   if string.sub("%1", 1, 9) == "(Context:" then
+     print("%0")
+     return
+   end
    mplay ("device/camera")
 SetVariable("last_camera_line", "%2")
      if config:get_option("internal_camera").value == "no" then

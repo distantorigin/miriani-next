@@ -3,6 +3,7 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- Removed roundTime2 sound, as people were complaining about it.
 - Added a new roundtime sound.
 - Added new male giggle sound and two new theme music sounds.
 - Moved scream sounds out of neuter and renamed them to various shrieks because I didn't account for people being obnoxious screaming on channels.

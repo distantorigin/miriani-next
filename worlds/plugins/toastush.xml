@@ -1340,6 +1340,12 @@ function playstep()
 
   foundstep = false
 
+    -- Play bounce social sound if bouncing
+    if footstep == "bounce" then
+     mplay("social/neuter/bounce", "socials")
+     return 1
+    end -- if bounce
+
   -- Stop here if aquatic
   if environment.marine
   or string.find (room, "aquatic") then

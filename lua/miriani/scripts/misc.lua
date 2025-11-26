@@ -94,10 +94,6 @@ endScan()</send>
     -- But still print it!
     endScan()
     print("%0")
-    -- Play bounce social sound if bouncing
-    if footstep == "bounce" then
-     mplay("social/neuter/bounce", "socials")
-    end -- if bounce
    end -- if movement</send>
   </trigger>
 

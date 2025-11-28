@@ -3,6 +3,7 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- Added new shock and headshake sounds, changed beep3 to bonk.
 - Boosted the volume of mlaugh1 and added flap sound.
 - Removed roundTime2 sound, as people were complaining about it.
 - Added a new roundtime sound.

@@ -3,6 +3,7 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- Boosted the volume of mlaugh1 and added flap sound.
 - Removed roundTime2 sound, as people were complaining about it.
 - Added a new roundtime sound.
 - Added new male giggle sound and two new theme music sounds.

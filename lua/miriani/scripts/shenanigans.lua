@@ -179,5 +179,18 @@ ImportXML([=[
   <send>mplay("misc/oops")</send>
   </trigger>
 
+<!-- Bowing While Sitting -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^.+ pitches? forward and slams? .+ that .+$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("social/neuter/headdesk")</send>
+</trigger>
+  
 </triggers>
 ]=])

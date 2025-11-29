@@ -3,6 +3,11 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- The accessible output window now properly associates to each world.
+- The accessible output window now shows the world's name in the title.
+- The accessible output window can no longer be closed and will hide itself instead upon users pressing CTRL+F4 (similarly to tabbing out of it).
+- The accessibel output window now automatically instantiates itself.
+- Added an option to clear the accessibel output window from the menu bar.
 - Added new shock and headshake sounds, changed beep3 to bonk.
 - Boosted the volume of mlaugh1 and added flap sound.
 - Removed roundTime2 sound, as people were complaining about it.
@@ -15,6 +20,10 @@
 - Added new stun baton sounds and a new message board post sound.
 - Added new beep sound and new oops sound.
 - Added airguitar and new quack sounds.
+
+### Fixed
+- CTRL+Tab now works (regardless of your conf gen tab settings).
+- The option to automatically launch the accessible output window has been inverted to toggle whether we *do not* open the output window.
 
 ### Changed
 - The changelog will no longer prompt to save when it's closed.

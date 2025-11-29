@@ -184,7 +184,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
-   match="^.+ pitches? forward and slams? .+$"
+   match="^.+ pitches? forward and slams? .+ head into the floor .+$"
    regexp="y"
    send_to="12"
    sequence="100"

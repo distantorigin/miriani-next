@@ -138,18 +138,6 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="hooks"
-   script="playsocial"
-   match="^.+ pitches? forward and slams? .+ head into the floor .+$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay("social/neuter/headdesk")</send>
-</trigger>
-  
-  <trigger
-   enabled="y"
-   group="hooks"
    match="^#\$#soundpack lore \| (.+?)$"
    regexp="y"
    send_to="12"

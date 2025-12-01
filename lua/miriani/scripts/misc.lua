@@ -1628,6 +1628,15 @@ if config:get_option("external_camera").value == "no" then
   >
   <send>mplay("misc/hosts/announcement")</send>
   </trigger>
+  <trigger
+   enabled="y"
+   match="^.+ (pitch|pitches) forward and slam.+head into the .+$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("social/neuter/headdesk")</send>
+</trigger>
 </triggers>
 ]=])
 

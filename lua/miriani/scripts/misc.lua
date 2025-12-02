@@ -1639,7 +1639,7 @@ if config:get_option("external_camera").value == "no" then
 </trigger>
 <trigger
    enabled="y"
-   match="^.+ (swallow|swallows) hard .+$"
+   match="^.+ (swallow|swallows) hard +$"
    regexp="y"
    send_to="12"
    sequence="100"

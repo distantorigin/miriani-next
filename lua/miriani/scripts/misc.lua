@@ -1637,6 +1637,15 @@ if config:get_option("external_camera").value == "no" then
   >
   <send>mplay("social/neuter/headdesk")</send>
 </trigger>
+<trigger
+   enabled="y"
+   match="^.+ (swallow|swallows) hard +$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("social/neuter/swallow")</send>
+</trigger>
 </triggers>
 ]=])
 

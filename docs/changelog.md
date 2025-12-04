@@ -3,6 +3,7 @@
 ## Version 4.0.11 (In Progress)
 
 ### New
+- Added sound for swallowing hard.
 - The accessible output window now properly associates to each world.
 - The accessible output window now shows the world's name in the title.
 - The accessible output window can no longer be closed and will hide itself instead upon users pressing CTRL+F4 (similarly to tabbing out of it).

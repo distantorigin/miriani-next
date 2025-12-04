@@ -179,5 +179,18 @@ ImportXML([=[
   <send>mplay("misc/oops")</send>
   </trigger>
 
+  <!-- Jingle Bells (Holiday) -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^A loud rendition of Jingle Bells sounds as .+ lights twinkle overhead\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/jingleBell")</send>
+  </trigger>
+
 </triggers>
 ]=])

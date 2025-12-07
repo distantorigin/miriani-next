@@ -598,7 +598,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^.+? (?:begins? following .+?|takes? control of .+? group|gestures? .+?, (?:who|which) promptly joins? (?:your|.+?'s) group)\.$"
+   match="^[a-zA-Z](.+ begins? following .+|.+ takes? control of .+ group|.+ gestures? for .+ to join .+ group, which (he|she|they|you) promptly (do|does)|.+ joins? (your|.+'s) group|.+ gestures toward .+, who promptly joins? (his|her|their|its) group)\.$"
    regexp="y"
    send_to="12"
    sequence="100"

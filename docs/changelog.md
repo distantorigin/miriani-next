@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.0.11 (In Progress)
+## Version 4.0.11
 
 ### New
 - Add sounds for the green Santa Box (red alert jingle bells). You can set which version you hear from within the sound variants menu by typing conf variant.

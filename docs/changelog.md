@@ -3,6 +3,7 @@
 ## Version 4.0.12 (In Progress)
 
 ### New
+- Sound for itsatrap and why socials.
 - Play cannon sounds for gumdrop launchers.
 
 ## Version 4.0.11

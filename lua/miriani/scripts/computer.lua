@@ -271,7 +271,7 @@ ImportXML([=[
    else
      -- Check wildcard patterns
      for pattern, action in pairs(computer_actions_wildcard) do
-       local matches = {string.match(message, pattern)}
+       local matches = {string.match(string.lower(message), string.lower(pattern))}
        if #matches > 0 then
          if action.sound then
            mplay(action.sound, action.group or "computer")

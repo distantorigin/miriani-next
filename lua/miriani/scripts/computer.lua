@@ -228,7 +228,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="computer"
-   match="^(?:The computer|.+? flickers into existence and) (announces|reports).?(?:that)? &quot;?(?:Arrr! )?(.+?)&quot;?$"
+   match="^(?:The computer|.+? flickers into existence and) (announces|reports).?(?:that)? &quot;?(?:Arrr! )?(?:(?:HO+!\s*)+)?(.+?)(?:(?:\s*HO+!)+)?&quot;?$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

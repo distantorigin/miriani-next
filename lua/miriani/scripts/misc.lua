@@ -1211,7 +1211,28 @@ if config:get_option("external_camera").value == "no" then
    <send>mplay("device/pendingBoard", "other")</send>
   </trigger>
 
-  <trigger
+ <trigger
+ enabled="y"
+ group="misc"
+ match="^(?:You|[A-Z][^ ]*(?: [^ ]+)*) (?:hits?|smacks?|sends?) the puck (?:flying down the center of the table\.{3}|down the center of the table\.|at an angle(?:, bouncing it off the side)?\.{3}|at an angle(?: from one corner)?, .+)$"
+ regexp="y"
+ send_to="12"
+>
+  <send>mplay("misc/hitpuck", "other")</send>
+</trigger>
+
+<trigger
+ enabled="y"
+ group="misc"
+ match="^(?:You|.+?) lines up a shot from one corner of the table\.{3}$"
+ regexp="y"
+ send_to="12"
+>
+  <send>mplay("misc/hitpuck", "other")</send>
+</trigger>
+
+
+ <trigger
    enabled="y"
    group="misc"
    match="^.+? winds? up and sends? a ball down the lane\.(?:  Good luck\.)?$"

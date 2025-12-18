@@ -28,15 +28,21 @@ ImportXML([=[
   >
   <send>
    mplay ("misc/tradesmanPrice", "notification")
-   local diff, v1, v2 = 0, string.gsub ("%4",",",""), string.gsub ("%5",",","")
-   if "%2" == "lowered" then
-    diff = assert (tonumber (v1 - v2)) -- close assertion 
-   else
-    diff = assert (tonumber (v2 - v1)) -- close assertion
-   end -- if
+local v1 = tonumber((string.gsub("%4", ",", "")))
+local v2 = tonumber((string.gsub("%5", ",", "")))
+local diff = 0
+
+  if v1 and v2 then
+if "%2" == "lowered" then
+  diff = v1 - v2
+else
+  diff = v2 - v1
+end
+    end
+
 
    local line = "%1 %2 %3 sale by "..diff.." credits. Price: %5"
-   print_color ({"[Tradesman Market] }, {line, "market"})
+print_color ({"[Tradesman Market] ", "default"}, {line, "market"})
    --channel ("market", line, {"market"})
   </send>
   </trigger>

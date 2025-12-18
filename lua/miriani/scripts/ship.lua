@@ -516,7 +516,7 @@ end -- camera</send>
   <trigger
    enabled="y"
    group="ship"
-   match="^(?:The|Praelor) .+? has (left|entered|jumped (?:into|out)|exited from) (?:the|to)?.*?\.$"
+ match="^(?:The|A|An|Praelor) .+? has (left|entered|jumped (?:into|out)|exited from) (?:the|to)?.*?\.$"
    regexp="y"
    send_to="12"
    sequence="100"

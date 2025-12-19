@@ -5,6 +5,10 @@
 ### New
 - Sound for itsatrap and why socials.
 - Play cannon sounds for gumdrop launchers.
+- Fixed an error where the sound wouldn't play for Gadzook ships entering and leaving the sector
+- Began adding sounds for air hockey. Right now they are copied from VIPMud but this will change on a future update.
+- Fixed a sound error that was displayed to all users when Cert orders were completed on the marketplace.
+
 
 ## Version 4.0.11
 

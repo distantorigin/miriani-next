@@ -3,11 +3,13 @@
 ## Version 4.0.12 (In Progress)
 
 ### New
-- Sound for itsatrap and why socials.
-- Play cannon sounds for gumdrop launchers.
+- Made the its a trap social not play the sector exit sound when typing "itsatrap me"
+- Fixed a bug where the airlock chime would play the ship enter sector sound when someone entered the airlock
 - Fixed an error where the sound wouldn't play for Gadzook ships entering and leaving the sector
 - Began adding sounds for air hockey. Right now they are copied from VIPMud but this will change on a future update.
 - Fixed a sound error that was displayed to all users when Cert orders were completed on the marketplace.
+- Sound for itsatrap and why socials.
+- Play cannon sounds for gumdrop launchers.
 
 
 ## Version 4.0.11

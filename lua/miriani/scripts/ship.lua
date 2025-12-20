@@ -90,7 +90,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="ship"
-   match="^([A-Z][a-z]+?\s?[A-Za-z\s]*?) [a-z]+( \w+ feet)? out of the.+?(?:&quot;.+?&quot;|ship\.|\w+-person .+?|Highguard)$"
+match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z]+(?: \w+)*(?: \w+ feet)? out of the (?:&quot;.+?&quot;|ship|hatch|airlock|docking bay|(?:\w+-person .+?)|Highguard)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -516,7 +516,7 @@ end -- camera</send>
   <trigger
    enabled="y"
    group="ship"
- match="^(?:The|A|An|Praelor) .+? has (left|entered|jumped (?:into|out)|exited from) (?:the|to)?.*?\.$"
+match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumped out of) (?:the|to)? sector\.$"
    regexp="y"
    send_to="12"
    sequence="100"

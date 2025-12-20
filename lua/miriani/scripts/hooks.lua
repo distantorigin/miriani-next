@@ -35,7 +35,6 @@ ImportXML([=[
    group="hooks"
    match="^#\$#soundpack_pong$"
    omit_from_log="y"
-   omit_from_commands="y"
    regexp="y"
    sequence="100"   
   >

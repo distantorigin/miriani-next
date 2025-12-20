@@ -3,6 +3,7 @@
 ## Version 4.0.12 (In Progress)
 
 ### New
+- Omit soundpack_ping hooks from logs.
 - Made the its a trap social not play the sector exit sound when typing "itsatrap me"
 - Fixed a bug where the airlock chime would play the ship enter sector sound when someone entered the airlock
 - Fixed an error where the sound wouldn't play for Gadzook ships entering and leaving the sector
@@ -10,7 +11,6 @@
 - Fixed a sound error that was displayed to all users when Cert orders were completed on the marketplace.
 - Sound for itsatrap and why socials.
 - Play cannon sounds for gumdrop launchers.
-
 
 ## Version 4.0.11
 

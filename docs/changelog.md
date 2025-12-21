@@ -1,8 +1,10 @@
 # Miriani-Next Changelog
 
-## Version 4.0.12
+## Version 4.0.13 (In Progress)
 
-# Miriani-Next Changelog
+### Fixed
+- Call buffercheck() when moving to the top or bottom of a buffer.
+
 ## Version 4.0.12
 
 ### New

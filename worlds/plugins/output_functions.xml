@@ -319,6 +319,7 @@ BroadcastPlugin(1,"output_boundary")
 end
 
 function end_line()
+ buffercheck()
  cline = skipblanklines(GetLinesInBufferCount(), 'b')
  line=GetLineInfo(cline,1)
  Execute("tts_interrupt Bottom: "..line)
@@ -330,6 +331,7 @@ function which_line()
 end
 
 function top_line()
+ buffercheck()
  cline=skipblanklines(0, 'f')
  line=GetLineInfo(cline,1)
  Execute("tts_interrupt top: "..line)

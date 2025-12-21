@@ -1,14 +1,15 @@
 # Miriani-Next Changelog
 
-## Version 4.0.13 (In Progress)
+## Version 4.0.13
 
 ### New
 - Disable the autosay keyboard shortcut by default (Ctrl+Shift+A).
 - Moved chuckle sound to socials/male and added a chuckle to socials/female.
 
 ### Fixed
-- Call buffercheck() when moving to the top or bottom of a buffer.
+- Call buffercheck() when moving to the top or bottom of a buffer. This will resolve issues where moving to the end of history and then backward might result in random placement instead of the item you expect.
 - Fixed an issue where no artifact nearby would not play a sound due to a invalid trigger.
+- Fixed an issue where launching atmospheric salvagers, among other things, would play the ship exit sound.
 
 ## Version 4.0.12
 

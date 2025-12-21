@@ -4,6 +4,7 @@
 
 ### New
 - Disable the autosay keyboard shortcut by default (Ctrl+Shift+A).
+- Moved chuckle sound to socials/male and added a chuckle to socials/female.
 
 ### Fixed
 - Call buffercheck() when moving to the top or bottom of a buffer.

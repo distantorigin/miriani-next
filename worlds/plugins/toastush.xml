@@ -478,7 +478,7 @@ AcceleratorTo("CTRL + F9", [[
 AcceleratorTo("F11", 'decrease_attribute("volume")', script)
 AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
-AcceleratorTo ("CTRL+SHIFT+A", execute("tts_interrupt The AutoSay keyboard shortcut has been disabled. You can enable AutoSay from the game menu.")', script)
+AcceleratorTo ("CTRL+SHIFT+A", 'execute("tts_interrupt The AutoSay keyboard shortcut has been disabled. You can enable AutoSay from the game menu.")', script)
 AcceleratorTo("Esc", [[
   if dialog and dialog.is_active() then
     -- In a dialog: go back with "0"

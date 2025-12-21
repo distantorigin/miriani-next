@@ -2,6 +2,9 @@
 
 ## Version 4.0.13 (In Progress)
 
+### New
+- Disable the autosay keyboard shortcut by default (Ctrl+Shift+A).
+
 ### Fixed
 - Call buffercheck() when moving to the top or bottom of a buffer.
 - Fixed an issue where no artifact nearby would not play a sound due to a invalid trigger.

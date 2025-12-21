@@ -90,7 +90,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="ship"
-match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z]+(?: \w+)*(?: \w+ feet)? out of the (?:&quot;.+?&quot;|ship|hatch|airlock|docking bay|(?:\w+-person .+?)|Highguard)\.$"
+match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z].{0,19}?(?: \w+ feet)? out of the (?:&quot;.+?&quot;|ship|hatch|airlock|docking bay|(?:\w+-person .+?)|Highguard)\.$"
    regexp="y"
    send_to="12"
    sequence="100"

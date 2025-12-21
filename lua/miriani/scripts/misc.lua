@@ -1214,7 +1214,7 @@ if config:get_option("external_camera").value == "no" then
  <trigger
  enabled="y"
  group="misc"
- match="^(?:You|[A-Z][^ ]*(?: [^ ]+)*) (?:hits?|smacks?|sends?) the puck (?:flying down the center of the table\.{3}|down the center of the table\.|at an angle(?:, bouncing it off the side)?\.{3}|at an angle(?: from one corner)?, .+)$"
+match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:flying down the center of the table\.{3}|down the center of the table\.{1,3}|at an angle(?:, bouncing it off the side)?\.{3}|at an angle(?: from one corner)?, [^.]{1,80}\.{1,3})$"
  regexp="y"
  send_to="12"
 >

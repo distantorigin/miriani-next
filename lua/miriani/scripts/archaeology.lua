@@ -108,7 +108,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="archaeology"
-   match="^A level \w+ archaeological dig site scanner indicates that nothing is buried nearby\.$"
+   match="^A level \w+ archaeological dig site scanner reports nothing nearby\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

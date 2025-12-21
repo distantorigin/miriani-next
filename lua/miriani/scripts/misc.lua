@@ -736,7 +736,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^You remove.+your .+ from a .+ storage bag.+\.$"
+   match="^You remove.+your .+ from (a|an) .+ storage bag.+\.$"
   regexp="y"
    send_to="12"
    sequence="100"

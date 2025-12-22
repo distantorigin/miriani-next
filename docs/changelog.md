@@ -1,7 +1,11 @@
 # Miriani-Next Changelog
 
 ## Version 4.0.14 (In Progress)
+### Fixed
+Fixed sounds for archaeology when using directional, and non-directional scanners, especially in places where the sound wouldn't play if the artifact had a remote possibility or some variant of the fact of being nearby.
+
 ### New
+
 
 
 ## Version 4.0.13

@@ -98,9 +98,9 @@ match="^A level \w+ archaeological dig site scanner (?:indicates|reports) that (
 
    -- Always print the result (we're gagging the original line)
    if config:get_option("spam").value == "yes" then
-     print("Artifact detected " .. output_message)
+     print("" .. output_message)
    else
-     print("Scanner indicates: " .. output_message)
+     print("" .. output_message)
    end  -- if
   </send>
   </trigger>

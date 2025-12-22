@@ -2,7 +2,7 @@
 
 ## Version 4.0.14 (In Progress)
 ### New
-- Added a new sound for females chuckling
+
 
 ## Version 4.0.13
 

@@ -8,6 +8,7 @@
 ### New
 - Disable the autosay keyboard shortcut by default (Ctrl+Shift+A).
 - Moved chuckle sound to socials/male and added a chuckle to socials/female.
+- Added second female chuckle sound
 
 ### Fixed
 - Call buffercheck() when moving to the top or bottom of a buffer. This will resolve issues where moving to the end of history and then backward might result in random placement instead of the item you expect.

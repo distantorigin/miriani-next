@@ -1,14 +1,14 @@
 # Miriani-Next Changelog
 
 ## Version 4.0.14 (In Progress)
-### Fixed
-Fixed sounds for archaeology when using directional, and non-directional scanners, especially in places where the sound wouldn't play if the artifact had a remote possibility or some variant of the fact of being nearby.
-- Fixed storage bags for diving gear, armor storage, and spacesuit bags so they have a sound when wearing and removing. Note this won't work for custom items at this time.
 
 ### New
 - Added the notification of the Dev Metaf channel to the launch notifications of the soundpack. As mentioned in the message, this channel is for dev chatter only and will be changed if used for anything other than discussions of code or dev work. If you are interested in deving for the SP, this is also a good channel to express interest.
 
-
+### Fixed
+- Fixed sounds for archaeology when using directional, and non-directional scanners, especially in places where the sound wouldn't play if the artifact had a remote possibility or some variant of the fact of being nearby.
+- Fixed storage bags for diving gear, armor storage, and spacesuit bags so they have a sound when wearing and removing. Note this won't work for custom items at this time.
+- Fixed the point calculator helper for point units that don't have "portable point unit" in the name.
 
 ## Version 4.0.13
 

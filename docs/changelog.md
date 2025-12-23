@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.0.14 (In Progress)
+## Version 4.0.14
 
 ### New
 - Added the notification of the Dev Metaf channel to the launch notifications of the soundpack. As mentioned in the message, this channel is for dev chatter only and will be changed if used for anything other than discussions of code or dev work. If you are interested in deving for the SP, this is also a good channel to express interest.

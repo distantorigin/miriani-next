@@ -60,6 +60,8 @@ computer_actions = {
 
 computer_actions_wildcard = {
   ["Mission objective has been completed in approximately (.+)%. Return to base%."] = {
+    sound = "music/theme",
+  group = "computer",
     func = function(time_taken)
       increment_counter("missions")
     end
@@ -194,10 +196,6 @@ computer_actions_wildcard = {
   },
   ["(.+) is one unit away from this ship%."] = {
     sound = "ship/computer/inRange",
-    group = "computer"
-  },
-  ["Mission objective has been completed in approximately (.+)%. Return to base%."] = {
-    sound = "music/theme",
     group = "computer"
   },
   ["Weapon launch sequence initiated%. Bomb's away!"] = {

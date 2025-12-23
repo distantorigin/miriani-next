@@ -736,7 +736,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^You remove.+your .+ from a .+ storage bag.+\.$"
+   match="^You remove.+(into|from|in) a .+ storage bag.+$"
   regexp="y"
    send_to="12"
    sequence="100"
@@ -753,7 +753,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^You access.+portable point unit and note you have ([0-9,.]+) license points? and ([0-9,.]+) combat points?\.$"
+   match="^You access .+ and note you have ([0-9,.]+) license points? and ([0-9,.]+) combat points?\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -846,7 +846,7 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^You access.+portable point unit and note you had ([0-9,.]+) license points? and ([0-9,.]+) combat points?\. This information was current as of (.+?)\. No new information can be obtained until you return to communications range\.$"
+   match="^You access.+ and note you had ([0-9,.]+) license points? and ([0-9,.]+) combat points?\. This information was current as of (.+?)\. No new information can be obtained until you return to communications range\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

@@ -3,6 +3,7 @@
 ## Version 4.0.14 (In Progress)
 ### Fixed
 Fixed sounds for archaeology when using directional, and non-directional scanners, especially in places where the sound wouldn't play if the artifact had a remote possibility or some variant of the fact of being nearby.
+- Fixed storage bags for diving gear, armor storage, and spacesuit bags so they have a sound when wearing and removing. Note this won't work for custom items at this time.
 
 ### New
 

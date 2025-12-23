@@ -23,7 +23,7 @@ ImportXML([=[
    enabled="y"
    group="archaeology"
    script="gagline"
-   match="^A level \w+ archaeological dig site scanner (?:indicates|reports) that (?:you should move to|there is an object) (.+)\.$"
+match="^A level \w+ archaeological dig site scanner (?:indicates|reports) that ([A-Za-z0-9 \(\),'-]{10,120})\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -98,9 +98,9 @@ ImportXML([=[
 
    -- Always print the result (we're gagging the original line)
    if config:get_option("spam").value == "yes" then
-     print("Artifact detected " .. output_message)
+     print("" .. output_message)
    else
-     print("Scanner indicates: " .. output_message)
+     print("" .. output_message)
    end  -- if
   </send>
   </trigger>
@@ -108,7 +108,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="archaeology"
-   match="^A level \w+ archaeological dig site scanner reports nothing nearby\.$"
+match="^A level \w+ archaeological dig site scanner (indicates|reports) (nothing nearby|that nothing is buried nearby|that nothing is nearby)\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

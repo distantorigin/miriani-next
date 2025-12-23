@@ -732,23 +732,22 @@ if config:get_option("external_camera").value == "no" then
    end
    print("%0")</send>
   </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   match="^You remove.+(into|from|in) a .+ storage bag.+$"
-  regexp="y"
-   send_to="12"
-   sequence="100"
-  >
+<trigger
+ enabled="y"
+ group="misc"
+ match="^You remove your ([A-Za-z][A-Za-z0-9' -]{1,40}) (?:from (?:a|an) ([A-Za-z][A-Za-z0-9' -]{1,60}) (?:storage )?bag and (put it on)|and (?:put it in|place each piece in the designated area in) (?:a|an) ([A-Za-z][A-Za-z0-9' -]{1,60}) (?:storage )?bag)\.$"
+ regexp="y"
+ send_to="12"
+ sequence="100"
+>
   <send>
-   if "%1" == "put it on" then
-    return mplay("device/suitOn")
-   else
-    return mplay("device/suitOff")
-   end -- if
+    if "%3" == "put it on" then
+      return mplay("device/suitOn")
+    else
+      return mplay("device/suitOff")
+    end
   </send>
-  </trigger>
+</trigger>
 
   <trigger
    enabled="y"

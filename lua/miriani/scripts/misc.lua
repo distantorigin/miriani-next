@@ -1405,16 +1405,6 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <trigger
    enabled="y"
    group="misc"
-   match="^.+? beeps quietly, indicating that there is a new file to import\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>mplay("device/lore/import")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
    match="^\((?:Another )?([0-9]+) seconds? (stun time|roundtime)\.\)$"
    regexp="y"
    send_to="12"

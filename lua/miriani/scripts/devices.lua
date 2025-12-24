@@ -128,5 +128,13 @@ ImportXML([=[
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   match="^.+ beeps quietly, indicating that there (is|are) (new files|a new file) to import\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("device/lore/import")</send>
+  </trigger>
 </triggers>
 ]=])

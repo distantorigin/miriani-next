@@ -192,5 +192,38 @@ ImportXML([=[
   <send>mplay("misc/jingleBell")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^.+ .+ a finger over the touch pad of an impact target array unit and .+ an inert sphere of inoperative bardenium at .+ chosen target\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/combat/cannon")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="An inert sphere of inoperative bardenium misses its target and shatters into sparkling dust that is efficiently suctioned away\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("activity/archaeology/shatter1")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="An inert sphere of inoperative bardenium crashes into .+ and sends it sliding down the pneumatic transport tube\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("activity/archaeology/practice")</send>
+  </trigger>
+
 </triggers>
 ]=])

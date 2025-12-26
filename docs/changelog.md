@@ -3,6 +3,7 @@
 ## Version 4.0.15 (In progress)
 ### New
 - Added sounds to a new action figure prize machine on NegraCaja.
+- Added experimentalTLS support to MUSHclient. Enable it from the world preferences connection screen.
 
 ### Fixed
 - Updated the code so mission counters actually increases the number of missions instead of staying at absolute 0. I may also make it actually tell you it increases, but right now you can see total number of missions with the counters command

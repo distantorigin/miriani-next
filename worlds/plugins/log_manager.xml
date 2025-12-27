@@ -449,13 +449,15 @@ function CmdStats()
 
   Note("Log Statistics for " .. GetWorldName() .. ":")
   Note("  Logging: " .. (IsLogOpen() and "enabled" or "disabled"))
-  Note("  Log files: " .. #files)
-  Note("  Total size: " .. FormatSize(total_size) .. " (avg " .. FormatSize(avg_size) .. ")")
-  Note("  Total lines: " .. total_lines .. " (avg " .. avg_lines .. ")")
+  Note("  Total log files: " .. #files)
+  Note("  Total size: " .. FormatSize(total_size))
+  Note("  Average size per log: " .. FormatSize(avg_size))
+  Note("  Total lines: " .. total_lines)
+  Note("  Average lines per log: " .. avg_lines)
   if oldest_date then
-    Note("  Date range: " .. oldest_date .. " days to " .. (newest_date == 0 and "today" or newest_date .. " days ago"))
+    Note("  Date range: " .. oldest_date .. " days ago to " .. (newest_date == 0 and "today" or newest_date .. " days ago"))
   end
-  Note("  Directory: " .. GetLogDir())
+  Note("  Log directory: " .. GetLogDir())
 end
 
 function CmdToggle()

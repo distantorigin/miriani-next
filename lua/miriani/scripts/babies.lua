@@ -1,13 +1,3 @@
--- @module babies
--- Baby sound triggers migrated from VIP Mud soundpack
--- These triggers provide audio feedback for baby actions and emotes
--- Credit to David Kieran for original VIP Mud implementation
-
--- Author: Toastush Migration (Claude Code)
--- Last updated: 2025-10-09
-
----------------------------------------------
-
 ImportXML([=[
 <triggers>
 
@@ -30,7 +20,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babycry"..math.random(1,6), "babies")</send>
+  <send>mplay("misc/baby/babycry", "babies")</send>
   </trigger>
 
   <trigger
@@ -52,7 +42,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babybabble"..math.random(1,2))</send>
+  <send>mplay("misc/baby/babybabble", "babies")</send>
   </trigger>
 
   <trigger
@@ -63,7 +53,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babybubble"..math.random(1,6))</send>
+  <send>mplay("misc/baby/babybubble", "babies")</send>
   </trigger>
 
   <trigger
@@ -107,7 +97,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babyfuss"..math.random(1,14))</send>
+  <send>mplay("misc/baby/babyfuss", "babies")</send>
   </trigger>
 
   <trigger
@@ -118,7 +108,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babygroan"..math.random(1,3))</send>
+  <send>mplay("misc/baby/babygroan", "babies")</send>
   </trigger>
 
   <trigger
@@ -129,7 +119,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babygiggle"..math.random(1,9))</send>
+  <send>mplay("misc/baby/babygiggle", "babies")</send>
   </trigger>
 
   <trigger
@@ -140,7 +130,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babygiggle"..math.random(1,9))</send>
+  <send>mplay("misc/baby/babygiggle", "babies")</send>
   </trigger>
 
   <trigger
@@ -151,7 +141,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babylaugh"..math.random(1,3))</send>
+  <send>mplay("misc/baby/babylaugh", "babies")</send>
   </trigger>
 
   <trigger
@@ -162,18 +152,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babygrunt"..math.random(1,2))</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="babies"
-   match="^[a-zA-Z][a-zA-Z0-9 '-]+ flails (his|her|their) limbs\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>--mplay("misc/baby/babywave", "babies")</send>
+  <send>mplay("misc/baby/babygrunt", "babies")</send>
   </trigger>
 
   <trigger
@@ -185,28 +164,6 @@ ImportXML([=[
    sequence="100"
   >
   <send>mplay("misc/baby/babyhiccups", "babies")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="babies"
-   match="^[a-zA-Z][a-zA-Z0-9 '-]+ kicks (his|her|their) feet and waves (his|her|their) arms\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>--mplay("misc/baby/babywave", "babies")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="babies"
-   match="^[a-zA-Z][a-zA-Z0-9 '-]+ kicks one foot\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>--mplay("misc/baby/babywave", "babies")</send>
   </trigger>
 
   <trigger
@@ -316,7 +273,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babysqueak"..math.random(1,6))</send>
+  <send>mplay("misc/baby/babysqueak", "babies")</send>
   </trigger>
 
   <trigger
@@ -327,7 +284,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babysqueal"..math.random(1,7))</send>
+  <send>mplay("misc/baby/babysqueal", "babies")</send>
   </trigger>
 
   <trigger
@@ -360,18 +317,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywail"..math.random(1,3), "babies")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="babies"
-   match="^[a-zA-Z][a-zA-Z0-9 '-]+ waves (his|her|their) fist around\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>--mplay("misc/baby/babywave", "babies")</send>
+  <send>mplay("misc/baby/babywail", "babies")</send>
   </trigger>
 
   <trigger
@@ -393,7 +339,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywhimper"..math.random(1,2))</send>
+  <send>mplay("misc/baby/babywhimper", "babies")</send>
   </trigger>
 
   <trigger
@@ -404,7 +350,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/baby/babywhine"..math.random(1,5))</send>
+  <send>mplay("misc/baby/babywhine", "babies")</send>
   </trigger>
 
 </triggers>

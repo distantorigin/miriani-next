@@ -1258,7 +1258,7 @@ function open_url()
 end -- open_url
 
 function mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
-  if suppress_emote_sounds then
+  if group == "babies" and originating_from_emote() then
     return
   end
 
@@ -1643,7 +1643,11 @@ function originating_from_camera(line)
   return true
   end -- GetVariable
   return false
-  end -- originating_from_camera
+end
+
+function originating_from_emote()
+  return os.clock() - (last_emote_time or 0) < 0.1
+end
 
 -- Exits tracking functionality
 current_exits = nil

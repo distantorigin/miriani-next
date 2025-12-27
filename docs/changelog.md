@@ -10,6 +10,10 @@
   - lg find <text> searches all logs with paginated, selectable results
   - lg stats shows log statistics (file count, size, lines, date range)
   - lg toggle enables/disables logging
+- Added an RP buffer, which currently stores emotes and custom socials.
+- Clean up baby triggers.
+- Add originating_from_emote, which is used to check if a sound or line of text is originating from an emote.
+- Emotes no longer trigger sounds.
 
 ### Fixed
 - Updated the code so mission counters actually increases the number of missions instead of staying at absolute 0. I may also make it actually tell you it increases, but right now you can see total number of missions with the counters command

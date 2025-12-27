@@ -139,6 +139,41 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="hooks"
+   script="handle_emote_hook"
+   match="^#\$#soundpack emote \| (male|female|nonbinary) \| (.+)$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="hooks"
+   script="check_emote_line_start"
+   match="^(.+)$"
+   regexp="y"
+   send_to="12"
+   sequence="1"
+   keep_evaluating="y"
+  >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="hooks"
+   script="check_emote_line_end"
+   match="^(.+)$"
+   regexp="y"
+   send_to="12"
+   sequence="9999"
+   keep_evaluating="y"
+  >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="hooks"
    match="^#\$#soundpack lore \| (.+?)$"
    regexp="y"
    send_to="12"
@@ -328,6 +363,28 @@ function playsocial(name, line, wildcards)
     actor = "You",
     timestamp = os.time()
   }
+end
+
+pending_emote_text = nil
+suppress_emote_sounds = false
+
+function handle_emote_hook(name, line, wildcards)
+  local gender = wildcards[1]
+  local emote_text = wildcards[2]
+  pending_emote_text = emote_text
+  channel("rp", emote_text, {"rp"})
+end
+
+function check_emote_line_start(name, line, wildcards)
+  local current_line = wildcards[1]
+  if pending_emote_text and current_line == pending_emote_text then
+    suppress_emote_sounds = true
+    pending_emote_text = nil
+  end
+end
+
+function check_emote_line_end(name, line, wildcards)
+  suppress_emote_sounds = false
 end
 
 function handle_coordinates(name, line, wildcards)

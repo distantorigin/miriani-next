@@ -102,7 +102,8 @@ local options = {
   newbie_buffer = {descr="Newbie Channel.", value="yes", group="buffers", type="bool"},
   hooks_buffer = {descr="Soundpack hooks buffer.", value="no", group="developer", type="bool"},
 scan_buffer = {descr="Starship Scans", value="yes", group="buffers", type="bool"},
-  
+  rp_buffer = {descr="Roleplay.", value="yes", group="buffers", type="bool"},
+
   -- Colors --
 
   background_color = {descr="Default Background:", value=16777215, group="colors", type="function", action="return PickColour(-1)", read="return(RGBColourToName)"},

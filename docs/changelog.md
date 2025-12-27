@@ -4,12 +4,21 @@
 ### New
 - Added sounds to a new action figure prize machine on NegraCaja.
 - Added experimentalTLS support to MUSHclient. Enable it from the world preferences connection screen.
+- Added a new lg command interface to control the log manager plugin:
+  - lg view opens today's log in your text editor
+  - lg view <days> opens the log from N days ago
+  - lg find <text> searches all logs with paginated, selectable results
+  - lg stats shows log statistics (file count, size, lines, date range)
+  - lg toggle enables/disables logging
 
 ### Fixed
 - Updated the code so mission counters actually increases the number of missions instead of staying at absolute 0. I may also make it actually tell you it increases, but right now you can see total number of missions with the counters command
 - Restored the ability to 'Find Output' in the accessible output window.
 - The accessible output window will now relay events to its associated world while its in focus. This addresses the commonly seen problem where ambiance and other things wouldn't stop when moving away from the window if the output window was the current tab.
 - The Lore import sound will now play when you have multiple files waiting.
+
+### Removed
+- Vlog alias
 
 ## Version 4.0.14
 

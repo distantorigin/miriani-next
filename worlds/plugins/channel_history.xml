@@ -96,18 +96,6 @@ CHANGELOG:
   >
   </alias>
   <alias
-   script="ttstoggle"
-   match="config tts"
-   enabled="y"
-   omit_from_command_history="y"
-keep_evaluating="y"
-   omit_from_log="y"
-   regexp="y"
-   omit_from_output="y"
-   sequence="100"
-  >
-  </alias>
-  <alias
    script="history_get"
    match="^history_get (\d+)$"
    enabled="y"
@@ -274,6 +262,54 @@ end</send>
   </alias>
 
   <alias
+   script="config_memory_window"
+   match="^history_config_window (\d+)$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   script="config_idle_save"
+   match="^history_config_idle (\d+)$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   script="manual_save"
+   match="^history_save$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   script="show_history_stats"
+   match="^history_stats$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
    script="SPHB"
    match="^sphb\s*(.*)"
    enabled="y"
@@ -339,6 +375,17 @@ categories = {}
 quick_buffers = {} -- configurable list of buffers for quick cycling
 quick_buffer_index = 1 -- current position in quick buffer cycle
 last_not_found_buffer = nil -- track the last buffer that wasn't found
+
+-- SQLite persistence
+db = nil
+memory_window_size = 10000
+idle_save_delay = 600    -- seconds of idle before auto-save (0 = disabled, 600 = 10 min)
+dirty_messages = {}      -- per-category list of unsaved message indices
+last_saved_id = {}       -- per-category highest saved msg_id
+oldest_loaded_id = {}    -- per-category oldest msg_id in memory
+total_count = {}         -- per-category total message count (memory + db)
+save_in_progress = false
+last_message_time = 0    -- for idle detection
 if not GetVariable("timestamps") then
 timestamps=true
 DoAfterSpecial(30, "Note('You can now toggle off the new relative time announcements in channel history. Press alt+shift+t to turn it on or off. Alternatively, you can just type timestamp.')", 14)
@@ -381,16 +428,38 @@ Accelerator("alt+q","history_quickcycle")
 Accelerator("alt+shift+q","history_quicktoggle")
 
 function history_delete(n,l,w)
- if #categories == 0 then
-  say("no categories")
-  return
+ if not require_category(true) then return end
+ local cat = categories[current_category]
+
+ -- Clear from memory
+ messages[cat] = nil
+ indices[cat] = nil
+ dirty_messages[cat] = nil
+ last_saved_id[cat] = nil
+ oldest_loaded_id[cat] = nil
+ total_count[cat] = nil
+
+ -- Clear from database
+ if db then
+  local stmt = db:prepare("DELETE FROM channel_messages WHERE category = ?")
+  stmt:bind_values(cat)
+  stmt:step()
+  stmt:finalize()
  end
- if current_category == 0 then
-  say("No category selected.")
-  return
+
+ -- Remove from quick buffers if present
+ for i = #quick_buffers, 1, -1 do
+  if quick_buffers[i] == cat then
+   table.remove(quick_buffers, i)
+   if quick_buffer_index > i then
+    quick_buffer_index = quick_buffer_index - 1
+   elseif quick_buffer_index > #quick_buffers then
+    quick_buffer_index = 1
+   end
+  end
  end
- messages[categories[current_category]] = nil
- indices[categories[current_category]] = nil
+ save_quick_buffers()
+
  table.remove(categories, current_category)
  if current_category > #categories then
   current_category = 1
@@ -399,21 +468,13 @@ function history_delete(n,l,w)
   say(categories[current_category])
  else
   say("no more categories.")
--- Prevent other code from crashing:
-categories = { }
-current_category = 0
+  categories = { }
+  current_category = 0
  end
 end
 
 function category_move(name, line, w)
- if #categories == 0 then
-  say("no categories")
-  return
- end
- if current_category == 0 then
-  say("No category selected.")
-  return
- end
+ if not require_category(true) then return end
  name = categories[current_category]
  table.remove(categories,current_category)
  if w[1]=="right" then
@@ -428,17 +489,58 @@ function category_move(name, line, w)
   end
  end
  table.insert(categories, current_category, name)
+ save_category_order()
  say("moved.")
 end
 
 function OnPluginInstall()
- --SetVariable("tts",GetPluginVariable("553a883096da345ce6897740","tts"))
  SetVariable("tts","1")
+
+ -- Initialize database
+ local db_initialized = init_database()
+
+ -- Load settings
+ memory_window_size = tonumber(GetVariable("memory_window_size")) or 10000
+ idle_save_delay = tonumber(GetVariable("idle_save_delay")) or 600  -- 10 minutes
+
+ -- Load message history from database
+ if db_initialized then
+   load_memory_windows()
+   apply_category_order()
+
+   -- Start idle detection timer (checks every 5 seconds)
+   if idle_save_delay > 0 then
+     AddTimer("history_idle_check", 0, 0, 5, "",
+              timer_flag.Enabled + timer_flag.Replace + timer_flag.ActiveWhenClosed,
+              "check_idle_save")
+     Note(string.format("[Channel History] Idle auto-save enabled: %d seconds", idle_save_delay))
+   end
+ end
+
+ -- Initialize tracking
+ dirty_messages = {}
+ last_saved_id = {}
+ oldest_loaded_id = {}
+ last_message_time = utils.timer()
+
+ -- Load quick buffers
  load_quick_buffers()
 end
 
-function ttstoggle(n,l,w)
--- SetVariable("tts",GetPluginVariable("553a883096da345ce6897740","tts"))
+
+function OnPluginSaveState()
+  save_to_database()
+  save_category_order()
+  SetVariable("memory_window_size", tostring(memory_window_size))
+  SetVariable("idle_save_delay", tostring(idle_save_delay))
+end
+
+function OnPluginClose()
+  save_to_database()
+  if db then
+    db:close()
+    db = nil
+  end
 end
 
 function history_add(name, line, wc)
@@ -447,24 +549,302 @@ function history_add(name, line, wc)
   messages[cat] = {}
   indices[cat] = 0
   table.insert(categories, cat)
+  dirty_messages[cat] = {}
+  total_count[cat] = 0
  end
- table.insert(messages[cat], {["message"]=msg,["time"]=utils.timer()})
- -- if we go over 100 items, remove the oldest one
- if #messages[cat] > 100000 then
-  table.remove(messages[cat], 1)
-  if indices[cat] > 1 then
-   indices[cat] = indices[cat] - 1
-  end
+
+ -- Add message to memory
+ local new_msg = {
+   message = msg,
+   time = utils.timer(),
+   msg_id = nil  -- not yet saved
+ }
+ table.insert(messages[cat], new_msg)
+ total_count[cat] = (total_count[cat] or 0) + 1
+
+ -- Track as dirty
+ if not dirty_messages[cat] then
+   dirty_messages[cat] = {}
  end
+ table.insert(dirty_messages[cat], #messages[cat])
+
+ -- Enforce memory window (keep last N in RAM)
+ if #messages[cat] > memory_window_size then
+   table.remove(messages[cat], 1)
+
+   if indices[cat] > 1 then
+     indices[cat] = indices[cat] - 1
+   end
+
+   -- Adjust dirty indices
+   for i, dirty_idx in ipairs(dirty_messages[cat]) do
+     dirty_messages[cat][i] = dirty_idx - 1
+   end
+
+   if #messages[cat] > 0 and messages[cat][1].msg_id then
+     oldest_loaded_id[cat] = messages[cat][1].msg_id
+   end
+ end
+
+ -- Update idle timer
+ last_message_time = utils.timer()
 end
 
 -- helper function to say stuff
-function say(x) 
+function say(x)
  if(GetVariable("tts")=="1") then
   Execute("tts_interrupt " .. x)
  else
   Note(x)
  end
+end
+
+-- validate category state, returns false if invalid
+function require_category(need_selection)
+ if #categories == 0 then
+  say("no categories")
+  return false
+ end
+ if need_selection and current_category == 0 then
+  say("No category selected.")
+  return false
+ end
+ return true
+end
+
+-- ensure index is valid (use "end" to start at newest message, default starts at oldest)
+function ensure_index(pos)
+ local cat = categories[current_category]
+ if indices[cat] == 0 then
+  if pos == "end" then
+   indices[cat] = #messages[cat]
+  else
+   indices[cat] = 1
+  end
+ end
+end
+
+-- get total message count for current category (includes db messages not in memory)
+function get_total_count(cat)
+ cat = cat or categories[current_category]
+ return total_count[cat] or #messages[cat]
+end
+
+-- announce current buffer status
+function announce_status()
+ say(categories[current_category] .. ": " .. indices[categories[current_category]] .. " of " .. get_total_count())
+end
+
+-- Initialize SQLite database
+function init_database()
+  local db_path = GetInfo(66) .. "channel_history_" .. GetWorldID() .. ".db"
+
+  local success, result = pcall(function() return sqlite3.open(db_path) end)
+  if not success then
+    Note("WARNING: Channel history database unavailable. Memory-only mode.")
+    return false
+  end
+
+  db = result
+  db:execute("PRAGMA journal_mode=WAL;")
+
+  -- Create tables if needed
+  local table_exists = false
+  for row in db:nrows("SELECT name FROM sqlite_master WHERE type='table' AND name='channel_messages'") do
+    table_exists = true
+  end
+
+  if not table_exists then
+    db:execute([[
+      BEGIN TRANSACTION;
+      CREATE TABLE channel_messages (
+        msg_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        timestamp REAL NOT NULL,
+        created_at INTEGER DEFAULT (strftime('%s', 'now'))
+      );
+      CREATE INDEX idx_category_timestamp ON channel_messages(category, timestamp DESC);
+      CREATE INDEX idx_category_msgid ON channel_messages(category, msg_id DESC);
+      COMMIT;
+    ]])
+    Note("Channel history database created.")
+  end
+
+  return true
+end
+
+-- Load memory windows from database on startup
+function load_memory_windows()
+  if not db then return end
+
+  -- Get categories with messages
+  for row in db:nrows([[
+    SELECT DISTINCT category, COUNT(*) as msg_count
+    FROM channel_messages
+    GROUP BY category
+    ORDER BY MAX(msg_id) DESC
+  ]]) do
+    local cat = row.category
+    total_count[cat] = row.msg_count
+
+    if not messages[cat] then
+      messages[cat] = {}
+      indices[cat] = 0
+      table.insert(categories, cat)
+    end
+
+    -- Load most recent N messages
+    local stmt = db:prepare([[
+      SELECT msg_id, message, timestamp
+      FROM channel_messages
+      WHERE category = ?
+      ORDER BY msg_id DESC
+      LIMIT ?
+    ]])
+    stmt:bind_values(cat, memory_window_size)
+
+    local temp = {}
+    while stmt:step() == sqlite3.ROW do
+      local row = stmt:get_named_values()
+      table.insert(temp, {
+        message = row.message,
+        time = row.timestamp,
+        msg_id = row.msg_id
+      })
+    end
+    stmt:finalize()
+
+    -- Reverse to oldest-first
+    for i = #temp, 1, -1 do
+      table.insert(messages[cat], temp[i])
+    end
+
+    if #messages[cat] > 0 then
+      last_saved_id[cat] = messages[cat][#messages[cat]].msg_id
+      oldest_loaded_id[cat] = messages[cat][1].msg_id
+    end
+  end
+end
+
+-- Save dirty messages to database
+function save_to_database()
+  if not db or save_in_progress then return end
+
+  save_in_progress = true
+
+  local success, err = pcall(function()
+    db:execute("BEGIN TRANSACTION")
+
+    for cat, dirty_indices in pairs(dirty_messages) do
+      if #dirty_indices > 0 then
+        local stmt = db:prepare([[
+          INSERT INTO channel_messages (category, message, timestamp)
+          VALUES (?, ?, ?)
+        ]])
+
+        for _, idx in ipairs(dirty_indices) do
+          local msg = messages[cat][idx]
+          if msg and not msg.msg_id then
+            stmt:bind_values(cat, msg.message, msg.time)
+            stmt:step()
+            msg.msg_id = db:last_insert_rowid()
+
+            if not last_saved_id[cat] or msg.msg_id > last_saved_id[cat] then
+              last_saved_id[cat] = msg.msg_id
+            end
+
+            stmt:reset()
+          end
+        end
+
+        stmt:finalize()
+        dirty_messages[cat] = {}
+      end
+    end
+
+    db:execute("COMMIT")
+  end)
+
+  if not success then
+    pcall(function() db:execute("ROLLBACK") end)
+    Note("Error saving channel history: " .. tostring(err))
+  end
+
+  save_in_progress = false
+end
+
+-- Idle detection timer callback
+function check_idle_save()
+  if not db or idle_save_delay == 0 then return end
+
+  local idle_time = utils.timer() - last_message_time
+  if idle_time >= idle_save_delay then
+    -- Check if there are unsaved messages
+    local has_dirty = false
+    local total_dirty = 0
+    for cat, dirty_list in pairs(dirty_messages) do
+      if #dirty_list > 0 then
+        has_dirty = true
+        total_dirty = total_dirty + #dirty_list
+      end
+    end
+
+    if has_dirty then
+      Note(string.format("[Channel History] Idle save triggered: %d unsaved messages", total_dirty))
+      save_to_database()
+    end
+  end
+end
+
+-- Lazy load older messages from database when navigating backward
+function lazy_load_older_messages(cat, requested_count)
+  if not db or not oldest_loaded_id[cat] then
+    return 0
+  end
+
+  local load_count = math.min(requested_count + 50, 200)
+
+  local success, older_messages = pcall(function()
+    local msgs = {}
+    local stmt = db:prepare([[
+      SELECT msg_id, message, timestamp
+      FROM channel_messages
+      WHERE category = ? AND msg_id < ?
+      ORDER BY msg_id DESC
+      LIMIT ?
+    ]])
+    stmt:bind_values(cat, oldest_loaded_id[cat], load_count)
+
+    while stmt:step() == sqlite3.ROW do
+      local row = stmt:get_named_values()
+      table.insert(msgs, {
+        message = row.message,
+        time = row.timestamp,
+        msg_id = row.msg_id
+      })
+    end
+    stmt:finalize()
+    return msgs
+  end)
+
+  if not success or #older_messages == 0 then
+    return 0
+  end
+
+  -- Prepend to messages array (oldest first)
+  for i = #older_messages, 1, -1 do
+    table.insert(messages[cat], 1, older_messages[i])
+  end
+
+  oldest_loaded_id[cat] = messages[cat][1].msg_id
+
+  -- Trim from end if needed
+  while #messages[cat] > memory_window_size + load_count do
+    table.remove(messages[cat])
+  end
+
+  return #older_messages
 end
 
 function history_get(name, line, wc)
@@ -519,17 +899,15 @@ function history_get(name, line, wc)
 end
 
 function history_catjump(name, line, wc)
-  local cat = tonumber(wc[1])
- if #categories == 0 then
-  say("No categories")
+ local cat = tonumber(wc[1])
+ if not require_category(false) then return end
+ if #categories < cat then
+  say("That category doesn't exist yet.")
   return
-elseif #categories < cat then
-say("That category doesn't exist yet.")
-return
-  end
-current_category = cat
-if #messages[categories[current_category]] > 0 and indices[categories[current_category]]==0 then indices[categories[current_category]]=1 end
- say(categories[current_category] ..": "..indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+ end
+ current_category = cat
+ if get_total_count() > 0 then ensure_index() end
+ announce_status()
 end
 
 function sayMsg(str,m)
@@ -574,45 +952,30 @@ end
 return ""
 end
 function history_catnext(name, line, wc)
- if #categories == 0 then
-  say("no categories")
-  return
- end
+ if not require_category(false) then return end
  current_category = current_category + 1
  if current_category > #categories then
   current_category = 1
  end
-if indices[categories[current_category]]==0 then indices[categories[current_category]]=1 end
- say(categories[current_category] ..": "..indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+ ensure_index()
+ announce_status()
 end
 
 function history_catprev(name, line, wc)
- if #categories == 0 then
-  say("no categories")
-  return
- end
+ if not require_category(false) then return end
  current_category = current_category - 1
  if current_category < 1 then
   current_category = #categories
  end
-if indices[categories[current_category]]==0 then indices[categories[current_category]]=1 end
- say(categories[current_category] ..": "..indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+ ensure_index()
+ announce_status()
 end
 
 function history_msgnext(name, line, wc)
  local skip = tonumber(wc[1])
  local str = ""
- if #categories == 0 then
-  say("no categories")
-  return
- end
- if current_category == 0 then
-  say("No category selected.")
-  return
- end
- if indices[categories[current_category]] == 0 then
-  indices[categories[current_category]] = #messages[categories[current_category]]
- end
+ if not require_category(true) then return end
+ ensure_index("end")
  if indices[categories[current_category]] + skip > #messages[categories[current_category]] then
   indices[categories[current_category]] = #messages[categories[current_category]]
   str = str .. "Bottom: "
@@ -625,89 +988,67 @@ end
 function history_msgprev(name, line, wc)
  local skip = tonumber(wc[1])
  local str = ""
- if #categories == 0 then
-  say("no categories")
-  return
+ if not require_category(true) then return end
+ ensure_index("end")
+
+ local cat = categories[current_category]
+ local target_index = indices[cat] - skip
+
+ -- Try to load older messages if needed
+ if target_index < 1 then
+   local loaded = lazy_load_older_messages(cat, skip)
+   if loaded > 0 then
+     indices[cat] = indices[cat] + loaded
+     target_index = target_index + loaded
+     str = str .. "(Loaded " .. loaded .. " older messages) "
+   end
  end
- if current_category == 0 then
-  say("No category selected.")
-  return
- end
- if indices[categories[current_category]] == 0 then
-  indices[categories[current_category]] = #messages[categories[current_category]]
- end
- if indices[categories[current_category]] - skip < 1 then
-  indices[categories[current_category]] = 1
+
+ -- Clamp to valid range
+ if target_index < 1 then
+  indices[cat] = 1
   str = str .. "Top: "
  else
-  indices[categories[current_category]] = indices[categories[current_category]] - skip
+  indices[cat] = target_index
  end
- sayMsg(str, messages[categories[current_category]][indices[categories[current_category]]])
+
+ sayMsg(str, messages[cat][indices[cat]])
 end
 
 function history_link(name, line, wc)
-err=0
- if #categories == 0 then
-  say("no categories")
-err=1
+ if not require_category(true) then
+  say("opening world configuration")
+  DoAfterSpecial(1,"DoCommand('preferences')",12)
+  return
  end
- if current_category == 0 then
-  say("No category selected.")
-err=1
+ ensure_index("end")
+ local hmm = messages[categories[current_category]][indices[categories[current_category]]]["message"]
+ local links = {}
+ local re = rex.new("(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%!:/~+#-]*[\\w@?^=%/~+#-])?",rex.flags().CASELESS)
+ re:gmatch(hmm,function(m, t)
+  table.insert(links,m)
+ end)
+ if #links==0 then
+  say("no links, opening world configuration")
+  DoAfterSpecial(1,"DoCommand('preferences')",12)
+ elseif #links==1 then
+  say("Opening URL: "..links[1])
+  OpenBrowser(links[1])
+ else
+  local url = utils.listbox("","Select URL",links,1)
+  if url then
+   OpenBrowser(links[url])
+  end
  end
-if err==0 then
- if indices[categories[current_category]] == 0 then
-  indices[categories[current_category]] = #messages[categories[current_category]]
- end
-local hmm=(messages[categories[current_category]][indices[categories[current_category]]]["message"])
-links={}
-re=rex.new("(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%!:/~+#-]*[\\w@?^=%/~+#-])?",rex.flags().CASELESS)
-n=re:gmatch(hmm,function(m, t)
-table.insert(links,m)
-end)
-if #links==0 then
-say("no links, opening world configuration")
-DoAfterSpecial(1,"DoCommand('preferences')",12)
-end
-if #links==1 then
-say("Opening URL: "..links[1])
-OpenBrowser(links[1])
-end
-if #links>1 then
-url=utils.listbox("","Select URL",links,1)
-if url then
-OpenBrowser(links[url])
-end
-end
-else
-say("opening world configuration")
-DoAfterSpecial(1,"DoCommand('preferences')",12)
-end
 end
 function history_msgcopy(name, line, wc)
- if #categories == 0 then
-  say("no categories")
-  return
- end
- if current_category == 0 then
-  say("No category selected.")
-  return
- end
- if indices[categories[current_category]] == 0 then
-  indices[categories[current_category]] = #messages[categories[current_category]]
- end
+ if not require_category(true) then return end
+ ensure_index("end")
  SetClipboard(messages[categories[current_category]][indices[categories[current_category]]]["message"])
  say("copied")
 end
 function history_notepad()
-if #categories == 0 then
-say("no categories")
-return
-end
-if current_category == 0 then
-say("No category selected.")
-return
-end
+if not require_category(true) then return end
 np = categories[current_category]
 local nptext="Showing "..#messages[categories[current_category]].." messages:\r\n"
 for i = 1, #messages[categories[current_category]] do
@@ -722,10 +1063,7 @@ SendToNotepad(np, nptext)
  ActivateNotepad(np)
  end
 function history_catsearch(name, line, wc)
- if #categories == 0 then
-  say("no categories")
-  return
- end
+ if not require_category(false) then return end
 command=GetCommand()
 if #command~=0 then
 possibles={}
@@ -767,20 +1105,13 @@ say("No previous jump available")
 end
 end
 if current_category==0 then current_category=1 end
-if indices[categories[current_category]]==0 then indices[categories[current_category]]=1 end
- say(categories[current_category] ..": "..indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+ensure_index()
+announce_status()
 end
 function history_find(next)
- if #categories == 0 then
-  say("no categories")
-  return
- end
-if current_category==0 then
-say("no category selected")
-return
-end
+ if not require_category(true) then return end
 if not next then next=1 end
-if indices[categories[current_category]]==0 then indices[categories[current_category]]=1 end
+ensure_index()
 search=indices[categories[current_category]]
 move=1
 if next==0 then move=-1 end
@@ -798,7 +1129,7 @@ str=messages[categories[current_category]][search]["message"]
 if string.find(string.lower(str),string.lower(current_search),1,true) then
 sayMsg("",messages[categories[current_category]][search])
 if GetVariable("tts")=="1" then
-Execute("tts_note "..search.." of "..#messages[categories[current_category]])
+Execute("tts_note "..search.." of "..get_total_count())
 end
 indices[categories[current_category]]=search
 if #command~=0 then
@@ -812,16 +1143,6 @@ end
 if search==0 or search==#messages[categories[current_category]]+1 then
 say("not found")
 end
-end
-
--- Announce the current quick buffers list
-function announce_quick_buffers()
-  if #quick_buffers == 0 then
-    say("No buffers in quick list.")
-    return
-  end
-
-  say("Quick list (" .. #quick_buffers .. " buffers): " .. table.concat(quick_buffers, ", "))
 end
 
 -- Load quick buffers from saved variable
@@ -840,6 +1161,41 @@ function save_quick_buffers()
   SetVariable("quick_buffers", table.concat(quick_buffers, "|"))
 end
 
+-- Save category order to variable
+function save_category_order()
+  SetVariable("category_order", table.concat(categories, "|"))
+end
+
+-- Apply saved category order after loading from DB
+function apply_category_order()
+  local saved_order = GetVariable("category_order")
+  if not saved_order or saved_order == "" then return end
+
+  -- Build lookup of current categories
+  local cat_set = {}
+  for _, cat in ipairs(categories) do
+    cat_set[cat] = true
+  end
+
+  -- Rebuild categories in saved order
+  local new_order = {}
+  for cat in saved_order:gmatch("([^|]+)") do
+    if cat_set[cat] then
+      table.insert(new_order, cat)
+      cat_set[cat] = nil
+    end
+  end
+
+  -- Append any new categories not in saved order
+  for _, cat in ipairs(categories) do
+    if cat_set[cat] then
+      table.insert(new_order, cat)
+    end
+  end
+
+  categories = new_order
+end
+
 -- Cycle through quick buffers with Alt+Q
 function history_quickcycle(name, line, wc)
   if #quick_buffers == 0 then
@@ -853,10 +1209,8 @@ function history_quickcycle(name, line, wc)
     for i, cat in ipairs(categories) do
       if cat == buffer_name then
         current_category = i
-        if indices[categories[current_category]] == 0 then
-          indices[categories[current_category]] = 1
-        end
-        say(categories[current_category] .. ": " .. indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+        ensure_index()
+        announce_status()
         return
       end
     end
@@ -877,10 +1231,8 @@ function history_quickcycle(name, line, wc)
   for i, cat in ipairs(categories) do
     if cat == buffer_name then
       current_category = i
-      if indices[categories[current_category]] == 0 then
-        indices[categories[current_category]] = 1
-      end
-      say(categories[current_category] .. ": " .. indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+      ensure_index()
+      announce_status()
       return
     end
   end
@@ -927,15 +1279,7 @@ function history_quicktoggle(name, line, wc)
     return
   end
 
-  if #categories == 0 then
-    say("No categories")
-    return
-  end
-
-  if current_category == 0 then
-    say("No category selected.")
-    return
-  end
+  if not require_category(true) then return end
 
   local current_buffer = categories[current_category]
 
@@ -1005,21 +1349,15 @@ function history_quickclear(name, line, wc)
   say("Cleared " .. count .. " buffers from quick list.")
 end
 
--- Call this on plugin load to initialize quick buffers
-load_quick_buffers()
-
 function sps_handler(name, line, wc)
   local buffer_name = wc[1]
 
   if not buffer_name or buffer_name == "" then
     history_catnext(name, line, wc)
   else
-    buffer_name = buffer_name:gsub("^%s+|%s+$", "")
+    buffer_name = buffer_name:match("^%s*(.-)%s*$")
 
-    if #categories == 0 then
-      say("no categories")
-      return
-    end
+    if not require_category(false) then return end
 
     local selected = 0
     local possibles = {}
@@ -1056,10 +1394,8 @@ function sps_handler(name, line, wc)
 
     if selected > 0 then
       current_category = selected
-      if indices[categories[current_category]] == 0 then
-        indices[categories[current_category]] = 1
-      end
-      say(categories[current_category] .. ": " .. indices[categories[current_category]] .. " of " .. #messages[categories[current_category]])
+      ensure_index()
+      announce_status()
     else
       say("buffer not found")
     end
@@ -1068,7 +1404,7 @@ end
 
 function SPHB(name, line, wc)
   local subcommand = wc[1] or ""
-  subcommand = string.lower(subcommand:gsub("^%s+|%s+$", ""))
+  subcommand = string.lower(subcommand:match("^%s*(.-)%s*$"))
 
   if subcommand == "" then
     say("Valid arguments are back, forward, copy, read, and switch.")
@@ -1088,6 +1424,90 @@ function SPHB(name, line, wc)
   else
     say("Valid arguments are back, forward, copy, read, and switch.")
   end
+end
+
+-- Configuration command: Set memory window size
+function config_memory_window(name, line, wc)
+  local new_size = tonumber(wc[1])
+  if new_size < 100 or new_size > 10000 then
+    Note("Memory window size must be between 100 and 10,000.")
+    return
+  end
+  memory_window_size = new_size
+  SetVariable("memory_window_size", tostring(new_size))
+  Note("Memory window set to " .. new_size .. " messages per buffer.")
+end
+
+-- Configuration command: Set idle save delay
+function config_idle_save(name, line, wc)
+  local new_delay = tonumber(wc[1])
+  if new_delay < 0 or new_delay > 600 then
+    Note("Idle save delay must be between 0 and 600 seconds (0 = disabled).")
+    return
+  end
+  idle_save_delay = new_delay
+  SetVariable("idle_save_delay", tostring(new_delay))
+
+  -- Restart/stop timer based on new setting
+  if new_delay > 0 and db then
+    AddTimer("history_idle_check", 0, 0, 5, "",
+             timer_flag.Enabled + timer_flag.Replace + timer_flag.ActiveWhenClosed,
+             "check_idle_save")
+    Note("Idle save delay set to " .. new_delay .. " seconds.")
+  else
+    DeleteTimer("history_idle_check")
+    Note("Idle auto-save disabled.")
+  end
+end
+
+-- Manual save command
+function manual_save(name, line, wc)
+  if not db then
+    Note("Database not available.")
+    return
+  end
+
+  -- Count dirty messages
+  local unsaved = 0
+  for cat, dirty_list in pairs(dirty_messages) do
+    unsaved = unsaved + #dirty_list
+  end
+
+  if unsaved == 0 then
+    Note("No unsaved messages.")
+    return
+  end
+
+  save_to_database()
+  Note("Saved " .. unsaved .. " messages to database.")
+end
+
+-- Show history statistics
+function show_history_stats()
+  if not db then
+    Note("Database not available.")
+    return
+  end
+
+  local total_db = 0
+  for row in db:rows("SELECT COUNT(*) FROM channel_messages") do
+    total_db = row[1]
+  end
+
+  local total_memory = 0
+  for cat, msg_list in pairs(messages) do
+    total_memory = total_memory + #msg_list
+  end
+
+  local unsaved = 0
+  for cat, dirty_list in pairs(dirty_messages) do
+    unsaved = unsaved + #dirty_list
+  end
+
+  Note(string.format(
+    "History Stats: %d buffers, %d in memory, %d in database, %d unsaved. Window: %d.",
+    #categories, total_memory, total_db, unsaved, memory_window_size
+  ))
 end
 
 ]]>

@@ -1,9 +1,10 @@
 # Miriani-Next Changelog
 
-## Version 4.0.15 (In progress)
+## Version 4.0.15
 ### New
 - Added sounds to a new action figure prize machine on NegraCaja.
 - Added experimentalTLS support to MUSHclient. Enable it from the world preferences connection screen.
+  - To enable, check the TLS Encryption checkbox and change the port from 1234 to 1443. Proxiani users should change the hostname to toastsoft.net.
 - Added a new lg command interface to control the log manager plugin:
   - lg view opens today's log in your text editor
   - lg view <days> opens the log from N days ago

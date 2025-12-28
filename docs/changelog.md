@@ -6,6 +6,7 @@
 - Added memory only mode for channel history that will always bypass the database.
 - Added sounds to an action figure machine on Templar
 - Added sound for bongo social
+- Gag soundpack ping spam in even more places for purposes of logging.
 
 ## Version 4.0.15
 ### New

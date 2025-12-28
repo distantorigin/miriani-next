@@ -225,5 +225,27 @@ ImportXML([=[
   <send>mplay("activity/archaeology/practice")</send>
   </trigger>
 
-</triggers>
+<trigger
+   enabled="y"
+   group="shenanigans"
+   match="After a few seconds, the sound of ravens cawing plays from a hidden speaker on a spiderweb-covered pyramidal machine as if in mockery\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay(misc/cawingRavens")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="After a few seconds, a faint thud can be heard, and .+ falls into the retrieval slot at the bottom of a spiderweb-covered pyramidal machine\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay(misc/slotPayout")</send>
+  </trigger>
+
+  </triggers>
 ]=])

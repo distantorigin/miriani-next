@@ -139,7 +139,7 @@ show_paralyzed(roundtime, stuntime)
 
     if (IsConnected()) then 
       if (heartbeat == ping_after_heartbeat) then
-             Execute("#$#SOUNDPACK_PING")
+             SendNoEcho("#$#SOUNDPACK_PING")
       end -- if
 
    end -- if

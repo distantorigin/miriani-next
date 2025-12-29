@@ -6,6 +6,7 @@
 - Include "You notify flight control..." messages in spam reduction mode.
 - Remove the config alias for conf.
 - Added pimpslap and new hoot sounds.
+- Added new squeak sound.
 
 ## Version 4.0.16
 ### New

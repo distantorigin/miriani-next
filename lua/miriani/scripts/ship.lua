@@ -1024,6 +1024,28 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   <trigger
    enabled="y"
    group="ship"
+   match="^Some lovely elevator music begins playing as the airlock cycles\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("music/theme", "elevator_music", true, nil, true)</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^Some lovely elevator music abruptly stops playing as the airlock ceases cycling\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>stop("elevator_music")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
    match="^(Name\s+#\s+Units|Weapon Status:|Charge Readout:|Starship Weapon Information)$"
    regexp="y"
    send_to="12"

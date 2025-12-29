@@ -267,7 +267,7 @@ show_paralyzed(roundtime, stuntime)
   <alias
    enabled="y"
    script="config_main_menu"
-   match="^conf(?:ig)?$"
+   match="^conf$"
    ignore_case="y"
    regexp="y"
    sequence="100"
@@ -276,7 +276,7 @@ show_paralyzed(roundtime, stuntime)
 
   <alias
    enabled="y"
-   match="^conf(?:ig)? (\w+)$"
+   match="^conf (\w+)$"
    ignore_case="y"
    regexp="y"
    send_to="12"
@@ -298,7 +298,7 @@ show_paralyzed(roundtime, stuntime)
 
   <alias
    enabled="y"
-   match="^conf(?:ig)? (\w+) (.+)$"
+   match="^conf (\w+) (.+)$"
    ignore_case="y"
    regexp="y"
    send_to="12"

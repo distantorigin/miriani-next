@@ -3,6 +3,8 @@
 ## Version 4.0.17 (In Progress)
 ### New
 - Add airlock cycling music.
+- Include "You notify flight control..." messages in spam reduction mode.
+- Remove the config alias for conf.
 
 ## Version 4.0.16
 ### New

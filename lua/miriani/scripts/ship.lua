@@ -401,6 +401,8 @@ end -- camera</send>
    match="^You notify flight control of your desire to (undock|dock|launch|land)\.$"
    regexp="y"
    send_to="12"
+   script="gagline"
+   omit_from_output="y"
    sequence="100"
   >
   <send>mplay ("ship/misc/radio", "ship")</send>

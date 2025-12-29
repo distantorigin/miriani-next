@@ -99,18 +99,6 @@ endScan()</send>
 
   <trigger
    enabled="y"
-   group="misc"
-   script="gagline"
-   match="^You begin to merrily float off into the great unknown\.$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="12"
-  >
-  <send>mplay("steps/jet")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
    name="room_title"
    script="playstep"
    group="misc"

@@ -136,5 +136,28 @@ ImportXML([=[
   >
   <send>mplay("device/lore/import")</send>
   </trigger>
-</triggers>
+<trigger
+   enabled="y"
+   group="misc"
+   script="gagline"
+   match="^You begin to merrily float off into the great unknown\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="12"
+  >
+  <send>mplay("device/jetStart")</send>
+  </trigger>
+<trigger
+   enabled="y"
+   group="misc"
+   script="gagline"
+   match="^You arrive at your new coordinates\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="12"
+  >
+  <send>mplay("device/jetEnd")</send>
+  </trigger>
+
+  </triggers>
 ]=])

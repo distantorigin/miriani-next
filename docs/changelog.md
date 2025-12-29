@@ -5,6 +5,7 @@
 - Add airlock cycling music.
 - Include "You notify flight control..." messages in spam reduction mode.
 - Remove the config alias for conf.
+- Added pimpslap and new hoot sounds.
 
 ## Version 4.0.16
 ### New

@@ -635,7 +635,7 @@ function OnPluginInstall()
   math.randomseed(os.time())
   print("Welcome to Miriani-Next ", VERSION, ", a MUSHclient Miriani soundpack! For help see next:help.")
   print("Miriani-Next is in beta. Please review 'next:help' and tune a metafrequency communicator to frequency 7.07 for bugs and discussion.")
-  print("If you might be interested in watching the development process from afar, metafrequency 338.7 is the channel. This is public because we want to encourage discussion and new people to work on the soundpack, but if we get an influx of questions or nonsense we will change it and not provide the new frequency.")
+  print("If you're interested in watching the development process from afar, metafrequency 338.7 is the channel. This is public because we want to encourage discussion and new people to work on the soundpack, but if we get an influx of questions or nonsense we will change it and not provide the new frequency.")
   print("Frequency 7.07 should still be used for install questions, etc, and most other things. Only tune to channel 338.7 if you are interested in LUA code, triggers, MUSHClient work etc.")
 
 

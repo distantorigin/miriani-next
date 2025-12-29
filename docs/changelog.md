@@ -7,6 +7,7 @@
 - Remove the config alias for conf.
 - Added pimpslap and new hoot sounds.
 - Added new squeak sound.
+- Changed the wording on the intro message slightly in regard to watching development.
 
 ## Version 4.0.16
 ### New

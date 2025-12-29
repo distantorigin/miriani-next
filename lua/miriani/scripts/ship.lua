@@ -1278,5 +1278,41 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="ship"
+   script="gagline"
+   match="^You hear the occasional ping of objects impacting the hull as the starship moves through space\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/backgroundHigh", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   script="gagline"
+   match="^The gentle hum of the ship's engines momentarily amplifies as the starship moves through space\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/backgroundHigh", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="gags"
+   match="^You detect a faint thrumming as the ship reorients itself\.$"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+
 </triggers>
 ]=])

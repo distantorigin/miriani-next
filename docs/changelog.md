@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.0.16 (In Progress)
+## Version 4.0.16
 ### New
 - Channel history is now infinite, automatically saving and reloading through restarts. Buffer orderings are automatically saved and restored. Up to 10,000 messages are loaded into each buffer at startup, at which point messages beyond that will be lazy-loaded as you browse. Messages are saved to a channel_history_<world-id>..db file in your main MUSHclient directory. Bugs are sure to be afoot. Consider this to be entirely experimental.
 - Added memory only mode for channel history that will always bypass the database.

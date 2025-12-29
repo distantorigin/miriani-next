@@ -379,7 +379,7 @@ last_not_found_buffer = nil -- track the last buffer that wasn't found
 -- SQLite persistence
 db = nil
 memory_window_size = 10000
-idle_save_delay = 600    -- seconds of idle before auto-save (0 = disabled, 600 = 10 min)
+idle_save_delay = 300    -- seconds of idle before auto-save
 dirty_messages = {}      -- per-category list of unsaved message indices
 last_saved_id = {}       -- per-category highest saved msg_id
 oldest_loaded_id = {}    -- per-category oldest msg_id in memory
@@ -791,7 +791,6 @@ function check_idle_save()
     end
 
     if has_dirty then
-      Note(string.format("[Channel History] Idle save triggered: %d unsaved messages", total_dirty))
       save_to_database()
     end
   end

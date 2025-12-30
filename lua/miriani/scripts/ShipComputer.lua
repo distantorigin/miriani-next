@@ -1,4 +1,4 @@
-local anomaly_found = false
+anomaly_found = false
 
 computer_actions = {
   ["There is insufficient weapons-grade bardenium available for firing."] = {

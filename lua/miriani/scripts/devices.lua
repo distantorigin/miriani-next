@@ -493,6 +493,28 @@ if config:get_option("external_camera").value == "no" then
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   name="DestinationFinder"
+   group="devices"
+   match="^(.+?)\s+(.+?)\s+(\d+, \d+, \d+)\s*$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   -- Capture destination finder coordinates for infobar
+   local destination = "%1"
+   local sector = "%2"
+   local coords = "%3"
+
+   -- Skip the header line
+   if destination ~= "Destination" then
+    infobar("dest", "Dest: " .. coords)
+   end
+  </send>
+  </trigger>
+
 <trigger
    enabled="y"
    group="misc"

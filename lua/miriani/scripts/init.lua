@@ -27,7 +27,7 @@ local namespace = {
   "market", -- tradesman market procedures
   "gags", -- text throttle
   "ship", -- starship-related procedures
-  "computer", -- Starship computer
+  "ShipComputer", -- Starship computer
   "combat", -- combat procedures
   "starmap_scan", -- starmap and scan routines
   "communication", -- Communication

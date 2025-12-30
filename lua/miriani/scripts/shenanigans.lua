@@ -233,7 +233,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay(misc/cawingRavens")</send>
+  <send>mplay("misc/cawingRavens")</send>
   </trigger>
 
   <trigger
@@ -244,7 +244,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay(misc/slotPayout")</send>
+  <send>mplay("misc/slotPayout")</send>
   </trigger>
 
   </triggers>

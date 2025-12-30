@@ -63,6 +63,23 @@ ImportXML([=[
 
   <trigger
    enabled="y"
+   name="MessageBoardNewMessageDetailed"
+   group="devices"
+   match="^A message board reader beeps quietly, indicating to you that there is a new message in (.+?)\. It was posted by (.+?) with the subject (.+?)\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   mplay ("device/newPost")
+   print_color({"New board post in %1. Posted by %2: Subject: ", "default"}, {"%3", "board"})
+   channel(name, "New board post in %1. Posted by %2: Subject: %3", {"board"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
    name="MessageBoardToggle"
    group="devices"
    match="^A.+message board reader will (now|no longer) notify you of new messages\.$"
@@ -75,6 +92,18 @@ ImportXML([=[
     mplay("miriani/device/deactivate")
   end
   </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="DeviceActivateDeactivate"
+   group="devices"
+   match="^You (?:re)?(activate|deactivate) .+?$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay ("device/%1", "communication")</send>
   </trigger>
 
   <trigger
@@ -136,6 +165,188 @@ ImportXML([=[
   >
   <send>mplay("device/lore/import")</send>
   </trigger>
+
+  <trigger
+   enabled="y"
+   name="LoreComputerPrint"
+   group="devices"
+   match="^Several short bleeps emit from .+ Lore computer.+followed by .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("device/lore/Print", "computer")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="LoreTechTracking"
+   group="devices"
+   match="^Via the TransLink network, the LoreTech device &quot;(.+?)&quot; reports current location pinpointed (.+?)$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   mplay ("device/lore/track")
+   print_color({"%1", "computer"}, {" %2", "default"})
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="LoreIncomingFile"
+   group="devices"
+   match="^Your (.+?) suddenly beeps quietly, indicating a new incoming file\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("device/lore/file")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="LoreTransLinkActivated"
+   group="devices"
+   match="^(.+?) beeps (quietly|twice in rapid succession), indicating that its TransLink tracking functionality has been activated(?:.+?)?\."
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   if "%2" == "quietly" then
+    mplay ("device/lore/beep")
+   else
+    mplay ("device/lore/unauthTrack")
+   end -- if
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="LoreTrackingDenied"
+   group="devices"
+   match="^Tracking authorization refused from LoreTech device &quot;.+?\.&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay ("device/lore/deny")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="LicenseCombatPointsInRange"
+   group="devices"
+   match="^You access .+ and note you have ([0-9,.]+) license points? and ([0-9,.]+) combat points?\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   -- Parse current point values
+   local license_pts = tonumber((string.gsub("%1", ",", "")))
+   local combat_pts = tonumber((string.gsub("%2", ",", "")))
+
+   -- Calculate differences
+   local license_diff = 0
+   local combat_diff = 0
+
+   local last_license = GetVariable("last_license_points")
+   if last_license then
+    local last_lp = tonumber(last_license)
+    if last_lp then
+     license_diff = license_pts - last_lp
+    end
+   end
+
+   local last_combat = GetVariable("last_combat_points")
+   if last_combat then
+    local last_cp = tonumber(last_combat)
+    if last_cp then
+     combat_diff = combat_pts - last_cp
+    end
+   end
+
+   -- Store current values for next time
+   SetVariable("last_license_points", tostring(license_pts))
+   SetVariable("last_combat_points", tostring(combat_pts))
+
+   -- Play sound
+   mplay("device/lore/track")
+
+   -- Build output with original text
+   local output = "%0"
+
+   -- Append difference if enabled and non-zero
+   if config:get_option("show_point_calculations").value == "yes" then
+    if license_diff ~= 0 or combat_diff ~= 0 then
+     output = output .. " " .. string.format("The difference since last check is %.1f license points and %.1f combat points.", license_diff, combat_diff)
+    end
+   end
+
+   print(output)
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="LicenseCombatPointsOutOfRange"
+   group="devices"
+   match="^You access.+ and note you had ([0-9,.]+) license points? and ([0-9,.]+) combat points?\. This information was current as of (.+?)\. No new information can be obtained until you return to communications range\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   -- Parse current point values (out-of-range)
+   local license_pts = tonumber((string.gsub("%1", ",", "")))
+   local combat_pts = tonumber((string.gsub("%2", ",", "")))
+
+   -- Calculate differences
+   local license_diff = 0
+   local combat_diff = 0
+
+   local last_license = GetVariable("last_license_points")
+   if last_license then
+    local last_lp = tonumber(last_license)
+    if last_lp then
+     license_diff = license_pts - last_lp
+    end
+   end
+
+   local last_combat = GetVariable("last_combat_points")
+   if last_combat then
+    local last_cp = tonumber(last_combat)
+    if last_cp then
+     combat_diff = combat_pts - last_cp
+    end
+   end
+
+   -- Store current values for next time
+   SetVariable("last_license_points", tostring(license_pts))
+   SetVariable("last_combat_points", tostring(combat_pts))
+
+   -- Play sound
+   mplay("device/lore/track")
+
+   -- Build output with original text
+   local output = "%0"
+
+   -- Append difference if enabled and non-zero
+   if config:get_option("show_point_calculations").value == "yes" then
+    if license_diff ~= 0 or combat_diff ~= 0 then
+     output = output .. " " .. string.format("The difference since last check is %.1f license points and %.1f combat points.", license_diff, combat_diff)
+    end
+   end
+
+   print(output)
+  </send>
+  </trigger>
+
 <trigger
    enabled="y"
    group="misc"

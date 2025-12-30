@@ -332,17 +332,6 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="computer"
-   match="^Several short bleeps emit from .+ Lore computer.+followed by .+\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay("device/lore/Print", "computer")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="computer"
    match="^There are no damaged components\.$"
    regexp="y"
    send_to="12"

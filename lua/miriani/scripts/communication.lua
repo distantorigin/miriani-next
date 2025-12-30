@@ -520,21 +520,6 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^A message board reader beeps quietly, indicating to you that there is a new message in (.+?)\. It was posted by (.+?) with the subject (.+?)\.$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-   sequence="100"
-  >
-  <send>
-   mplay ("device/newPost")
-   print_color({"New board post in %1. Posted by %2: Subject: ", "default"}, {"%3", "board"})
-   channel(name, "New board post in %1. Posted by %2: Subject: %3", {"board"})
-  </send>
-  </trigger>
-  <trigger
-   enabled="y"
-   group="comm"
    match="^You turn a .+? (on|off)\.$"
    regexp="y"
    send_to="12"
@@ -552,17 +537,6 @@ ImportXML([=[
    sequence="100"
   >
   <send>mplay ("comm/tune", "communication")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^You (?:re)?(activate|deactivate) .+?$"
-regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay ("device/%1", "communication")</send>
   </trigger>
 
   <trigger

@@ -274,93 +274,6 @@ endScan()</send>
   <trigger
    enabled="y"
    group="misc"
-   match="^(\(.+\)) (.+?)$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-  sequence="100"
-  >
-  <send>
-   -- Filter out context messages from AI
-   if string.sub("%1", 1, 9) == "(Context:" then
-     print("%0")
-     return
-   end
-   mplay ("device/camera")
-SetVariable("last_camera_line", "%2")
-     if config:get_option("internal_camera").value == "no" then
-    replicate_line("%2")
-   end -- if filtering camera
-   channel ("camera", "%0", {"camera"})
-</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   match="^\[From Outside\] (.+?)$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-   sequence="100"
-  >
-  <send>
-   mplay ("device/camera")
-   SetVariable("last_camera_line", "%2")
-if config:get_option("external_camera").value == "no" then
-    replicate_line("%1")
-   end -- if
-   channel("camera", "%0", {"camera"})
-     </send>
-  </trigger>
-
-<trigger
-   enabled="y"
-   group="misc"
-   match="^A small handheld radio receiver beeps twice, indicating the detection of a radio transmission\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay ("device/radio/detect")</send>
-  </trigger>
-<trigger
-   enabled="y"
-   group="misc"
-   match="^.+? plugs? a small handheld radio receiver into a console.(?: It beeps in confirmation and begins recording\.)?$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay ("device/radio/connect")</send>
-  </trigger>
-<trigger
-   enabled="y"
-   group="misc"
-   match="^A small handheld radio receiver gives a series of beeps and automatically unplugs from the console\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay ("device/radio/disconnect")</send>
-  </trigger>
-<trigger
-   enabled="y"
-   group="misc"
-   match="^From your droid's camera, you see[.]{3}$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-   cameraFeed = true
-   mplay ("device/camera")
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
    match="^(I don't understand that|You should stand up first)\.$"
    regexp="y"
    send_to="12"
@@ -561,28 +474,6 @@ if config:get_option("external_camera").value == "no" then
    sequence="100"
   >
   <send>mplay("misc/cash")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   match="^(?:\w+ the droid|An internal stun turret) suddenly (?:slumps|begins) (?:over|to) (?:as \w+ mechanical systems begin to shut|power) down\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay("device/shutdown")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   match="^(?:\w+ the droid|An internal stun turret) suddenly powers back up\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay("device/powerUp")</send>
   </trigger>
 
   <trigger
@@ -1018,16 +909,6 @@ if config:get_option("external_camera").value == "no" then
   <trigger
    enabled="y"
    group="misc"
-   match="^.+? takes? a snapshot of .+?\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>mplay("device/snapshot")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
    match="^A .*?message board reader .*?beeps urgently, notifying you that there (?:are|is a) new messages? in .+?\.$"
    regexp="y"
    send_to="12"
@@ -1350,20 +1231,6 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    send_to="12"
   >
   <send>mplay("misc/strange")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   script="gagline"
-   match="^You activate .+? planetary surveyor and begin scanning the area\.$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-  >
-  <send>
-   mplay("device/surveyer")
-  </send>
   </trigger>
 
   <trigger

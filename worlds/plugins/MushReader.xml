@@ -62,6 +62,24 @@ end
   </alias>
 
   <alias
+   match="tts_disable_silent"
+   enabled="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>tts_enabled = false</send>
+  </alias>
+
+  <alias
+   match="tts_enable_silent"
+   enabled="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>tts_enabled = true</send>
+  </alias>
+
+  <alias
    script="TTSToggle"
    match="tts"
    enabled="y"

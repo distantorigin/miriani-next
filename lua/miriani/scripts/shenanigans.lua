@@ -239,7 +239,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
-   match="After a few seconds, a faint thud can be heard, and .+ falls into the retrieval slot at the bottom of a spiderweb-covered pyramidal machine\.$"
+   Match="^After a few seconds, a faint thud can be heard, and .+ falls into the retrieval slot at the bottom of a spiderweb-covered pyramidal machine\.(?: [A-Z][^.]{1,80}\.)?$
    regexp="y"
    send_to="12"
    sequence="100"

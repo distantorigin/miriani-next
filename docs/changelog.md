@@ -8,6 +8,8 @@
 - Added pimpslap and new hoot sounds.
 - Added new squeak sound.
 - Changed the wording on the intro message slightly in regard to watching development.
+- Add Do not Disturb (DND) mode, which will disable all incoming sounds and speech. Toggle by typing 'dnd' or pressing CTRL+D.
+- Add Wake on Red (conf gen wake) which will automatically turn off DND mode if the ship goes to red alert.
 
 ## Version 4.0.16
 ### New

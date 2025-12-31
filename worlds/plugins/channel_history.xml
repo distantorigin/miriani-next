@@ -696,7 +696,7 @@ function load_memory_windows()
 
     -- Load most recent N messages
     local stmt = db:prepare([[
-      SELECT msg_id, message, timestamp
+      SELECT msg_id, message, timestamp, created_at
       FROM channel_messages
       WHERE category = ?
       ORDER BY msg_id DESC
@@ -709,7 +709,7 @@ function load_memory_windows()
       local row = stmt:get_named_values()
       table.insert(temp, {
         message = row.message,
-        time = row.timestamp,
+        time = utils.timer() - (os.time() - row.created_at),
         msg_id = row.msg_id
       })
     end
@@ -807,7 +807,7 @@ function lazy_load_older_messages(cat, requested_count)
   local success, older_messages = pcall(function()
     local msgs = {}
     local stmt = db:prepare([[
-      SELECT msg_id, message, timestamp
+      SELECT msg_id, message, timestamp, created_at
       FROM channel_messages
       WHERE category = ? AND msg_id < ?
       ORDER BY msg_id DESC
@@ -819,7 +819,7 @@ function lazy_load_older_messages(cat, requested_count)
       local row = stmt:get_named_values()
       table.insert(msgs, {
         message = row.message,
-        time = row.timestamp,
+        time = utils.timer() - (os.time() - row.created_at),
         msg_id = row.msg_id
       })
     end

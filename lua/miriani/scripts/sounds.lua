@@ -1027,32 +1027,15 @@ function toggle_dnd()
   local was_enabled = config:is_dnd()
 
   if was_enabled then
-    -- Disabling DND: unmute first, then announce
     config:toggle_dnd()
-    -- Re-enable TTS if it was disabled by DND
-    if not tts_enabled then
-      Execute("tts")
-    end
-    mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
-    Execute("tts_interrupt Do Not Disturb disabled")
+    Execute("tts_enable_silent")
+    notify("info", "Do Not Disturb disabled")
   else
-    -- Enabling DND: play click, announce, then stop everything
-    mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
-    Execute("tts_interrupt Do Not Disturb enabled")
-
+    notify("info", "Do Not Disturb enabled")
     config:toggle_dnd()
-
-    -- Stop all currently playing sounds
     stop()
-
-    -- Disable TTS if it's currently enabled
-    if tts_enabled then
-      Execute("tts")
-    end
+    Execute("tts_disable_silent")
   end
-
-  local status = config:is_dnd() and "enabled" or "disabled"
-  notify("info", "Do Not Disturb " .. status)
 end
 
 function pause_group(group)

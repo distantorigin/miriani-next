@@ -1,15 +1,8 @@
--- Auto-disable DND when ship goes to red alert
 local function check_red_alert_autowake()
   if config and config:is_dnd() and config:get_option("dnd_wake_on_red").value == "yes" then
     config:set_dnd(false)
-
-    -- Re-enable TTS if it was disabled by DND
-    if not tts_enabled then
-      Execute("tts")
-    end
-
-    Execute("tts_interrupt Do Not Disturb auto-disabled due to red alert")
-    notify("important", "DND auto-disabled: Red alert!")
+    Execute("tts_enable_silent")
+    notify("important", "Do Not Disturb auto-disabled: Red alert!")
   end
 end
 

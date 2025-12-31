@@ -351,14 +351,14 @@ ImportXML([=[
    enabled="y"
    name="InternalCamera"
    group="devices"
-   match="^(\(.+\)) (.+?)$"
+   match="^(\(.+)\) (.+)$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
   <send>
-   -- Filter out context messages from AI
+   -- Filter out context messages from spellcheck
    if string.sub("%1", 1, 9) == "(Context:" then
      print("%0")
      return

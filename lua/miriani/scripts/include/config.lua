@@ -606,6 +606,24 @@ function Config:toggle_mute()
   return not self.master_mute  -- Return true if now unmuted, false if now muted
 end -- toggle_mute
 
+function Config:is_dnd()
+  return self:get_option("dnd_mode").value == "yes"
+end -- is_dnd
+
+function Config:toggle_dnd()
+  local current = self:get_option("dnd_mode").value
+  local new_value = (current == "yes") and "no" or "yes"
+  self:set_option("dnd_mode", new_value)
+  self:save()
+  return new_value == "yes"  -- Return true if DND is now enabled
+end -- toggle_dnd
+
+function Config:set_dnd(enabled)
+  local value = enabled and "yes" or "no"
+  self:set_option("dnd_mode", value)
+  self:save()
+end -- set_dnd
+
 function Config:get_version()
   return self.consts.pack.VERSION or self.consts.error.UNKNOWN
 end -- get_version

@@ -362,6 +362,34 @@ show_paralyzed(roundtime, stuntime)
 
   <alias
    enabled="y"
+   name="dnd_alias"
+   match="^dnd(?: (on|off))?$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>
+    if "%1" == "on" then
+      if not config:is_dnd() then
+        toggle_dnd()
+      else
+        Execute("tts_interrupt Do Not Disturb already enabled")
+        notify("info", "Do Not Disturb already enabled")
+      end
+    elseif "%1" == "off" then
+      if config:is_dnd() then
+        toggle_dnd()
+      else
+        Execute("tts_interrupt Do Not Disturb already disabled")
+        notify("info", "Do Not Disturb already disabled")
+      end
+    else
+      toggle_dnd()
+    end
+  </send>
+  </alias>
+
+  <alias
+   enabled="y"
    match="^sim (.+)$"
    regexp="y"
    send_to="12"
@@ -475,6 +503,7 @@ AcceleratorTo("CTRL + F9", [[
   mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
   config:save()
 ]], script)
+AcceleratorTo("CTRL+D", 'toggle_dnd()', script)
 AcceleratorTo("F11", 'decrease_attribute("volume")', script)
 AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
@@ -1258,6 +1287,11 @@ function open_url()
 end -- open_url
 
 function mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
+  -- DND mode: Block all sounds when Do Not Disturb is enabled
+  if config and config:is_dnd() then
+    return
+  end
+
   if group == "babies" and originating_from_emote() then
     return
   end

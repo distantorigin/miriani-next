@@ -88,7 +88,7 @@ endScan()</send>
    elseif "%1" ~= "You" then
     -- others move around you.
     print("%0")
-    playstep ()
+    playstep ("%0")
    else
     -- Your movement will be picked up by room_title
     -- But still print it!

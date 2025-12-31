@@ -1373,9 +1373,15 @@ function set_environment(name, line, wc)
   ambiance(wc[#wc])
 end -- set_environment
 
-function playstep()
+function playstep(name, line, wildcards)
+  local check_line = line or name
 
   if (not foundstep) or (not environment) or (not room) then
+    return 0
+  end -- if
+
+  if check_line and originating_from_camera(check_line) then
+    foundstep = false
     return 0
   end -- if
 

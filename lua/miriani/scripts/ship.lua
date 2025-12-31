@@ -1,4 +1,4 @@
-local function check_red_alert_autowake()
+function check_red_alert_autowake()
   if config and config:is_dnd() and config:get_option("dnd_wake_on_red").value == "yes" then
     config:set_dnd(false)
     Execute("tts_enable_silent")

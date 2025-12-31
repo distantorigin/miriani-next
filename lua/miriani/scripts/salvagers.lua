@@ -217,18 +217,6 @@ script = "gagline"
   <trigger
    enabled="y"
    group="vehicle"
-   script="gagline"
-   match="^The vehicle shudders violently as it makes contact with the topmost gas clouds\. .+?\.$"
-   regexp="y"
-   send_to="14"
-   omit_from_output="y"
-  >
-  <send>mplay("vehicle/contact", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
    match="^A gust of atmospheric wind suddenly buffets the ship.+?\.$"
    regexp="y"
    send_to="12"

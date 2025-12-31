@@ -32,6 +32,8 @@ local namespace = {
   "starmap_scan", -- starmap and scan routines
   "communication", -- Communication
   "vehicles", -- vehicles
+  "salvagers", -- atmospheric salvagers
+  "ACV", -- atmospheric combat vehicle
   "archaeology", -- archaeology
   "hauling", -- asteroid hauling
   "asteroid_mining", -- Asteroid mining.

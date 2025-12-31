@@ -26,17 +26,6 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="vehicle"
-   match="^You carefully pilot the vehicle into a small chamber above the docking bay\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>mplay("vehicle/drive", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
    match="^You are suddenly pressed against your seat as the vehicle is catapulted out of the docking bay( and into space. With a rapid jerk, the vehicle begins accelerating into the planet's atmosphere)?\.$"
    regexp="y"
    send_to="12"
@@ -85,61 +74,6 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="vehicle"
-   match="^A gust of atmospheric wind suddenly buffets the ship.+?\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>mplay("vehicle/wind", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
-   match="^The vehicle suddenly hits a pocket of fierce wind.+?\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>mplay("vehicle/wind", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
-   script="gagline"
-   match="^You are thrown back against your seat as the craft hits an air pocket in the atmosphere and then breaks free\.$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-   sequence="100"
-  >
-  <send>mplay("vehicle/wind", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
-   match="^A sudden instability in the layer of gasses around the ship causes it to rapidly sink deeper into the atmosphere\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>mplay("vehicle/wind", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
-   script="gagline"
-   match="^The vehicle shudders violently as it makes contact with the topmost gas clouds\. .+?\.$"
-   regexp="y"
-   send_to="14"
-   omit_from_output="y"
-  >
-  <send>mplay("vehicle/contact", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
    match="^Without any warning sign, the ship tilts over and the engine section is quickly detached through a short series of explosions just behind the cockpit, giving what remains a great upwards speed\.$"
    regexp="y"
    send_to="12"
@@ -155,35 +89,6 @@ ImportXML([=[
    send_to="12"
   >
   <send>mplay("vehicle/salvageExplode", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="vehicle"
-   match="^The vehicle manages to break free from the pocket of wind and stabilize its course\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>mplay("vehicle/decelerate", "vehicle")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="ship"
-   match="^You flip a conveniently placed switch, powering (down|up) the vehicle's (?:active|dormant) systems\.$"
-   regexp="y"
-   omit_from_output="y"
-   send_to="14"
-   sequence="100"
-  >
-  <send>
-   mplay ("vehicle/togglePower", "vehicle")
-   if config:get_option("background_ambiance").value == "yes"
-   and environment then
-     replicate_line(
-     "%1" == "up" and string.gsub(environment.line, "unpowered", "powered") or string.gsub(environment.line, "powered", "unpowered"))
-   end -- if
-  </send>
   </trigger>
 
 </triggers>

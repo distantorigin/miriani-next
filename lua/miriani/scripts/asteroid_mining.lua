@@ -227,6 +227,35 @@ ImportXML([=[
   <send>mplay("activity/asteroid/manufacturingComplete")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^You carefully pilot the vehicle into a small chamber above the docking bay\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("vehicle/drive", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^You flip a conveniently placed switch, powering (down|up) the vehicle's (?:active|dormant) systems\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   mplay ("vehicle/togglePower", "vehicle")
+   if config:get_option("background_ambiance").value == "yes"
+   and environment then
+     replicate_line(
+     "%1" == "up" and string.gsub(environment.line, "unpowered", "powered") or string.gsub(environment.line, "powered", "unpowered"))
+   end -- if
+  </send>
+  </trigger>
 
 </triggers>
 ]=])

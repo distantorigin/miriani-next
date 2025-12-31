@@ -213,5 +213,71 @@ script = "gagline"
    sequence="100"
    >
   </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^The vehicle shudders violently as it makes contact with the topmost gas clouds\. .+?\.$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+  >
+  <send>mplay("vehicle/contact", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^A gust of atmospheric wind suddenly buffets the ship.+?\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("vehicle/wind", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^The vehicle suddenly hits a pocket of fierce wind.+?\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("vehicle/wind", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   script="gagline"
+   match="^You are thrown back against your seat as the craft hits an air pocket in the atmosphere and then breaks free\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("vehicle/wind", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^A sudden instability in the layer of gasses around the ship causes it to rapidly sink deeper into the atmosphere\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("vehicle/wind", "vehicle")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="vehicle"
+   match="^The vehicle manages to break free from the pocket of wind and stabilize its course\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("vehicle/decelerate", "vehicle")</send>
+  </trigger>
+
 </triggers>
 ]=])

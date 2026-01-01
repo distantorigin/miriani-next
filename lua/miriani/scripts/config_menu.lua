@@ -3,6 +3,30 @@
 
 local config_menu = {}
 
+-- Sounds that support variants (used in show_group and find_and_edit)
+local variant_sounds = {
+  {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
+  {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
+  {path = "miriani/vehicle/accelerate.ogg", name = "Vehicle Accelerate (Salvagers and ACVs)", default = 1},
+  {path = "miriani/vehicle/decelerate.ogg", name = "Vehicle Decelerate (Salvagers and ACVs)", default = 1},
+  {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
+  {path = "miriani/misc/jingleBell.ogg", name = "Jingle Bells", default = 1}
+}
+
+-- Special groups that have no regular options
+local special_groups = {"audio groups", "sound variants"}
+
+-- Social sound category keys
+local social_categories = {"socials_laughter", "socials_distress", "socials_reflex", "socials_bodily", "socials_physical", "socials_novelty"}
+
+-- Known option groups for exact matching
+local known_groups = {
+  "general", "auto_login", "ship", "room", "helpers", "screen reader",
+  "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
+  "socials_bodily", "socials_physical", "socials_novelty", "scan_formats",
+  "buffers", "colors", "developer"
+}
+
 -- Helper function to strip trailing punctuation from option descriptions
 local function strip_trailing_punctuation(text)
   return text:gsub("[%.,:;!?]+%s*$", "")
@@ -89,16 +113,9 @@ function config_menu.show_group(group_name)
 
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
-  local special_groups = {"audio groups", "sound variants"}
 
   -- First check if it's an exact match for a known group
   local matched_exact = false
-  local known_groups = {
-    "general", "auto_login", "ship", "room", "helpers", "screen reader",
-    "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
-    "socials_bodily", "socials_physical", "socials_novelty", "scan_formats",
-    "buffers", "colors", "developer"
-  }
   for _, known in ipairs(known_groups) do
     if string.lower(known) == string.lower(group_name) then
       actual_group_key = known
@@ -118,26 +135,22 @@ function config_menu.show_group(group_name)
     end
   end
 
-  -- If still not matched, try to find a matching regular group from options
+  -- If still not matched, try to find a matching group from options (exact first, then partial)
   if not matched_exact then
-    -- First try exact match (case-insensitive)
-    local found_exact = false
+    local partial_match = nil
     for key, option in pairs(config.options or {}) do
-      if string.lower(option.group) == string.lower(group_name) then
+      local group_lower = string.lower(option.group)
+      local name_lower = string.lower(group_name)
+      if group_lower == name_lower then
         actual_group_key = option.group
-        found_exact = true
+        matched_exact = true
         break
+      elseif not partial_match and string.find(group_lower, name_lower) then
+        partial_match = option.group
       end
     end
-
-    -- If no exact match, try partial match
-    if not found_exact then
-      for key, option in pairs(config.options or {}) do
-        if string.find(string.lower(option.group), string.lower(group_name)) then
-          actual_group_key = option.group
-          break
-        end
-      end
+    if not matched_exact and partial_match then
+      actual_group_key = partial_match
     end
   end
 
@@ -148,40 +161,30 @@ function config_menu.show_group(group_name)
   end
 
   if actual_group_key == "socials" then
-    -- Special handling for socials menu - show options AND subcategory links
-    -- First get the regular options for this group
-    local socials_options = config:render_menu_list("socials")
-    if type(socials_options) == 'table' then
-      for key, value in pairs(socials_options) do
-        secondary_menu[key] = value
-      end
+    -- Special handling for socials menu - show master toggle AND subcategory links
+    -- Only include the master toggle, not category toggles (those go in their submenus)
+    if config:is_option("social_sounds") then
+      local master = config:get_option("social_sounds")
+      local status = master.value == "yes" and "[On]" or "[Off]"
+      secondary_menu["social_sounds"] = string.format("%s %s", master.descr, status)
     end
 
-    -- Add links to subcategory menus
+    -- Add links to subcategory menus (All sounds is last)
     local subcategories = {
-      {key = "socials_all", title = "All sounds"},
       {key = "socials_laughter", title = "Laughter"},
       {key = "socials_distress", title = "Distress"},
       {key = "socials_reflex", title = "Reflex"},
       {key = "socials_bodily", title = "Bodily"},
       {key = "socials_physical", title = "Physical"},
       {key = "socials_novelty", title = "Novelty"},
+      {key = "socials_all", title = "All sounds"},
     }
-    for _, subcat in ipairs(subcategories) do
-      secondary_menu["_submenu_" .. subcat.key] = subcat.title
+    for i, subcat in ipairs(subcategories) do
+      -- Use numeric prefix in key to preserve order (submenu links sort after options)
+      secondary_menu["~" .. string.format("%02d", i) .. "_submenu_" .. subcat.key] = subcat.title
     end
 
   elseif actual_group_key == "sound variants" then
-    -- Predefined list of sounds that support variants with their defaults
-    local variant_sounds = {
-      {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
-      {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
-      {path = "miriani/vehicle/accelerate.ogg", name = "Vehicle Accelerate (Salvagers and ACVs)", default = 1},
-   {path = "miriani/vehicle/decelerate.ogg", name = "Vehicle Decelerate (Salvagers and ACVs)", default = 1},
-   {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
-   {path = "miriani/misc/jingleBell.ogg", name = "Jingle Bells", default = 1}
-    }
-
     for _, sound in ipairs(variant_sounds) do
       local sound_key = "_sound_variant_" .. sound.path:gsub("/", "_"):gsub("%.", "_")
       local preference = get_variant_preference(sound.path)
@@ -197,8 +200,7 @@ function config_menu.show_group(group_name)
     end
   elseif actual_group_key == "socials_all" then
     -- Special handling for "All sounds" - show all individual social toggles from all categories
-    local all_social_groups = {"socials_laughter", "socials_distress", "socials_reflex", "socials_bodily", "socials_physical", "socials_novelty"}
-    for _, group_key in ipairs(all_social_groups) do
+    for _, group_key in ipairs(social_categories) do
       local category_options = config:render_menu_list(group_key)
       if type(category_options) == 'table' then
         for key, value in pairs(category_options) do
@@ -279,13 +281,13 @@ function config_menu.show_group(group_name)
   end
 
   dialog.menu({
-    title = string.format("%s", group_title),
+    title = group_title,
     choices = choices,
     callback = function(result, reason)
       if result then
         if result.key == "0" then
-          -- If we're in a socials subcategory or "all", go back to socials menu
-          if actual_group_key:match("^socials_") or actual_group_key == "socials_all" then
+          -- If we're in a socials subcategory, go back to socials menu
+          if actual_group_key:match("^socials_") then
             config_menu.show_group("socials")
           else
             config_menu.show_main()
@@ -300,7 +302,7 @@ function config_menu.show_group(group_name)
       else
         -- Aborted or cancelled - save config
         config:save()
-              end
+      end
     end
   })
 end
@@ -308,8 +310,8 @@ end
 -- Edit a specific option
 function config_menu.edit_option(option_key, group_name)
   -- Special handling for socials submenu navigation
-  if option_key:match("^_submenu_socials_") then
-    local subgroup = option_key:match("^_submenu_(.+)$")
+  if option_key:match("_submenu_socials_") then
+    local subgroup = option_key:match("_submenu_(socials_.+)$")
     if subgroup then
       config_menu.show_group(subgroup)
       return
@@ -542,38 +544,44 @@ end
 function config_menu.find_and_edit(group_name, search_term)
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
-  local special_groups = {"audio groups", "sound variants"}
 
-  -- First check if it's a partial match for special groups
-  local matched_special = false
-  for _, special_group in ipairs(special_groups) do
-    if string.find(string.lower(special_group), string.lower(group_name)) then
-      actual_group_key = special_group
-      matched_special = true
+  -- First check if it's an exact match for a known group
+  local matched_exact = false
+  for _, known in ipairs(known_groups) do
+    if string.lower(known) == string.lower(group_name) then
+      actual_group_key = known
+      matched_exact = true
       break
     end
   end
 
-  -- If not a special group, try to find a matching regular group
-  if not matched_special then
-    -- First try exact match (case-insensitive)
-    local found_exact = false
-    for key, option in pairs(config.options or {}) do
-      if string.lower(option.group) == string.lower(group_name) then
-        actual_group_key = option.group
-        found_exact = true
+  -- If not an exact match, check special groups
+  if not matched_exact then
+    for _, special_group in ipairs(special_groups) do
+      if string.find(string.lower(special_group), string.lower(group_name)) then
+        actual_group_key = special_group
+        matched_exact = true
         break
       end
     end
+  end
 
-    -- If no exact match, try partial match
-    if not found_exact then
-      for key, option in pairs(config.options or {}) do
-        if string.find(string.lower(option.group), string.lower(group_name)) then
-          actual_group_key = option.group
-          break
-        end
+  -- If still not matched, try to find a matching group from options (exact first, then partial)
+  if not matched_exact then
+    local partial_match = nil
+    for key, option in pairs(config.options or {}) do
+      local group_lower = string.lower(option.group)
+      local name_lower = string.lower(group_name)
+      if group_lower == name_lower then
+        actual_group_key = option.group
+        matched_exact = true
+        break
+      elseif not partial_match and string.find(group_lower, name_lower) then
+        partial_match = option.group
       end
+    end
+    if not matched_exact and partial_match then
+      actual_group_key = partial_match
     end
   end
 
@@ -610,16 +618,6 @@ function config_menu.find_and_edit(group_name, search_term)
 
   -- Special handling for sound variants
   if actual_group_key == "sound variants" then
-    -- Predefined list of sounds that support variants
-    local variant_sounds = {
-      {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
-      {path = "miriani/ship/move/decelerate.ogg", name = "Ship Decelerate", default = 3},
-      {path = "miriani/vehicle/accelerate.ogg", name = "Vehicle Accelerate (Salvagers and ACVs)", default = 1},
-      {path = "miriani/vehicle/decelerate.ogg", name = "Vehicle Decelerate (Salvagers and ACVs)", default = 1},
-      {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
-      {path = "miriani/misc/jingleBell.ogg", name = "Jingle Bells", default = 1}
-    }
-
     -- Try numeric index first
     local index = tonumber(search_term)
     if index and index >= 1 and index <= #variant_sounds then

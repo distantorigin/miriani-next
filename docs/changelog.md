@@ -13,6 +13,8 @@
 - Add a sound for GMU detecting stars.
 - Add more LRScan sounds from the VIP Mud scripts
 - Add salvagre power low and salvager power critical sounds.
+- Boosted volume on low and critical salvager alerts.
+- Added dedicated planetary survey start and complete sounds.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

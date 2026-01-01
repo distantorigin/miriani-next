@@ -15,6 +15,7 @@
 - Add salvagre power low and salvager power critical sounds.
 - Boosted volume on low and critical salvager alerts.
 - Added dedicated planetary survey start and complete sounds.
+- Added sounds for please social.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

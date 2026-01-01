@@ -11,6 +11,8 @@
 - Add Do not Disturb (DND) mode, which will disable all incoming sounds and speech. Toggle by typing 'dnd' or pressing CTRL+D.
 - Add Wake on Red (conf gen wake) which will automatically turn off DND mode if the ship goes to red alert.
 - Add a sound for GMU detecting stars.
+- Add more LRScan sounds from the VIP Mud scripts
+- Add salvagre power low and salvager power critical sounds.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

@@ -112,7 +112,7 @@ computer_actions_wildcard = {
     func = function(match1)
       if string.find(string.lower(match1), "artifact") then mplay("ship/computer/artifact", "notification") end
       if string.find(match1, "planet") then mplay("ship/computer/planet", "notification") end
-      if string.find(match1, "starship") or string.find(match1, "furner") then mplay("ship/computer/starship", "notification") end
+      if string.find(match1, "starship") or string.find(match1, "furner") or string.find(match1, "sleigh") then mplay("ship/computer/starship", "notification") end
       if string.find(match1, "space station") then mplay("ship/computer/station", "notification") end
       if string.find(match1, "anomaly") then
         if not anomaly_found then
@@ -123,6 +123,7 @@ computer_actions_wildcard = {
       end
       if string.find(match1, "wormhole") then mplay("ship/computer/wormhole", "notification") end
       if string.find(match1, "long%-range communication beacon") then mplay("ship/computer/beacon", "notification") end
+	  if string.find(match1, " star ") then mplay("ship/computer/star", "notification") end
     end
   },
   ["Bardenium Cannons? (.+) locked on (.+)%. Firing%."] = {

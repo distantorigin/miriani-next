@@ -10,6 +10,7 @@
 - Changed the wording on the intro message slightly in regard to watching development.
 - Add Do not Disturb (DND) mode, which will disable all incoming sounds and speech. Toggle by typing 'dnd' or pressing CTRL+D.
 - Add Wake on Red (conf gen wake) which will automatically turn off DND mode if the ship goes to red alert.
+- Add a sound for GMU detecting stars.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

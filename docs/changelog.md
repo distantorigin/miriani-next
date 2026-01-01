@@ -16,6 +16,7 @@
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".
+- Fix metafrequency labels to not break when other non-word symbols were added, such as hyphens or parentheses.
 
 ## Version 4.0.16
 ### New

@@ -333,13 +333,14 @@ function playsocial(name, line, wildcards)
   local action = wildcards[1]
   local gender = wildcards[2]
 
-  notify("important", "Hook received: " .. action .. " | " .. gender)
+  -- Use the socials module to handle sound playback
+  local socials = require("lua/miriani/scripts/socials")
 
-  pending_targeted_message = {
-    action = action,
-    actor = "You",
-    timestamp = os.time()
-  }
+  -- Set pending target for targeted socials (poke, nudge, etc.)
+  socials.set_pending_target(action, "You")
+
+  -- Play the social sound
+  socials.play_social(action, gender, false)
 end
 
 last_emote_time = 0

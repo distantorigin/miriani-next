@@ -33,6 +33,17 @@ function config_menu.show_main()
     end
   end
 
+  -- Filter out socials subcategory groups (they appear under "Social Sounds" menu instead)
+  local filtered_menu = {}
+  for _, title in ipairs(main_menu) do
+    local group_key = config:get_group_key_from_title(title)
+    -- Only include if it's not a socials subcategory (socials_laughter, socials_distress, etc.)
+    if not (group_key and group_key:match("^socials_")) then
+      table.insert(filtered_menu, title)
+    end
+  end
+  main_menu = filtered_menu
+
   -- Custom sort based on group order metadata
   table.sort(main_menu, function(a, b)
     -- Get group keys from titles
@@ -102,7 +113,30 @@ function config_menu.show_group(group_name)
 
   local group_title = config:get_group_title(actual_group_key)
 
-  if actual_group_key == "sound variants" then
+  if actual_group_key == "socials" then
+    -- Special handling for socials menu - show options AND subcategory links
+    -- First get the regular options for this group
+    local socials_options = config:render_menu_list("socials")
+    if type(socials_options) == 'table' then
+      for key, value in pairs(socials_options) do
+        secondary_menu[key] = value
+      end
+    end
+
+    -- Add links to subcategory menus
+    local subcategories = {
+      {key = "socials_laughter", title = ">> Laughter sounds..."},
+      {key = "socials_distress", title = ">> Distress sounds..."},
+      {key = "socials_reflex", title = ">> Reflex sounds..."},
+      {key = "socials_bodily", title = ">> Bodily sounds..."},
+      {key = "socials_physical", title = ">> Physical sounds..."},
+      {key = "socials_novelty", title = ">> Novelty sounds..."},
+    }
+    for _, subcat in ipairs(subcategories) do
+      secondary_menu["_submenu_" .. subcat.key] = subcat.title
+    end
+
+  elseif actual_group_key == "sound variants" then
     -- Predefined list of sounds that support variants with their defaults
     local variant_sounds = {
       {path = "miriani/ship/move/accelerate.ogg", name = "Ship Accelerate", default = 3},
@@ -126,6 +160,26 @@ function config_menu.show_group(group_name)
 
       secondary_menu[sound_key] = string.format("%s [%s]", sound.name, status)
     end
+  elseif actual_group_key:match("^socials_") then
+    -- Special handling for socials subcategory menus - include category toggle at the top
+    local category_name = actual_group_key:match("^socials_(.+)$")
+    local category_toggle_key = "social_cat_" .. category_name
+
+    -- Add the category toggle first
+    if config:is_option(category_toggle_key) then
+      local cat_option = config:get_option(category_toggle_key)
+      local status = cat_option.value == "yes" and "[On]" or "[Off]"
+      secondary_menu[category_toggle_key] = string.format("** %s %s", cat_option.descr, status)
+    end
+
+    -- Then add all individual socials for this category
+    local category_options = config:render_menu_list(actual_group_key)
+    if type(category_options) == 'table' then
+      for key, value in pairs(category_options) do
+        secondary_menu[key] = value
+      end
+    end
+
   elseif actual_group_key == "audio groups" then
     -- Get all discovered sound groups
     local groups = get_all_sound_groups()
@@ -183,7 +237,12 @@ function config_menu.show_group(group_name)
     callback = function(result, reason)
       if result then
         if result.key == "0" then
-          config_menu.show_main()
+          -- If we're in a socials subcategory, go back to socials menu
+          if actual_group_key:match("^socials_") then
+            config_menu.show_group("socials")
+          else
+            config_menu.show_main()
+          end
         else
           -- Look up the actual option key from our mapping
           local option_key = key_map[result.key]
@@ -201,6 +260,15 @@ end
 
 -- Edit a specific option
 function config_menu.edit_option(option_key, group_name)
+  -- Special handling for socials submenu navigation
+  if option_key:match("^_submenu_socials_") then
+    local subgroup = option_key:match("^_submenu_(.+)$")
+    if subgroup then
+      config_menu.show_group(subgroup)
+      return
+    end
+  end
+
   -- Special handling for sound variants
   if option_key:match("^_sound_variant_") then
     local sound_path = option_key:match("^_sound_variant_(.+)$"):gsub("_", "/"):gsub("/ogg$", ".ogg")

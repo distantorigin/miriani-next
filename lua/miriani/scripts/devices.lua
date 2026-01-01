@@ -489,7 +489,22 @@ if config:get_option("external_camera").value == "no" then
    send_to="14"
   >
   <send>
-   mplay("device/surveyer")
+   mplay("device/surveyStart")
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="PlanetarySurveyor"
+   group="devices"
+   script="gagline"
+   match="^A .+? planetary surveyor indicates that the scan was successful\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+  >
+  <send>
+   mplay("device/surveyComplete")
   </send>
   </trigger>
 

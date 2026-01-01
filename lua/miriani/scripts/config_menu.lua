@@ -91,18 +91,35 @@ function config_menu.show_group(group_name)
   local actual_group_key = group_name
   local special_groups = {"audio groups", "sound variants"}
 
-  -- First check if it's a partial match for special groups
-  local matched_special = false
-  for _, special_group in ipairs(special_groups) do
-    if string.find(string.lower(special_group), string.lower(group_name)) then
-      actual_group_key = special_group
-      matched_special = true
+  -- First check if it's an exact match for a known group
+  local matched_exact = false
+  local known_groups = {
+    "general", "auto_login", "ship", "room", "helpers", "screen reader",
+    "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
+    "socials_bodily", "socials_physical", "socials_novelty", "scan_formats",
+    "buffers", "colors", "developer"
+  }
+  for _, known in ipairs(known_groups) do
+    if string.lower(known) == string.lower(group_name) then
+      actual_group_key = known
+      matched_exact = true
       break
     end
   end
 
-  -- If not a special group, try to find a matching regular group
-  if not matched_special then
+  -- If not an exact match, check special groups
+  if not matched_exact then
+    for _, special_group in ipairs(special_groups) do
+      if string.find(string.lower(special_group), string.lower(group_name)) then
+        actual_group_key = special_group
+        matched_exact = true
+        break
+      end
+    end
+  end
+
+  -- If still not matched, try to find a matching regular group from options
+  if not matched_exact then
     -- First try exact match (case-insensitive)
     local found_exact = false
     for key, option in pairs(config.options or {}) do
@@ -125,6 +142,10 @@ function config_menu.show_group(group_name)
   end
 
   local group_title = config:get_group_title(actual_group_key)
+  -- Override title for virtual socials_all group
+  if actual_group_key == "socials_all" then
+    group_title = "All Sounds"
+  end
 
   if actual_group_key == "socials" then
     -- Special handling for socials menu - show options AND subcategory links
@@ -138,12 +159,13 @@ function config_menu.show_group(group_name)
 
     -- Add links to subcategory menus
     local subcategories = {
-      {key = "socials_laughter", title = ">> Laughter sounds..."},
-      {key = "socials_distress", title = ">> Distress sounds..."},
-      {key = "socials_reflex", title = ">> Reflex sounds..."},
-      {key = "socials_bodily", title = ">> Bodily sounds..."},
-      {key = "socials_physical", title = ">> Physical sounds..."},
-      {key = "socials_novelty", title = ">> Novelty sounds..."},
+      {key = "socials_all", title = "All sounds"},
+      {key = "socials_laughter", title = "Laughter"},
+      {key = "socials_distress", title = "Distress"},
+      {key = "socials_reflex", title = "Reflex"},
+      {key = "socials_bodily", title = "Bodily"},
+      {key = "socials_physical", title = "Physical"},
+      {key = "socials_novelty", title = "Novelty"},
     }
     for _, subcat in ipairs(subcategories) do
       secondary_menu["_submenu_" .. subcat.key] = subcat.title
@@ -173,6 +195,18 @@ function config_menu.show_group(group_name)
 
       secondary_menu[sound_key] = string.format("%s [%s]", sound.name, status)
     end
+  elseif actual_group_key == "socials_all" then
+    -- Special handling for "All sounds" - show all individual social toggles from all categories
+    local all_social_groups = {"socials_laughter", "socials_distress", "socials_reflex", "socials_bodily", "socials_physical", "socials_novelty"}
+    for _, group_key in ipairs(all_social_groups) do
+      local category_options = config:render_menu_list(group_key)
+      if type(category_options) == 'table' then
+        for key, value in pairs(category_options) do
+          secondary_menu[key] = value
+        end
+      end
+    end
+
   elseif actual_group_key:match("^socials_") then
     -- Special handling for socials subcategory menus - include category toggle at the top
     local category_name = actual_group_key:match("^socials_(.+)$")
@@ -250,8 +284,8 @@ function config_menu.show_group(group_name)
     callback = function(result, reason)
       if result then
         if result.key == "0" then
-          -- If we're in a socials subcategory, go back to socials menu
-          if actual_group_key:match("^socials_") then
+          -- If we're in a socials subcategory or "all", go back to socials menu
+          if actual_group_key:match("^socials_") or actual_group_key == "socials_all" then
             config_menu.show_group("socials")
           else
             config_menu.show_main()

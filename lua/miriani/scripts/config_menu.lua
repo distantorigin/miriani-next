@@ -103,10 +103,23 @@ function config_menu.show_group(group_name)
 
   -- If not a special group, try to find a matching regular group
   if not matched_special then
+    -- First try exact match (case-insensitive)
+    local found_exact = false
     for key, option in pairs(config.options or {}) do
-      if string.find(string.lower(option.group), string.lower(group_name)) then
+      if string.lower(option.group) == string.lower(group_name) then
         actual_group_key = option.group
+        found_exact = true
         break
+      end
+    end
+
+    -- If no exact match, try partial match
+    if not found_exact then
+      for key, option in pairs(config.options or {}) do
+        if string.find(string.lower(option.group), string.lower(group_name)) then
+          actual_group_key = option.group
+          break
+        end
       end
     end
   end
@@ -509,10 +522,23 @@ function config_menu.find_and_edit(group_name, search_term)
 
   -- If not a special group, try to find a matching regular group
   if not matched_special then
+    -- First try exact match (case-insensitive)
+    local found_exact = false
     for key, option in pairs(config.options or {}) do
-      if string.find(string.lower(option.group), string.lower(group_name)) then
+      if string.lower(option.group) == string.lower(group_name) then
         actual_group_key = option.group
+        found_exact = true
         break
+      end
+    end
+
+    -- If no exact match, try partial match
+    if not found_exact then
+      for key, option in pairs(config.options or {}) do
+        if string.find(string.lower(option.group), string.lower(group_name)) then
+          actual_group_key = option.group
+          break
+        end
       end
     end
   end

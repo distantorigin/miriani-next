@@ -230,6 +230,16 @@ computer_actions_wildcard = {
     func = function()
       ordinatesFiring = nil
     end
+  },
+  ["Warning, power level has dropped to (%d+)%%."] = {
+    func = function(power_level)
+      local level = tonumber(power_level)
+      if level and level > 5 then
+        mplay("activity/atmo/salvageLow", "notification")
+      else
+        mplay("activity/atmo/salvageCritical", "notification")
+      end
+    end
   }
 }
 

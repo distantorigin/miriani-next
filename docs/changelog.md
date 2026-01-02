@@ -16,10 +16,13 @@
 - Boosted volume on low and critical salvager alerts.
 - Added dedicated planetary survey start and complete sounds.
 - Added sounds for please social.
+- Added a new socials framework. See conf socials to control all aspects of social sounds. For those that want to add new socials, please review lua/miriani/scripts/socials.lua for details.
+- Include volume, pan, and group in the sounds buffer.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".
 - Fix metafrequency labels to not break when other non-word symbols were added, such as hyphens or parentheses.
+- Intelligently play a single anomaly sound even if you have GMU notifications enabled while using NAVI. (Previously this would play two alert sounds.)
 
 ## Version 4.0.16
 ### New

@@ -82,6 +82,25 @@ function Config:init(options, audio)
   self.options = deep_copy(vars.options)
   self.audio = deep_copy(vars.audio)
 
+  -- Dynamically inject social options from socials database
+  local ok, socials = pcall(require, "miriani.scripts.socials")
+  if ok and socials and socials.get_all_socials and socials.get_social_info then
+    for _, social_name in ipairs(socials.get_all_socials()) do
+      local info = socials.get_social_info(social_name)
+      if info then
+        local category = info.category or "uncategorized"
+        local option_key = "social_" .. social_name
+        local display_name = social_name:gsub("^%l", string.upper)
+        self.options[option_key] = {
+          descr = display_name,
+          value = "yes",
+          group = "socials_" .. category,
+          type = "bool"
+        }
+      end
+    end
+  end
+
   local error = vars.consts.error.OK
 
   -- Try loading from file

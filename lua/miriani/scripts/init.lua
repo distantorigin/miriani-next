@@ -19,6 +19,7 @@ notify = require(scripts .."/include/notify")
 -- Table of dependencies.
 local namespace = {
   "sounds", -- specific audio functions.
+  "socials", -- social sounds framework
   "constants", -- Global constants
   "options", -- global options
   "counters", -- Activity counters system

@@ -193,7 +193,7 @@ function config_menu.show_group(group_name)
       local master = config:get_option("social_sounds")
       local status = master.value == "yes" and "[On]" or "[Off]"
       -- Prefix with "00" to sort first
-      secondary_menu["00_social_sounds"] = string.format("All Social Sounds %s", status)
+      secondary_menu["00_social_sounds"] = string.format("All Socials (Master Mute/Unmute) %s", status)
     end
 
     -- Add links to subcategory menus dynamically
@@ -208,8 +208,8 @@ function config_menu.show_group(group_name)
         table.insert(subcategories, {key = cat_key, title = title})
       end
     end
-    -- Add "All sounds" at the end
-    table.insert(subcategories, {key = "socials_all", title = "All sounds"})
+    -- Add "Show All Social Sounds" at the end
+    table.insert(subcategories, {key = "socials_all", title = "Show All Social Sounds"})
 
     for i, subcat in ipairs(subcategories) do
       -- Use numeric prefix in key to preserve order
@@ -300,8 +300,8 @@ function config_menu.show_group(group_name)
   for key in pairs(secondary_menu) do
     table.insert(sorted_keys, key)
   end
-  if actual_group_key == "socials" then
-    -- Sort by key to preserve intended order
+  if actual_group_key == "socials" or actual_group_key:match("^socials_") then
+    -- Sort by key to preserve intended order (00_ prefix sorts category toggle first)
     table.sort(sorted_keys)
   else
     -- Sort by display text for other menus
@@ -356,9 +356,11 @@ function config_menu.edit_option(option_key, group_name)
     end
   end
 
-  -- Special handling for socials master toggle (has "00_" prefix)
+  -- Special handling for socials toggles (have "00_" prefix)
   if option_key == "00_social_sounds" then
     option_key = "social_sounds"
+  elseif option_key:match("^00_social_cat_") then
+    option_key = option_key:gsub("^00_", "")
   end
 
   -- Special handling for sound variants

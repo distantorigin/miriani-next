@@ -15,6 +15,7 @@ local social_aliases = {
   ["slug"] = "punch",
   ["sock"] = "punch",
   ["hit"] = "punch",
+["pop"] = "punch",
 }
 
 -- Socials database
@@ -130,6 +131,7 @@ local socials = {
   noo       = {genders = {"neuter"}, category = "novelty"},
   oink      = {genders = {"neuter"}, category = "novelty"},
   pimp      = {genders = {"neuter"}, category = "novelty"},
+    please      = {genders = {"neuter"}, category = "novelty"},
   ponder    = {genders = {"male", "female"}, category = "novelty"},
   purr      = {genders = {"neuter"}, category = "novelty"},
   quack     = {genders = {"neuter"}, category = "novelty"},

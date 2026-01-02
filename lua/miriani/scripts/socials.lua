@@ -334,16 +334,12 @@ function M.find_sound_file(social_name, gender)
     return "social/" .. gender .. "/" .. sound_file
   end
 
-  -- Fall back to neuter if gender not supported
+  -- Fall back to neuter if gender not supported (neuter is gender-neutral)
   if gender ~= "neuter" and gender_supported(social_name, social_data, "neuter") then
     return "social/neuter/" .. sound_file
   end
 
-  -- Last resort: try first available gender
-  if #social_data.genders > 0 then
-    return "social/" .. social_data.genders[1] .. "/" .. sound_file
-  end
-
+  -- Don't fall back to opposite gender - return nil if no match
   return nil
 end
 

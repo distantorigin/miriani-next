@@ -443,12 +443,17 @@ function M.play_social(action, gender, is_targeted_at_player)
   return false
 end
 
+-- Global function for trigger to call
+function play_pending_targeted_social(action)
+  return M.play_pending_targeted(action)
+end
+
 -- Trigger for targeted social confirmation (text arrives after hook)
 ImportXML([=[
 <triggers>
   <trigger
    enabled="y"
-   group="socials"
+   group="comm"
    match="^(.+?) (poke|pokes|nudge|nudges) you (.*)$"
    regexp="y"
    send_to="14"
@@ -456,9 +461,8 @@ ImportXML([=[
    keep_evaluating="y"
   >
   <send>
-   local socials = require("lua/miriani/scripts/socials")
    local action = ("%2"):gsub("s$", "")
-   socials.play_pending_targeted(action)
+   play_pending_targeted_social(action)
   </send>
   </trigger>
 </triggers>

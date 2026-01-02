@@ -425,4 +425,63 @@ function M.play_social(action, gender, is_targeted_at_player)
   return false
 end
 
+-- Triggers for targeted social validation
+ImportXML([=[
+<triggers>
+  <trigger
+   enabled="y"
+   group="socials"
+   match="^You (poke|nudge) (.+)$"
+   regexp="y"
+   send_to="14"
+   sequence="10"
+  >
+  <send>
+<![CDATA[
+   local socials = require("lua/miriani/scripts/socials")
+   local action = "%1"
+   local target = "%2"
+   if socials.pending_targeted_message and socials.pending_targeted_message.action == action and socials.pending_targeted_message.actor == "You" and utils.timer() - socials.pending_targeted_message.timestamp < 2 then
+     mplay("social/neuter/" .. action, "socials")
+     socials.clear_pending_target()
+   end
+]]]]><![CDATA[>
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="socials"
+   match="^(.+?) (poke|pokes|nudge|nudges) you (.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="10"
+   keep_evaluating="y"
+  >
+  <send>
+   local socials = require("lua/miriani/scripts/socials")
+   local actor = "%1"
+   local action = ("%2"):gsub("s$", "")
+   socials.set_pending_target(action, actor)
+  </send>
+  </trigger>
+</triggers>
+]=])
+
+-- Expose pending_targeted_message for trigger access
+M.pending_targeted_message = pending_targeted_message
+
+-- Keep pending_targeted_message in sync
+local original_set = M.set_pending_target
+M.set_pending_target = function(action, actor)
+  original_set(action, actor)
+  M.pending_targeted_message = pending_targeted_message
+end
+
+local original_clear = M.clear_pending_target
+M.clear_pending_target = function()
+  original_clear()
+  M.pending_targeted_message = pending_targeted_message
+end
+
 return M

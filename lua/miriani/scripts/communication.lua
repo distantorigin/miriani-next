@@ -628,43 +628,6 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^You (poke|nudge) (.+)$"
-   regexp="y"
-   send_to="14"
-   sequence="10"
-  >
-  <send>
-<![CDATA[
-   local action = "%1"
-   local target = "%2"
-   if pending_targeted_message and pending_targeted_message.action == action and pending_targeted_message.actor == "You" and os.time() - pending_targeted_message.timestamp < 2 then
-     mplay("social/neuter/" .. action, "communication")
-     pending_targeted_message = nil
-   end
-]]>
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^(.+?) (poke|pokes|nudge|nudges) you (.*)$"
-   regexp="y"
-   send_to="14"
-   sequence="10"
-   keep_evaluating="y"
-  >
-  <send>
-   local socials = require("lua/miriani/scripts/socials")
-   local actor = "%1"
-   local action = "%2":gsub("s$", "")
-   socials.set_pending_target(action, actor)
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
    match="^\[.+?\] .+ transmits an exciting burst of static"
    regexp="y"
    send_to="12"

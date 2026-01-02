@@ -19,48 +19,68 @@ local social_aliases = {
   ["hit"] = "punch",
 }
 
--- Complete socials database
--- Each entry: genders = supported folders, category = grouping
--- Optional: sound = override filename (defaults to key name), requires_target = true (defaults to false)
+-- Socials database
+--
+-- To add a new social:
+--   1. Place sound file(s) in sounds/miriani/social/<gender>/<name>.ogg
+--   2. Add entry below in the appropriate category section (alphabetically)
+--
+-- Entry format:
+--   name = {genders = {"male", "female", "neuter"}, category = "category_name"},
+--
+-- Examples:
+--   -- Neuter only (no gendered variants):
+--   clap = {genders = {"neuter"}, category = "physical"},
+--
+--   -- Male and female variants:
+--   laugh = {genders = {"male", "female"}, category = "laughter"},
+--
+--   -- Override sound filename (when different from social name):
+--   lmao = {genders = {"neuter"}, category = "laughter", sound = "rofl"},
+--
+--   -- Requires target (only plays when you're the target, e.g. "X pokes you"):
+--   poke = {genders = {"neuter"}, category = "physical", requires_target = true},
+--
 -- Categories: laughter, distress, reflex, bodily, physical, novelty
+-- (socials without a category will appear under "uncategorized")
+--
 local socials = {
   -- Laughter sounds
   cackle    = {genders = {"neuter"}, category = "laughter"},
-  chortle   = {genders = {"male", "female", "neuter"}, category = "laughter"},
-  chuckle   = {genders = {"male", "female", "neuter"}, category = "laughter"},
-  giggle    = {genders = {"male", "female", "neuter"}, category = "laughter"},
-  laugh     = {genders = {"male", "female", "neuter"}, category = "laughter"},
-  lol       = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  chortle   = {genders = {"male", "female"}, category = "laughter"},
+  chuckle   = {genders = {"male", "female"}, category = "laughter"},
+  giggle    = {genders = {"male", "female"}, category = "laughter"},
+  laugh     = {genders = {"male", "female"}, category = "laughter"},
+  lol       = {genders = {"male", "female"}, category = "laughter"},
   mlaugh    = {genders = {"neuter"}, category = "laughter"},
-  rofl      = {genders = {"male", "female", "neuter"}, category = "laughter"},
-  snicker   = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  rofl      = {genders = {"male", "female"}, category = "laughter"},
+  snicker   = {genders = {"male", "female"}, category = "laughter"},
 
   -- Distress sounds
-  cry       = {genders = {"male", "female", "neuter"}, category = "distress"},
-  gasp      = {genders = {"male", "female", "neuter"}, category = "distress"},
-  moan      = {genders = {"male", "female", "neuter"}, category = "distress"},
+  cry       = {genders = {"male", "female"}, category = "distress"},
+  gasp      = {genders = {"male", "female"}, category = "distress"},
+  moan      = {genders = {"male", "female"}, category = "distress"},
   screech   = {genders = {"neuter"}, category = "distress"},
-  shriek    = {genders = {"female", "neuter"}, category = "distress"},
+  shriek    = {genders = {"male", "female"}, category = "distress"},
   sniffle   = {genders = {"neuter"}, category = "distress"},
-  sob       = {genders = {"male", "female", "neuter"}, category = "distress"},
+  sob       = {genders = {"male", "female"}, category = "distress"},
   yelp      = {genders = {"neuter"}, category = "distress"},
   yowl      = {genders = {"neuter"}, category = "distress"},
 
   -- Reflex sounds (involuntary body reflexes)
-  cough     = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  cough     = {genders = {"male", "female"}, category = "reflex"},
   gulp      = {genders = {"neuter"}, category = "reflex"},
-  sigh      = {genders = {"male", "female", "neuter"}, category = "reflex"},
-  sneeze    = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  sigh      = {genders = {"male", "female"}, category = "reflex"},
+  sneeze    = {genders = {"male", "female"}, category = "reflex"},
   snore     = {genders = {"neuter"}, category = "reflex"},
   snort     = {genders = {"neuter"}, category = "reflex"},
-  splutter  = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  splutter  = {genders = {"male", "female"}, category = "reflex"},
   swallow   = {genders = {"neuter"}, category = "reflex"},
-  throatfix = {genders = {"male", "neuter"}, category = "reflex"},
-  yawn      = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  throatfix = {genders = {"male"}, category = "reflex"},
+  yawn      = {genders = {"male", "female"}, category = "reflex"},
 
   -- Bodily sounds (gross/bodily functions)
   belch     = {genders = {"neuter"}, category = "bodily"},
-  blow      = {genders = {"neuter"}, category = "bodily"},
   bubble    = {genders = {"neuter"}, category = "bodily"},
   burp      = {genders = {"neuter"}, category = "bodily"},
   fart      = {genders = {"neuter"}, category = "bodily"},
@@ -77,7 +97,7 @@ local socials = {
   fall        = {genders = {"neuter"}, category = "physical"},
   flap        = {genders = {"neuter"}, category = "physical"},
   headdesk    = {genders = {"neuter"}, category = "physical"},
-  hop         = {genders = {"male", "female", "neuter"}, category = "physical"},
+  hop         = {genders = {"male", "female"}, category = "physical"},
   kick        = {genders = {"neuter"}, category = "physical"},
   kiss        = {genders = {"neuter"}, category = "physical"},
   knucklecrack = {genders = {"neuter"}, category = "physical"},
@@ -95,14 +115,14 @@ local socials = {
   airguitar = {genders = {"neuter"}, category = "novelty"},
   applaud   = {genders = {"neuter"}, category = "novelty"},
   beep      = {genders = {"neuter"}, category = "novelty"},
-  boggle    = {genders = {"female", "neuter"}, category = "novelty"},
+  boggle    = {genders = {"female"}, category = "novelty"},
   bongo     = {genders = {"neuter"}, category = "novelty"},
   bonk      = {genders = {"neuter"}, category = "novelty"},
   boo       = {genders = {"neuter"}, category = "novelty"},
-  cheer     = {genders = {"male", "female", "neuter"}, category = "novelty"},
+  cheer     = {genders = {"male", "female"}, category = "novelty"},
   frog      = {genders = {"neuter"}, category = "novelty"},
   golfclap  = {genders = {"neuter"}, category = "novelty"},
-  growl     = {genders = {"male", "female", "neuter"}, category = "novelty"},
+  growl     = {genders = {"male", "female"}, category = "novelty"},
   hiss      = {genders = {"neuter"}, category = "novelty"},
   hoot      = {genders = {"neuter"}, category = "novelty"},
   itsatrap  = {genders = {"neuter"}, category = "novelty"},
@@ -112,7 +132,7 @@ local socials = {
   noo       = {genders = {"neuter"}, category = "novelty"},
   oink      = {genders = {"neuter"}, category = "novelty"},
   pimp      = {genders = {"neuter"}, category = "novelty"},
-  ponder    = {genders = {"male", "female", "neuter"}, category = "novelty"},
+  ponder    = {genders = {"male", "female"}, category = "novelty"},
   purr      = {genders = {"neuter"}, category = "novelty"},
   quack     = {genders = {"neuter"}, category = "novelty"},
   roar      = {genders = {"neuter"}, category = "novelty"},
@@ -182,8 +202,9 @@ function M.should_play(social_name)
     return false
   end
 
-  -- Check category toggle
-  if not M.is_category_enabled(social_data.category) then
+  -- Check category toggle (default to uncategorized if no category)
+  local category = social_data.category or "uncategorized"
+  if not M.is_category_enabled(category) then
     return false
   end
 
@@ -223,12 +244,13 @@ function M.get_social_info(action)
 end
 
 --- Get all socials in a category
--- @param category string The category name
+-- @param category string The category name (use "uncategorized" for socials without a category)
 -- @return table Array of social action names
 function M.get_socials_by_category(category)
   local result = {}
   for action, data in pairs(socials) do
-    if data.category == category then
+    local social_category = data.category or "uncategorized"
+    if social_category == category then
       table.insert(result, action)
     end
   end
@@ -243,6 +265,29 @@ function M.get_all_socials()
     table.insert(result, action)
   end
   table.sort(result)
+  return result
+end
+
+--- Get list of all categories in use
+-- @return table Array of category names (includes "uncategorized" only if socials exist without category)
+function M.get_all_categories()
+  local category_set = {}
+  local has_uncategorized = false
+  for _, data in pairs(socials) do
+    if data.category then
+      category_set[data.category] = true
+    else
+      has_uncategorized = true
+    end
+  end
+  local result = {}
+  for cat, _ in pairs(category_set) do
+    table.insert(result, cat)
+  end
+  table.sort(result)
+  if has_uncategorized then
+    table.insert(result, "uncategorized")
+  end
   return result
 end
 

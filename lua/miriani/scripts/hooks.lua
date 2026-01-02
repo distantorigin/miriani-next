@@ -335,11 +335,6 @@ function playsocial(name, line, wildcards)
 
   -- Use the socials module to handle sound playback
   local socials = require("lua/miriani/scripts/socials")
-
-  -- Set pending target for targeted socials (poke, nudge, etc.)
-  socials.set_pending_target(action, "You")
-
-  -- Play the social sound
   socials.play_social(action, gender, false)
 end
 

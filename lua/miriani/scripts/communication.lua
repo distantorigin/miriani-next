@@ -652,12 +652,13 @@ ImportXML([=[
    regexp="y"
    send_to="14"
    sequence="10"
+   keep_evaluating="y"
   >
   <send>
+   local socials = require("lua/miriani/scripts/socials")
    local actor = "%1"
-   local action = "%2"
-   action = action:gsub("s$", "")
-   mplay("social/neuter/" .. action, "communication")
+   local action = "%2":gsub("s$", "")
+   socials.set_pending_target(action, actor)
   </send>
   </trigger>
 

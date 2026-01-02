@@ -613,7 +613,21 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
 
   -- Log to sounds buffer if enabled
   if config:get_option("sounds_buffer").value == "yes" then
-    Execute("history_add sounds=" .. original_file)
+    local buffer_entry = original_file
+    local details = {}
+    if group then
+      table.insert(details, "group=" .. group)
+    end
+    if final_pan ~= 0 then
+      table.insert(details, "pan=" .. final_pan)
+    end
+    if volume then
+      table.insert(details, "vol=" .. string.format("%.0f%%", volume * 100))
+    end
+    if #details > 0 then
+      buffer_entry = buffer_entry .. " [" .. table.concat(details, ", ") .. "]"
+    end
+    Execute("history_add sounds=" .. buffer_entry)
   end
 
 end -- play

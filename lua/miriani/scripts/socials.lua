@@ -1,14 +1,16 @@
--- @module socials
--- Handles all social sound playback for the Miriani soundpack.
--- Provides a complete database of socials with gender-based sound selection.
-
--- Author: Claude Code
--- Created: 2026.01.01
-
+-- Social sound playback with gender-based sound selection.
 local M = {}
 
 -- State for targeted social validation
 local pending_targeted_message = nil
+
+-- Caches (built on first access)
+local all_socials_cache = nil
+local socials_by_category_cache = nil
+local gender_sets_cache = {}
+
+-- Constants
+local PENDING_TARGET_TIMEOUT = 2.0  -- seconds to wait for targeted social confirmation
 
 -- Social aliases - map action names to canonical sound file names
 local social_aliases = {
@@ -18,108 +20,109 @@ local social_aliases = {
 }
 
 -- Complete socials database
--- Each entry: sound = base filename, genders = supported folders, category = grouping, requires_target = edge case flag
+-- Each entry: genders = supported folders, category = grouping
+-- Optional: sound = override filename (defaults to key name), requires_target = true (defaults to false)
 -- Categories: laughter, distress, reflex, bodily, physical, novelty
 local socials = {
   -- Laughter sounds
-  ["cackle"] = {sound = "cackle", genders = {"neuter"}, category = "laughter", requires_target = false},
-  ["chortle"] = {sound = "chortle", genders = {"male", "female", "neuter"}, category = "laughter", requires_target = false},
-  ["chuckle"] = {sound = "chuckle", genders = {"male", "female", "neuter"}, category = "laughter", requires_target = false},
-  ["giggle"] = {sound = "giggle", genders = {"male", "female", "neuter"}, category = "laughter", requires_target = false},
-  ["laugh"] = {sound = "laugh", genders = {"male", "female", "neuter"}, category = "laughter", requires_target = false},
-  ["lol"] = {sound = "lol", genders = {"male", "female", "neuter"}, category = "laughter", requires_target = false},
-  ["mlaugh"] = {sound = "mlaugh", genders = {"neuter"}, category = "laughter", requires_target = false},
-  ["rofl"] = {sound = "rofl", genders = {"male", "female", "neuter"}, category = "laughter", requires_target = false},
-  ["snicker"] = {sound = "snicker", genders = {"male", "female", "neuter"}, category = "laughter", requires_target = false},
+  cackle    = {genders = {"neuter"}, category = "laughter"},
+  chortle   = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  chuckle   = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  giggle    = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  laugh     = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  lol       = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  mlaugh    = {genders = {"neuter"}, category = "laughter"},
+  rofl      = {genders = {"male", "female", "neuter"}, category = "laughter"},
+  snicker   = {genders = {"male", "female", "neuter"}, category = "laughter"},
 
   -- Distress sounds
-  ["cry"] = {sound = "cry", genders = {"male", "female", "neuter"}, category = "distress", requires_target = false},
-  ["gasp"] = {sound = "gasp", genders = {"male", "female", "neuter"}, category = "distress", requires_target = false},
-  ["moan"] = {sound = "moan", genders = {"male", "female", "neuter"}, category = "distress", requires_target = false},
-  ["screech"] = {sound = "screech", genders = {"neuter"}, category = "distress", requires_target = false},
-  ["shriek"] = {sound = "shriek", genders = {"female", "neuter"}, category = "distress", requires_target = false},
-  ["sniffle"] = {sound = "sniffle", genders = {"neuter"}, category = "distress", requires_target = false},
-  ["sob"] = {sound = "sob", genders = {"male", "female", "neuter"}, category = "distress", requires_target = false},
-  ["yelp"] = {sound = "yelp", genders = {"neuter"}, category = "distress", requires_target = false},
-  ["yowl"] = {sound = "yowl", genders = {"neuter"}, category = "distress", requires_target = false},
+  cry       = {genders = {"male", "female", "neuter"}, category = "distress"},
+  gasp      = {genders = {"male", "female", "neuter"}, category = "distress"},
+  moan      = {genders = {"male", "female", "neuter"}, category = "distress"},
+  screech   = {genders = {"neuter"}, category = "distress"},
+  shriek    = {genders = {"female", "neuter"}, category = "distress"},
+  sniffle   = {genders = {"neuter"}, category = "distress"},
+  sob       = {genders = {"male", "female", "neuter"}, category = "distress"},
+  yelp      = {genders = {"neuter"}, category = "distress"},
+  yowl      = {genders = {"neuter"}, category = "distress"},
 
   -- Reflex sounds (involuntary body reflexes)
-  ["cough"] = {sound = "cough", genders = {"male", "female", "neuter"}, category = "reflex", requires_target = false},
-  ["gulp"] = {sound = "gulp", genders = {"neuter"}, category = "reflex", requires_target = false},
-  ["sigh"] = {sound = "sigh", genders = {"male", "female", "neuter"}, category = "reflex", requires_target = false},
-  ["sneeze"] = {sound = "sneeze", genders = {"male", "female", "neuter"}, category = "reflex", requires_target = false},
-  ["snore"] = {sound = "snore", genders = {"neuter"}, category = "reflex", requires_target = false},
-  ["snort"] = {sound = "snort", genders = {"neuter"}, category = "reflex", requires_target = false},
-  ["splutter"] = {sound = "splutter", genders = {"male", "female", "neuter"}, category = "reflex", requires_target = false},
-  ["swallow"] = {sound = "swallow", genders = {"neuter"}, category = "reflex", requires_target = false},
-  ["throatfix"] = {sound = "throatfix", genders = {"male", "neuter"}, category = "reflex", requires_target = false},
-  ["yawn"] = {sound = "yawn", genders = {"male", "female", "neuter"}, category = "reflex", requires_target = false},
+  cough     = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  gulp      = {genders = {"neuter"}, category = "reflex"},
+  sigh      = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  sneeze    = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  snore     = {genders = {"neuter"}, category = "reflex"},
+  snort     = {genders = {"neuter"}, category = "reflex"},
+  splutter  = {genders = {"male", "female", "neuter"}, category = "reflex"},
+  swallow   = {genders = {"neuter"}, category = "reflex"},
+  throatfix = {genders = {"male", "neuter"}, category = "reflex"},
+  yawn      = {genders = {"male", "female", "neuter"}, category = "reflex"},
 
   -- Bodily sounds (gross/bodily functions)
-  ["belch"] = {sound = "belch", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["blow"] = {sound = "blow", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["bubble"] = {sound = "bubble", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["burp"] = {sound = "burp", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["fart"] = {sound = "fart", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["gag"] = {sound = "gag", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["puke"] = {sound = "puke", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["spit"] = {sound = "spit", genders = {"neuter"}, category = "bodily", requires_target = false},
-  ["vomit"] = {sound = "vomit", genders = {"neuter"}, category = "bodily", requires_target = false},
+  belch     = {genders = {"neuter"}, category = "bodily"},
+  blow      = {genders = {"neuter"}, category = "bodily"},
+  bubble    = {genders = {"neuter"}, category = "bodily"},
+  burp      = {genders = {"neuter"}, category = "bodily"},
+  fart      = {genders = {"neuter"}, category = "bodily"},
+  gag       = {genders = {"neuter"}, category = "bodily"},
+  puke      = {genders = {"neuter"}, category = "bodily"},
+  spit      = {genders = {"neuter"}, category = "bodily"},
+  vomit     = {genders = {"neuter"}, category = "bodily"},
 
   -- Physical sounds (movement/contact)
-  ["bop"] = {sound = "bop", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["bounce"] = {sound = "bounce", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["clap"] = {sound = "clap", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["collapse"] = {sound = "collapse", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["fall"] = {sound = "fall", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["flap"] = {sound = "flap", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["headdesk"] = {sound = "headdesk", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["hop"] = {sound = "hop", genders = {"male", "female", "neuter"}, category = "physical", requires_target = false},
-  ["kick"] = {sound = "kick", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["kiss"] = {sound = "kiss", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["knucklecrack"] = {sound = "knucklecrack", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["nudge"] = {sound = "nudge", genders = {"neuter"}, category = "physical", requires_target = true},
-  ["poke"] = {sound = "poke", genders = {"neuter"}, category = "physical", requires_target = true},
-  ["punch"] = {sound = "punch", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["slap"] = {sound = "slap", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["snap"] = {sound = "snap", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["spank"] = {sound = "spank", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["stomp"] = {sound = "stomp", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["tackle"] = {sound = "tackle", genders = {"neuter"}, category = "physical", requires_target = false},
-  ["twitch"] = {sound = "twitch", genders = {"neuter"}, category = "physical", requires_target = false},
+  bop         = {genders = {"neuter"}, category = "physical"},
+  bounce      = {genders = {"neuter"}, category = "physical"},
+  clap        = {genders = {"neuter"}, category = "physical"},
+  collapse    = {genders = {"neuter"}, category = "physical"},
+  fall        = {genders = {"neuter"}, category = "physical"},
+  flap        = {genders = {"neuter"}, category = "physical"},
+  headdesk    = {genders = {"neuter"}, category = "physical"},
+  hop         = {genders = {"male", "female", "neuter"}, category = "physical"},
+  kick        = {genders = {"neuter"}, category = "physical"},
+  kiss        = {genders = {"neuter"}, category = "physical"},
+  knucklecrack = {genders = {"neuter"}, category = "physical"},
+  nudge       = {genders = {"neuter"}, category = "physical", requires_target = true},
+  poke        = {genders = {"neuter"}, category = "physical", requires_target = true},
+  punch       = {genders = {"neuter"}, category = "physical"},
+  slap        = {genders = {"neuter"}, category = "physical"},
+  snap        = {genders = {"neuter"}, category = "physical"},
+  spank       = {genders = {"neuter"}, category = "physical"},
+  stomp       = {genders = {"neuter"}, category = "physical"},
+  tackle      = {genders = {"neuter"}, category = "physical"},
+  twitch      = {genders = {"neuter"}, category = "physical"},
 
   -- Novelty sounds (animals, musical, memes, misc expressions)
-  ["airguitar"] = {sound = "airguitar", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["applaud"] = {sound = "applaud", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["beep"] = {sound = "beep", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["boggle"] = {sound = "boggle", genders = {"female", "neuter"}, category = "novelty", requires_target = false},
-  ["bongo"] = {sound = "bongo", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["bonk"] = {sound = "bonk", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["boo"] = {sound = "boo", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["cheer"] = {sound = "cheer", genders = {"male", "female", "neuter"}, category = "novelty", requires_target = false},
-  ["frog"] = {sound = "frog", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["golfclap"] = {sound = "golfclap", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["growl"] = {sound = "growl", genders = {"male", "female", "neuter"}, category = "novelty", requires_target = false},
-  ["hiss"] = {sound = "hiss", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["hoot"] = {sound = "hoot", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["itsatrap"] = {sound = "itsatrap", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["khan"] = {sound = "khan", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["mock"] = {sound = "mock", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["moo"] = {sound = "moo", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["noo"] = {sound = "noo", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["oink"] = {sound = "oink", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["pimp"] = {sound = "pimp", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["ponder"] = {sound = "ponder", genders = {"male", "female", "neuter"}, category = "novelty", requires_target = false},
-  ["purr"] = {sound = "purr", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["quack"] = {sound = "quack", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["roar"] = {sound = "roar", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["slowclap"] = {sound = "slowclap", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["snarl"] = {sound = "snarl", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["spoon"] = {sound = "spoon", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["squeak"] = {sound = "squeak", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["whistle"] = {sound = "whistle", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["why"] = {sound = "why", genders = {"neuter"}, category = "novelty", requires_target = false},
-  ["yess"] = {sound = "yess", genders = {"neuter"}, category = "novelty", requires_target = false},
+  airguitar = {genders = {"neuter"}, category = "novelty"},
+  applaud   = {genders = {"neuter"}, category = "novelty"},
+  beep      = {genders = {"neuter"}, category = "novelty"},
+  boggle    = {genders = {"female", "neuter"}, category = "novelty"},
+  bongo     = {genders = {"neuter"}, category = "novelty"},
+  bonk      = {genders = {"neuter"}, category = "novelty"},
+  boo       = {genders = {"neuter"}, category = "novelty"},
+  cheer     = {genders = {"male", "female", "neuter"}, category = "novelty"},
+  frog      = {genders = {"neuter"}, category = "novelty"},
+  golfclap  = {genders = {"neuter"}, category = "novelty"},
+  growl     = {genders = {"male", "female", "neuter"}, category = "novelty"},
+  hiss      = {genders = {"neuter"}, category = "novelty"},
+  hoot      = {genders = {"neuter"}, category = "novelty"},
+  itsatrap  = {genders = {"neuter"}, category = "novelty"},
+  khan      = {genders = {"neuter"}, category = "novelty"},
+  mock      = {genders = {"neuter"}, category = "novelty"},
+  moo       = {genders = {"neuter"}, category = "novelty"},
+  noo       = {genders = {"neuter"}, category = "novelty"},
+  oink      = {genders = {"neuter"}, category = "novelty"},
+  pimp      = {genders = {"neuter"}, category = "novelty"},
+  ponder    = {genders = {"male", "female", "neuter"}, category = "novelty"},
+  purr      = {genders = {"neuter"}, category = "novelty"},
+  quack     = {genders = {"neuter"}, category = "novelty"},
+  roar      = {genders = {"neuter"}, category = "novelty"},
+  slowclap  = {genders = {"neuter"}, category = "novelty"},
+  snarl     = {genders = {"neuter"}, category = "novelty"},
+  spoon     = {genders = {"neuter"}, category = "novelty"},
+  squeak    = {genders = {"neuter"}, category = "novelty"},
+  whistle   = {genders = {"neuter"}, category = "novelty"},
+  why       = {genders = {"neuter"}, category = "novelty"},
+  yess      = {genders = {"neuter"}, category = "novelty"},
 }
 
 --- Check if social sounds are globally enabled in config
@@ -135,7 +138,7 @@ function M.is_enabled()
 end
 
 --- Check if a specific category is enabled
--- @param category string The category name (vocal, physical, expressive, silly, animal, musical)
+-- @param category string The category name (laughter, distress, reflex, bodily, physical, novelty)
 -- @return boolean
 function M.is_category_enabled(category)
   if not config or not config.get_option then
@@ -243,17 +246,29 @@ function M.get_all_socials()
   return result
 end
 
---- Check if a gender is supported for a social
+--- Build a gender set for O(1) lookup (cached per social)
+-- @param social_name string The social name for cache key
+-- @param genders table Array of supported genders
+-- @return table Set of genders
+local function get_gender_set(social_name, genders)
+  if not gender_sets_cache[social_name] then
+    local set = {}
+    for _, g in ipairs(genders) do
+      set[g] = true
+    end
+    gender_sets_cache[social_name] = set
+  end
+  return gender_sets_cache[social_name]
+end
+
+--- Check if a gender is supported for a social (O(1) lookup)
+-- @param social_name string The social name
 -- @param social_data table The social entry
 -- @param gender string The gender to check
 -- @return boolean
-local function gender_supported(social_data, gender)
-  for _, g in ipairs(social_data.genders) do
-    if g == gender then
-      return true
-    end
-  end
-  return false
+local function gender_supported(social_name, social_data, gender)
+  local gender_set = get_gender_set(social_name, social_data.genders)
+  return gender_set[gender] == true
 end
 
 --- Find the appropriate sound file path for a social and gender
@@ -266,19 +281,22 @@ function M.find_sound_file(social_name, gender)
     return nil
   end
 
+  -- Derive sound filename: use explicit sound or fall back to social_name
+  local sound_file = social_data.sound or social_name
+
   -- Check if the specified gender is supported
-  if gender_supported(social_data, gender) then
-    return "social/" .. gender .. "/" .. social_data.sound
+  if gender_supported(social_name, social_data, gender) then
+    return "social/" .. gender .. "/" .. sound_file
   end
 
   -- Fall back to neuter if gender not supported
-  if gender ~= "neuter" and gender_supported(social_data, "neuter") then
-    return "social/neuter/" .. social_data.sound
+  if gender ~= "neuter" and gender_supported(social_name, social_data, "neuter") then
+    return "social/neuter/" .. sound_file
   end
 
   -- Last resort: try first available gender
   if #social_data.genders > 0 then
-    return "social/" .. social_data.genders[1] .. "/" .. social_data.sound
+    return "social/" .. social_data.genders[1] .. "/" .. sound_file
   end
 
   return nil
@@ -291,7 +309,7 @@ function M.set_pending_target(action, actor)
   pending_targeted_message = {
     action = action,
     actor = actor,
-    timestamp = os.time()
+    timestamp = utils.timer()  -- high-resolution timer
   }
 end
 
@@ -307,9 +325,9 @@ local function has_valid_pending_target(action)
   if not pending_targeted_message then
     return false
   end
-  -- Check if the pending message matches and is recent (within 2 seconds)
-  if pending_targeted_message.action == action and
-     (os.time() - pending_targeted_message.timestamp) <= 2 then
+  -- Check if the pending message matches and is recent
+  local elapsed = utils.timer() - pending_targeted_message.timestamp
+  if pending_targeted_message.action == action and elapsed <= PENDING_TARGET_TIMEOUT then
     return true
   end
   return false
@@ -335,11 +353,10 @@ function M.play_social(action, gender, is_targeted_at_player)
     return false
   end
 
-  -- Handle nonbinary: randomly pick male or female
-  local effective_gender = gender
-  if gender == "nonbinary" then
-    local genders = {"male", "female"}
-    effective_gender = genders[math.random(2)]
+  -- Determine effective gender (default to neuter if nil)
+  local effective_gender = gender or "neuter"
+  if effective_gender == "nonbinary" then
+    effective_gender = math.random(2) == 1 and "male" or "female"
   end
 
   -- Handle targeted socials (poke, nudge)

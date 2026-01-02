@@ -114,13 +114,19 @@ function config_menu.show_group(group_name)
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
 
-  -- First check if it's an exact match for a known group
+  -- First check if it's an exact or partial match for a known group (prefer shorter matches)
   local matched_exact = false
+  local partial_match = nil
   for _, known in ipairs(known_groups) do
     if string.lower(known) == string.lower(group_name) then
       actual_group_key = known
       matched_exact = true
       break
+    elseif string.find(string.lower(known), string.lower(group_name)) then
+      -- Prefer shorter matches (e.g., "socials" over "socials_distress")
+      if not partial_match or #known < #partial_match then
+        partial_match = known
+      end
     end
   end
 
@@ -128,16 +134,22 @@ function config_menu.show_group(group_name)
   if not matched_exact then
     for _, special_group in ipairs(special_groups) do
       if string.find(string.lower(special_group), string.lower(group_name)) then
-        actual_group_key = special_group
-        matched_exact = true
-        break
+        if not partial_match or #special_group < #partial_match then
+          partial_match = special_group
+        end
       end
     end
   end
 
-  -- If still not matched, try to find a matching group from options (exact first, then partial)
+  -- Use partial match if found
+  if not matched_exact and partial_match then
+    actual_group_key = partial_match
+    matched_exact = true
+  end
+
+  -- If still not matched, try to find a matching group from options
   if not matched_exact then
-    local partial_match = nil
+    partial_match = nil
     for key, option in pairs(config.options or {}) do
       local group_lower = string.lower(option.group)
       local name_lower = string.lower(group_name)
@@ -145,8 +157,10 @@ function config_menu.show_group(group_name)
         actual_group_key = option.group
         matched_exact = true
         break
-      elseif not partial_match and string.find(group_lower, name_lower) then
-        partial_match = option.group
+      elseif string.find(group_lower, name_lower) then
+        if not partial_match or #option.group < #partial_match then
+          partial_match = option.group
+        end
       end
     end
     if not matched_exact and partial_match then
@@ -166,7 +180,8 @@ function config_menu.show_group(group_name)
     if config:is_option("social_sounds") then
       local master = config:get_option("social_sounds")
       local status = master.value == "yes" and "[On]" or "[Off]"
-      secondary_menu["social_sounds"] = string.format("%s %s", master.descr, status)
+      -- Prefix with "00" to sort first
+      secondary_menu["00_social_sounds"] = string.format("%s %s", master.descr, status)
     end
 
     -- Add links to subcategory menus (All sounds is last)
@@ -180,8 +195,8 @@ function config_menu.show_group(group_name)
       {key = "socials_all", title = "All sounds"},
     }
     for i, subcat in ipairs(subcategories) do
-      -- Use numeric prefix in key to preserve order (submenu links sort after options)
-      secondary_menu["~" .. string.format("%02d", i) .. "_submenu_" .. subcat.key] = subcat.title
+      -- Use numeric prefix in key to preserve order
+      secondary_menu[string.format("%02d", i) .. "_submenu_" .. subcat.key] = subcat.title
     end
 
   elseif actual_group_key == "sound variants" then
@@ -218,7 +233,7 @@ function config_menu.show_group(group_name)
     if config:is_option(category_toggle_key) then
       local cat_option = config:get_option(category_toggle_key)
       local status = cat_option.value == "yes" and "[On]" or "[Off]"
-      secondary_menu[category_toggle_key] = string.format("** %s %s", cat_option.descr, status)
+      secondary_menu[category_toggle_key] = string.format("Toggle Category %s", status)
     end
 
     -- Then add all individual socials for this category
@@ -264,13 +279,19 @@ function config_menu.show_group(group_name)
   local key_map = {}  -- Maps numbers to option keys
   local sorted_keys = {}
 
-  -- Get all keys and sort by their display text
+  -- Get all keys and sort
   for key in pairs(secondary_menu) do
     table.insert(sorted_keys, key)
   end
-  table.sort(sorted_keys, function(a, b)
-    return secondary_menu[a] < secondary_menu[b]
-  end)
+  if actual_group_key == "socials" then
+    -- Sort by key to preserve intended order
+    table.sort(sorted_keys)
+  else
+    -- Sort by display text for other menus
+    table.sort(sorted_keys, function(a, b)
+      return secondary_menu[a] < secondary_menu[b]
+    end)
+  end
 
   -- Create numbered menu
   choices["0"] = "Go back"
@@ -316,6 +337,11 @@ function config_menu.edit_option(option_key, group_name)
       config_menu.show_group(subgroup)
       return
     end
+  end
+
+  -- Special handling for socials master toggle (has "00_" prefix)
+  if option_key == "00_social_sounds" then
+    option_key = "social_sounds"
   end
 
   -- Special handling for sound variants
@@ -545,13 +571,18 @@ function config_menu.find_and_edit(group_name, search_term)
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
 
-  -- First check if it's an exact match for a known group
+  -- First check if it's an exact or partial match for a known group (prefer shorter matches)
   local matched_exact = false
+  local partial_match = nil
   for _, known in ipairs(known_groups) do
     if string.lower(known) == string.lower(group_name) then
       actual_group_key = known
       matched_exact = true
       break
+    elseif string.find(string.lower(known), string.lower(group_name)) then
+      if not partial_match or #known < #partial_match then
+        partial_match = known
+      end
     end
   end
 
@@ -559,16 +590,22 @@ function config_menu.find_and_edit(group_name, search_term)
   if not matched_exact then
     for _, special_group in ipairs(special_groups) do
       if string.find(string.lower(special_group), string.lower(group_name)) then
-        actual_group_key = special_group
-        matched_exact = true
-        break
+        if not partial_match or #special_group < #partial_match then
+          partial_match = special_group
+        end
       end
     end
   end
 
-  -- If still not matched, try to find a matching group from options (exact first, then partial)
+  -- Use partial match if found
+  if not matched_exact and partial_match then
+    actual_group_key = partial_match
+    matched_exact = true
+  end
+
+  -- If still not matched, try to find a matching group from options
   if not matched_exact then
-    local partial_match = nil
+    partial_match = nil
     for key, option in pairs(config.options or {}) do
       local group_lower = string.lower(option.group)
       local name_lower = string.lower(group_name)
@@ -576,13 +613,30 @@ function config_menu.find_and_edit(group_name, search_term)
         actual_group_key = option.group
         matched_exact = true
         break
-      elseif not partial_match and string.find(group_lower, name_lower) then
-        partial_match = option.group
+      elseif string.find(group_lower, name_lower) then
+        if not partial_match or #option.group < #partial_match then
+          partial_match = option.group
+        end
       end
     end
     if not matched_exact and partial_match then
       actual_group_key = partial_match
     end
+  end
+
+  -- Special handling for socials - navigate to subcategory menus
+  if actual_group_key == "socials" then
+    local subcategory_names = {"laughter", "distress", "reflex", "bodily", "physical", "novelty", "all"}
+    for _, cat in ipairs(subcategory_names) do
+      if string.find(string.lower(cat), string.lower(search_term)) then
+        config_menu.show_group("socials_" .. cat)
+        return
+      end
+    end
+    -- If no category matched, show error
+    mplay("misc/cancel")
+    notify("critical", string.format("Could not find social category matching '%s'.", search_term))
+    return
   end
 
   -- Special handling for audio groups

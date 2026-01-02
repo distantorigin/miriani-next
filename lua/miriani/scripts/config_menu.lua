@@ -201,7 +201,10 @@ function config_menu.show_group(group_name)
     for _, cat_key in ipairs(get_social_categories()) do
       local cat_name = cat_key:match("^socials_(.+)$")
       if cat_name then
-        local title = cat_name:gsub("^%l", string.upper)
+        -- Get description from category toggle option
+        local toggle_key = "social_cat_" .. cat_name
+        local toggle_opt = config:get_option(toggle_key)
+        local title = toggle_opt.descr or cat_name:gsub("^%l", string.upper)
         table.insert(subcategories, {key = cat_key, title = title})
       end
     end

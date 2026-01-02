@@ -193,7 +193,7 @@ function config_menu.show_group(group_name)
       local master = config:get_option("social_sounds")
       local status = master.value == "yes" and "[On]" or "[Off]"
       -- Prefix with "00" to sort first
-      secondary_menu["00_social_sounds"] = string.format("%s %s", master.descr, status)
+      secondary_menu["00_social_sounds"] = string.format("All Social Sounds %s", status)
     end
 
     -- Add links to subcategory menus dynamically
@@ -246,11 +246,11 @@ function config_menu.show_group(group_name)
     local category_name = actual_group_key:match("^socials_(.+)$")
     local category_toggle_key = "social_cat_" .. category_name
 
-    -- Add the category toggle first
+    -- Add the category toggle first (prefix with "00" to sort first)
     if config:is_option(category_toggle_key) then
       local cat_option = config:get_option(category_toggle_key)
       local status = cat_option.value == "yes" and "[On]" or "[Off]"
-      secondary_menu[category_toggle_key] = string.format("Toggle Category %s", status)
+      secondary_menu["00_" .. category_toggle_key] = string.format("Toggle Category %s", status)
     end
 
     -- Then add all individual socials for this category

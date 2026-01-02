@@ -1,8 +1,8 @@
 -- Social sound playback with gender-based sound selection.
 local M = {}
 
--- State for targeted social validation
-local pending_targeted_message = nil
+-- State for targeted social validation (stores hook data until text confirms target)
+local pending_targeted_hook = nil
 
 -- Cache for O(1) gender lookup
 local gender_sets_cache = {}
@@ -341,34 +341,57 @@ function M.find_sound_file(social_name, gender)
   return nil
 end
 
---- Set pending targeted message (called from hooks when social hook received)
+--- Store pending targeted hook (called when hook arrives for a targeted social)
 -- @param action string The social action
--- @param actor string The actor performing the social
-function M.set_pending_target(action, actor)
-  pending_targeted_message = {
+-- @param gender string The gender from the hook
+function M.set_pending_hook(action, gender)
+  pending_targeted_hook = {
     action = action,
-    actor = actor,
-    timestamp = utils.timer()  -- high-resolution timer
+    gender = gender,
+    timestamp = utils.timer()
   }
 end
 
---- Clear pending targeted message
-function M.clear_pending_target()
-  pending_targeted_message = nil
+--- Clear pending targeted hook
+function M.clear_pending_hook()
+  pending_targeted_hook = nil
 end
 
---- Check if we have a valid pending targeted message for this social
--- @param action string The social action to check
--- @return boolean
-local function has_valid_pending_target(action)
-  if not pending_targeted_message then
+--- Play sound for a targeted social when text confirms player is the target
+-- @param action string The social action from the text trigger
+-- @return boolean Whether sound was played
+function M.play_pending_targeted(action)
+  if not pending_targeted_hook then
     return false
   end
-  -- Check if the pending message matches and is recent
-  local elapsed = utils.timer() - pending_targeted_message.timestamp
-  if pending_targeted_message.action == action and elapsed <= PENDING_TARGET_TIMEOUT then
+
+  -- Check if the pending hook matches and is recent
+  local elapsed = utils.timer() - pending_targeted_hook.timestamp
+  if pending_targeted_hook.action ~= action or elapsed > PENDING_TARGET_TIMEOUT then
+    return false
+  end
+
+  -- Check toggles
+  if not M.should_play(action) then
+    M.clear_pending_hook()
+    return false
+  end
+
+  -- Get the gender from the stored hook
+  local gender = pending_targeted_hook.gender or "neuter"
+  if gender == "nonbinary" then
+    gender = math.random(2) == 1 and "male" or "female"
+  end
+
+  -- Find and play the sound
+  local sound_path = M.find_sound_file(action, gender)
+  M.clear_pending_hook()
+
+  if sound_path and mplay then
+    mplay(sound_path, "socials")
     return true
   end
+
   return false
 end
 
@@ -400,14 +423,9 @@ function M.play_social(action, gender, is_targeted_at_player)
 
   -- Handle targeted socials (poke, nudge)
   if social_data.requires_target then
-    -- For targeted socials, only play if we have a valid pending target
-    if is_targeted_at_player or has_valid_pending_target(canonical) then
-      -- Clear the pending message
-      M.clear_pending_target()
-    else
-      -- Don't play the sound - player is not the target
-      return false
-    end
+    -- Store the hook data; sound will play when text confirms player is target
+    M.set_pending_hook(canonical, effective_gender)
+    return false
   end
 
   -- Find the appropriate sound file
@@ -425,30 +443,9 @@ function M.play_social(action, gender, is_targeted_at_player)
   return false
 end
 
--- Triggers for targeted social validation
+-- Trigger for targeted social confirmation (text arrives after hook)
 ImportXML([=[
 <triggers>
-  <trigger
-   enabled="y"
-   group="socials"
-   match="^You (poke|nudge) (.+)$"
-   regexp="y"
-   send_to="14"
-   sequence="10"
-  >
-  <send>
-<![CDATA[
-   local socials = require("lua/miriani/scripts/socials")
-   local action = "%1"
-   local target = "%2"
-   if socials.pending_targeted_message and socials.pending_targeted_message.action == action and socials.pending_targeted_message.actor == "You" and utils.timer() - socials.pending_targeted_message.timestamp < 2 then
-     mplay("social/neuter/" .. action, "socials")
-     socials.clear_pending_target()
-   end
-]]]]><![CDATA[>
-  </send>
-  </trigger>
-
   <trigger
    enabled="y"
    group="socials"
@@ -460,28 +457,11 @@ ImportXML([=[
   >
   <send>
    local socials = require("lua/miriani/scripts/socials")
-   local actor = "%1"
    local action = ("%2"):gsub("s$", "")
-   socials.set_pending_target(action, actor)
+   socials.play_pending_targeted(action)
   </send>
   </trigger>
 </triggers>
 ]=])
-
--- Expose pending_targeted_message for trigger access
-M.pending_targeted_message = pending_targeted_message
-
--- Keep pending_targeted_message in sync
-local original_set = M.set_pending_target
-M.set_pending_target = function(action, actor)
-  original_set(action, actor)
-  M.pending_targeted_message = pending_targeted_message
-end
-
-local original_clear = M.clear_pending_target
-M.clear_pending_target = function()
-  original_clear()
-  M.pending_targeted_message = pending_targeted_message
-end
 
 return M

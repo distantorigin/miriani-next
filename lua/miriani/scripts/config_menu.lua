@@ -55,7 +55,6 @@ function config_menu.show_main()
   end
 
   -- Add "audio groups" and "sound variants" to the menu even though they have no regular options
-  local special_groups = {"audio groups", "sound variants"}
   for _, group_key in ipairs(special_groups) do
     local found = false
     for _, title in ipairs(main_menu) do

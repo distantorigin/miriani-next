@@ -4,9 +4,7 @@ local M = {}
 -- State for targeted social validation
 local pending_targeted_message = nil
 
--- Caches (built on first access)
-local all_socials_cache = nil
-local socials_by_category_cache = nil
+-- Cache for O(1) gender lookup
 local gender_sets_cache = {}
 
 -- Constants

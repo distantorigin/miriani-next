@@ -16,15 +16,27 @@ local variant_sounds = {
 -- Special groups that have no regular options
 local special_groups = {"audio groups", "sound variants"}
 
--- Social sound category keys
-local social_categories = {"socials_laughter", "socials_distress", "socials_reflex", "socials_bodily", "socials_physical", "socials_novelty"}
+-- Get social categories dynamically from socials module
+local function get_social_categories()
+  local categories = {}
+  local ok, socials = pcall(require, "miriani.scripts.socials")
+  if ok and socials and socials.get_all_categories then
+    for _, cat in ipairs(socials.get_all_categories()) do
+      table.insert(categories, "socials_" .. cat)
+    end
+  else
+    -- Fallback to defaults
+    categories = {"socials_laughter", "socials_distress", "socials_reflex", "socials_bodily", "socials_physical", "socials_novelty"}
+  end
+  return categories
+end
 
 -- Known option groups for exact matching
 local known_groups = {
   "general", "auto_login", "ship", "room", "helpers", "screen reader",
   "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
-  "socials_bodily", "socials_physical", "socials_novelty", "scan_formats",
-  "buffers", "colors", "developer"
+  "socials_bodily", "socials_physical", "socials_novelty", "socials_uncategorized",
+  "scan_formats", "buffers", "colors", "developer"
 }
 
 -- Helper function to strip trailing punctuation from option descriptions
@@ -184,16 +196,18 @@ function config_menu.show_group(group_name)
       secondary_menu["00_social_sounds"] = string.format("%s %s", master.descr, status)
     end
 
-    -- Add links to subcategory menus (All sounds is last)
-    local subcategories = {
-      {key = "socials_laughter", title = "Laughter"},
-      {key = "socials_distress", title = "Distress"},
-      {key = "socials_reflex", title = "Reflex"},
-      {key = "socials_bodily", title = "Bodily"},
-      {key = "socials_physical", title = "Physical"},
-      {key = "socials_novelty", title = "Novelty"},
-      {key = "socials_all", title = "All sounds"},
-    }
+    -- Add links to subcategory menus dynamically
+    local subcategories = {}
+    for _, cat_key in ipairs(get_social_categories()) do
+      local cat_name = cat_key:match("^socials_(.+)$")
+      if cat_name then
+        local title = cat_name:gsub("^%l", string.upper)
+        table.insert(subcategories, {key = cat_key, title = title})
+      end
+    end
+    -- Add "All sounds" at the end
+    table.insert(subcategories, {key = "socials_all", title = "All sounds"})
+
     for i, subcat in ipairs(subcategories) do
       -- Use numeric prefix in key to preserve order
       secondary_menu[string.format("%02d", i) .. "_submenu_" .. subcat.key] = subcat.title
@@ -215,7 +229,7 @@ function config_menu.show_group(group_name)
     end
   elseif actual_group_key == "socials_all" then
     -- Special handling for "All sounds" - show all individual social toggles from all categories
-    for _, group_key in ipairs(social_categories) do
+    for _, group_key in ipairs(get_social_categories()) do
       local category_options = config:render_menu_list(group_key)
       if type(category_options) == 'table' then
         for key, value in pairs(category_options) do

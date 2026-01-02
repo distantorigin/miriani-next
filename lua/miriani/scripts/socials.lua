@@ -134,6 +134,7 @@ local socials = {
     please      = {genders = {"neuter"}, category = "novelty"},
   ponder    = {genders = {"male", "female"}, category = "novelty"},
   purr      = {genders = {"neuter"}, category = "novelty"},
+  q     = {genders = {"neuter"}, category = "novelty"},  
   quack     = {genders = {"neuter"}, category = "novelty"},
   roar      = {genders = {"neuter"}, category = "novelty"},
   slowclap  = {genders = {"neuter"}, category = "novelty"},

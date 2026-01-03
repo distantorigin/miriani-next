@@ -67,6 +67,7 @@ local socials = {
   yowl      = {genders = {"neuter"}, category = "distress"},
 
   -- Reflex sounds (involuntary body reflexes)
+    blink      = {genders = {"neuter"}, category = "reflex"},
   cough     = {genders = {"male", "female"}, category = "reflex"},
   gulp      = {genders = {"neuter"}, category = "reflex"},
   sigh      = {genders = {"male", "female"}, category = "reflex"},
@@ -89,7 +90,9 @@ local socials = {
   vomit     = {genders = {"neuter"}, category = "bodily"},
 
   -- Physical sounds (movement/contact)
-  bop         = {genders = {"neuter"}, category = "physical"},
+bap         = {genders = {"neuter"}, category = "physical"},
+bite         = {genders = {"neuter"}, category = "physical"},  
+bop         = {genders = {"neuter"}, category = "physical"},
   bounce      = {genders = {"neuter"}, category = "physical"},
   clap        = {genders = {"neuter"}, category = "physical"},
   collapse    = {genders = {"neuter"}, category = "physical"},
@@ -100,6 +103,7 @@ local socials = {
   kick        = {genders = {"neuter"}, category = "physical"},
   kiss        = {genders = {"neuter"}, category = "physical"},
   knucklecrack = {genders = {"neuter"}, category = "physical"},
+lick         = {genders = {"neuter"}, category = "physical"},
   nudge       = {genders = {"neuter"}, category = "physical", requires_target = true},
   poke        = {genders = {"neuter"}, category = "physical", requires_target = true},
   punch       = {genders = {"neuter"}, category = "physical"},
@@ -108,7 +112,6 @@ local socials = {
   spank       = {genders = {"neuter"}, category = "physical"},
   stomp       = {genders = {"neuter"}, category = "physical"},
   tackle      = {genders = {"neuter"}, category = "physical"},
-  
   thump      = {genders = {"neuter"}, category = "physical"},  
   twitch      = {genders = {"neuter"}, category = "physical"},
 
@@ -126,6 +129,7 @@ local socials = {
   growl     = {genders = {"male", "female"}, category = "novelty"},
   hiss      = {genders = {"neuter"}, category = "novelty"},
   hoot      = {genders = {"neuter"}, category = "novelty"},
+  howl      = {genders = {"neuter"}, category = "novelty"},
   itsatrap  = {genders = {"neuter"}, category = "novelty"},
   khan      = {genders = {"neuter"}, category = "novelty"},
   mock      = {genders = {"neuter"}, category = "novelty"},

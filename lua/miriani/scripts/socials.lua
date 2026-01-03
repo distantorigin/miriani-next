@@ -129,6 +129,8 @@ local socials = {
   mock      = {genders = {"neuter"}, category = "novelty"},
   moo       = {genders = {"neuter"}, category = "novelty"},
   noo       = {genders = {"neuter"}, category = "novelty"},
+  oic      = {genders = {"neuter"}, category = "novelty"},
+  oicic      = {genders = {"neuter"}, category = "novelty"},
   oink      = {genders = {"neuter"}, category = "novelty"},
   pimp      = {genders = {"neuter"}, category = "novelty"},
     please      = {genders = {"neuter"}, category = "novelty"},

@@ -18,6 +18,8 @@
 - Added sounds for please social.
 - Added a new socials framework. See conf socials to control all aspects of social sounds. For those that want to add new socials, please review lua/miriani/scripts/socials.lua for details.
 - Include volume, pan, and group in the sounds buffer.
+- Added sound file updates to include pop, q and others.
+- Added sounds for OIC and OICIC socials. These are in neuter until I can find ones to match to proper genders.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

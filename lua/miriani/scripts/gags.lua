@@ -24,6 +24,26 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="gags"
+   match="^Salvage line energy emitters linked. Beginning salvage sweep[.]{3}$"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="gags"
+   match="^You watch as the salvage lines slowly wind their way to what might be several pieces of debris, projecting an energy net around them before carefully making their way back to the ship\.$"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="gags"
    match="^You peer \w+ and see[.]{3}$"
    regexp="y"
    omit_from_output="y"

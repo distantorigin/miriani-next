@@ -108,6 +108,8 @@ local socials = {
   spank       = {genders = {"neuter"}, category = "physical"},
   stomp       = {genders = {"neuter"}, category = "physical"},
   tackle      = {genders = {"neuter"}, category = "physical"},
+  
+  thump      = {genders = {"neuter"}, category = "physical"},  
   twitch      = {genders = {"neuter"}, category = "physical"},
 
   -- Novelty sounds (animals, musical, memes, misc expressions)

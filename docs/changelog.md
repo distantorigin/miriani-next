@@ -20,6 +20,7 @@
 - Include volume, pan, and group in the sounds buffer.
 - Added sound file updates to include pop, q and others.
 - Added sounds for OIC and OICIC socials. These are in neuter until I can find ones to match to proper genders.
+- Added a couple of requested gags for bulk salvaging
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

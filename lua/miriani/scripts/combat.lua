@@ -366,7 +366,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
-   match="^[A-Z][a-z]+?\s?[A-Za-z\s]*? (load|unload)s? .+? (?:from|into) .+? ammunition container\.$"
+   match="^(?:You|[A-Z][a-z]+(?: [A-Z][a-z]+){0,3}) (?:load|unload)s? .+? (?:from|into) .+?\.$"
    regexp="y"
    send_to="12"
    sequence="100"

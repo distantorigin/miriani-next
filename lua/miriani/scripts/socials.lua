@@ -87,6 +87,7 @@ local socials = {
   gag       = {genders = {"neuter"}, category = "bodily"},
   puke      = {genders = {"neuter"}, category = "bodily"},
   spit      = {genders = {"neuter"}, category = "bodily"},
+  squish      = {genders = {"neuter"}, category = "bodily"},
   vomit     = {genders = {"neuter"}, category = "bodily"},
 
   -- Physical sounds (movement/contact)

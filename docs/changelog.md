@@ -24,6 +24,7 @@
 - Added sounds for bite, bap, howl, lick, thump and blink socials. 
 - Added scream sounds back in since they can now be toggled on and off.
 - Modified the ammo from containers trigger to support ones bought from Ceridwen and to support other custom ammo containers.
+- Added new sound for noo social and one for squish.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

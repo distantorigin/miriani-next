@@ -156,6 +156,7 @@ local socials = {
 }
 
 --- Check if social sounds are globally enabled in config
+-- @return boolean
 function is_socials_enabled()
   if config and config.get_option then
     local option = config:get_option("social_sounds")
@@ -167,6 +168,8 @@ function is_socials_enabled()
 end
 
 --- Check if a specific category is enabled
+-- @param category string The category name (laughter, distress, reflex, bodily, physical, novelty)
+-- @return boolean
 function is_social_category_enabled(category)
   if not config or not config.get_option then
     return true -- default to enabled
@@ -180,6 +183,8 @@ function is_social_category_enabled(category)
 end
 
 --- Check if a specific social is individually enabled
+-- @param social_name string The canonical social name
+-- @return boolean
 function is_social_enabled(social_name)
   if not config or not config.get_option then
     return true -- default to enabled
@@ -193,6 +198,8 @@ function is_social_enabled(social_name)
 end
 
 --- Check if a social should play based on all toggle levels
+-- @param social_name string The canonical social name
+-- @return boolean
 function should_play_social(social_name)
   -- Check master toggle
   if not is_socials_enabled() then
@@ -220,6 +227,8 @@ function should_play_social(social_name)
 end
 
 --- Resolve a social action to its canonical name (handle aliases)
+-- @param action string The social action name
+-- @return string The canonical social name
 function resolve_social_alias(action)
   if not action then return nil end
   local lower_action = string.lower(action)
@@ -227,6 +236,8 @@ function resolve_social_alias(action)
 end
 
 --- Check if a social exists in the database
+-- @param action string The social action name
+-- @return boolean
 function social_exists(action)
   if not action then return false end
   local canonical = resolve_social_alias(action)
@@ -234,6 +245,8 @@ function social_exists(action)
 end
 
 --- Get social metadata
+-- @param action string The social action name
+-- @return table|nil Social entry data
 function get_social_info(action)
   if not action then return nil end
   local canonical = resolve_social_alias(action)
@@ -241,6 +254,8 @@ function get_social_info(action)
 end
 
 --- Get all socials in a category
+-- @param category string The category name (use "uncategorized" for socials without a category)
+-- @return table Array of social action names
 function get_socials_by_category(category)
   local result = {}
   for action, data in pairs(socials) do
@@ -253,6 +268,7 @@ function get_socials_by_category(category)
 end
 
 --- Get list of all available social names
+-- @return table Array of social action names
 function get_all_socials()
   local result = {}
   for action, _ in pairs(socials) do
@@ -263,6 +279,7 @@ function get_all_socials()
 end
 
 --- Get list of all categories in use
+-- @return table Array of category names (includes "uncategorized" only if socials exist without category)
 function get_all_social_categories()
   local category_set = {}
   local has_uncategorized = false
@@ -303,6 +320,9 @@ local function gender_supported(social_name, social_data, gender)
 end
 
 --- Find the appropriate sound file path for a social and gender
+-- @param social_name string The canonical social name
+-- @param gender string The gender (male, female, neuter)
+-- @return string|nil The sound file path (without extension)
 function find_social_sound_file(social_name, gender)
   local social_data = socials[social_name]
   if not social_data then
@@ -327,6 +347,8 @@ function find_social_sound_file(social_name, gender)
 end
 
 --- Store pending targeted hook (called when hook arrives for a targeted social)
+-- @param action string The social action
+-- @param gender string The gender from the hook
 function set_pending_social_hook(action, gender)
   pending_targeted_hook = {
     action = action,
@@ -341,6 +363,8 @@ function clear_pending_social_hook()
 end
 
 --- Play sound for a targeted social when text confirms player is the target
+-- @param action string The social action from the text trigger
+-- @return boolean Whether sound was played
 function play_pending_targeted_social(action)
   if not pending_targeted_hook then
     return false
@@ -377,6 +401,10 @@ function play_pending_targeted_social(action)
 end
 
 --- Main entry point - play a social sound
+-- @param action string The social action name (e.g., "laugh", "punch")
+-- @param gender string Character gender ("male", "female", "nonbinary")
+-- @param is_targeted_at_player boolean Whether player is the target (for edge cases)
+-- @return boolean Whether sound was played successfully
 function play_social(action, gender, is_targeted_at_player)
   -- Resolve any aliases
   local canonical = resolve_social_alias(action)

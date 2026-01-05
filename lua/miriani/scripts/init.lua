@@ -11,6 +11,9 @@ local path = require("pl.path")
 
 local scripts = "lua/miriani/scripts"
 
+-- Socials must load before Config:init (generates social options dynamically)
+require(scripts .. "/socials")
+
 -- Dependencies:
 local Config = require(scripts .."/include/config")
 config = Config()
@@ -19,7 +22,7 @@ notify = require(scripts .."/include/notify")
 -- Table of dependencies.
 local namespace = {
   "sounds", -- specific audio functions.
-  "socials", -- social sounds framework
+  -- socials loaded earlier (before Config:init)
   "constants", -- Global constants
   "options", -- global options
   "counters", -- Activity counters system

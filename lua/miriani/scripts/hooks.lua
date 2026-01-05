@@ -332,9 +332,7 @@ ImportXML([=[
 function playsocial(name, line, wildcards)
   local action = wildcards[1]
   local gender = wildcards[2]
-
-  -- Use the socials module to handle sound playback
-  play_social(action, gender, false)
+  play_social(action, gender)
 end
 
 last_emote_time = 0

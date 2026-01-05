@@ -1,13 +1,7 @@
 -- Social sound playback with gender-based sound selection.
 
--- State for targeted social validation (stores hook data until text confirms target)
-local pending_targeted_hook = nil
-
 -- Cache for O(1) gender lookup
 local gender_sets_cache = {}
-
--- Constants
-local PENDING_TARGET_TIMEOUT = 2.0  -- seconds to wait for targeted social confirmation
 
 -- Social aliases - map action names to canonical sound file names
 local social_aliases = {
@@ -35,9 +29,6 @@ local social_aliases = {
 --
 --   -- Override sound filename (when different from social name):
 --   lmao = {genders = {"neuter"}, category = "laughter", sound = "rofl"},
---
---   -- Requires target (only plays when you're the target, e.g. "X pokes you"):
---   poke = {genders = {"neuter"}, category = "physical", requires_target = true},
 --
 -- Categories: laughter, distress, reflex, bodily, physical, novelty
 -- (socials without a category will appear under "uncategorized")
@@ -104,8 +95,8 @@ local socials = {
   kiss      = {genders = {"neuter"}, category = "physical"},
   knucklecrack = {genders = {"neuter"}, category = "physical"},
   lick      = {genders = {"neuter"}, category = "physical"},
-  nudge     = {genders = {"neuter"}, category = "physical", requires_target = true},
-  poke      = {genders = {"neuter"}, category = "physical", requires_target = true},
+  nudge     = {genders = {"neuter"}, category = "physical"},
+  poke      = {genders = {"neuter"}, category = "physical"},
   punch     = {genders = {"neuter"}, category = "physical"},
   slap      = {genders = {"neuter"}, category = "physical"},
   snap      = {genders = {"neuter"}, category = "physical"},
@@ -346,70 +337,11 @@ function find_social_sound_file(social_name, gender)
   return nil
 end
 
---- Store pending targeted hook (called when hook arrives for a targeted social)
--- @param action string The social action
--- @param gender string The gender from the hook
-function set_pending_social_hook(action, gender)
-  pending_targeted_hook = {
-    action = action,
-    gender = gender,
-    timestamp = utils.timer()
-  }
-end
-
---- Clear pending targeted hook
-function clear_pending_social_hook()
-  pending_targeted_hook = nil
-end
-
---- Play sound for a targeted social when text confirms player is the target
--- @param action string The social action from the text trigger
--- @return boolean Whether sound was played
-function play_pending_targeted_social(action)
-  if not pending_targeted_hook then
-    return false
-  end
-
-  -- Check if the pending hook matches and is recent
-  local elapsed = utils.timer() - pending_targeted_hook.timestamp
-  if elapsed > PENDING_TARGET_TIMEOUT then
-    clear_pending_social_hook()
-    return false
-  end
-  if pending_targeted_hook.action ~= action then
-    return false
-  end
-
-  -- Check toggles
-  if not should_play_social(action) then
-    clear_pending_social_hook()
-    return false
-  end
-
-  -- Get the gender from the stored hook
-  local gender = pending_targeted_hook.gender or "neuter"
-  if gender == "nonbinary" then
-    gender = math.random(2) == 1 and "male" or "female"
-  end
-
-  -- Find and play the sound
-  local sound_path = find_social_sound_file(action, gender)
-  clear_pending_social_hook()
-
-  if sound_path and mplay then
-    mplay(sound_path, "socials")
-    return true
-  end
-
-  return false
-end
-
 --- Main entry point - play a social sound
 -- @param action string The social action name (e.g., "laugh", "punch")
 -- @param gender string Character gender ("male", "female", "nonbinary")
--- @param is_targeted_at_player boolean Whether player is the target (for edge cases)
 -- @return boolean Whether sound was played successfully
-function play_social(action, gender, is_targeted_at_player)
+function play_social(action, gender)
   -- Resolve any aliases
   local canonical = resolve_social_alias(action)
   local social_data = socials[canonical]
@@ -430,13 +362,6 @@ function play_social(action, gender, is_targeted_at_player)
     effective_gender = math.random(2) == 1 and "male" or "female"
   end
 
-  -- Handle targeted socials (poke, nudge)
-  if social_data.requires_target then
-    -- Store the hook data; sound will play when text confirms player is target
-    set_pending_social_hook(canonical, effective_gender)
-    return false
-  end
-
   -- Find the appropriate sound file
   local sound_path = find_social_sound_file(canonical, effective_gender)
   if not sound_path then
@@ -451,23 +376,3 @@ function play_social(action, gender, is_targeted_at_player)
 
   return false
 end
-
--- Trigger for targeted social confirmation (text arrives after hook)
-ImportXML([=[
-<triggers>
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^(.+?) (poke|pokes|nudge|nudges) you (.*)$"
-   regexp="y"
-   send_to="14"
-   sequence="10"
-   keep_evaluating="y"
-  >
-  <send>
-   local action = ("%2"):gsub("s$", "")
-   play_pending_targeted_social(action)
-  </send>
-  </trigger>
-</triggers>
-]=])

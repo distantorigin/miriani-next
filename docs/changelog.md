@@ -1,7 +1,8 @@
 # Miriani-Next Changelog
 
-## Version 4.0.17 (In Progress)
+## Version 4.0.17
 ### New
+- Began work on automated GitHub builds and releases.
 - Add airlock cycling music.
 - Include "You notify flight control..." messages in spam reduction mode.
 - Remove the config alias for conf.
@@ -32,7 +33,7 @@
 - Properly import timestamps from the database so older messages don't show up as "Just now".
 - Fix metafrequency labels to not break when other non-word symbols were added, such as hyphens or parentheses.
 - Intelligently play a single anomaly sound even if you have GMU notifications enabled while using NAVI. (Previously this would play two alert sounds.)
-- Delete buffers that are disabled.
+- Delete buffers that are disabled from within conf buffers.
 
 ## Version 4.0.16
 ### New

@@ -4,7 +4,7 @@ name: Build
 on:
   push: 
     branches: ['feature/ci']
-
+    
 jobs:
   build:
     name: build
@@ -20,7 +20,14 @@ jobs:
       - name: generate zip
         run: zip -9 -r miriani-next.zip . --exclude=*.git*
       - name: Upload zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4C
         with:
           name: miriani-next
           path: ./miriani-next.zip
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: './miriani-next'
+          draft: true
+          generateReleaseNotes: true

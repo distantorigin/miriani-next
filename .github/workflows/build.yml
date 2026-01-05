@@ -3,7 +3,7 @@ name: Build
 # Trigger the workflow on any push and when a release is published
 on:
   push: 
-    branches: ['feature/ci']
+    branches: ['feature/ci', 'main']
     tags: ['v*']
     
 jobs:

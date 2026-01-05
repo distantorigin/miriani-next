@@ -18,7 +18,7 @@ jobs:
         run: |-
           git describe --tags | sed 's/^v//; s/-.*//' | jq -R 'split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber, patch: .[2]|tonumber}' > version.json
       - name: generate zip
-        run: zip -9 -r miriani-next.zip . -x .git
+        run: zip -9 -r miriani-next.zip . -x \.git
       - name: Upload zip
         uses: actions/upload-artifact@v4
         with:

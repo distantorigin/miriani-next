@@ -298,6 +298,15 @@ end</send>
   </alias>
 
   <alias
+   script="disable_memory_only_mode"
+   match="^history_persist$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+  >
+  </alias>
+
+  <alias
    script="enable_memory_only_mode"
    match="^history_memory_only$"
    enabled="y"
@@ -1584,6 +1593,43 @@ function enable_memory_only_mode(name, line, wc)
   DeleteTimer("history_idle_check")
 
   Note("[Channel History] Memory-only mode enabled. Database cleared. History will not persist.")
+end
+
+-- Disable memory-only mode and initialize the database
+function disable_memory_only_mode(name, line, wc)
+  if not memory_only_mode then
+    Note("[Channel History] Already in persistence mode.")
+    return
+  end
+
+  -- Disable memory-only mode
+  memory_only_mode = false
+  DeleteVariable("channel_history_memory_mode")
+
+  -- Initialize database
+  local db_initialized = init_database()
+  if not db_initialized then
+    Note("[Channel History] Failed to initialize database. Staying in memory-only mode.")
+    memory_only_mode = true
+    return
+  end
+
+  -- Start idle save timer
+  if idle_save_delay > 0 then
+    AddTimer("history_idle_check", 0, 0, 5, "",
+             timer_flag.Enabled + timer_flag.Replace + timer_flag.ActiveWhenClosed,
+             "check_idle_save")
+  end
+
+  -- Mark all in-memory messages as dirty so they get saved
+  for cat, msgs in pairs(messages) do
+    dirty_messages[cat] = dirty_messages[cat] or {}
+    for id, _ in pairs(msgs) do
+      dirty_messages[cat][id] = true
+    end
+  end
+
+  Note("[Channel History] Persistence enabled. History will be saved to database.")
 end
 
 -- Delete all buffers matching a prefix

@@ -462,8 +462,8 @@ function config_menu.edit_option(option_key, group_name)
         -- Disable persistence - enable memory-only mode and clear the database
         Execute("history_memory_only")
       else
-        -- Enable persistence - delete the variable, db restored on reload
-        DeleteVariable("channel_history_memory_mode")
+        -- Enable persistence - initialize database and start saving
+        Execute("history_persist")
       end
     end
 

@@ -21,7 +21,7 @@ jobs:
       - name: generate zip
         run: zip -9 -r miriani-next.zip . --exclude=*.git*
       - name: Upload zip
-        uses: actions/upload-artifact@v4C
+        uses: actions/upload-artifact@v4
         with:
           name: miriani-next
           path: ./miriani-next.zip

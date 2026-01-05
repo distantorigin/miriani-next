@@ -1,5 +1,11 @@
 # Miriani-Next Changelog
 
+## Version 4.1.0 (In Progress)
+### New
+
+### Changed
+- Now use old host in/out sounds.
+
 ## Version 4.0.17
 ### New
 - Began work on automated GitHub builds and releases.

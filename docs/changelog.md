@@ -26,6 +26,7 @@
 - Modified the ammo from containers trigger to support ones bought from Ceridwen and to support other custom ammo containers.
 - Added new sound for noo social and one for squish.
 - Added an option under 'conf buffers' to disable history persistence through restarts.
+- Always play poke and nudge. Require_target option has been removed from socials.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

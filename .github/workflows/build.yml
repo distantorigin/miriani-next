@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-        run: git fetch --prune --unshallow
+      - run: git fetch --prune --unshallow
       
       - name: generate version.json
         run: |-

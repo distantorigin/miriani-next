@@ -1,0 +1,22 @@
+name: Build
+
+# Trigger the workflow on any push and when a release is published
+on:
+  push: 
+    branches: ['feature/ci']
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      
+      - name: generate zip
+        run: zip -r miriani-next.zip . -x .git
+      - name: Upload zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: miriani-next
+          path: ./miriani-next.zip

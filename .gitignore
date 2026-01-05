@@ -54,3 +54,6 @@ installer_output/
 
 # Versioning
 version.json
+
+# channel history related files
+channel_history_*.db*

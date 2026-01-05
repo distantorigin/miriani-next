@@ -1,5 +1,4 @@
 -- Social sound playback with gender-based sound selection.
-local M = {}
 
 -- State for targeted social validation (stores hook data until text confirms target)
 local pending_targeted_hook = nil
@@ -15,7 +14,7 @@ local social_aliases = {
   ["slug"] = "punch",
   ["sock"] = "punch",
   ["hit"] = "punch",
-["pop"] = "punch",
+  ["pop"] = "punch",
 }
 
 -- Socials database
@@ -67,7 +66,7 @@ local socials = {
   yowl      = {genders = {"neuter"}, category = "distress"},
 
   -- Reflex sounds (involuntary body reflexes)
-    blink      = {genders = {"neuter"}, category = "reflex"},
+  blink     = {genders = {"neuter"}, category = "reflex"},
   cough     = {genders = {"male", "female"}, category = "reflex"},
   gulp      = {genders = {"neuter"}, category = "reflex"},
   sigh      = {genders = {"male", "female"}, category = "reflex"},
@@ -87,34 +86,34 @@ local socials = {
   gag       = {genders = {"neuter"}, category = "bodily"},
   puke      = {genders = {"neuter"}, category = "bodily"},
   spit      = {genders = {"neuter"}, category = "bodily"},
-  squish      = {genders = {"neuter"}, category = "bodily"},
+  squish    = {genders = {"neuter"}, category = "bodily"},
   vomit     = {genders = {"neuter"}, category = "bodily"},
 
   -- Physical sounds (movement/contact)
-bap         = {genders = {"neuter"}, category = "physical"},
-bite         = {genders = {"neuter"}, category = "physical"},  
-bop         = {genders = {"neuter"}, category = "physical"},
-  bounce      = {genders = {"neuter"}, category = "physical"},
-  clap        = {genders = {"neuter"}, category = "physical"},
-  collapse    = {genders = {"neuter"}, category = "physical"},
-  fall        = {genders = {"neuter"}, category = "physical"},
-  flap        = {genders = {"neuter"}, category = "physical"},
-  headdesk    = {genders = {"neuter"}, category = "physical"},
-  hop         = {genders = {"male", "female"}, category = "physical"},
-  kick        = {genders = {"neuter"}, category = "physical"},
-  kiss        = {genders = {"neuter"}, category = "physical"},
+  bap       = {genders = {"neuter"}, category = "physical"},
+  bite      = {genders = {"neuter"}, category = "physical"},
+  bop       = {genders = {"neuter"}, category = "physical"},
+  bounce    = {genders = {"neuter"}, category = "physical"},
+  clap      = {genders = {"neuter"}, category = "physical"},
+  collapse  = {genders = {"neuter"}, category = "physical"},
+  fall      = {genders = {"neuter"}, category = "physical"},
+  flap      = {genders = {"neuter"}, category = "physical"},
+  headdesk  = {genders = {"neuter"}, category = "physical"},
+  hop       = {genders = {"male", "female"}, category = "physical"},
+  kick      = {genders = {"neuter"}, category = "physical"},
+  kiss      = {genders = {"neuter"}, category = "physical"},
   knucklecrack = {genders = {"neuter"}, category = "physical"},
-lick         = {genders = {"neuter"}, category = "physical"},
-  nudge       = {genders = {"neuter"}, category = "physical", requires_target = true},
-  poke        = {genders = {"neuter"}, category = "physical", requires_target = true},
-  punch       = {genders = {"neuter"}, category = "physical"},
-  slap        = {genders = {"neuter"}, category = "physical"},
-  snap        = {genders = {"neuter"}, category = "physical"},
-  spank       = {genders = {"neuter"}, category = "physical"},
-  stomp       = {genders = {"neuter"}, category = "physical"},
-  tackle      = {genders = {"neuter"}, category = "physical"},
-  thump      = {genders = {"neuter"}, category = "physical"},  
-  twitch      = {genders = {"neuter"}, category = "physical"},
+  lick      = {genders = {"neuter"}, category = "physical"},
+  nudge     = {genders = {"neuter"}, category = "physical", requires_target = true},
+  poke      = {genders = {"neuter"}, category = "physical", requires_target = true},
+  punch     = {genders = {"neuter"}, category = "physical"},
+  slap      = {genders = {"neuter"}, category = "physical"},
+  snap      = {genders = {"neuter"}, category = "physical"},
+  spank     = {genders = {"neuter"}, category = "physical"},
+  stomp     = {genders = {"neuter"}, category = "physical"},
+  tackle    = {genders = {"neuter"}, category = "physical"},
+  thump     = {genders = {"neuter"}, category = "physical"},
+  twitch    = {genders = {"neuter"}, category = "physical"},
 
   -- Novelty sounds (animals, musical, memes, misc expressions)
   airguitar = {genders = {"neuter"}, category = "novelty"},
@@ -136,17 +135,17 @@ lick         = {genders = {"neuter"}, category = "physical"},
   mock      = {genders = {"neuter"}, category = "novelty"},
   moo       = {genders = {"neuter"}, category = "novelty"},
   noo       = {genders = {"neuter"}, category = "novelty"},
-  oic      = {genders = {"neuter"}, category = "novelty"},
-  oicic      = {genders = {"neuter"}, category = "novelty"},
+  oic       = {genders = {"neuter"}, category = "novelty"},
+  oicic     = {genders = {"neuter"}, category = "novelty"},
   oink      = {genders = {"neuter"}, category = "novelty"},
   pimp      = {genders = {"neuter"}, category = "novelty"},
-    please      = {genders = {"neuter"}, category = "novelty"},
+  please    = {genders = {"neuter"}, category = "novelty"},
   ponder    = {genders = {"male", "female"}, category = "novelty"},
   purr      = {genders = {"neuter"}, category = "novelty"},
-  q     = {genders = {"neuter"}, category = "novelty"},  
+  q         = {genders = {"neuter"}, category = "novelty"},
   quack     = {genders = {"neuter"}, category = "novelty"},
   roar      = {genders = {"neuter"}, category = "novelty"},
-  scream  = {genders = {"neuter"}, category = "novelty"},
+  scream    = {genders = {"neuter"}, category = "novelty"},
   slowclap  = {genders = {"neuter"}, category = "novelty"},
   snarl     = {genders = {"neuter"}, category = "novelty"},
   spoon     = {genders = {"neuter"}, category = "novelty"},
@@ -157,8 +156,7 @@ lick         = {genders = {"neuter"}, category = "physical"},
 }
 
 --- Check if social sounds are globally enabled in config
--- @return boolean
-function M.is_enabled()
+function is_socials_enabled()
   if config and config.get_option then
     local option = config:get_option("social_sounds")
     if option then
@@ -169,9 +167,7 @@ function M.is_enabled()
 end
 
 --- Check if a specific category is enabled
--- @param category string The category name (laughter, distress, reflex, bodily, physical, novelty)
--- @return boolean
-function M.is_category_enabled(category)
+function is_social_category_enabled(category)
   if not config or not config.get_option then
     return true -- default to enabled
   end
@@ -184,9 +180,7 @@ function M.is_category_enabled(category)
 end
 
 --- Check if a specific social is individually enabled
--- @param social_name string The canonical social name
--- @return boolean
-function M.is_social_enabled(social_name)
+function is_social_enabled(social_name)
   if not config or not config.get_option then
     return true -- default to enabled
   end
@@ -199,11 +193,9 @@ function M.is_social_enabled(social_name)
 end
 
 --- Check if a social should play based on all toggle levels
--- @param social_name string The canonical social name
--- @return boolean
-function M.should_play(social_name)
+function should_play_social(social_name)
   -- Check master toggle
-  if not M.is_enabled() then
+  if not is_socials_enabled() then
     return false
   end
 
@@ -215,12 +207,12 @@ function M.should_play(social_name)
 
   -- Check category toggle (default to uncategorized if no category)
   local category = social_data.category or "uncategorized"
-  if not M.is_category_enabled(category) then
+  if not is_social_category_enabled(category) then
     return false
   end
 
   -- Check individual toggle
-  if not M.is_social_enabled(social_name) then
+  if not is_social_enabled(social_name) then
     return false
   end
 
@@ -228,36 +220,28 @@ function M.should_play(social_name)
 end
 
 --- Resolve a social action to its canonical name (handle aliases)
--- @param action string The social action name
--- @return string The canonical social name
-function M.resolve_alias(action)
+function resolve_social_alias(action)
   if not action then return nil end
   local lower_action = string.lower(action)
   return social_aliases[lower_action] or lower_action
 end
 
 --- Check if a social exists in the database
--- @param action string The social action name
--- @return boolean
-function M.social_exists(action)
+function social_exists(action)
   if not action then return false end
-  local canonical = M.resolve_alias(action)
+  local canonical = resolve_social_alias(action)
   return socials[canonical] ~= nil
 end
 
 --- Get social metadata
--- @param action string The social action name
--- @return table or nil Social entry data
-function M.get_social_info(action)
+function get_social_info(action)
   if not action then return nil end
-  local canonical = M.resolve_alias(action)
+  local canonical = resolve_social_alias(action)
   return socials[canonical]
 end
 
 --- Get all socials in a category
--- @param category string The category name (use "uncategorized" for socials without a category)
--- @return table Array of social action names
-function M.get_socials_by_category(category)
+function get_socials_by_category(category)
   local result = {}
   for action, data in pairs(socials) do
     local social_category = data.category or "uncategorized"
@@ -269,8 +253,7 @@ function M.get_socials_by_category(category)
 end
 
 --- Get list of all available social names
--- @return table Array of social action names
-function M.get_all_socials()
+function get_all_socials()
   local result = {}
   for action, _ in pairs(socials) do
     table.insert(result, action)
@@ -280,8 +263,7 @@ function M.get_all_socials()
 end
 
 --- Get list of all categories in use
--- @return table Array of category names (includes "uncategorized" only if socials exist without category)
-function M.get_all_categories()
+function get_all_social_categories()
   local category_set = {}
   local has_uncategorized = false
   for _, data in pairs(socials) do
@@ -303,9 +285,6 @@ function M.get_all_categories()
 end
 
 --- Build a gender set for O(1) lookup (cached per social)
--- @param social_name string The social name for cache key
--- @param genders table Array of supported genders
--- @return table Set of genders
 local function get_gender_set(social_name, genders)
   if not gender_sets_cache[social_name] then
     local set = {}
@@ -318,20 +297,13 @@ local function get_gender_set(social_name, genders)
 end
 
 --- Check if a gender is supported for a social (O(1) lookup)
--- @param social_name string The social name
--- @param social_data table The social entry
--- @param gender string The gender to check
--- @return boolean
 local function gender_supported(social_name, social_data, gender)
   local gender_set = get_gender_set(social_name, social_data.genders)
   return gender_set[gender] == true
 end
 
 --- Find the appropriate sound file path for a social and gender
--- @param social_name string The canonical social name
--- @param gender string The gender (male, female, neuter)
--- @return string or nil The sound file path (without extension)
-function M.find_sound_file(social_name, gender)
+function find_social_sound_file(social_name, gender)
   local social_data = socials[social_name]
   if not social_data then
     return nil
@@ -355,9 +327,7 @@ function M.find_sound_file(social_name, gender)
 end
 
 --- Store pending targeted hook (called when hook arrives for a targeted social)
--- @param action string The social action
--- @param gender string The gender from the hook
-function M.set_pending_hook(action, gender)
+function set_pending_social_hook(action, gender)
   pending_targeted_hook = {
     action = action,
     gender = gender,
@@ -366,14 +336,12 @@ function M.set_pending_hook(action, gender)
 end
 
 --- Clear pending targeted hook
-function M.clear_pending_hook()
+function clear_pending_social_hook()
   pending_targeted_hook = nil
 end
 
 --- Play sound for a targeted social when text confirms player is the target
--- @param action string The social action from the text trigger
--- @return boolean Whether sound was played
-function M.play_pending_targeted(action)
+function play_pending_targeted_social(action)
   if not pending_targeted_hook then
     return false
   end
@@ -385,8 +353,8 @@ function M.play_pending_targeted(action)
   end
 
   -- Check toggles
-  if not M.should_play(action) then
-    M.clear_pending_hook()
+  if not should_play_social(action) then
+    clear_pending_social_hook()
     return false
   end
 
@@ -397,8 +365,8 @@ function M.play_pending_targeted(action)
   end
 
   -- Find and play the sound
-  local sound_path = M.find_sound_file(action, gender)
-  M.clear_pending_hook()
+  local sound_path = find_social_sound_file(action, gender)
+  clear_pending_social_hook()
 
   if sound_path and mplay then
     mplay(sound_path, "socials")
@@ -409,13 +377,9 @@ function M.play_pending_targeted(action)
 end
 
 --- Main entry point - play a social sound
--- @param action string The social action name (e.g., "laugh", "punch")
--- @param gender string Character gender ("male", "female", "nonbinary")
--- @param is_targeted_at_player boolean Whether player is the target (for edge cases)
--- @return boolean Whether sound was played successfully
-function M.play_social(action, gender, is_targeted_at_player)
+function play_social(action, gender, is_targeted_at_player)
   -- Resolve any aliases
-  local canonical = M.resolve_alias(action)
+  local canonical = resolve_social_alias(action)
   local social_data = socials[canonical]
 
   if not social_data then
@@ -424,7 +388,7 @@ function M.play_social(action, gender, is_targeted_at_player)
   end
 
   -- Check if this social should play (master, category, and individual toggles)
-  if not M.should_play(canonical) then
+  if not should_play_social(canonical) then
     return false
   end
 
@@ -437,12 +401,12 @@ function M.play_social(action, gender, is_targeted_at_player)
   -- Handle targeted socials (poke, nudge)
   if social_data.requires_target then
     -- Store the hook data; sound will play when text confirms player is target
-    M.set_pending_hook(canonical, effective_gender)
+    set_pending_social_hook(canonical, effective_gender)
     return false
   end
 
   -- Find the appropriate sound file
-  local sound_path = M.find_sound_file(canonical, effective_gender)
+  local sound_path = find_social_sound_file(canonical, effective_gender)
   if not sound_path then
     return false
   end
@@ -454,11 +418,6 @@ function M.play_social(action, gender, is_targeted_at_player)
   end
 
   return false
-end
-
--- Global function for trigger to call
-function play_pending_targeted_social(action)
-  return M.play_pending_targeted(action)
 end
 
 -- Trigger for targeted social confirmation (text arrives after hook)
@@ -480,5 +439,3 @@ ImportXML([=[
   </trigger>
 </triggers>
 ]=])
-
-return M

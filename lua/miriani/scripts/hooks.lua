@@ -334,8 +334,7 @@ function playsocial(name, line, wildcards)
   local gender = wildcards[2]
 
   -- Use the socials module to handle sound playback
-  local socials = require("lua/miriani/scripts/socials")
-  socials.play_social(action, gender, false)
+  play_social(action, gender, false)
 end
 
 last_emote_time = 0

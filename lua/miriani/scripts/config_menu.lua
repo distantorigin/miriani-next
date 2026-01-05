@@ -19,9 +19,8 @@ local special_groups = {"audio groups", "sound variants"}
 -- Get social categories dynamically from socials module
 local function get_social_categories()
   local categories = {}
-  local ok, socials = pcall(require, "miriani.scripts.socials")
-  if ok and socials and socials.get_all_categories then
-    for _, cat in ipairs(socials.get_all_categories()) do
+  if get_all_social_categories then
+    for _, cat in ipairs(get_all_social_categories()) do
       table.insert(categories, "socials_" .. cat)
     end
   else

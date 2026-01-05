@@ -29,6 +29,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: './miriani-next'
+          artifacts: './miriani-next.zip'
           draft: true
           generateReleaseNotes: true

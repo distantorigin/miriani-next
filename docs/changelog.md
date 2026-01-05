@@ -25,11 +25,13 @@
 - Added scream sounds back in since they can now be toggled on and off.
 - Modified the ammo from containers trigger to support ones bought from Ceridwen and to support other custom ammo containers.
 - Added new sound for noo social and one for squish.
+- Added an option under 'conf buffers' to disable history persistence through restarts.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".
 - Fix metafrequency labels to not break when other non-word symbols were added, such as hyphens or parentheses.
 - Intelligently play a single anomaly sound even if you have GMU notifications enabled while using NAVI. (Previously this would play two alert sounds.)
+- Delete buffers that are disabled.
 
 ## Version 4.0.16
 ### New

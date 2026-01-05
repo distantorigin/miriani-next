@@ -372,7 +372,11 @@ function play_pending_targeted_social(action)
 
   -- Check if the pending hook matches and is recent
   local elapsed = utils.timer() - pending_targeted_hook.timestamp
-  if pending_targeted_hook.action ~= action or elapsed > PENDING_TARGET_TIMEOUT then
+  if elapsed > PENDING_TARGET_TIMEOUT then
+    clear_pending_social_hook()
+    return false
+  end
+  if pending_targeted_hook.action ~= action then
     return false
   end
 

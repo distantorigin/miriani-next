@@ -113,7 +113,8 @@ local options = {
   courier_buffer = {descr="Courier company channel.", value="yes", group="buffers", type="bool"},
   newbie_buffer = {descr="Newbie Channel.", value="yes", group="buffers", type="bool"},
   hooks_buffer = {descr="Soundpack hooks buffer.", value="no", group="developer", type="bool"},
-scan_buffer = {descr="Starship Scans", value="yes", group="buffers", type="bool"},
+  scan_buffer = {descr="Starship Scans", value="yes", group="buffers", type="bool"},
+  channel_history_persist = {descr="Keep channel history indefinitely (persists across restarts).", value="yes", group="buffers", type="bool"},
   rp_buffer = {descr="Roleplay.", value="yes", group="buffers", type="bool"},
 
   -- Colors --

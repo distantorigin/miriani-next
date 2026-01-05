@@ -62,7 +62,7 @@ CHANGELOG:
 <aliases>
   <alias
    script="history_delete"
-   match="^history_delete"
+   match="^history_delete\s*(.*)$"
    enabled="y"
    omit_from_command_history="y"
    omit_from_log="y"
@@ -298,6 +298,30 @@ end</send>
   </alias>
 
   <alias
+   script="enable_memory_only_mode"
+   match="^history_memory_only$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   script="history_delete_prefix"
+   match="^history_delete_prefix\s+(.+)$"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
    script="show_history_stats"
    match="^history_stats$"
    enabled="y"
@@ -380,6 +404,7 @@ last_not_found_buffer = nil -- track the last buffer that wasn't found
 db = nil
 memory_window_size = 10000
 idle_save_delay = 300    -- seconds of idle before auto-save
+memory_only_mode = false -- when true, never use database
 dirty_messages = {}      -- per-category list of unsaved message indices
 last_saved_id = {}       -- per-category highest saved msg_id
 oldest_loaded_id = {}    -- per-category oldest msg_id in memory
@@ -427,9 +452,17 @@ Accelerator("alt+shift+t","timestamps")
 Accelerator("alt+q","history_quickcycle")
 Accelerator("alt+shift+q","history_quicktoggle")
 
-function history_delete(n,l,w)
- if not require_category(true) then return end
- local cat = categories[current_category]
+-- Helper function to delete a buffer by name (returns true if found and deleted)
+function delete_buffer_by_name(cat)
+ -- Find the category index
+ local cat_index = nil
+ for i, c in ipairs(categories) do
+  if c == cat then
+   cat_index = i
+   break
+  end
+ end
+ if not cat_index then return false end
 
  -- Clear from memory
  messages[cat] = nil
@@ -458,18 +491,46 @@ function history_delete(n,l,w)
    end
   end
  end
- save_quick_buffers()
 
- table.remove(categories, current_category)
+ -- Remove from categories
+ table.remove(categories, cat_index)
+ if current_category >= cat_index and current_category > 1 then
+  current_category = current_category - 1
+ end
  if current_category > #categories then
   current_category = 1
  end
- if #categories > 0 then
-  say(categories[current_category])
+
+ return true
+end
+
+function history_delete(n,l,w)
+ -- Check if a buffer name was provided as argument
+ local arg = w and w[1] and w[1]:match("^%s*(.-)%s*$") or ""
+ local cat = nil
+
+ if arg ~= "" then
+  cat = arg
+  if not delete_buffer_by_name(cat) then
+   -- Buffer not found, silently return (may not exist yet)
+   return
+  end
+  save_quick_buffers()
  else
-  say("no more categories.")
-  categories = { }
-  current_category = 0
+  -- No argument, use current category
+  if not require_category(true) then return end
+  cat = categories[current_category]
+  delete_buffer_by_name(cat)
+  save_quick_buffers()
+
+  -- Announce result for interactive delete
+  if #categories > 0 then
+   say(categories[current_category])
+  else
+   say("no more categories.")
+   categories = { }
+   current_category = 0
+  end
  end
 end
 
@@ -496,15 +557,21 @@ end
 function OnPluginInstall()
  SetVariable("tts","1")
 
- -- Initialize database
- local db_initialized = init_database()
-
  -- Load settings
  memory_window_size = tonumber(GetVariable("memory_window_size")) or 10000
  idle_save_delay = tonumber(GetVariable("idle_save_delay")) or 600  -- 10 minutes
+ memory_only_mode = GetVariable("channel_history_memory_mode") == "yes"
 
- -- Load message history from database
- if db_initialized then
+ -- Initialize database (unless memory-only mode)
+ local db_initialized = false
+ if not memory_only_mode then
+   db_initialized = init_database()
+ else
+   Note("[Channel History] Memory-only mode enabled. History will not persist.")
+ end
+
+ -- Load message history from database (unless memory-only mode)
+ if db_initialized and not memory_only_mode then
    load_memory_windows()
    apply_category_order()
 
@@ -729,7 +796,7 @@ end
 
 -- Save dirty messages to database
 function save_to_database()
-  if not db or save_in_progress then return end
+  if not db or save_in_progress or memory_only_mode then return end
 
   save_in_progress = true
 
@@ -776,7 +843,7 @@ end
 
 -- Idle detection timer callback
 function check_idle_save()
-  if not db or idle_save_delay == 0 then return end
+  if not db or idle_save_delay == 0 or memory_only_mode then return end
 
   local idle_time = utils.timer() - last_message_time
   if idle_time >= idle_save_delay then
@@ -798,7 +865,7 @@ end
 
 -- Lazy load older messages from database when navigating backward
 function lazy_load_older_messages(cat, requested_count)
-  if not db or not oldest_loaded_id[cat] then
+  if not db or not oldest_loaded_id[cat] or memory_only_mode then
     return 0
   end
 
@@ -1481,21 +1548,95 @@ function manual_save(name, line, wc)
   Note("Saved " .. unsaved .. " messages to database.")
 end
 
+-- Enable memory-only mode and clear the database
+function enable_memory_only_mode(name, line, wc)
+  -- Enable memory-only mode
+  memory_only_mode = true
+  SetVariable("channel_history_memory_mode", "yes")
+
+  -- Close and delete the database
+  if db then
+    db:close()
+    db = nil
+  end
+
+  local db_path = GetInfo(66) .. "channel_history_" .. GetWorldID() .. ".db"
+  os.remove(db_path)
+  os.remove(db_path .. "-wal")  -- WAL journal file
+  os.remove(db_path .. "-shm")  -- Shared memory file
+
+  -- Clear all in-memory state
+  messages = {}
+  indices = {}
+  categories = {}
+  dirty_messages = {}
+  last_saved_id = {}
+  oldest_loaded_id = {}
+  total_count = {}
+  current_category = 0
+
+  -- Clear quick buffers
+  quick_buffers = {}
+  quick_buffer_index = 1
+  save_quick_buffers()
+
+  -- Disable idle save timer
+  DeleteTimer("history_idle_check")
+
+  Note("[Channel History] Memory-only mode enabled. Database cleared. History will not persist.")
+end
+
+-- Delete all buffers matching a prefix
+function history_delete_prefix(name, line, w)
+  local prefix = w and w[1] and w[1]:match("^%s*(.-)%s*$") or ""
+  if prefix == "" then return end
+
+  -- Find all categories matching the prefix
+  local to_delete = {}
+  for _, cat in ipairs(categories) do
+    if cat:sub(1, #prefix) == prefix then
+      table.insert(to_delete, cat)
+    end
+  end
+
+  -- Delete each matching buffer
+  for _, cat in ipairs(to_delete) do
+    delete_buffer_by_name(cat)
+  end
+
+  save_quick_buffers()
+
+  if #categories == 0 then
+    current_category = 0
+  end
+end
+
 -- Show history statistics
 function show_history_stats()
+  local total_memory = 0
+  for cat, msg_list in pairs(messages) do
+    total_memory = total_memory + #msg_list
+  end
+
+  if memory_only_mode then
+    Note(string.format(
+      "History Stats (memory-only): %d buffers, %d messages in memory.",
+      #categories, total_memory
+    ))
+    return
+  end
+
   if not db then
-    Note("Database not available.")
+    Note(string.format(
+      "History Stats (no database): %d buffers, %d messages in memory.",
+      #categories, total_memory
+    ))
     return
   end
 
   local total_db = 0
   for row in db:rows("SELECT COUNT(*) FROM channel_messages") do
     total_db = row[1]
-  end
-
-  local total_memory = 0
-  for cat, msg_list in pairs(messages) do
-    total_memory = total_memory + #msg_list
   end
 
   local unsaved = 0

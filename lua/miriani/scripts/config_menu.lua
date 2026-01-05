@@ -457,6 +457,36 @@ function config_menu.edit_option(option_key, group_name)
     notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), display_value))
     config:save()
 
+    -- Special handling for channel_history_persist option
+    if option_key == "channel_history_persist" then
+      if new_value == "no" then
+        -- Disable persistence - enable memory-only mode and clear the database
+        Execute("history_memory_only")
+      else
+        -- Enable persistence - delete the variable, db restored on reload
+        DeleteVariable("channel_history_memory_mode")
+      end
+    end
+
+    -- Special handling for buffer options - delete the buffer when disabled
+    if option_key:match("_buffer$") and new_value == "no" then
+      -- Exceptions where the category name differs from the option prefix
+      local buffer_exceptions = {
+        url_buffer = "URLs",
+        flight_buffer = "flight control",
+        board_buffer = "boards",
+        scan_buffer = "scans",
+        rp_buffer = "roleplay",
+      }
+      -- Special case: metaf_buffer deletes all buffers starting with "metaf"
+      if option_key == "metaf_buffer" then
+        Execute("history_delete_prefix metaf")
+      else
+        local category = buffer_exceptions[option_key] or option_key:gsub("_buffer$", "")
+        Execute("history_delete " .. category)
+      end
+    end
+
     -- Special handling for tab_activates_notepad option
     if option_key == "tab_activates_notepad" then
       -- Update tab accelerators immediately

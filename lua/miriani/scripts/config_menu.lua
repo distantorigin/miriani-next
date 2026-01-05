@@ -671,8 +671,9 @@ function config_menu.find_and_edit(group_name, search_term)
     end
   end
 
-  -- Special handling for socials - navigate to subcategory menus
+  -- Special handling for socials - navigate to subcategory menus or toggle individual socials
   if actual_group_key == "socials" then
+    -- First try matching a category name
     local subcategory_names = {"laughter", "distress", "reflex", "bodily", "physical", "novelty", "all"}
     for _, cat in ipairs(subcategory_names) do
       if string.find(string.lower(cat), string.lower(search_term)) then
@@ -680,9 +681,29 @@ function config_menu.find_and_edit(group_name, search_term)
         return
       end
     end
-    -- If no category matched, show error
+
+    -- Try matching an individual social name
+    if get_all_socials then
+      local search_lower = string.lower(search_term)
+      for _, social_name in ipairs(get_all_socials()) do
+        if string.find(string.lower(social_name), search_lower) then
+          local option_key = "social_" .. social_name
+          local option = config:get_option(option_key)
+          if option then
+            local new_value = option.value == "yes" and "no" or "yes"
+            config:set_option(option_key, new_value)
+            config:save()
+            local status = new_value == "yes" and "enabled" or "disabled"
+            notify("info", string.format("%s sound %s", social_name, status))
+            return
+          end
+        end
+      end
+    end
+
+    -- If nothing matched, show error
     mplay("misc/cancel")
-    notify("critical", string.format("Could not find social category matching '%s'.", search_term))
+    notify("critical", string.format("Could not find social or category matching '%s'.", search_term))
     return
   end
 

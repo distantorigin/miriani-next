@@ -4,6 +4,7 @@ name: Build
 on:
   push: 
     branches: ['feature/ci']
+    tags: ['v*']
     
 jobs:
   build:

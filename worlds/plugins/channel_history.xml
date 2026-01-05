@@ -303,6 +303,9 @@ end</send>
    enabled="y"
    omit_from_command_history="y"
    omit_from_log="y"
+   regexp="y"
+   omit_from_output="y"
+   sequence="100"
   >
   </alias>
 

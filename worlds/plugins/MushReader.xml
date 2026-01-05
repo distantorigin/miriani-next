@@ -67,7 +67,11 @@ end
    send_to="12"
    sequence="100"
   >
-  <send>tts_enabled = false</send>
+  <send>
+tts_enabled = false
+SetVariable("ftts_saved", GetVariable("ftts") or "0")
+SetVariable("ftts", "0")
+  </send>
   </alias>
 
   <alias
@@ -76,7 +80,10 @@ end
    send_to="12"
    sequence="100"
   >
-  <send>tts_enabled = true</send>
+  <send>
+tts_enabled = true
+restore_ftts()
+  </send>
   </alias>
 
   <alias
@@ -225,8 +232,17 @@ else
 tnote("Unrecognized substitutions command. Possible commands are: clear, list, add, remove, on, off")
 end
 end
+function restore_ftts()
+  local saved = GetVariable("ftts_saved")
+  if saved then
+    SetVariable("ftts", saved)
+    DeleteVariable("ftts_saved")
+  end
+end
+
 function OnPluginInstall ()
 assert(package.loadlib("MushReader.dll", "luaopen_audio"))()
+restore_ftts()
 stop()
 --say("mush reader initialized")
 end
@@ -276,6 +292,7 @@ say("speech off")
 else
 tts_enabled = true
 etts=true
+restore_ftts()
 stop()
 say("speech on")
 end

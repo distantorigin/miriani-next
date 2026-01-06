@@ -2,7 +2,7 @@ name: Build
 
 on:
   push: 
-    branches: ['feature/ci', 'main', 'feature/git-cliff']
+    branches: ['feature/ci', 'main']
     tags: ['v*']
 
 permissions:
@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ startsWith(github.ref, 'refs/tags') && 'feature/git-cliff' || github.ref_name }}
+          ref: ${{ startsWith(github.ref, 'refs/tags') && 'main' || github.ref_name }}
 
       - name: generate version.json
         run: |-

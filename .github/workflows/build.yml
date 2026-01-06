@@ -1,10 +1,12 @@
 name: Build
 
-# Trigger the workflow on any push and when a release is published
 on:
   push: 
-    branches: ['feature/ci', 'main']
+    branches: ['feature/ci', 'main', 'feature/git-cliff']
     tags: ['v*']
+
+permissions:
+  contents: write
     
 jobs:
   build:
@@ -13,22 +15,54 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - run: git fetch --prune --unshallow
-      
+        with:
+          fetch-depth: 0
+          ref: ${{ startsWith(github.ref, 'refs/tags') && 'feature/git-cliff' || github.ref_name }}
+
       - name: generate version.json
         run: |-
           git describe --tags | sed 's/^v//; s/-.*//' | jq -R 'split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber, patch: .[2]|tonumber}' > version.json
+
+      - name: Generate release changelog
+        if: startsWith(github.ref, 'refs/tags')
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --tag ${{ github.ref_name }}
+        env:
+          OUTPUT: CHANGELOG.md
+
+      - name: Update changelog
+        if: startsWith(github.ref, 'refs/tags')
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --tag ${{ github.ref_name }} --prepend docs/changelog.md
+        env:
+          OUTPUT: docs/changelog.md
+
+      - name: Commit changelog
+        if: startsWith(github.ref, 'refs/tags')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/changelog.md
+          git diff --staged --quiet || git commit -m "chore(ci): "update changelog"
+          git push
+
       - name: generate zip
         run: zip -9 -r miriani-next.zip . --exclude=*.git*
+
       - name: Upload zip
         uses: actions/upload-artifact@v4
         with:
           name: miriani-next
           path: ./miriani-next.zip
+
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
           artifacts: './miriani-next.zip'
           draft: true
-          generateReleaseNotes: true
+          bodyFile: CHANGELOG.md

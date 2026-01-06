@@ -15,6 +15,33 @@
 -  Remove --local parameter
 -  Not using OUTPUT environment variable when prepending
 -  Fix quotes
+-  Fix release generation
+-  Use git-cliff --tag --latest
+
+### Changed
+
+-  Replace host in/out sounds with old ones.
+-  Change cliff.toml configuration
+
+### Removed
+
+-  Remove unreleased manual changelog entries
+
+## Version 4.1.0 - 2026-01-06
+
+### New
+
+-  Add automatic changelog generation
+-  Add changelog generation in release
+
+### Fixed
+
+-  Save dynamic social toggle options to config file
+-  Fix git-cliff parameters
+-  Change git-cliff parameters to use latest tag
+-  Remove --local parameter
+-  Not using OUTPUT environment variable when prepending
+-  Fix quotes
 
 ### Changed
 

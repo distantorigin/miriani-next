@@ -90,6 +90,15 @@ function Config:init(options, audio)
         local category = info.category or "uncategorized"
         local option_key = "social_" .. social_name
         local display_name = social_name:gsub("^%l", string.upper)
+        local option_def = {
+          descr = display_name,
+          value = "yes",
+          group = "socials_" .. category,
+          type = "bool"
+        }
+        -- Add to vars.options for save comparison (defaults reference)
+        vars.options[option_key] = option_def
+        -- Add to self.options (working copy that gets loaded values applied)
         self.options[option_key] = {
           descr = display_name,
           value = "yes",

@@ -38,8 +38,6 @@ jobs:
         with:
           config: cliff.toml
           args: -l --prepend docs/changelog.md
-        env:
-          OUTPUT: docs/changelog.md
 
       - name: Commit changelog
         if: startsWith(github.ref, 'refs/tags')

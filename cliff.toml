@@ -5,7 +5,10 @@
 [changelog]
 # A Tera template to be rendered for each release in the changelog.
 # See https://keats.github.io/tera/docs/#introduction
-header = "# Miriani-Next Changelog"
+header = """
+# Miriani-Next Changelog
+
+"""
 body = """
 {% if version %}\
     ## Version {{ version | trim_start_matches(pat="v") }} - {{ timestamp | date(format="%Y-%m-%d") }}
@@ -15,10 +18,10 @@ body = """
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
-        - {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
-            {{ commit.message | upper_first }}\
+        - {% if commit.scope %}*({{ commit.scope }})* {% endif %} {{ commit.message | upper_first }}\
     {% endfor %}
 {% endfor %}
+
 """
 # Remove leading and trailing whitespaces from the changelog's body.
 trim = true
@@ -29,8 +32,6 @@ postprocessors = [
     # Replace the placeholder <REPO> with a URL.
     #{ pattern = '<REPO>', replace = "https://github.com/orhun/git-cliff" },
 ]
-# render body even when there are no releases to process
-# render_always = true
 # output file path
 # output = "test.md"
 
@@ -61,19 +62,20 @@ protect_breaking_commits = false
 # Assigns commits to groups.
 # Optionally sets the commit's scope and can decide to exclude commits from further processing.
 commit_parsers = [
-    { message = "^feat", group = "New" },
-    { message = "^fix", group = "Fixed" },
-    { message = "^change", group = "Changed"}" 
-    { message = "^doc", group = "Documented" },
-    { message = "^perf", group = "Performance" },
-    { message = "^refactor", group = "Refactor" },
+    { message = "^feat", group = "<!-- 0 -->New" },
+    { message = "^fix", group = "<!-- 1 -->Fixed" },
+    { message = "^change", group = "<!-- 2 -->Changed"},
+    { message = "^remove", group = "<!-- 3 -->Removed"},
+    { message = "^doc", group = "<!-- 4 -->Documented" },
+    { message = "^refactor", group = "<!-- 5 -->Refactor" },
     { message = "^chore\\(release\\): prepare for", skip = true },
+    { message = "^update changelog$", skip = true},
     { message = "^chore\\(deps.*\\)", skip = true },
     { message = "^chore\\(pr\\)", skip = true },
     { message = "^chore\\(pull\\)", skip = true },
-    { message = "^chore|^ci", group = "Miscellaneous" },
-    { message = "^revert", group = "Reverted" },
-    { message = ".*", group = "<!-- 10 -->💼 Other" },
+    { message = "^chore|^ci", group = "<!-- 6 -->Miscellaneous" },
+    { message = "^revert", group = "<!-- 7 -->Reverted" },
+    { message = ".*", group = "<!-- 2 -->Changed" },
 ]
 # Exclude commits that are not matched by any commit parser.
 filter_commits = false

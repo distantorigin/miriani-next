@@ -11,7 +11,7 @@ header = """
 """
 body = """
 {% if version %}\
-    ## Version {{ version | trim_start_matches(pat="v") }} - {{ timestamp | date(format="%Y-%m-%d") }}
+    ## Version {{ version | trim_start_matches(pat="v") }} ({{ timestamp | date(format="%Y-%m-%d") }})
 {% else %}\
     ## Unreleased
 {% endif %}\

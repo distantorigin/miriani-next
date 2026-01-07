@@ -1,5 +1,135 @@
 # Miriani-Next Changelog
 
+## Version 4.0.17 (2026-01-07)
+
+### New
+
+-  Expose memory-only mode as config option and auto-delete disabled buffers
+-  Add continuous integration workflow (#3)
+-  Allow conf socials <social_name> to toggle individual socials
+-  Add automatic changelog generation
+- *(ci)*  Add versioned artifact names to build workflow
+
+### Fixed
+
+-  Fixed survey sounds for planets
+- *(MushReader)*  Prevent FTTS from re-enabling speech while DND is active
+-  Restore doc comments and fix socials load order
+-  Clear stale pending social hooks on timeout
+-  Channel history persistence toggle takes effect immediately
+-  Add missing regexp flag to history_persist alias
+-  Save dynamic social toggle options to config file
+- *(ci)*  Disable go cache in build-installer job
+
+### Changed
+
+-  Add elevator music for airlocks.
+-  Added pimp slap sound
+-  Remove the config alias from conf, add flight control gagging.
+-  Consolidate device triggers into devices.lua
+
+Moved device-related triggers from multiple files to devices.lua:
+- From communication.lua: board message notifications and activate/deactivate
+- From computer.lua: Lore computer print sounds
+- From misc.lua: LoreTech tracking, incoming files, TransLink, tracking denied, and license/combat points checking
+-  Move camera, radio, droid, and surveyor triggers to devices.lua
+
+Added to devices.lua:
+- Camera triggers: internal, external, droid camera feed, snapshot
+- Radio triggers: detect, connect, disconnect
+- Droid triggers: shutdown, power up
+- Planetary surveyor trigger
+-  Rename computer.lua to ShipComputer.lua and move destination finder to devices
+
+- Renamed computer.lua to ShipComputer.lua
+- Moved destination finder trigger from computer to devices.lua
+- Updated init.lua to reference ShipComputer
+- ShipComputer.lua now contains only ship computer related triggers
+-  More new sounds
+-  New squeak sound
+-  Changed some wording
+-  Further cleanup to ShipComputer.lua.
+-  Add debouncing to anomaly detection.
+-  Remove local declaration.
+-  Extract atmospheric salvaging triggers to salvagers.lua.
+
+Migrated all salvager-specific triggers from vehicles.lua to a new
+dedicated salvagers.lua file, including water navigation, whirlpools,
+waves, bubbles, fish crashes, avian expulsion, and salvager operations.
+-  Extract atmospheric combat vehicle triggers to ACV.lua.
+
+Migrated all ACV-specific combat triggers from vehicles.lua to a new
+dedicated ACV.lua file, including return command, weapon aiming,
+ordinates firing, and bomb activation.
+-  Fixed a missing "
+-  Fixed another line.
+-  Fixing a line again
+-  Trying again with failed trigger.
+-  Final attempt
+-  Testing a new pimpslap social sound. May make it number 3 if liked.
+-  Trying yet another pimpslap sound
+-  Add ACV.lua and salvagers.lua to init includes.
+-  More vehicles reorganization.
+
+Docking bay and power toggle triggers now in asteroid_mining.lua.
+Gas contact and wind triggers now in salvagers.lua.
+-  Remove duplicate gas clouds contact trigger.
+
+The salvagers.lua file contained two triggers for the same game event
+(vehicle contacting gas clouds). Both played identical sound files
+(activity/atmo/contact.ogg and vehicle/contact.ogg have the same MD5).
+Kept the activity/atmo version as it's more semantically correct for
+atmospheric operations and has better trigger sequencing.
+-  Add DND mode.
+-  Add silent TTS control aliases to MushReader.
+
+Added tts_disable_silent and tts_enable_silent commands for precise
+TTS state control without announcements. These are needed for DND mode
+to reliably disable and re-enable speech across plugin boundaries.
+-  More updates to new DND mode.
+-  Fix wake on red.
+-  Don't play step sounds when originating from camera.
+-  Fix channel history timestamps upon database load.
+-  Fix internal camera.
+-  Add star detection.
+-  Add more long-range scanning sounds.
+-  Readded pimpslap sounds.
+-  Readded second snort sound.
+-  Add salvage low and salvage critical.
+-  Make metafrequency labels less picky.
+-  Added planetary survey start and complete sounds, boosted volume on salvager low and critical alerts
+-  Added sound for please social
+-  Another please social sound
+-  Include pan, volume, and group in sounds buffer entries
+-  Add socials framework with granular toggle controls
+-  Move targeted social triggers to socials.lua
+-  Reverse the social hook check.
+-  Pending target scope fix.
+-  Added POP to punch sounds, please to novelty sounds.
+-  Added Q to socials list.
+-  Sounds for OIC and OICIC socials.
+-  Trimmed excess from OIC and OICIC sounds.
+-  Renamed miriani back to toastush as it was breaking new installs.
+-  Added a couple gags for bulk salvaging.
+-  Updated changelog because I'm a forgetful human.
+-  Restore MUSHclient.ini and mushclient_prefs.sqlite to previous versions.
+-  Added thump sound.
+-  Added a batch of new social sounds.
+-  Readded scream sounds.
+-  Readded scream sounds.
+-  Made melee  ammo sound support any type of ammo container.
+-  Added new noo sound.
+-  Added new noo and squish sounds.
+-  Replace host in/out sounds with old ones.
+-  Replaced surveyStart with original MT Miriani version.
+-  New bonk sound.
+-  Boosted volume for a few social sounds.
+
+### Refactor
+
+-  Remove unnecessary module pattern from socials
+-  Remove requires_target functionality from socials
+
 ## Version 4.0.20 (2026-01-07)
 
 ### New

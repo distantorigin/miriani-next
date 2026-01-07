@@ -40,7 +40,7 @@ postprocessors = [
 # See https://www.conventionalcommits.org
 conventional_commits = true
 # Exclude commits that do not match the conventional commits specification.
-filter_unconventional = true
+filter_unconventional = false
 # Require all commits to be conventional.
 # Takes precedence over filter_unconventional.
 require_conventional = false
@@ -69,7 +69,8 @@ commit_parsers = [
     { message = "^doc", group = "<!-- 4 -->Documented" },
     { message = "^refactor", group = "<!-- 5 -->Refactor" },
     { message = "^chore\\(release\\): prepare for", skip = true },
-    { message = "^update changelog$", skip = true},
+    { message = "^(update changelog|Update changelog).*$", skip = true},
+    { message = "^Merge", skip=true },
     { message = "^chore\\(deps.*\\)", skip = true },
     { message = "^chore\\(pr\\)", skip = true },
     { message = "^chore\\(pull\\)", skip = true },

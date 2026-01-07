@@ -1,5 +1,24 @@
 # Miriani-Next Changelog
 
+## Version 4.0.20 (2026-01-07)
+
+### New
+
+-  Add automatic changelog generation
+- *(ci)*  Add versioned artifact names to build workflow
+
+### Fixed
+
+-  Save dynamic social toggle options to config file
+- *(ci)*  Disable go cache in build-installer job
+
+### Changed
+
+-  Replace host in/out sounds with old ones.
+-  Replaced surveyStart with original MT Miriani version.
+-  New bonk sound.
+-  Boosted volume for a few social sounds.
+
 ## Version 4.0.18 (2026-01-07)
 
 ### New

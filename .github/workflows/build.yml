@@ -88,10 +88,11 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
+          cache: false
 
       - name: Build offline installer
         run: |
-          mkdir -p next-launcher/internal/embedded/release
+          New-Item -ItemType Directory -Force -Path next-launcher\internal\embedded\release
           copy "release\miriani-${{ needs.build-zip.outputs.version }}.zip" next-launcher\internal\embedded\release\miriani-next.zip
           cd next-launcher
           go build -tags embedded -ldflags="-s -w" -o "..\miriani-installer-${{ needs.build-zip.outputs.version }}.exe"

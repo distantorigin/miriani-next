@@ -1,27 +1,33 @@
 name: Build
 
 on:
-  push: 
+  push:
     branches: ['feature/ci', 'main']
     tags: ['v*']
 
 permissions:
   contents: write
-    
+
 jobs:
-  build:
-    name: build
+  build-zip:
+    name: Build ZIP
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ startsWith(github.ref, 'refs/tags') && 'main' || github.ref_name }}
 
-      - name: generate version.json
+      - name: Get version
+        id: version
+        run: echo "VERSION=$(git describe --tags | sed 's/^v//; s/-.*//')" >> $GITHUB_OUTPUT
+
+      - name: Generate version.json
         run: |-
-          git describe --tags | sed 's/^v//; s/-.*//' | jq -R 'split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber, patch: .[2]|tonumber}' > version.json
+          echo '${{ steps.version.outputs.VERSION }}' | jq -R 'split(".") | {major: .[0]|tonumber, minor: .[1]|tonumber, patch: .[2]|tonumber}' > version.json
 
       - name: Generate release changelog
         if: startsWith(github.ref, 'refs/tags')
@@ -48,19 +54,81 @@ jobs:
           git diff --staged --quiet || git commit -m "update changelog"
           git push
 
-      - name: generate zip
-        run: zip -9 -r miriani-next.zip . --exclude=*.git*
+      - name: Generate ZIP
+        run: zip -9 -r miriani-${{ steps.version.outputs.VERSION }}.zip . --exclude=*.git*
 
-      - name: Upload zip
+      - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: miriani-next
-          path: ./miriani-next.zip
+          path: ./miriani-${{ steps.version.outputs.VERSION }}.zip
+
+      - name: Upload changelog artifact
+        if: startsWith(github.ref, 'refs/tags')
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: ./CHANGELOG.md
+
+  build-installer:
+    name: Build Installer
+    needs: build-zip
+    runs-on: windows-latest
+    steps:
+      - name: Download ZIP
+        uses: actions/download-artifact@v4
+        with:
+          name: miriani-next
+          path: ./release
+
+      - name: Clone next-launcher
+        run: git clone https://github.com/distantorigin/next-launcher.git
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build offline installer
+        run: |
+          mkdir -p next-launcher/internal/embedded/release
+          copy "release\miriani-${{ needs.build-zip.outputs.version }}.zip" next-launcher\internal\embedded\release\miriani-next.zip
+          cd next-launcher
+          go build -tags embedded -ldflags="-s -w" -o "..\miriani-installer-${{ needs.build-zip.outputs.version }}.exe"
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: miriani-installer
+          path: ./miriani-installer-${{ needs.build-zip.outputs.version }}.exe
+
+  release:
+    name: Create Release
+    needs: [build-zip, build-installer]
+    if: startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download ZIP
+        uses: actions/download-artifact@v4
+        with:
+          name: miriani-next
+          path: ./artifacts
+
+      - name: Download installer
+        uses: actions/download-artifact@v4
+        with:
+          name: miriani-installer
+          path: ./artifacts
+
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: changelog
+          path: ./
 
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags') && github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
-          artifacts: './miriani-next.zip'
+          artifacts: './artifacts/*'
+          bodyFile: ./CHANGELOG.md
           draft: true
-          bodyFile: CHANGELOG.md

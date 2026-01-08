@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
+      installer_name: ${{ steps.version.outputs.INSTALLER_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,7 +24,20 @@ jobs:
 
       - name: Get version
         id: version
-        run: echo "VERSION=$(git describe --tags | sed 's/^v//; s/-.*//')" >> $GITHUB_OUTPUT
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            # Tagged release: extract version from tag (v4.0.17 -> 4.0.17)
+            VERSION="${{ github.ref_name }}"
+            VERSION="${VERSION#v}"
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+            echo "INSTALLER_NAME=miriani-$VERSION" >> $GITHUB_OUTPUT
+          else
+            # Branch push: use dev-<short-sha>
+            SHORT_SHA=$(git rev-parse --short HEAD)
+            VERSION=$(git describe --tags | sed 's/^v//; s/-.*//')
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+            echo "INSTALLER_NAME=miriani-dev-$SHORT_SHA" >> $GITHUB_OUTPUT
+          fi
 
       - name: Generate version.json
         run: |-
@@ -95,13 +109,13 @@ jobs:
           New-Item -ItemType Directory -Force -Path next-launcher\internal\embedded\release
           copy "release\miriani-${{ needs.build-zip.outputs.version }}.zip" next-launcher\internal\embedded\release\miriani-next.zip
           cd next-launcher
-          go build -tags embedded -ldflags="-s -w" -o "..\miriani-installer-${{ needs.build-zip.outputs.version }}.exe"
+          go build -tags embedded -ldflags="-s -w" -o "..\${{ needs.build-zip.outputs.installer_name }}.exe"
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: miriani-installer
-          path: ./miriani-installer-${{ needs.build-zip.outputs.version }}.exe
+          path: ./${{ needs.build-zip.outputs.installer_name }}.exe
 
   release:
     name: Create Release

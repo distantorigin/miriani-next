@@ -509,8 +509,9 @@ AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
 AcceleratorTo ("CTRL+SHIFT+A", 'Execute("tts_interrupt The AutoSay keyboard shortcut has been disabled. You can enable AutoSay from the game menu.")', script)
 AcceleratorTo("Esc", [[
-  if dialog and dialog.escape() then
-    -- Dialog handled the escape
+  if dialog and dialog.is_active() then
+    -- In a dialog: go back with "0"
+    dialog.handle_input("0")
   elseif config:get_option("escape_abort").value == "yes" then
     -- Not in dialog: send @abort to game
     Send("@abort")

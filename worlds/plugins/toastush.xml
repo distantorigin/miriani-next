@@ -509,9 +509,8 @@ AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
 AcceleratorTo ("CTRL+SHIFT+A", 'Execute("tts_interrupt The AutoSay keyboard shortcut has been disabled. You can enable AutoSay from the game menu.")', script)
 AcceleratorTo("Esc", [[
-  if dialog and dialog.is_active() then
-    -- In a dialog: go back with "0"
-    dialog.handle_input("0")
+  if dialog and dialog.escape() then
+    -- Dialog handled the escape
   elseif config:get_option("escape_abort").value == "yes" then
     -- Not in dialog: send @abort to game
     Send("@abort")
@@ -1335,44 +1334,6 @@ function GetAudioVolume(group_name)
   return ""
 end -- GetAudioVolume
 
-function set_environment(name, line, wc)
-  environment = {}
-
-  environment.name = name
-  environment.line = line
-    SetVariable("last_environment_line", line)
-
-  -- iterate through a table of flags
-  -- and set all to true.
-  -- split any deliminated tags and make them into their own truth value.
-
-  for _, flag in ipairs(wc) do
-
-    local names = utils.split(flag, " ")
-
-    table.foreach(names,
-    function(_, value)
-      environment[string.lower(value)] = true
-    end ) -- foreach
-  end -- for
-
-  -- Debug output is enabled
-  if config:get_option("debug_mode").value == "yes" then
-    local flags = {}
-    for k, v in pairs(environment) do
-      if k ~= "name" and k ~= "line" and v == true then
-        table.insert(flags, k)
-      end
-    end
-    if #flags > 0 then
-      notify("info", "Environment [" .. name .. "]: " .. table.concat(flags, ", "))
-    end
-  end
-
-  -- ambiance
-  ambiance(wc[#wc])
-end -- set_environment
-
 function playstep(name, line, wildcards)
   local check_line = line or name
 
@@ -1452,87 +1413,6 @@ function playstep(name, line, wildcards)
 
   return 1
 end -- playstep
-
-function ambiance(roomtype)
-
-  if (not environment)
-  or not focusWindow
-  or (cameraFeed)
-  or (stunned)
-  or config:get_option("background_ambiance").value == "no" then
-    return 0
-  end -- if
-
-  local file = nil
-  local fade = 0.8
-  local names = utils.split(roomtype, " ")
-  local rname = string.lower(names[#names])  
-
-  if (environment.name == "starship") then
-
-    local r = rooms.starship[rname]
-    if environment.unpowered then
-      file = "starship_unpowered"
-    elseif r then
-      file = r
-    end -- if
-
-  elseif (environment.name == "room") then
-
-    if (environment.outdoors) then
-      -- probably a roid.
-      file = "asteroid"
-    elseif environment.lift then
-      file = "lift"
-    elseif environment.ITPN then
-      file = "ITPN"
-    end -- if
-
-  elseif environment.indoors and environment.lift then
-    file = "lift"
-  elseif (environment.name == "planet") then
-    if environment.marine then
-      file = "marine"
-    elseif environment.rocky and environment.outdoors then
-      file = "rocky"
-    elseif environment.river then
-      file = environment.outdoors and "lake" or "indoorRiver"
-    elseif (environment.digsite) and (environment.indoors) and (environment.safe) then
-      file = "cave"
-    elseif environment.terrestrial and environment.outdoors then
-      file = "terrestrial"
-    elseif environment.transterrestrial and environment.outdoors then
-      file = "transterrestrial"
-    elseif environment.ice and environment.outdoors then
-      file = "ice"
-    end -- if
-
-  elseif (environment.name == "vehicle") then
-    if environment.unpowered then
-      file = "starship_unpowered"
-    else
-      file = "vehicle"
-    end -- if
-  end -- if
-
-  if (not file)
-  and (rooms[environment.name]) then
-    file = rooms[environment.name][rname]
-  end -- if
-
-  if file ~= nil then
-    if file ~= ambianceFile then
-      ambianceFile = file -- avoid repeat loops.
-      mplay("ambiance/"..file, "ambiance", 1, nil, 1, 1, fade) 
-    end -- if
-  else
-    stop("ambiance", nil, 1, fade) -- fade out previous
-    ambianceFile = nil
-  end -- if
-
-
-
-end -- playambiance
 
 function gagline(name, line, wc)
   if config:get_option("spam").value == "no" then

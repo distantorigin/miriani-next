@@ -26,53 +26,6 @@ constants.IDLE_CUTOFF = 1200
 constants.minimal_groups = {"ship", "combat", "sounds", "sounds", "misc", "market", "hauling", "asteroid", "archaeology", "planetary mining"}
 
 
--- room types:
-constants.rooms = {
-  starship = {
-    cr = "cr",
-    eng = "eng",
-    storage = "storage",
-    weapons = "weapon",
-    repair = "eng",
-    bay = "bay",
-    corridor = "corridor",
-    stateroom = "stateroom",
-    medical = "starship_medical",
-    airlock = "airlock",
-    pool = "pool",
-    observation = "observation",
-    brig = "brig",
-    unknown = "starship_unknown",
-  }, -- starship
-
-  planet = {
-    garage = "garage",
-    pool = "pool",
-    hottub = "pool",
-    observation = "observation",
-    unknown = "planet_unknown",
-    security = "security",
-    lp = "landingpad",
-
-  }, -- station
-
-  station = {
-    garage = "garage",
-    pool = "pool",
-    hottub = "pool",
-    observation = "observation",
-    unknown = "station_unknown",
-    security = "security",
-    lp = "landingpad",
-
-  }, -- planet
-
-  room = {
-
-  } -- room
-} -- rooms
-
-
 -- Global table of walkstyle:
 constants.walkStyle = {
   ["ambles"] = "amble",

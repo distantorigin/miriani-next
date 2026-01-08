@@ -99,74 +99,6 @@ endScan()</send>
 
   <trigger
    enabled="y"
-   name="room_title"
-   script="playstep"
-   group="misc"
-   keep_evaluating="y"
-   match="^\[(.+?)\]( (\((indoors|outdoors)\))? ?(\(([\d, ]+)\))? ?(\((hostile environment|aquatic environment)\))? ?(\(riding a .+?\))?)?$"
-     regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-   room = "%0"
-   cameraFeed = nil
-
-   if config:get_option("debug_mode").value == "yes" then
-     notify("info", string.format("room_title trigger: room='%s', environment=%s, has_digsite=%s, has_store=%s",
-       tostring(room),
-       tostring(environment ~= nil),
-       tostring(environment and environment.digsite or false),
-       tostring(environment and environment.store or false)))
-   end
-
-   -- Clear archaeology infobar when leaving digsite (regardless of digsite_detector option)
-   if config:get_option("archaeology_helper_dig").value == "yes"
-   and environment
-   and (buried_artifact or artifact_room) then
-     if not environment.digsite then
-       buried_artifact, artifact_room = nil
-       infobar_t["arch"] = nil
-     end -- if
-   end -- if
-
-   if config:get_option("digsite_detector").value == "yes"
-   and environment then
-
-     if environment.digsite then
-       if (not digsite) then mplay("activity/archaeology/digsite", "notification", 1) end
-       digsite = true
-     elseif digsite then
-       digsite = nil
-      end -- if
-   end -- if
-
-   if config:get_option("store_detector").value == "yes"
-   and environment then
-
-     if environment.store then
-       if config:get_option("debug_mode").value == "yes" then
-         notify("info", string.format("Store detector: room='%s', store='%s', equal=%s", tostring(room), tostring(store), tostring(room == store)))
-       end
-       if room ~= store then mplay("misc/store", "notification", 1) end
-       store = room
-     elseif store then
-       store = false
-      end -- if
-   end -- if
-
-
-   if liftroom and liftroom ~= room then
-     liftroom = nil
-     stop("loop")
-   end -- if
-
-  </send>
-  </trigger>
-
-
-  <trigger
-   enabled="y"
    group="misc"
    match="^(You can't go that way|That exit appears to be blocked|[A-Z][A-Za-z0-9\s,-]+ is closed)\.$"
    regexp="y"
@@ -487,26 +419,8 @@ endScan()</send>
    sequence="100"
   >
   <send>
-   -- Map direction words to sound file names
-   local direction_map = {
-     north = "north",
-     south = "south",
-     ["into the airlock"] = "out",
-     east = "east",
-     west = "west",
-     northeast = "northeast",
-     northwest = "northwest",
-     southeast = "southeast",
-     southwest = "southwest",
-     up = "up",
-     down = "down",
-     into = "enter",
-     out = "out",
-     through = "go"
-   }
-
    local direction = string.lower("%1")
-   local sound_file = direction_map[direction]
+   local sound_file = directionSounds[direction]
 
    if sound_file and config:get_option("follow_direction_sounds").value == "yes" then
      -- Play the direction sound with interrupt (interrupts previous direction announcements)
@@ -522,32 +436,15 @@ endScan()</send>
    name="interruptDrag"
    group="misc"
    match="^(.+?) drags you (north|south|east|west|northeast|northwest|southeast|southwest|up|down|into|out|through)(.*)\.$"
-      enabled="y"
+   enabled="y"
    regexp="y"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
   <send>
-   -- Map direction words to sound file names
-   local direction_map = {
-     north = "north",
-     south = "south",
-     east = "east",
-     west = "west",
-     northeast = "northeast",
-     northwest = "northwest",
-     southeast = "southeast",
-     southwest = "southwest",
-     up = "up",
-     down = "down",
-     into = "enter",
-     out = "out",
-     through = "go"
-   }
-
    local direction = string.lower("%2")
-   local sound_file = direction_map[direction]
+   local sound_file = directionSounds[direction]
 
    if sound_file and config:get_option("follow_direction_sounds").value == "yes" then
      -- Play the direction sound with interrupt (interrupts previous direction announcements)
@@ -830,7 +727,7 @@ endScan()</send>
   <send>
    mplay("misc/splash")
 
-   if (not ambianceFile) 
+   if (not getCurrentAmbiance())
    and environment then
      replicate_line(environment.line)
    end -- if
@@ -846,7 +743,7 @@ endScan()</send>
   >
   <send>
    mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
-   ambianceFile = nil
+   clearAmbiance()
   </send>
   </trigger>
 
@@ -859,7 +756,7 @@ endScan()</send>
   >
   <send>
    mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
-   ambianceFile = nil
+   clearAmbiance()
   </send>
   </trigger>
 
@@ -873,7 +770,7 @@ endScan()</send>
   >
   <send>
    mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
-   ambianceFile = nil
+   clearAmbiance()
   </send>
   </trigger>
 
@@ -1127,7 +1024,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
       -- Stop current ambiance and environment sounds before playing heartbeat
       stop("ambiance")
       stop("environment")
-      ambianceFile = nil
+      clearAmbiance()
       mplay("ambiance/heartbeat", "environment", 1, nil, 1, 1, fade)
     end -- if
 

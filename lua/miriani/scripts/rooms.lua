@@ -462,6 +462,11 @@ function playAmbiance(roomtype)
         end
       end
     end
+
+    -- Shadius ambiance only plays indoors
+    if file == "shadius" and not environment.indoors then
+      file = nil
+    end
   end
 
   -- Priority 3: Room type mapping (from environment.roomtype)

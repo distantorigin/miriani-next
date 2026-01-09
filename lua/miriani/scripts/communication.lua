@@ -15,6 +15,8 @@ ImportXML([=[
    local sound_file = "metaf"
    local label = "%3"
    local frequency = "%2"
+   local speaker_part = "%4"
+   local message = "%5"
 
    if label ~= "" then
      -- Check if custom sound exists for the label
@@ -23,7 +25,7 @@ ImportXML([=[
        sound_file = custom_label
      end
    else
-     
+
      local custom_freq = frequency:gsub("%.", "")
      if require("pl.path").isfile(config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/"..custom_freq..EXTENSION) then
        sound_file = custom_freq
@@ -32,11 +34,39 @@ ImportXML([=[
 
    mplay ("comm/"..sound_file, "communication")
 
+   -- Format output based on shorten_communication setting
+   local display_output
+   if config:get_option("shorten_communication").value == "yes" then
+     if speaker_part ~= "" then
+       -- Speaker transmits pattern matched - strip "transmits," to get "Speaker:"
+       local speaker_short = string.gsub(speaker_part, "%s*transmits,?%s*$", ":")
+       local unquoted = string.match(message, '^"(.+)"$') or message
+       display_output = speaker_short .. " " .. unquoted
+     else
+       -- No transmits - parse message for verb pattern
+       local speaker, verb, rest = string.match(message, '^(.-)%s+(%a+),%s*(.+)$')
+       if speaker and verb and rest then
+         local unquoted = string.match(rest, '^"(.+)"$') or rest
+         local v = string.lower(verb)
+         if v == "says" or v == "say" or v == "asks" or v == "ask" or
+            v == "exclaims" or v == "exclaim" or v == "transmits" or v == "transmit" then
+           display_output = speaker .. ": " .. unquoted
+         else
+           display_output = speaker .. " " .. verb .. ": " .. unquoted
+         end
+       else
+         display_output = message
+       end
+     end
+   else
+     display_output = speaker_part .. " " .. message
+   end
+
    if "%3" ~= "" then
-    print_color({"[%3] %4 ", "default"}, {"%5", "priv_comm"})
+    print_color({"[%3] " .. display_output, "priv_comm"})
     channel(name, "[%3] %4 %5", {"metaf %3", "metaf", "communication"})
    else
-    print_color({"[%2] %4 ", "default"}, {"%5", "priv_comm"})
+    print_color({"[%2] " .. display_output, "priv_comm"})
     channel(name, "%0", {"metaf %2", "metaf", "communication"})
    end -- if
   </send>
@@ -103,6 +133,7 @@ ImportXML([=[
   >
   <send>
    local sender_name = string.lower("%2")
+   local message = "%3"
    local sound_file = "private"
    local bypass_foreground = true
 
@@ -112,9 +143,21 @@ ImportXML([=[
      bypass_foreground = config:get_option("service_comm_interrupt").value == "yes"
    end
 
+   -- Apply shortening to remove verbs like "transmits"
+   local display_message = message
+   if config:get_option("shorten_communication").value == "yes" then
+     -- Match: Speaker transmits, rest -> Speaker: message
+     local speaker, rest = string.match(message, '^(.-)%s+transmits?,?%s*(.+)$')
+     if speaker and rest then
+       -- Strip surrounding quotes if present
+       local unquoted = string.match(rest, '^"(.+)"$') or rest
+       display_message = speaker .. ": " .. unquoted
+     end
+   end
+
    mplay ("comm/"..sound_file, "communication", nil, nil, nil, nil, nil, bypass_foreground)
    channel("private", "[%2] %3", {"private %2", "private", "communication"})
-   print_color({"[%2] ", "default"}, {"%3", "priv_comm"})
+   print_color({"[%2] ", "default"}, {display_message, "priv_comm"})
   </send>
   </trigger>
 
@@ -145,10 +188,30 @@ ImportXML([=[
      sound_name = "general"
    end
 
-   local display_text = "[" .. display_name .. "] " .. message
+   -- Apply shortening: remove comma and quotes, keep non-communication verbs
+   local display_message = message
+   if config:get_option("shorten_communication").value == "yes" then
+     -- Match: Speaker verb, "message"
+     local speaker, verb, rest = string.match(message, '^(.-)%s+(%a+),%s*(.+)$')
+     if speaker and verb and rest then
+       -- Strip surrounding quotes if present
+       local unquoted = string.match(rest, '^"(.+)"$') or rest
+       local v = string.lower(verb)
+       if v == "says" or v == "say" or v == "asks" or v == "ask" or
+          v == "exclaims" or v == "exclaim" or v == "transmits" or v == "transmit" then
+         -- Communication verbs: remove verb entirely
+         display_message = speaker .. ": " .. unquoted
+       else
+         -- Other verbs: keep verb, just remove comma and quotes
+         display_message = speaker .. " " .. verb .. ": " .. unquoted
+       end
+     end
+   end
+
+   local display_text = "[" .. display_name .. "] " .. display_message
 
    mplay("comm/"..sound_name, "communication")
-   channel(display_name, display_text, {"communication", sound_name})
+   channel(display_name, "[" .. display_name .. "] " .. message, {"communication", sound_name})
    print(display_text)
   </send>
   </trigger>
@@ -158,6 +221,7 @@ ImportXML([=[
    group="comm"
    match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*) (.+ )?(says?|asks?|exclaims?)(?: (?:to )?([A-Za-z]+(?: [A-Z][A-Za-z]+)*))?, &quot;(.+?)&quot;$"
    regexp="y"
+   omit_from_output="y"
    send_to="14"
    sequence="99"
   >
@@ -182,7 +246,28 @@ ImportXML([=[
      mplay("comm/say", "communication")
    end
 
-   -- Add to say buffer
+   -- Format output based on shorten_communication setting
+   local output
+   if config:get_option("shorten_communication").value == "yes" then
+     -- Shortened format: Speaker: message (or Speaker [to Target]: message)
+     if target and target ~= "" then
+       output = speaker .. " [to " .. target .. "]: " .. message
+     else
+       output = speaker .. ": " .. message
+     end
+   else
+     -- Original format
+     output = "%0"
+   end
+
+   -- Print with appropriate color based on target
+   if is_direct_to_you then
+     print_color({output, "priv_comm"})
+   else
+     print_color({output, "pub_comm"})
+   end
+
+   -- Add to say buffer (always use original format for buffer)
    channel("say", "%0", {"say", "communication"})
   </send>
   </trigger>
@@ -319,7 +404,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*|You) (?:hear )?(shout|yell|holler)s?, (&quot;.+?&quot;)$"
+   match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*|You) (?:hear )?(shout|yell|holler)s?, &quot;(.+?)&quot;$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -332,8 +417,20 @@ ImportXML([=[
    local message = "%3"
    -- Properly conjugate the verb: third person gets 's', first person doesn't
    local verb_form = speaker == "You" and verb or verb .. "s"
-   print_color({speaker .. " " .. verb_form .. ", ", "default"}, {message, "pub_comm"})
-   channel(name, speaker .. " " .. verb_form .. ", " .. message, {"say", "communication"})
+
+   -- Format output based on shorten_communication setting
+   local output
+   local q = '"'
+   if config:get_option("shorten_communication").value == "yes" then
+     -- Shortened format: Speaker: message (remove the shout/yell verb and quotes)
+     output = speaker .. ": " .. message
+   else
+     -- Original format with quotes
+     output = speaker .. " " .. verb_form .. ", " .. q .. message .. q
+   end
+
+   print_color({output, "pub_comm"})
+   channel(name, speaker .. " " .. verb_form .. ", " .. q .. message .. q, {"say", "communication"})
   </send>
   </trigger>
 
@@ -511,8 +608,28 @@ ImportXML([=[
    local ship_name = "%2"
    local message = "%3"
 
+   -- Apply shortening: remove comma and quotes, keep non-communication verbs
+   local display_message = message
+   if config:get_option("shorten_communication").value == "yes" then
+     -- Match: Speaker verb, "message"
+     local speaker, verb, rest = string.match(message, '^(.-)%s+(%a+),%s*(.+)$')
+     if speaker and verb and rest then
+       -- Strip surrounding quotes if present
+       local unquoted = string.match(rest, '^"(.+)"$') or rest
+       local v = string.lower(verb)
+       if v == "says" or v == "say" or v == "asks" or v == "ask" or
+          v == "exclaims" or v == "exclaim" or v == "transmits" or v == "transmit" then
+         -- Communication verbs: remove verb entirely
+         display_message = speaker .. ": " .. unquoted
+       else
+         -- Other verbs: keep verb, just remove comma and quotes
+         display_message = speaker .. " " .. verb .. ": " .. unquoted
+       end
+     end
+   end
+
    -- Always show as [shipname] format
-   print_color({"[" .. ship_name .. "] ", "default"}, {message, "priv_comm"})
+   print_color({"[" .. ship_name .. "] ", "default"}, {display_message, "priv_comm"})
    channel("ship", "[" .. ship_name .. "] " .. message, {"ship", "communication"})
   </send>
   </trigger>
@@ -542,13 +659,29 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^[\w\s]+ transmits?(?: in an? \w+ voice)?, &quot;.+?&quot;$"
+   match="^([\w\s]+) transmits?(?: in an? \w+ voice)?, &quot;(.+?)&quot;$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
   <send>
+   local speaker = "%1"
+   local message = "%2"
+
    mplay ("comm/transmit", "communication")
+
+   -- Format output based on shorten_communication setting
+   local output
+   if config:get_option("shorten_communication").value == "yes" then
+     -- Shortened format: Speaker: message
+     output = speaker .. ": " .. message
+   else
+     -- Original format
+     output = "%0"
+   end
+
+   print_color({output, "pub_comm"})
    channel ("transmit", "%0", {"communication", "say"})
   </send>
   </trigger>

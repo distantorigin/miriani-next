@@ -13,7 +13,9 @@ ImportXML([=[
   <send>
   if GetVariable("logged_in") == "0" then
     Send("REGISTER_SOUNDPACK "..registry.." | "..VERSION.."")
-  mplay("music/theme", "other")
+  if config:get_option("play_theme_music").value == "yes" then
+    mplay("music/theme", "other")
+  end
 -- Auto login functionality
 if config:get_option("auto_login").value == "yes" then
   local username = config:get_option("auto_login_username").value

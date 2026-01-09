@@ -26,6 +26,7 @@ local options = {
   social_cat_novelty = {descr="Novelty (animals, musical, memes, etc).", value="yes", group="socials", type="bool"},
   social_cat_uncategorized = {descr="Uncategorized.", value="yes", group="socials", type="bool"},
 
+  play_theme_music = {descr="Play theme music at startup.", value="yes", group="general", type="bool"},
   dnd_mode = {descr="Do Not Disturb mode (stops all sounds and TTS).", value="no", group="general", type="bool"},
   dnd_wake_on_red = {descr="Disable DND mode when ship goes to red alert (Wake on Red).", value="no", group="general", type="bool"},
   service_comm_interrupt = {descr="Link Recipients (Auction Service, combat mission notification service, etc) bypass foreground sounds.", value="no", group="general", type="bool"},

@@ -108,7 +108,9 @@ roomTypes = {
     lp = "landingpad",
   },
 
-  room = {},
+  room = {
+    asteroid = "asteroidSurface",
+  },
 }
 
 -------------------------------------------------------------------------------
@@ -148,7 +150,6 @@ roomNames = {
     ["A Suborbital Pod"] = "ITPN",
     ["Artificial Garden"] = "planet",
     ["Asteroid Rover Control Center"] = "asteroidRover",
-    ["Asteroid Surface"] = "asteroidSurface",
     ["Atmospheric Combat Vehicle Control Room"] = "acv",
     ["Atmospheric Salvager Cockpit"] = "salvager",
     ["Beach"] = "ocean",
@@ -340,6 +341,9 @@ end
 environment = nil
 
 function set_environment(name, line, wc)
+  -- Track previous power state to detect power up/down
+  local wasUnpowered = environment and environment.unpowered
+
   environment = {}
 
   environment.name = name
@@ -373,6 +377,12 @@ function set_environment(name, line, wc)
 
   -- Store roomtype for use by room_title trigger (ambiance played by room_title after roomName is set)
   environment.roomtype = wc[#wc]
+
+  -- Immediately update ambiance when power state changes (no room title sent for power up/down)
+  local isUnpowered = environment.unpowered
+  if wasUnpowered ~= isUnpowered then
+    playAmbiance(environment.roomtype)
+  end
 end -- set_environment
 
 -------------------------------------------------------------------------------

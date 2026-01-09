@@ -130,8 +130,8 @@ As of October 13, 2025, Toastush-NG is now a hard fork of the Toastush soundpack
    and (stunned == true) then
     stunned = false
     stop("environment", nil, 1, 0.5)
-    if (environment) and (environment.line) then
-      replicate_line(environment.line)
+    if (environment) and (environment.roomtype) then
+      playAmbiance(environment.roomtype)
     end -- if
    end -- if
 

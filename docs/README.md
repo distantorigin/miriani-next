@@ -593,6 +593,9 @@ We stand on the shoulders of giants. This project utilizes sounds from the follo
 - Miriani 7
 - MTMiriani
 - Miriani Soundpack for VIP Mud
+- Myinstants https://www.myinstants.com/
+- Star Wars ULTIMATE SFX COLLECTION
+- Some sounds provided by Jason Harkness in his home stuido
 
 We extend our gratitude to these projects for providing high-quality audio resources.
 

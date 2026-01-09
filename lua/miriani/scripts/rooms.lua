@@ -509,7 +509,7 @@ function playAmbiance(roomtype)
         file = "transterrestrial"
       elseif environment.ice and environment.outdoors then
         file = "ice"
-      else
+      elseif environment.outdoors then
         file = "planet"
       end
     elseif environment.name == "vehicle" then

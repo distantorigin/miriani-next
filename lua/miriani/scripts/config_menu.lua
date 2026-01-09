@@ -344,7 +344,8 @@ function config_menu.show_group(group_name)
 end
 
 -- Edit a specific option
-function config_menu.edit_option(option_key, group_name)
+-- If skip_menu is true, don't show the group menu after editing (for direct command access)
+function config_menu.edit_option(option_key, group_name, skip_menu)
   -- Special handling for socials submenu navigation
   if option_key:match("_submenu_socials_") then
     local subgroup = option_key:match("_submenu_(socials_.+)$")
@@ -371,7 +372,7 @@ function config_menu.edit_option(option_key, group_name)
       -- Check if we found any variants
       if #variants == 0 then
         notify("critical", string.format("No variants found for %s", sound_path))
-        config_menu.show_group(group_name)
+        if not skip_menu then config_menu.show_group(group_name) end
         return
       end
 
@@ -411,7 +412,7 @@ function config_menu.edit_option(option_key, group_name)
             notify("info", string.format("%s set to Variant %d", display_name, selected_variant))
           end
           -- Return to sound variants menu
-          config_menu.show_group(group_name)
+          if not skip_menu then config_menu.show_group(group_name) end
         end
       })
       return
@@ -431,7 +432,7 @@ function config_menu.edit_option(option_key, group_name)
       notify("info", string.format("%s sounds set to %s", sound_group, status))
 
       -- Return to group menu
-      config_menu.show_group(group_name)
+      if not skip_menu then config_menu.show_group(group_name) end
       return
     end
   end
@@ -439,7 +440,7 @@ function config_menu.edit_option(option_key, group_name)
   if not config:is_option(option_key) then
     mplay("misc/cancel")
     notify("critical", string.format("Invalid option: %s.", option_key))
-    config_menu.show_group(group_name)
+    if not skip_menu then config_menu.show_group(group_name) end
     return
   end
 
@@ -516,14 +517,14 @@ function config_menu.edit_option(option_key, group_name)
     end
 
     -- Return to group menu
-    config_menu.show_group(group_name)
+    if not skip_menu then config_menu.show_group(group_name) end
 
   elseif opt_type == "enum" then
     -- Enum option - show menu of choices
     if not option.options or #option.options == 0 then
       mplay("misc/cancel")
       notify("critical", "No options defined for this enum.")
-      config_menu.show_group(group_name)
+      if not skip_menu then config_menu.show_group(group_name) end
       return
     end
 
@@ -552,7 +553,7 @@ function config_menu.edit_option(option_key, group_name)
           end
         end
         -- Return to group menu
-        config_menu.show_group(group_name)
+        if not skip_menu then config_menu.show_group(group_name) end
       end
     })
 
@@ -566,7 +567,7 @@ function config_menu.edit_option(option_key, group_name)
       config:save()
     end
 
-    config_menu.show_group(group_name)
+    if not skip_menu then config_menu.show_group(group_name) end
 
   else
     -- String or other type - use prompt
@@ -598,7 +599,7 @@ function config_menu.edit_option(option_key, group_name)
           config:save()
         end
         -- Return to group menu
-        config_menu.show_group(group_name)
+        if not skip_menu then config_menu.show_group(group_name) end
       end
     })
   end
@@ -745,7 +746,7 @@ function config_menu.find_and_edit(group_name, search_term)
     if index and index >= 1 and index <= #variant_sounds then
       local sound = variant_sounds[index]
       local sound_key = "_sound_variant_" .. sound.path:gsub("/", "_"):gsub("%.", "_")
-      config_menu.edit_option(sound_key, actual_group_key)
+      config_menu.edit_option(sound_key, actual_group_key, true)
       return
     end
 
@@ -754,7 +755,7 @@ function config_menu.find_and_edit(group_name, search_term)
       if string.find(string.lower(sound.name), string.lower(search_term)) or
          string.find(string.lower(sound.path), string.lower(search_term)) then
         local sound_key = "_sound_variant_" .. sound.path:gsub("/", "_"):gsub("%.", "_")
-        config_menu.edit_option(sound_key, actual_group_key)
+        config_menu.edit_option(sound_key, actual_group_key, true)
         return
       end
     end
@@ -786,7 +787,7 @@ function config_menu.find_and_edit(group_name, search_term)
   local index = tonumber(search_term)
   if index and index >= 1 and index <= #sorted_keys then
     local option_key = sorted_keys[index]
-    config_menu.edit_option(option_key, actual_group_key)
+    config_menu.edit_option(option_key, actual_group_key, true)
     return
   end
 
@@ -809,7 +810,7 @@ function config_menu.find_and_edit(group_name, search_term)
     notify("critical", string.format("Could not find option matching '%s' in group '%s'.", search_term, group_name))
   elseif #matches == 1 then
     -- Single match - edit it
-    config_menu.edit_option(matches[1], actual_group_key)
+    config_menu.edit_option(matches[1], actual_group_key, true)
   else
     -- Multiple matches - show them
     local match_names = {}

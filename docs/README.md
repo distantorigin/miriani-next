@@ -45,7 +45,7 @@ If you're confused about anything, join metafrequency channel 7.07 in-game and s
 
 ## Installation
 
-1. Download the `miriani.exe` launcher from the [releases page](https://github.com/distantorigin/next-launcher/releases)
+1. Download the Next Launcher from the [releases page](https://github.com/distantorigin/next-launcher/releases)
 2. Run `miriani.exe`
 3. The launcher will guide you through initial installation and updates
 
@@ -58,7 +58,7 @@ The launcher handles everything automatically - installation, updates, channel s
 There are two versions of the installer available:
 
 - **miriani.exe** (Online Installer): A small download that fetches the latest files from the internet during installation. This is the recommended choice for most users, and is housed in a separate repository.
-- **miriani-<version>.exe** (Offline Installer): A larger download that contains everything needed to install without an internet connection. Use this if you have unreliable internet or need to install on a computer without network access. You can find these on the [miriani-Next releases page](https://github.com/distantorigin/miriani-next/releases).
+- **miriani-x.y.z.exe** (Offline Installer): A larger download that contains everything needed to install without an internet connection. Use this if you have unreliable internet or need to install on a computer without network access. You can find these on the [miriani-Next releases page](https://github.com/distantorigin/miriani-next/releases).
 
 Both installers work the same way - the only difference is whether files are downloaded during installation or already included.
 
@@ -76,7 +76,7 @@ Unlike the Miriani Soundpack for VIP Mud, no configuration is needed after insta
 
 ### Reviewing Output
 
-There are two ways to review game output:
+There are multiple ways to review game output:
 
 #### Accessible Output Window
 
@@ -173,7 +173,7 @@ Updates come from one of two channels:
 - **Stable**: Tested releases that have been verified by alpha testers. This is the default and recommended for most players.
 - **Dev**: The latest development code with new features and fixes. Updates come more frequently but may occasionally have issues.
 
-Additionally, more channels may be made available as needed--thes etake the form of new branches in this repository.
+Additionally, more channels may be made available as needed--these take the form of new branches in this repository.
 
 You can switch channels at any time without losing your settings. You will not, however, be able to switch to another channel if that would downgrade your version.
 
@@ -301,7 +301,7 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 - **Reflex (cough, sneeze, yawn, etc)**: Sounds for cough, sneeze, yawn, hiccup, gasp, etc. Involuntary bodily reactions.
 - **Bodily (fart, burp, belch, etc)**: Sounds for fart, burp, belch, etc. Crude humor socials (toggle if you prefer less silly sounds).
 - **Physical (punch, kick, clap, etc)**: Sounds for punch, kick, clap, snap, stomp, etc. Physical action socials.
-- **Novelty (animals, musical, memes, etc)**: Sounds for animals (meow, bark, moo), musical (hum, sing), and memes (dab, yeet). Fun but potentially annoying - disable if you prefer serious gameplay.
+- **Novelty (animals, musical, memes, etc)**: Sounds for animals (meow, bark, moo), musical (hum, sing), and memes (insane television references, mostly). Fun but potentially annoying - disable if you prefer serious gameplay.
 - **Uncategorized**: Miscellaneous social sounds that don't fit other categories. Each individual social can be toggled within these categories.
 
 **Scan Templates** (`conf scan_formats`)
@@ -395,7 +395,7 @@ This section documents all major commands available in Miriani-Next.
 - `update help` - Show update command help
 
 **Sound Control**
-- `dnd` - Toggle Do Not Disturb mode (blocks all sounds)
+- `dnd` - Toggle Do Not Disturb mode (blocks all sounds and speech)
 - `dnd on` / `dnd off` - Explicitly enable/disable DND mode
 - `fsounds` - Toggle foreground sounds (sounds only when window has focus)
 - `next:minimal` or `next:min` - Toggle minimal mode (disables most triggers)
@@ -415,12 +415,12 @@ This section documents all major commands available in Miriani-Next.
 - `subst on` / `subst off` - Enable/disable substitutions
 - `subst save` - Save substitutions to disk
 
-**Developer**
-- `spreload` - Reload all plugins (for developers)
+**Developer & Troubleshooting**
+- `spreload` - Reload all plugins
 
 ## Keyboard Shortcuts
 
-Complete reference of keyboard shortcuts. For the most up-to-date list, type `next:help` in-game.
+This is a mostly complete reference of keyboard shortcuts. For the most up-to-date list, type `next:help` in-game.
 
 **Audio**
 | Shortcut | Action |

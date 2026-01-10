@@ -39,7 +39,7 @@ Miriani-Next is a MUSHclient client package specifically designed for [Miriani](
 
 Miriani-Next is a successor to the excellent work done by Erick Rosso on [Toastush](https://github.com/PsudoDeSudo/Toastush). With the advent of agentic coding tools, work is currently underway to migrate popular features from the VIP Mud soundpack to MUSHclient, making them more performant and maintainable.
 
-Remember that this client package is rapidly evolving and problems may occur. We'll do our best to address these as quickly as possible. This said, I'm only one person and I'm presently the only developer. Please have patience as we grow! (And do consider contributing if you have relevant skills.)
+Remember that this client package is rapidly evolving and problems may occur. We'll do our best to address these as quickly as possible. Please have patience as we grow! (And do consider contributing if you have relevant skills.)
 
 If you're confused about anything, join metafrequency channel 7.07 in-game and someone will help you out.
 

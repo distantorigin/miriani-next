@@ -23,6 +23,7 @@ Features:
 - Directory structure: logs/<world>/<year>/<month>/<day> <Month> <year>.txt
 - Search across all logs with 'lg find <text>'
 - View logs with 'lg view [days ago]'
+- Import logs from other formats with 'lg import'
 
 Type 'lg help' for commands.
 ]]>
@@ -347,6 +348,7 @@ function ShowHelp()
   Note("  lg find <text>    Search all logs for text")
   Note("  lg stats          Show log statistics")
   Note("  lg toggle         Enable/disable logging")
+  Note("  lg import         Rename log files to Miriani Next style")
   Note("  lg help           Show this help")
 end
 
@@ -471,6 +473,288 @@ function CmdToggle()
   end
 end
 
+local month_names = {
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+}
+
+local month_abbr_to_num = {
+  jan=1, feb=2, mar=3, apr=4, may=5, jun=6,
+  jul=7, aug=8, sep=9, oct=10, nov=11, dec=12
+}
+
+local month_name_to_num = {
+  january=1, february=2, march=3, april=4, may=5, june=6,
+  july=7, august=8, september=9, october=10, november=11, december=12
+}
+
+function IsMirianiNextStyle(filename)
+  return filename:match("^%d%d? %a+ %d%d%d%d%.txt$") ~= nil
+end
+
+function ParseDateFromFilename(filename, dir_path)
+  local base = filename:gsub("%.txt$", "")
+  local year, month, day
+
+  -- YYYY-MM-DD or YYYY_MM_DD
+  year, month, day = base:match("^(%d%d%d%d)[_%-](%d%d?)[_%-](%d%d?)$")
+  if year then return tonumber(year), tonumber(month), tonumber(day) end
+
+  -- DD-MM-YYYY or DD_MM_YYYY
+  day, month, year = base:match("^(%d%d?)[_%-](%d%d?)[_%-](%d%d%d%d)$")
+  if year then return tonumber(year), tonumber(month), tonumber(day) end
+
+  -- "December 14 2025" or "December_14_2025"
+  local month_str
+  month_str, day, year = base:match("^(%a+)[_% ](%d%d?)[_%, ]+(%d%d%d%d)$")
+  if month_str then
+    local m = month_name_to_num[month_str:lower()] or month_abbr_to_num[month_str:lower():sub(1,3)]
+    if m then return tonumber(year), m, tonumber(day) end
+  end
+
+  -- "14_December_2025"
+  day, month_str, year = base:match("^(%d%d?)[_% ](%a+)[_% ](%d%d%d%d)$")
+  if month_str then
+    local m = month_name_to_num[month_str:lower()] or month_abbr_to_num[month_str:lower():sub(1,3)]
+    if m then return tonumber(year), m, tonumber(day) end
+  end
+
+  -- MM-DD-YYYY
+  local m1, d1
+  m1, d1, year = base:match("^(%d%d?)[_%-](%d%d?)[_%-](%d%d%d%d)$")
+  if year and tonumber(m1) <= 12 and tonumber(d1) <= 31 then
+    return tonumber(year), tonumber(m1), tonumber(d1)
+  end
+
+  -- YYYYMMDD
+  year, month, day = base:match("^(%d%d%d%d)(%d%d)(%d%d)$")
+  if year then return tonumber(year), tonumber(month), tonumber(day) end
+
+  -- Day with ordinal (e.g. "9th, on port 1234") - get year/month from directory path
+  day = base:match("^(%d%d?)%a*[,]?")
+  if day and dir_path then
+    year, month = dir_path:match("[/\\](%d%d%d%d)[/\\](%d%d?)[/\\]?$")
+    if year and month then
+      return tonumber(year), tonumber(month), tonumber(day)
+    end
+    local month_name_match
+    year, month_name_match = dir_path:match("[/\\](%d%d%d%d)[/\\](%a+)[/\\]?$")
+    if year and month_name_match then
+      local m = month_name_to_num[month_name_match:lower()] or month_abbr_to_num[month_name_match:lower():sub(1,3)]
+      if m then return tonumber(year), m, tonumber(day) end
+    end
+  end
+
+  return nil
+end
+
+function BuildMirianiNextFilename(year, month, day)
+  return string.format("%d %s %d.txt", day, month_names[month], year)
+end
+
+function BuildMirianiNextPath(year, month, day)
+  local log_dir = GetLogDir() .. "\\" .. year .. "\\" .. string.format("%02d", month)
+  local filename = BuildMirianiNextFilename(year, month, day)
+  return log_dir .. "\\" .. filename, log_dir
+end
+
+function DoImportScan()
+  local world_log_dir = GetLogDir()
+  local files_to_rename = {}
+  local files_with_conflicts = {}
+  local skipped = 0
+  local already_correct = 0
+
+  Note("Scanning for log files to import in: " .. world_log_dir)
+
+  local function scan_dir(dir)
+    local attr = lfs.attributes(dir)
+    if not attr or attr.mode ~= "directory" then return end
+
+    pcall(function()
+      for entry in lfs.dir(dir) do
+        if entry ~= "." and entry ~= ".." then
+          local path = dir .. "\\" .. entry
+          local entry_attr = lfs.attributes(path)
+          if entry_attr then
+            if entry_attr.mode == "directory" then
+              scan_dir(path)
+            elseif entry:match("%.txt$") then
+              if IsMirianiNextStyle(entry) then
+                already_correct = already_correct + 1
+              else
+                local year, month, day = ParseDateFromFilename(entry, dir)
+                if year and month and day and month >= 1 and month <= 12 and day >= 1 and day <= 31 then
+                  local new_path, new_dir = BuildMirianiNextPath(year, month, day)
+                  local file_info = {
+                    old_path = path,
+                    old_name = entry,
+                    new_path = new_path,
+                    new_dir = new_dir,
+                    year = year,
+                    month = month,
+                    day = day
+                  }
+                  if lfs.attributes(new_path) then
+                    table.insert(files_with_conflicts, file_info)
+                  else
+                    table.insert(files_to_rename, file_info)
+                  end
+                else
+                  skipped = skipped + 1
+                  Note("  Skipped (could not parse date): " .. entry)
+                end
+              end
+            end
+          end
+        end
+      end
+    end)
+  end
+
+  scan_dir(world_log_dir)
+
+  if #files_to_rename == 0 and #files_with_conflicts == 0 then
+    Note("No files to import.")
+    Note("  Already in correct format: " .. already_correct)
+    Note("  Could not parse: " .. skipped)
+    return
+  end
+
+  local function do_renames(files, overwrite)
+    local renamed = 0
+    local errors = 0
+    for _, file in ipairs(files) do
+      EnsureLogDirectory(file.new_dir)
+      if overwrite and lfs.attributes(file.new_path) then
+        os.remove(file.new_path)
+      end
+      local ok, err = os.rename(file.old_path, file.new_path)
+      if ok then
+        renamed = renamed + 1
+      else
+        errors = errors + 1
+        Note("  Error renaming " .. file.old_name .. ": " .. (err or "unknown error"))
+      end
+    end
+    return renamed, errors
+  end
+
+  if #files_to_rename > 0 then
+    Note(string.format("Found %d file(s) to rename:", #files_to_rename))
+    for _, file in ipairs(files_to_rename) do
+      local new_name = BuildMirianiNextFilename(file.year, file.month, file.day)
+      Note(string.format("  %s -> %s", file.old_name, new_name))
+    end
+  end
+
+  if #files_with_conflicts > 0 then
+    Note(string.format("Found %d file(s) with conflicts (destination exists):", #files_with_conflicts))
+    for _, file in ipairs(files_with_conflicts) do
+      local new_name = BuildMirianiNextFilename(file.year, file.month, file.day)
+      Note(string.format("  %s -> %s (EXISTS)", file.old_name, new_name))
+    end
+  end
+
+  if not dialog then
+    local renamed, errors = do_renames(files_to_rename, false)
+    Note(string.format("Import complete: %d renamed, %d errors, %d already correct, %d skipped, %d conflicts (skipped)",
+      renamed, errors, already_correct, skipped, #files_with_conflicts))
+  else
+    local function finish_import(include_conflicts, overwrite_conflicts)
+      local total_renamed = 0
+      local total_errors = 0
+      local renamed, errors = do_renames(files_to_rename, false)
+      total_renamed = total_renamed + renamed
+      total_errors = total_errors + errors
+      if include_conflicts then
+        renamed, errors = do_renames(files_with_conflicts, overwrite_conflicts)
+        total_renamed = total_renamed + renamed
+        total_errors = total_errors + errors
+      end
+
+      local conflict_msg = ""
+      if #files_with_conflicts > 0 and not include_conflicts then
+        conflict_msg = string.format(", %d conflicts skipped", #files_with_conflicts)
+      end
+
+      Note(string.format("Import complete: %d renamed, %d errors, %d already correct, %d skipped%s",
+        total_renamed, total_errors, already_correct, skipped, conflict_msg))
+    end
+
+    if #files_with_conflicts > 0 then
+      dialog.menu({
+        title = string.format("%d file(s) have conflicts. Both old and new format logs exist for the same date.", #files_with_conflicts),
+        choices = {
+          ["1"] = { label = "Skip conflicts, only rename non-conflicting files", action = "skip" },
+          ["2"] = { label = "Overwrite existing files with old format versions", action = "overwrite" },
+          ["3"] = { label = "Cancel import", action = "cancel" },
+        },
+        callback = function(result, reason)
+          if not result or not result.value or result.value.action == "cancel" then
+            Note("Import cancelled.")
+            return
+          end
+
+          if #files_to_rename == 0 and result.value.action == "skip" then
+            Note("No non-conflicting files to import.")
+            return
+          end
+
+          if result.value.action == "skip" then
+            finish_import(false, false)
+          elseif result.value.action == "overwrite" then
+            finish_import(true, true)
+          end
+        end
+      })
+    else
+      dialog.confirm({
+        title = string.format("Import %d log file(s)?", #files_to_rename),
+        text = "This will rename files to match Miriani Next naming convention.",
+        callback = function(result, reason)
+          if result and result.value then
+            finish_import(false, false)
+          else
+            Note("Import cancelled.")
+          end
+        end
+      })
+    end
+  end
+end
+
+function CmdImport(args)
+  local world_log_dir = GetLogDir()
+
+  Note("Import Log Files")
+  Note("================")
+  Note("This command imports logs from other clients (Proxiani, MudMixer, etc.)")
+  Note("and renames them to match the Miriani Next naming convention.")
+  Note("")
+  Note("To import logs:")
+  Note("  1. Find your old log files (must be .txt files)")
+  Note("  2. Copy them into: " .. world_log_dir)
+  Note("  3. Run 'lg import' again")
+  Note("")
+
+  if not dialog then
+    Note("Starting scan...")
+    DoImportScan()
+  else
+    dialog.confirm({
+      title = "Ready to scan for importable logs?",
+      callback = function(result, reason)
+        if result and result.value then
+          DoImportScan()
+        else
+          Note("Import cancelled.")
+        end
+      end
+    })
+  end
+end
+
 local commands = {
   view = { func = CmdView },
   log = { func = CmdView },
@@ -478,6 +762,7 @@ local commands = {
   find = { func = CmdFind },
   stats = { func = CmdStats },
   toggle = { func = CmdToggle },
+  import = { func = CmdImport },
   help = { func = ShowHelp },
 }
 

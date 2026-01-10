@@ -490,7 +490,7 @@ This is a mostly complete reference of keyboard shortcuts. For the most up-to-da
 
 ## What's New in Miriani-Next
 
-See the [changelog](docs/changelog.md) for a comprehensive list of changes since Toastush 3.0.
+See the [changelog](/docs/changelog.md) for a comprehensive list of changes since Toastush 3.0.
 
 **Major Features**
 - Terminal-based configuration system (`conf`) - navigate menus with number or text selection

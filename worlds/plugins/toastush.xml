@@ -706,7 +706,18 @@ if config:get_option("reset_counters_on_startup").value == "yes" then
   -- Set up tab accelerators based on current option
   update_tab_accelerators()
 
+  -- Ctrl+Shift+V pastes clipboard with linebreaks converted to spaces
+  world.AcceleratorTo("Ctrl+Shift+V", "PasteAsOneLine()", sendto.script)
+
 end -- OnPluginInstall
+
+function PasteAsOneLine()
+  local text = GetClipboard()
+  if text then
+    text = text:gsub("\r\n", " "):gsub("\r", " "):gsub("\n", " ")
+    PasteCommand(text)
+  end
+end
 
 function OnPluginSaveState()
   config:save()

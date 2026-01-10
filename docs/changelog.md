@@ -3,10 +3,11 @@
 ## Version 4.1.01 (In Progress)
 
 ### New
-- Boosted volume on frog social plus two oops sounds.
 - Added support for MCP local edit. This is primarily used by hosts for building and programming operations.
-- Expose the client via MCP client package.
-- Play a random hop social if your walk style is set to hop, similar to bounce.
+- Expose the client and its known version via the MCP client package.
+- Play a random hop social if your walk style is set to hop or leap, similar to bounce.
+- Boosted volume on frog social plus two oops sounds.
+- You can now press CTRL+Shift+V to paste the contents of the clipboard with linebreaks turned into spaces.
 
 ## Version 4.1.00
 

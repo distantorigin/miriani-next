@@ -209,7 +209,7 @@ roomPatterns = {
 
   general = {
     {"Cave", "cave"},
-    {"^Cell Block ", "brig"},
+    {"^Cell", "brig"},
     {"Cockpit$", "salvager"},
     {"Docking", "landingpad"},
     {"Escape Pod$", "escapePod"},
@@ -506,8 +506,10 @@ function computeAmbianceFile()
         file = "ITPN"
       elseif zoneName then
         local lowerZone = string.lower(zoneName)
-        if lowerZone == "deneii" or lowerZone == "apartment" then
+        if lowerZone == "deneii" then
           file = "deneii"
+        elseif string.find(lowerZone, "apartment") then
+          file = "quarters"
         end
       end
     elseif environment.name == "planet" then

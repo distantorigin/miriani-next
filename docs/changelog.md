@@ -1,5 +1,31 @@
 # Miriani-Next Changelog
 
+## Version 4.1.0
+
+### New
+- Comprehensive README rewrite with improved organization, clearer installation instructions, and expanded documentation for all features. You can view the README at https://github.com/distantorigin/miriani-next/
+- Complete overhaul of the ambiance system with a new rooms.lua module:
+  - Three-tier room matching system: exact room names are checked first, then pattern matching, then fallback to room type from the game's environment flags.
+  - Added documentation in rooms.lua explaining how to add new ambiances.
+- New option to disable theme music at startup (conf gen theme).
+- New option to shorten communication by removing verbs, e.g. "Player says" becomes "Player:" (conf gag short).
+- Over 40 new ambiance sound files:
+  - Starship rooms with variants: Bridge/Control Room (3 new variants), Engineering (3 new variants), Quarters (3 variants), Medical (2 variants), Escalator (2 variants).
+  - Praelor ship rooms: 5 unique ambiance variants for Potateotons.
+  - New location-specific ambiances: ACV cockpit, asteroid rover, asteroid surface, bias drive housing, combat drone bay, common area, crawlspace, deck, decontamination chamber, Deneii areas, dig site, docking bay, duct, hostile environment, mission rooms, pilot's lounge, generic planet surface, repair and rearm, salvager cockpit, Shadius station, simulation shop, spacesuit/EVA, and volcano/moon surface.
+- New female social sounds: 8 laugh variants, 2 lol variants, 3 rofl variants.
+- CI now builds offline installers by embedding the release ZIP into the launcher, giving us an automatically compiled binary for every release.
+- Release artifacts and installer filenames now include version numbers. Dev builds use commit SHA for identification.
+- Automatic changelog generation for releases using git-cliff.
+- The updater is now open source and builds itself on GitHub using GitHub Actions: https://github.com/distantorigin/next-launcher
+
+### Changed
+- Consolidated direction sound mappings into rooms.lua.
+- Direct conf commands that toggle options no longer display the menu afterward.
+
+### Removed
+- boggle and ponder social sounds for females.
+
 ## Version 4.0.17
 ### New
 - Began work on automated GitHub builds and releases.

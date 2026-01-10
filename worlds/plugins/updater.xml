@@ -72,33 +72,42 @@ end
 function download_updater(callback)
   local homedir = GetInfo(66)
   local download_url = "https://github.com/distantorigin/next-launcher/releases/latest/download/miriani.exe"
+  local updater_path = homedir .. "update.exe"
 
   Note("Downloading updater...")
 
-  async.doAsyncRemoteRequest(download_url, function(retval, page, status, headers, full_status, requested_url)
-    if not retval or status ~= 200 then
-      Note("Error: Failed to download update.exe (HTTP " .. tostring(status) .. ")")
+  -- Use curl to download (handles SNI, redirects, everything properly -- sigh). Windows 10 1803 required.
+  local cmd = 'curl -L -o "' .. updater_path .. '" "' .. download_url .. '"'
+
+  execute.doAsyncExecute(cmd, function(success, output, exit_code, err)
+    if success and exit_code == 0 then
+      -- Verify file exists and has content
+      local file = io.open(updater_path, "rb")
+      if file then
+        local size = file:seek("end")
+        file:close()
+        if size > 0 then
+          Note("Successfully downloaded update.exe (" .. size .. " bytes) to " .. homedir)
+          if callback then callback(true) end
+          return
+        end
+      end
+      Note("Error: Download appeared to succeed but file is empty or missing")
       if callback then callback(false) end
-      return
-    end
-
-    local updater_path = homedir .. "update.exe"
-    local file = io.open(updater_path, "wb")
-    if not file then
-      Note("Error: Failed to write update.exe to " .. updater_path)
+    else
+      Note("Error: Failed to download update.exe (curl exit code: " .. tostring(exit_code) .. ")")
+      if output and #output > 0 then
+        for _, line in ipairs(output) do
+          Note("  " .. line)
+        end
+      end
       if callback then callback(false) end
-      return
     end
-
-    file:write(page)
-    file:close()
-
-    Note("Successfully downloaded update.exe to " .. homedir)
-    if callback then callback(true) end
-  end, "HTTPS", 60, function(url, timeout)
-    Note("Error: Download timed out after " .. timeout .. " seconds")
-    if callback then callback(false) end
-  end)
+  end, {
+    hide_window = true,
+    working_dir = homedir,
+    timeout = 120
+  })
 end
 
 function get_current_channel()

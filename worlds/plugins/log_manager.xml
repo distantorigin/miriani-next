@@ -624,18 +624,30 @@ function DoImportScan()
   local function do_renames(files, overwrite)
     local renamed = 0
     local errors = 0
+    local dirs_to_clean = {}
     for _, file in ipairs(files) do
       EnsureLogDirectory(file.new_dir)
       if overwrite and lfs.attributes(file.new_path) then
         os.remove(file.new_path)
       end
+      local old_dir = file.old_path:match("^(.+)\\[^\\]+$")
       local ok, err = os.rename(file.old_path, file.new_path)
       if ok then
         renamed = renamed + 1
+        if old_dir then dirs_to_clean[old_dir] = true end
       else
         errors = errors + 1
         Note("  Error renaming " .. file.old_name .. ": " .. (err or "unknown error"))
       end
+    end
+    -- Clean up empty directories
+    for dir, _ in pairs(dirs_to_clean) do
+      pcall(function()
+        lfs.rmdir(dir)
+        -- Try parent too (e.g., year folder if month folder was removed)
+        local parent = dir:match("^(.+)\\[^\\]+$")
+        if parent then lfs.rmdir(parent) end
+      end)
     end
     return renamed, errors
   end

@@ -1350,11 +1350,15 @@ function playstep(name, line, wildcards)
 
   foundstep = false
 
-    -- Play bounce social sound if bouncing
+    -- Play social sounds for certain walk styles
     if footstep == "bounce" then
-     mplay("social/neuter/bounce", "socials")
-     return 1
-    end -- if bounce
+      mplay("social/neuter/bounce", "socials")
+      return 1
+    elseif footstep == "hop" then
+      local gender = math.random(2) == 1 and "male" or "female"
+      mplay("social/" .. gender .. "/hop", "socials")
+      return 1
+    end
 
   -- Stop here if aquatic
   if environment.marine

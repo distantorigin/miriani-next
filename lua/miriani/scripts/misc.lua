@@ -744,8 +744,9 @@ endScan()</send>
    send_to="12"
   >
   <send>
+   stop("ambiance", nil, 1, 0.5)
+   currentAmbianceFile = nil
    mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
-   clearAmbiance()
   </send>
   </trigger>
 
@@ -757,8 +758,9 @@ endScan()</send>
    send_to="12"
   >
   <send>
+   stop("ambiance", nil, 1, 0.5)
+   currentAmbianceFile = nil
    mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
-   clearAmbiance()
   </send>
   </trigger>
 
@@ -771,8 +773,9 @@ endScan()</send>
    send_to="12"
   >
   <send>
+   stop("ambiance", nil, 1, 0.5)
+   currentAmbianceFile = nil
    mplay("ambiance/underwater", "environment", 1, nil, 1, 1, 0.5)
-   clearAmbiance()
   </send>
   </trigger>
 
@@ -1023,10 +1026,9 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
 
     if (not stunned) then
       stunned = true
-      -- Stop current ambiance and environment sounds before playing heartbeat
-      stop("ambiance")
+      -- updateAmbiance will stop ambiance since stunned=true
+      updateAmbiance()
       stop("environment")
-      clearAmbiance()
       mplay("ambiance/heartbeat", "environment", 1, nil, 1, 1, fade)
     end -- if
 

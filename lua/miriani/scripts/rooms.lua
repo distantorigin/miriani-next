@@ -388,29 +388,40 @@ end -- set_environment
 -------------------------------------------------------------------------------
 -- Ambiance playback logic
 -- Determines and plays appropriate ambient sound based on environment/room
+--
+-- Architecture:
+--   shouldPlayAmbiance() - checks all blocking conditions (stun, DND, focus, etc.)
+--   computeAmbianceFile() - determines what file to play based on environment
+--   updateAmbiance() - single entry point, call when ANY relevant state changes
 -------------------------------------------------------------------------------
 
 -- Track current ambiance to avoid repeating
 currentAmbianceFile = nil
 
-function playAmbiance(roomtype)
-  -- Check preconditions (uses globals: environment, focusWindow, cameraFeed, stunned, config)
-  if (not environment)
-  or not focusWindow
-  or (cameraFeed)
-  or (stunned)
-  or config:get_option("background_ambiance").value == "no" then
-    return 0
-  end
+-- Check all conditions that would block ambiance playback
+function shouldPlayAmbiance()
+  if not environment then return false end
+  if not focusWindow then return false end
+  if cameraFeed then return false end
+  if stunned then return false end
+  if config:is_dnd() then return false end
+  if config:get_option("background_ambiance").value == "no" then return false end
+  return true
+end
+
+-- Determine what ambiance file should play based on current environment
+-- Returns nil if no appropriate ambiance found
+function computeAmbianceFile()
+  if not environment then return nil end
 
   local file = nil
-  local fade = 0.8
+  local roomtype = environment.roomtype or environment.name or "unknown"
   local names = utils.split(roomtype, " ")
   local rname = string.lower(names[#names])
 
   -- Debug: trace all calls
   if config and config:get_option("debug_mode").value == "yes" then
-    notify("info", string.format("playAmbiance called: roomtype='%s', rname='%s', roomName='%s'",
+    notify("info", string.format("computeAmbianceFile: roomtype='%s', rname='%s', roomName='%s'",
       tostring(roomtype), tostring(rname), tostring(roomName)))
   end
 
@@ -522,16 +533,40 @@ function playAmbiance(roomtype)
     end
   end
 
-  -- Play or stop ambiance
-  if file ~= nil then
+  return file
+end
+
+-- Single entry point for ambiance updates
+-- Call this whenever any relevant state changes (room, stun, DND, focus, etc.)
+function updateAmbiance()
+  local fade = 0.8
+
+  if not shouldPlayAmbiance() then
+    if currentAmbianceFile then
+      stop("ambiance", nil, 1, fade)
+      currentAmbianceFile = nil
+    end
+    return
+  end
+
+  local file = computeAmbianceFile()
+
+  if file then
     if file ~= currentAmbianceFile then
       currentAmbianceFile = file
       mplay("ambiance/"..file, "ambiance", 1, nil, 1, 1, fade)
     end
   else
-    stop("ambiance", nil, 1, fade)
-    currentAmbianceFile = nil
+    if currentAmbianceFile then
+      stop("ambiance", nil, 1, fade)
+      currentAmbianceFile = nil
+    end
   end
+end
+
+-- Legacy wrapper for backwards compatibility
+function playAmbiance(roomtype)
+  updateAmbiance()
 end
 
 function getCurrentAmbiance()
@@ -553,7 +588,7 @@ ImportXML([=[
    script="playstep"
    group="misc"
    keep_evaluating="y"
-   match="^\[([^\]]+)\](( \([^)]+\))*)$"
+   match="^\[([A-Za-z0-9 ;:\-'&quot;]+)\](( \([^)]+\))*)$"
    regexp="y"
    send_to="12"
    sequence="100"

@@ -1044,14 +1044,12 @@ function toggle_dnd()
     config:toggle_dnd()
     Execute("tts_enable_silent")
     notify("info", "Do Not Disturb disabled")
-    -- Resume ambiance
-    if environment and environment.roomtype then
-      playAmbiance(environment.roomtype)
-    end
+    updateAmbiance()
   else
     notify("info", "Do Not Disturb enabled")
     config:toggle_dnd()
     stop()
+    currentAmbianceFile = nil
     Execute("tts_disable_silent")
   end
 end

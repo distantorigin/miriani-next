@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.0
+## Version 4.1.00
 
 ### New
 - Comprehensive README rewrite with improved organization, clearer installation instructions, and expanded documentation for all features. You can view the README at https://github.com/distantorigin/miriani-next/
@@ -25,6 +25,7 @@
 
 ### Removed
 - boggle and ponder social sounds for females.
+- Secondary ship relay sound.
 
 ## Version 4.0.17
 ### New

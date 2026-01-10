@@ -77,7 +77,7 @@ function download_updater(callback)
   Note("Downloading updater...")
 
   -- Use curl to download (handles SNI, redirects, everything properly -- sigh). Windows 10 1803 required.
-  local cmd = 'curl -L -o "' .. updater_path .. '" "' .. download_url .. '"'
+  local cmd = 'curl -sL -o "' .. updater_path .. '" "' .. download_url .. '"'
 
   execute.doAsyncExecute(cmd, function(success, output, exit_code, err)
     if success and exit_code == 0 then
@@ -166,8 +166,19 @@ function run_updater_hidden(args, callback)
     if success then
       if callback then callback(success, output, exit_code) end
     else
-      Note("Updater error: " .. (err or "Unknown error"))
-      if callback then callback(false, {}, exit_code or -1) end
+      if err and err:match("error 740") then
+        Note("Error: Windows requires administrator privileges to run the updater.")
+        Note("To fix this permanently:")
+        Note("  1. Right-click MUSHclient.exe and select 'Properties'")
+        Note("  2. Go to the 'Compatibility' tab")
+        Note("  3. Check 'Run this program as an administrator'")
+        Note("  4. Click OK and restart MUSHclient")
+        -- Don't call callback - we've already shown the user what to do
+        return
+      else
+        Note("Updater error: " .. (err or "Unknown error"))
+        if callback then callback(false, {}, exit_code or -1) end
+      end
     end
   end, {
     hide_window = true,
@@ -337,24 +348,9 @@ function update_run(quiet)
 
       -- Run the update
       if info.restart_required then
-        -- Use -allow-restart flag if restart is required
         run_updater_visible("-allow-restart -non-interactive")
       else
-        -- Run without restart flag
-run_updater_visible("-non-interactive")
---        run_updater_hidden("", function(output, exit_code)
--- if exit_code == 0 then
---            Note("Update completed successfully!")
---          else
---            Note("Update failed with exit code: " .. tostring(exit_code))
---          end
-          -- Show all output regardless of exit code
---          if output and #output > 0 then
---            for _, line in ipairs(output) do
---              Note(line)
---            end
---          end
---        end)
+        run_updater_visible("-non-interactive")
       end
     else
       if not quiet then

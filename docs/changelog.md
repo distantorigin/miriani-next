@@ -1,14 +1,20 @@
 # Miriani-Next Changelog
 
-## Version 4.1.01 (In Progress)
+## Version 4.1.01
 
 ### New
-- Added 'lg import' command to import and rename log files from any client to match the Miriani Next naming convention (DD Month YYYY.txt). To use, copy your old log .txt files into the log directory shown when running the command, then run 'lg import' to scan and rename them. The importer recognizes dates from filenames in various formats: YYYY-MM-DD, DD-MM-YYYY, YYYYMMDD, month names (December 14 2025), and underscores instead of spaces. For files that only have a day number (like Proxiani's "9th, on port 1234.txt"), the year and month are extracted from the parent directory structure (e.g., 2025/01/).
+- Added an 'lg import' command to import and rename log files from any client to match the Miriani Next naming convention (DD Month YYYY.txt). To use, copy your old log .txt files into the log directory shown when running the command, then run 'lg import' to scan and rename them. The importer recognizes dates from filenames in various formats: YYYY-MM-DD, DD-MM-YYYY, YYYYMMDD, month names (December 14 2025), and underscores instead of spaces. For files that only have a day number (like Proxiani's "9th, on port 1234.txt"), the year and month are extracted from the parent directory structure (e.g., 2025/01/).
 - Added support for MCP local edit. This is primarily used by hosts for building and programming operations.
 - Expose the client and its known version via the MCP client package.
 - Play a random hop social if your walk style is set to hop or leap, similar to bounce.
+- Add 'conf gen editor' to set your default text editor. By default, this is set to 'notepad.exe'.
 - Boosted volume on frog social plus two oops sounds.
+- Add 7 new footsteps for ducts and crawlspaces.
+- Ambiances for prison cells and apartments.
+- Ambiances should now be more resilient to reloads, stun time, DND, etc.
 - You can now press CTRL+Shift+V to paste the contents of the clipboard with linebreaks turned into spaces.
+- The Updater plugin now uses curl (instead of DoAsyncRequest) to reinstall the updater via the 'update reinstall' command. This mandates you have Windows 10 1804, released in April of 2018.
+- Bump Updater to version 1.4.5 and begin including an app manifest to ensure Windows doesn't raise error 740 when not being run as admin.
 
 ## Version 4.1.00
 

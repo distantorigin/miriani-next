@@ -110,8 +110,7 @@ roomTypes = {
 
   room = {
     asteroid = "asteroidSurface",
-	APARTMENT = "QUARTERS",
-  },
+    apartment = "quarters",
   },
 }
 

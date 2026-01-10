@@ -8,7 +8,7 @@ local timeouts = {}
 local timeout_callbacks = {}
 local execute_thread_code = string.dump(function(arg)
   local ffi = require("ffi")
-  ffi.cdef[[typedef void* HANDLE;typedef uint32_t DWORD;typedef uint16_t WORD;typedef int BOOL;typedef struct{DWORD cb;char* lpReserved;char* lpDesktop;char* lpTitle;DWORD dwX;DWORD dwY;DWORD dwXSize;DWORD dwYSize;DWORD dwXCountChars;DWORD dwYCountChars;DWORD dwFillAttribute;DWORD dwFlags;WORD wShowWindow;WORD cbReserved2;void* lpReserved2;HANDLE hStdInput;HANDLE hStdOutput;HANDLE hStdError;}STARTUPINFOA;typedef struct{HANDLE hProcess;HANDLE hThread;DWORD dwProcessId;DWORD dwThreadId;}PROCESS_INFORMATION;typedef struct{DWORD nLength;void* lpSecurityDescriptor;BOOL bInheritHandle;}SECURITY_ATTRIBUTES;BOOL CreateProcessA(const char*,char*,SECURITY_ATTRIBUTES*,SECURITY_ATTRIBUTES*,BOOL,DWORD,void*,const char*,STARTUPINFOA*,PROCESS_INFORMATION*);BOOL CreatePipe(HANDLE*,HANDLE*,SECURITY_ATTRIBUTES*,DWORD);BOOL ReadFile(HANDLE,void*,DWORD,DWORD*,void*);BOOL CloseHandle(HANDLE);DWORD WaitForSingleObject(HANDLE,DWORD);BOOL GetExitCodeProcess(HANDLE,DWORD*);]]
+  ffi.cdef[[typedef void* HANDLE;typedef uint32_t DWORD;typedef uint16_t WORD;typedef int BOOL;typedef struct{DWORD cb;char* lpReserved;char* lpDesktop;char* lpTitle;DWORD dwX;DWORD dwY;DWORD dwXSize;DWORD dwYSize;DWORD dwXCountChars;DWORD dwYCountChars;DWORD dwFillAttribute;DWORD dwFlags;WORD wShowWindow;WORD cbReserved2;void* lpReserved2;HANDLE hStdInput;HANDLE hStdOutput;HANDLE hStdError;}STARTUPINFOA;typedef struct{HANDLE hProcess;HANDLE hThread;DWORD dwProcessId;DWORD dwThreadId;}PROCESS_INFORMATION;typedef struct{DWORD nLength;void* lpSecurityDescriptor;BOOL bInheritHandle;}SECURITY_ATTRIBUTES;BOOL CreateProcessA(const char*,char*,SECURITY_ATTRIBUTES*,SECURITY_ATTRIBUTES*,BOOL,DWORD,void*,const char*,STARTUPINFOA*,PROCESS_INFORMATION*);BOOL CreatePipe(HANDLE*,HANDLE*,SECURITY_ATTRIBUTES*,DWORD);BOOL ReadFile(HANDLE,void*,DWORD,DWORD*,void*);BOOL CloseHandle(HANDLE);DWORD WaitForSingleObject(HANDLE,DWORD);BOOL GetExitCodeProcess(HANDLE,DWORD*);DWORD GetLastError();]]
   local k32=ffi.load("kernel32")
   local out={}
   local sa=ffi.new("SECURITY_ATTRIBUTES")
@@ -27,9 +27,10 @@ local execute_thread_code = string.dump(function(arg)
   local cb=ffi.new("char[?]",#arg.cmd+1)
   ffi.copy(cb,arg.cmd)
   if k32.CreateProcessA(nil,cb,nil,nil,1,flags,nil,arg.working_dir,si,pi)==0 then
+    local err=k32.GetLastError()
     k32.CloseHandle(hR[0])
     k32.CloseHandle(hW[0])
-    return false,out,"Process failed",-1
+    return false,out,"Process failed (error "..tostring(err)..")",-1
   end
   k32.CloseHandle(hW[0])
   local buf=ffi.new("char[4096]")

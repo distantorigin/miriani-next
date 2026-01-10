@@ -40,13 +40,13 @@ ImportXML([=[
      if speaker_part ~= "" then
        -- Speaker transmits pattern matched - strip "transmits," to get "Speaker:"
        local speaker_short = string.gsub(speaker_part, "%s*transmits,?%s*$", ":")
-       local unquoted = string.match(message, '^"(.+)"$') or message
+       local unquoted = string.gsub(string.gsub(message, '^%s*"?', ''), '"?%s*$', '')
        display_output = speaker_short .. " " .. unquoted
      else
        -- No transmits - parse message for verb pattern
        local speaker, verb, rest = string.match(message, '^(.-)%s+(%a+),%s*(.+)$')
        if speaker and verb and rest then
-         local unquoted = string.match(rest, '^"(.+)"$') or rest
+         local unquoted = string.gsub(string.gsub(rest, '^%s*"?', ''), '"?%s*$', '')
          local v = string.lower(verb)
          if v == "says" or v == "say" or v == "asks" or v == "ask" or
             v == "exclaims" or v == "exclaim" or v == "transmits" or v == "transmit" then
@@ -735,25 +735,66 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^\[([\w ]+)\] .+$"
+   match="^\[([\w ]+)\] (.+)$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="110"
   >
   <send>
    local detected_org = GetVariable("org_name")
    local detected_courier = GetVariable("courier_company")
+   local channel_name = "%1"
+   local message = "%2"
 
-   if detected_org and "%1" == detected_org then
+   if detected_org and channel_name == detected_org then
      -- This is our organization
      local file = require("pl.path").isfile(
-     config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/%1"..EXTENSION) and "%1" or "organization"
+     config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/"..channel_name..EXTENSION) and channel_name or "organization"
      mplay("comm/"..file, "communication")
      channel(name, "%0", {"organization", "communication"})
-   elseif detected_courier and "%1" == detected_courier then
+
+     -- Apply shortening
+     local display_message = message
+     if config:get_option("shorten_communication").value == "yes" then
+       local speaker, verb, rest = string.match(message, '^(.-)%s+(%a+),%s*(.+)$')
+       if speaker and verb and rest then
+         local unquoted = string.gsub(string.gsub(rest, '^%s*"?', ''), '"?%s*$', '')
+         local v = string.lower(verb)
+         if v == "says" or v == "say" or v == "asks" or v == "ask" or
+            v == "exclaims" or v == "exclaim" or v == "transmits" or v == "transmit" then
+           display_message = speaker .. ": " .. unquoted
+         else
+           display_message = speaker .. " " .. verb .. ": " .. unquoted
+         end
+       end
+     end
+     print_color({"[" .. channel_name .. "] ", "default"}, {display_message, "priv_comm"})
+
+   elseif detected_courier and channel_name == detected_courier then
      -- This is our courier company
      mplay("comm/courier", "communication")
      channel(name, "%0", {"courier", "communication"})
+
+     -- Apply shortening
+     local display_message = message
+     if config:get_option("shorten_communication").value == "yes" then
+       local speaker, verb, rest = string.match(message, '^(.-)%s+(%a+),%s*(.+)$')
+       if speaker and verb and rest then
+         local unquoted = string.gsub(string.gsub(rest, '^%s*"?', ''), '"?%s*$', '')
+         local v = string.lower(verb)
+         if v == "says" or v == "say" or v == "asks" or v == "ask" or
+            v == "exclaims" or v == "exclaim" or v == "transmits" or v == "transmit" then
+           display_message = speaker .. ": " .. unquoted
+         else
+           display_message = speaker .. " " .. verb .. ": " .. unquoted
+         end
+       end
+     end
+     print_color({"[" .. channel_name .. "] ", "default"}, {display_message, "priv_comm"})
+   else
+     -- Not our org or courier, just print original
+     print("%0")
    end
   </send>
   </trigger>

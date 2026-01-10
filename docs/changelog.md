@@ -22,11 +22,12 @@
 ### Changed
 - Consolidated direction sound mappings into rooms.lua.
 - Direct conf commands that toggle options no longer display the menu afterward.
+- Boosted volume on frog social plus two oops sounds.
 
 ### Removed
 - boggle and ponder social sounds for females.
 - Secondary ship relay sound.
-
+- fuzzyDeath4
 ## Version 4.0.17
 ### New
 - Began work on automated GitHub builds and releases.

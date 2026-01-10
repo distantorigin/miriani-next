@@ -56,6 +56,7 @@
 - Always play poke and nudge. Require_target option has been removed from socials.
 - Replaced the handheld planetary surveyor start sound with the original MT Miriani version.
 - Boosted volume on a few social sounds.
+- Removed relay1, boosted volume on remaining relay.
 
 ### Fixed
 - Properly import timestamps from the database so older messages don't show up as "Just now".

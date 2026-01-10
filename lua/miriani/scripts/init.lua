@@ -48,7 +48,7 @@ local namespace = {
   "shenanigans", -- Blade combat, slime machines, and other RP shenanigans
   "devices", -- Device sounds and notifications (message board readers, etc.)
   "dialog_handlers", -- Dialog system input handlers
--- "mcp", -- MCP protocol
+"mcp", -- MCP protocol
 } -- namespace
 
 

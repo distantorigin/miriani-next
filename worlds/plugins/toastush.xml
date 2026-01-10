@@ -718,6 +718,7 @@ SetVariable("logged_in", 0)
 end -- OnPluginConnect
 
 function OnPluginDisconnect()
+  if mcp then mcp:cleanup() end
   DeleteVariable("proxiani_enabled")
   SetVariable("logged_in", 0)
   link = {}

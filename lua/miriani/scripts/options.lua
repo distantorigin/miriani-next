@@ -72,6 +72,7 @@ local options = {
 
   roundtime = {descr="Play a sound when roundtime is up.", value="no", group="general", type="bool"},
   escape_abort = {descr="Use Escape key to send @abort command.", value="yes", group="general", type="bool"},
+  text_editor = {descr="Text editor for local editing (MCP).", value="notepad.exe", group="general", type="string"},
   tab_activates_notepad = {descr="Use Tab to activate output window instead of tab completion.", value="no", group="general", type="bool"},
   alt_space_shows_exits = {descr="Alt+Space shows exits instead of current history item.", value="yes", group="general", type="bool"},
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},

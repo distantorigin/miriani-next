@@ -1,5 +1,13 @@
 # Miriani-Next Changelog
 
+## Version 4.1.01 (In Progress)
+
+### New
+- Boosted volume on frog social plus two oops sounds.
+- Added support for MCP local edit. This is primarily used by hosts for building and programming operations.
+- Expose the client via MCP client package.
+- Play a random hop social if your walk style is set to hop, similar to bounce.
+
 ## Version 4.1.00
 
 ### New
@@ -22,7 +30,6 @@
 ### Changed
 - Consolidated direction sound mappings into rooms.lua.
 - Direct conf commands that toggle options no longer display the menu afterward.
-- Boosted volume on frog social plus two oops sounds.
 
 ### Removed
 - boggle and ponder social sounds for females.

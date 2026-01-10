@@ -1354,7 +1354,7 @@ function playstep(name, line, wildcards)
     if footstep == "bounce" then
       mplay("social/neuter/bounce", "socials")
       return 1
-    elseif footstep == "hop" then
+    elseif footstep == "hop" or footstep == "leap" then
       local gender = math.random(2) == 1 and "male" or "female"
       mplay("social/" .. gender .. "/hop", "socials")
       return 1

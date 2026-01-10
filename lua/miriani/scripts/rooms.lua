@@ -554,6 +554,7 @@ function updateAmbiance()
   if file then
     if file ~= currentAmbianceFile then
       currentAmbianceFile = file
+      SetVariable("last_ambiance_file", file)
       mplay("ambiance/"..file, "ambiance", 1, nil, 1, 1, fade)
     end
   else
@@ -562,6 +563,24 @@ function updateAmbiance()
       currentAmbianceFile = nil
     end
   end
+end
+
+-- Restore ambiance after plugin reload
+-- Uses saved ambiance file, bypasses environment checks since state may not be fully restored
+function restoreAmbiance()
+  -- Only restore if we were logged in
+  if GetVariable("logged_in") ~= "1" then return end
+
+  local file = GetVariable("last_ambiance_file")
+  if not file then return end
+
+  -- Basic checks that don't depend on environment state
+  if not focusWindow then return end
+  if config:is_dnd() then return end
+  if config:get_option("background_ambiance").value == "no" then return end
+
+  currentAmbianceFile = file
+  mplay("ambiance/"..file, "ambiance", 1, nil, 1, 1, 0.8)
 end
 
 -- Legacy wrapper for backwards compatibility

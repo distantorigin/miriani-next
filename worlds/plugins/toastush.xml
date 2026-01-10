@@ -681,8 +681,10 @@ function OnPluginInstall()
     register()
     OnPluginGetFocus()
     if (GetVariable("last_environment_line")) then
-  replicate_line(GetVariable("last_environment_line"))
-end
+      replicate_line(GetVariable("last_environment_line"))
+    end
+    -- Restore ambiance directly from saved state
+    DoAfterSpecial(0.5, "restoreAmbiance()", sendto.script)
   end -- if
 
   -- janitor code

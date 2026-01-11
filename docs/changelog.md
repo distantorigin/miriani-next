@@ -5,6 +5,9 @@
 ### New
 - Update Bass to 2.4.18. Consequently, audio will now correctly follow the default device set in Windows.
 
+### Fixed
+- Planetary mining scan sound now stops if the drone isn't being held.
+
 ## Version 4.1.01
 
 ### New

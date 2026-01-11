@@ -500,6 +500,10 @@ function ParseDateFromFilename(filename, dir_path)
   year, month, day = base:match("^(%d%d%d%d)[_%-](%d%d?)[_%-](%d%d?)$")
   if year then return tonumber(year), tonumber(month), tonumber(day) end
 
+  -- Name YYYY-MM-DD or Name YYYY-MM-DD HH.MM (e.g., "Mitchell 2026-01-02" or "Victor 2022-07-11 16.21")
+  year, month, day = base:match("%s(%d%d%d%d)[_%-](%d%d?)[_%-](%d%d?)")
+  if year then return tonumber(year), tonumber(month), tonumber(day) end
+
   -- DD-MM-YYYY or DD_MM_YYYY
   day, month, year = base:match("^(%d%d?)[_%-](%d%d?)[_%-](%d%d%d%d)$")
   if year then return tonumber(year), tonumber(month), tonumber(day) end
@@ -562,6 +566,8 @@ function DoImportScan()
   local world_log_dir = GetLogDir()
   local files_to_rename = {}
   local files_with_conflicts = {}
+  local files_using_modified_date = {}
+  local files_modified_conflicts = {}
   local skipped = 0
   local already_correct = 0
 
@@ -584,6 +590,15 @@ function DoImportScan()
                 already_correct = already_correct + 1
               else
                 local year, month, day = ParseDateFromFilename(entry, dir)
+                local used_modified_date = false
+
+                -- Fallback to file modification date if parsing failed
+                if not year and entry_attr.modification then
+                  local date = os.date("*t", entry_attr.modification)
+                  year, month, day = date.year, date.month, date.day
+                  used_modified_date = true
+                end
+
                 if year and month and day and month >= 1 and month <= 12 and day >= 1 and day <= 31 then
                   local new_path, new_dir = BuildMirianiNextPath(year, month, day)
                   local file_info = {
@@ -595,10 +610,18 @@ function DoImportScan()
                     month = month,
                     day = day
                   }
-                  if lfs.attributes(new_path) then
-                    table.insert(files_with_conflicts, file_info)
+                  if used_modified_date then
+                    if lfs.attributes(new_path) then
+                      table.insert(files_modified_conflicts, file_info)
+                    else
+                      table.insert(files_using_modified_date, file_info)
+                    end
                   else
-                    table.insert(files_to_rename, file_info)
+                    if lfs.attributes(new_path) then
+                      table.insert(files_with_conflicts, file_info)
+                    else
+                      table.insert(files_to_rename, file_info)
+                    end
                   end
                 else
                   skipped = skipped + 1
@@ -614,7 +637,7 @@ function DoImportScan()
 
   scan_dir(world_log_dir)
 
-  if #files_to_rename == 0 and #files_with_conflicts == 0 then
+  if #files_to_rename == 0 and #files_with_conflicts == 0 and #files_using_modified_date == 0 and #files_modified_conflicts == 0 then
     Note("No files to import.")
     Note("  Already in correct format: " .. already_correct)
     Note("  Could not parse: " .. skipped)
@@ -668,12 +691,28 @@ function DoImportScan()
     end
   end
 
+  if #files_using_modified_date > 0 then
+    Note(string.format("WARNING: Found %d file(s) with unrecognized names (using last modified date):", #files_using_modified_date))
+    for _, file in ipairs(files_using_modified_date) do
+      local new_name = BuildMirianiNextFilename(file.year, file.month, file.day)
+      Note(string.format("  %s -> %s (MODIFIED DATE)", file.old_name, new_name))
+    end
+  end
+
+  if #files_modified_conflicts > 0 then
+    Note(string.format("WARNING: Found %d file(s) using modified date with conflicts:", #files_modified_conflicts))
+    for _, file in ipairs(files_modified_conflicts) do
+      local new_name = BuildMirianiNextFilename(file.year, file.month, file.day)
+      Note(string.format("  %s -> %s (MODIFIED DATE, EXISTS)", file.old_name, new_name))
+    end
+  end
+
   if not dialog then
     local renamed, errors = do_renames(files_to_rename, false)
-    Note(string.format("Import complete: %d renamed, %d errors, %d already correct, %d skipped, %d conflicts (skipped)",
-      renamed, errors, already_correct, skipped, #files_with_conflicts))
+    Note(string.format("Import complete: %d renamed, %d errors, %d already correct, %d skipped, %d conflicts (skipped), %d modified-date files (skipped)",
+      renamed, errors, already_correct, skipped, #files_with_conflicts, #files_using_modified_date))
   else
-    local function finish_import(include_conflicts, overwrite_conflicts)
+    local function finish_import(include_conflicts, overwrite_conflicts, include_modified, overwrite_modified)
       local total_renamed = 0
       local total_errors = 0
       local renamed, errors = do_renames(files_to_rename, false)
@@ -684,14 +723,64 @@ function DoImportScan()
         total_renamed = total_renamed + renamed
         total_errors = total_errors + errors
       end
+      if include_modified then
+        renamed, errors = do_renames(files_using_modified_date, false)
+        total_renamed = total_renamed + renamed
+        total_errors = total_errors + errors
+        if overwrite_modified then
+          renamed, errors = do_renames(files_modified_conflicts, true)
+          total_renamed = total_renamed + renamed
+          total_errors = total_errors + errors
+        end
+      end
 
-      local conflict_msg = ""
+      local extra_msg = ""
       if #files_with_conflicts > 0 and not include_conflicts then
-        conflict_msg = string.format(", %d conflicts skipped", #files_with_conflicts)
+        extra_msg = extra_msg .. string.format(", %d conflicts skipped", #files_with_conflicts)
+      end
+      if (#files_using_modified_date > 0 or #files_modified_conflicts > 0) and not include_modified then
+        extra_msg = extra_msg .. string.format(", %d modified-date files skipped", #files_using_modified_date + #files_modified_conflicts)
       end
 
       Note(string.format("Import complete: %d renamed, %d errors, %d already correct, %d skipped%s",
-        total_renamed, total_errors, already_correct, skipped, conflict_msg))
+        total_renamed, total_errors, already_correct, skipped, extra_msg))
+    end
+
+    local function prompt_for_modified_date_files(include_conflicts, overwrite_conflicts)
+      if #files_using_modified_date == 0 and #files_modified_conflicts == 0 then
+        finish_import(include_conflicts, overwrite_conflicts, false, false)
+        return
+      end
+
+      local total_modified = #files_using_modified_date + #files_modified_conflicts
+      local conflict_note = ""
+      if #files_modified_conflicts > 0 then
+        conflict_note = string.format(" (%d have conflicts)", #files_modified_conflicts)
+      end
+
+      dialog.menu({
+        title = string.format("WARNING: %d file(s) could not be parsed and will use last modified date%s. Dates may be inaccurate if files were copied or edited.", total_modified, conflict_note),
+        choices = {
+          ["1"] = { label = "Skip files using modified date", action = "skip" },
+          ["2"] = { label = "Include files using modified date", action = "include" },
+          ["3"] = { label = "Include and overwrite conflicts", action = "overwrite" },
+          ["4"] = { label = "Cancel import", action = "cancel" },
+        },
+        callback = function(result, reason)
+          if not result or not result.value or result.value.action == "cancel" then
+            Note("Import cancelled.")
+            return
+          end
+
+          if result.value.action == "skip" then
+            finish_import(include_conflicts, overwrite_conflicts, false, false)
+          elseif result.value.action == "include" then
+            finish_import(include_conflicts, overwrite_conflicts, true, false)
+          elseif result.value.action == "overwrite" then
+            finish_import(include_conflicts, overwrite_conflicts, true, true)
+          end
+        end
+      })
     end
 
     if #files_with_conflicts > 0 then
@@ -708,30 +797,28 @@ function DoImportScan()
             return
           end
 
-          if #files_to_rename == 0 and result.value.action == "skip" then
-            Note("No non-conflicting files to import.")
-            return
-          end
-
           if result.value.action == "skip" then
-            finish_import(false, false)
+            prompt_for_modified_date_files(false, false)
           elseif result.value.action == "overwrite" then
-            finish_import(true, true)
+            prompt_for_modified_date_files(true, true)
           end
         end
       })
-    else
+    elseif #files_to_rename > 0 then
       dialog.confirm({
         title = string.format("Import %d log file(s)?", #files_to_rename),
         text = "This will rename files to match Miriani Next naming convention.",
         callback = function(result, reason)
           if result and result.value then
-            finish_import(false, false)
+            prompt_for_modified_date_files(false, false)
           else
             Note("Import cancelled.")
           end
         end
       })
+    else
+      -- Only modified date files to import
+      prompt_for_modified_date_files(false, false)
     end
   end
 end

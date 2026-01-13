@@ -6,6 +6,7 @@
 - Update Bass to 2.4.18. Consequently, audio will now correctly follow the default device set in Windows.
 - 'lg import' now supports time and date-based logs from VIP Mud.
 - 'lg import' will fall back to modified date if it can't match a known pattern in the file name.
+- Added sounds for pose, jig and tapdance socials.
 
 ### Fixed
 - Planetary mining scan sound now stops if the drone isn't being held.

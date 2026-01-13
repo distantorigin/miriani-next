@@ -91,6 +91,7 @@ local socials = {
   flap      = {genders = {"neuter"}, category = "physical"},
   headdesk  = {genders = {"neuter"}, category = "physical"},
   hop       = {genders = {"male", "female"}, category = "physical"},
+  jig    = {genders = {"neuter"}, category = "physical"},
   kick      = {genders = {"neuter"}, category = "physical"},
   kiss      = {genders = {"neuter"}, category = "physical"},
   knucklecrack = {genders = {"neuter"}, category = "physical"},
@@ -104,6 +105,7 @@ local socials = {
   spank     = {genders = {"neuter"}, category = "physical"},
   stomp     = {genders = {"neuter"}, category = "physical"},
   tackle    = {genders = {"neuter"}, category = "physical"},
+  tapdance    = {genders = {"neuter"}, category = "physical"},
   thump     = {genders = {"neuter"}, category = "physical"},
   twitch    = {genders = {"neuter"}, category = "physical"},
 

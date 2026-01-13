@@ -59,6 +59,7 @@ local socials = {
   -- Reflex sounds (involuntary body reflexes)
   blink     = {genders = {"neuter"}, category = "reflex"},
   cough     = {genders = {"male", "female"}, category = "reflex"},
+  eep     = {genders = {"male", "female"}, category = "reflex"},
   gulp      = {genders = {"neuter"}, category = "reflex"},
   sigh      = {genders = {"male", "female"}, category = "reflex"},
   sneeze    = {genders = {"male", "female"}, category = "reflex"},

@@ -97,6 +97,7 @@ local socials = {
   lick      = {genders = {"neuter"}, category = "physical"},
   nudge     = {genders = {"neuter"}, category = "physical"},
   poke      = {genders = {"neuter"}, category = "physical"},
+  pose      = {genders = {"neuter"}, category = "physical"},
   punch     = {genders = {"neuter"}, category = "physical"},
   slap      = {genders = {"neuter"}, category = "physical"},
   snap      = {genders = {"neuter"}, category = "physical"},

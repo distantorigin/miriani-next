@@ -36,16 +36,20 @@
     }
 
     .skip-link {
-      position: absolute;
-      top: -40px;
+      position: fixed;
+      top: -100px;
       left: 0;
       background: var(--cyan);
       color: #000;
       padding: 8px 16px;
       z-index: 2000;
       text-decoration: none;
+      transition: top 0.2s;
     }
-    .skip-link:focus { top: 0; }
+    .skip-link:focus {
+      top: 0;
+      outline: 3px solid var(--cyan);
+    }
 
     .sr-only {
       position: absolute;

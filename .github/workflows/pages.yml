@@ -45,18 +45,29 @@ jobs:
           echo "SHIP_SOUNDS=$SHIP_SOUNDS" >> $GITHUB_OUTPUT
           echo "CONFIG_OPTIONS=$CONFIG_OPTIONS" >> $GITHUB_OUTPUT
 
-      - name: Get download size and hash
+      - name: Get installer size from release
         id: size
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          zip -9 -r temp.zip . --exclude=*.git* > /dev/null
-          SIZE_BYTES=$(stat -c%s temp.zip 2>/dev/null || stat -f%z temp.zip)
-          SIZE_MB=$(echo "scale=0; $SIZE_BYTES / 1048576" | bc)
-          HASH=$(sha256sum temp.zip | cut -c1-16)
-          SIZE_PERCENT=$(echo "scale=0; $SIZE_MB * 100 / 1100" | bc)
+          VERSION=${{ steps.version.outputs.VERSION }}
+
+          # Get installer size from GitHub API
+          SIZE_BYTES=$(gh api repos/${{ github.repository }}/releases/tags/v$VERSION | jq -r '.assets[] | select(.name | endswith(".exe")) | .size' || echo "0")
+
+          # Fallback to a reasonable default if we can't get the size
+          if [ "$SIZE_BYTES" = "0" ] || [ -z "$SIZE_BYTES" ]; then
+            SIZE_BYTES="89128960"  # ~85 MB default
+          fi
+
+          SIZE_MB=$(echo "scale=1; $SIZE_BYTES / 1048576" | bc)
+          # Get full SHA256 hash of the installer
+          DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/tags/v$VERSION | jq -r '.assets[] | select(.name | endswith(".exe")) | .browser_download_url')
+          HASH=$(curl -sL "$DOWNLOAD_URL" | sha256sum | awk '{print $1}')
+          SIZE_PERCENT=$(echo "scale=0; $SIZE_MB * 100 / 150" | bc)
           echo "SIZE_MB=$SIZE_MB" >> $GITHUB_OUTPUT
           echo "HASH=$HASH" >> $GITHUB_OUTPUT
           echo "SIZE_PERCENT=$SIZE_PERCENT" >> $GITHUB_OUTPUT
-          rm temp.zip
 
       - name: Generate site
         run: |

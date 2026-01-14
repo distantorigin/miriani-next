@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Miriani-Next: A comprehensive MUSHclient client package for the Miriani MUD.">
+  <meta property="og:title" content="Miriani-Next">
+  <meta property="og:description" content="Play Miriani. Hear everything. Over a thousand sounds, built for screen readers, updates itself.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Miriani-Next">
+  <meta name="twitter:description" content="Play Miriani. Hear everything. Over a thousand sounds, built for screen readers.">
+  <title>Miriani-Next</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyan: #0ff;
+      --magenta: #f0f;
+      --green: #0f0;
+      --bg: #020204;
+      --border: #151520;
+      --text: #999;
+      --text-dim: #666;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Space Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--cyan);
+      color: #000;
+      padding: 8px 16px;
+      z-index: 2000;
+      text-decoration: none;
+    }
+    .skip-link:focus { top: 0; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    /* Pixel Art Ship */
+    .ship-art {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .ship-art pre {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      line-height: 1.1;
+      color: var(--cyan);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      letter-spacing: 0.1em;
+      display: inline-block;
+      text-align: left;
+      padding: 1.5rem;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 4px;
+      background: rgba(0, 255, 255, 0.03);
+      transition: all 0.3s;
+    }
+
+    .ship-art:hover pre {
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+      transform: scale(1.02);
+    }
+
+    header { text-align: center; margin-bottom: 2rem; }
+
+    h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      background: linear-gradient(180deg, var(--cyan), var(--magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 20px rgba(0,255,255,0.4));
+    }
+
+    .tagline {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    .version {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.3rem 1rem;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Blurb */
+    .blurb {
+      text-align: center;
+      margin: 2.5rem 0;
+      padding: 0 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.9;
+    }
+
+    .blurb strong {
+      color: var(--cyan);
+      font-weight: normal;
+    }
+
+    /* Download */
+    .download-section { margin: 3rem 0; }
+
+    .download-btn {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 1.2rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 1.4rem;
+      text-align: center;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .download-btn:hover,
+    .download-btn:focus {
+      background: var(--green);
+      color: #000;
+      box-shadow: 0 0 30px rgba(0,255,0,0.6);
+      transform: translateY(-2px);
+    }
+
+    .download-btn:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 4px;
+    }
+
+    .download-btn small {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      margin-top: 0.3rem;
+      opacity: 0.7;
+    }
+
+    .download-meta {
+      margin-top: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .download-meta a {
+      color: var(--text-dim);
+      text-decoration: underline;
+      transition: color 0.1s;
+    }
+    .download-meta a:hover,
+    .download-meta a:focus { color: var(--cyan); }
+
+    .download-hash {
+      margin-top: 0.4rem;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .hash {
+      font-family: 'Space Mono', monospace;
+      color: var(--text-dim);
+      user-select: all;
+      cursor: pointer;
+    }
+
+    /* Size comparison */
+    .size-comparison {
+      font-size: 0.7rem;
+      margin-top: 1rem;
+    }
+
+    .size-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .size-row:last-child { margin-bottom: 0; }
+
+    .size-bar {
+      height: 1.5rem;
+      min-width: 4px;
+      border-radius: 2px;
+    }
+
+    .size-bar-us {
+      background: linear-gradient(90deg, #0f0 0%, #0ff 100%);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+      transition: box-shadow 0.3s;
+    }
+
+    .size-row:hover .size-bar-us {
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+    }
+
+    .size-bar-them {
+      background: linear-gradient(90deg, #666 0%, #444 100%);
+      opacity: 0.6;
+    }
+
+    .size-label {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+
+    .size-label strong {
+      color: var(--green);
+    }
+
+    .size-joke {
+      margin-top: 0.75rem;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      font-style: italic;
+      white-space: nowrap;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      background: rgba(0, 255, 255, 0.05);
+    }
+
+    .stat-number {
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.25rem;
+    }
+
+    /* Sections */
+    .compare,
+    .features,
+    .updater {
+      margin: 2rem 0;
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+      transition: box-shadow 0.3s;
+    }
+
+    .compare:hover,
+    .features:hover,
+    .updater:hover {
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+    }
+
+    .compare h2,
+    .features h2,
+    .updater h2 {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      position: relative;
+    }
+
+    .compare h2::after,
+    .features h2::after,
+    .updater h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #0ff 0%, transparent 100%);
+      box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    }
+
+    .compare p,
+    .features p,
+    .updater p {
+      font-size: 0.75rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .updater-link {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+    .updater-link:hover,
+    .updater-link:focus { text-decoration: underline; }
+
+    /* Links */
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 4rem;
+      padding-bottom: 2rem;
+    }
+
+    .links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.1s;
+    }
+
+    .links a:hover,
+    .links a:focus {
+      color: var(--cyan);
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    }
+
+    .links a:focus-visible {
+      outline: 1px solid var(--cyan);
+      outline-offset: 4px;
+    }
+
+    /* Feature List */
+    .feature-list {
+      margin: 1.5rem 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-left: 0;
+    }
+
+    .feature-list li::before {
+      content: "▸";
+      color: var(--cyan);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .feature-list li strong {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    /* System Requirements */
+    .requirements-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.75rem 1.5rem;
+      margin: 1rem 0;
+      font-size: 0.8rem;
+    }
+
+    .requirements-grid dt {
+      color: var(--text-dim);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .requirements-grid dd {
+      color: var(--text);
+      margin: 0;
+    }
+
+    /* Getting Started */
+    .steps-list {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .steps-list li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      padding-left: 3rem;
+    }
+
+    .steps-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: -0.1rem;
+      width: 2rem;
+      height: 2rem;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .steps-list li strong {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, .container { animation: none !important; transition: none !important; }
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 2.5rem; }
+      .stats, .category-grid { grid-template-columns: 1fr; }
+      .stat, .category { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child, .category:last-child { border-bottom: none; }
+      .ship-art pre { font-size: 0.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <main id="main" class="container">
+    <figure class="ship-art" role="img" aria-label="ASCII art of a sleek starship viewed from above, oval hull with twin engine pods and glowing thrusters">
+      <pre aria-hidden="true">
+        ___------___
+     .-~             ~-.
+   ./                   \.
+  /                       \
+ ;      ___       ___      ;
+ |     |===|-----|===|     |
+  \     \==/     \==/     /
+   \.    ~    _    ~    ./
+     ~-_     |_|     _-~
+         ----===----
+      </pre>
+    </figure>
+
+    <header>
+      <h1>MIRIANI-NEXT</h1>
+      <p class="tagline">The next client experience for Miriani.</p>
+    </header>
+
+    <p class="blurb">
+      Over a thousand sounds bring the galaxy to life. Every airlock, every laser, every wormhole jump. Download, launch, play.
+    </p>
+
+    <section class="download-section">
+      <a href="https://github.com/__REPO__/releases/latest/download/miriani-__VERSION__.exe" class="download-btn">
+        DOWNLOAD INSTALLER
+        <small>__SIZE_MB__ MB</small>
+      </a>
+      <p class="download-meta">
+        The latest version is __VERSION__, released on __RELEASE_DATE__. <a href="https://github.com/__REPO__/releases" rel="noopener noreferrer">View all releases</a>
+      </p>
+      <p class="download-hash">SHA256: <code class="hash">__HASH__</code></p>
+    </section>
+
+    <section class="features">
+      <h2>Features</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-number">__AMBIANCE_SOUNDS__</div>
+          <div class="stat-label">Ambiances</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">__SOCIALS__</div>
+          <div class="stat-label">Socials</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">__CONFIG_OPTIONS__</div>
+          <div class="stat-label">Config Options</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">__SHIP_SOUNDS__</div>
+          <div class="stat-label">Ship Sounds</div>
+        </div>
+      </div>
+      <ul class="feature-list">
+        <li><strong>Log search</strong> - Search your entire log history</li>
+        <li><strong>Counters</strong> - Tracks artifacts, missions, debris</li>
+        <li><strong>Scan formatting</strong> - Condensed scan output</li>
+        <li><strong>Point tracking</strong> - Shows XP gains as you play</li>
+        <li><strong>TLS support</strong> - Encrypted connections</li>
+        <li><strong>Auto-updates</strong> - Launcher updates itself</li>
+        <li><strong>Screen reader compatible</strong> - Works with JAWS and NVDA</li>
+      </ul>
+    </section>
+
+    <section class="features">
+      <h2>System Requirements</h2>
+      <dl class="requirements-grid">
+        <dt>OS:</dt>
+        <dd>Windows 10 or Windows 11</dd>
+        <dt>Memory:</dt>
+        <dd>512MB RAM minimum</dd>
+        <dt>Storage:</dt>
+        <dd>100MB available space</dd>
+        <dt>Network:</dt>
+        <dd>Internet connection for updates and gameplay</dd>
+      </dl>
+    </section>
+
+    <section class="updater">
+      <h2>Self-Updating</h2>
+      <p>
+        The <a href="https://github.com/distantorigin/next-launcher" class="updater-link" rel="noopener noreferrer">open source launcher</a> handles installs and updates, downloading only what changed. No cloud account required.
+      </p>
+    </section>
+
+    <section class="compare">
+      <h2>Small Download, Full Experience</h2>
+      <p>High-quality OGG audio keeps the install compact without sacrificing fidelity.</p>
+      <div class="size-comparison">
+        <div class="size-row">
+          <span class="size-bar size-bar-us" style="width: __SIZE_PERCENT__%;" aria-hidden="true"></span>
+          <span class="size-label">Miriani-Next: <strong>__SIZE_MB__ MB</strong></span>
+        </div>
+        <div class="size-row">
+          <span class="size-bar size-bar-them" style="width: 100%;" aria-hidden="true"></span>
+          <span class="size-label">Miriani Soundpack for VIP Mud: 1.1 GB</span>
+        </div>
+        <p class="size-joke">1 GB saved. That's <span id="space-joke">about 250 songs</span>.</p>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>Getting Started</h2>
+      <ol class="steps-list">
+        <li><strong>Download</strong> the installer (__SIZE_MB__ MB)</li>
+        <li><strong>Run</strong> miriani-__VERSION__.exe</li>
+        <li><strong>Connect</strong> to Miriani through MUSHclient</li>
+        <li><strong>Set your preferences</strong> in the options menu</li>
+      </ol>
+      <p>The launcher handles updates. You only download once.</p>
+    </section>
+
+    <section class="features">
+      <h2>Community</h2>
+      <p>Open source. Report bugs on <a href="https://github.com/__REPO__/issues" class="updater-link" rel="noopener noreferrer">GitHub</a>.</p>
+    </section>
+
+    <nav class="links">
+      <a href="https://toastsoft.net" rel="noopener noreferrer">Miriani</a>
+      <a href="https://github.com/__REPO__" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/__REPO__/blob/main/docs/changelog.md" rel="noopener noreferrer">Changelog</a>
+      <a href="https://github.com/__REPO__/releases" rel="noopener noreferrer">Releases</a>
+    </nav>
+  </main>
+
+  <script>
+    const jokes = [
+      'enough songs to build a whole personality around',
+      'every photo your parents have ever texted you',
+      'Doom. 400 Dooms.',
+      'a weekend of Netflix you\'ll never admit to',
+      'the Bee Movie script so many times it stops being funny and then starts again',
+      '13,500 Apollo guidance computers (we went to the moon with less)',
+      'enough Oregon Trail runs to die of dysentery 20,000 times',
+      'all of Shakespeare, plus room for your fan fiction',
+      'a quarter of that iPhone you cracked in 2008',
+      'half a Baldur\'s Gate 3 patch (the small one)',
+      'that podcast backlog you\'re never getting through',
+      'Stardew Valley twice, for when you mess up your farm',
+      'an audiobook you\'ll start and never finish',
+      'Minesweeper a million times (you still won\'t win)',
+      'roughly one Microsoft Teams update',
+      'more than the Voyager probe has, and that thing left the solar system',
+      'the entire Space Shuttle flight software, seven times over',
+      'every NES game ever made, with room to spare',
+      'one and a third Gmail apps (why is it 750 MB??)',
+      'The Sims 1, with room for expansion packs',
+      'Counter-Strike 1.6, twice',
+      'every song you downloaded from Limewire (and claimed you owned)',
+      'your entire AIM chat history, including the away messages',
+      'two whole copies of GTA Vice City',
+      'Age of Empires II, five times over',
+      'about 10,000 Newgrounds flash games',
+      'every Winamp skin you ever downloaded',
+      'StarCraft and Brood War, with room for replays',
+      'Shrek in DVD quality, and most of Shrek 2',
+      'eight seasons of Scrubs',
+      'your old MySpace page, including the autoplaying music',
+      'the complete Homestar Runner archive',
+      'Diablo II, minus Lord of Destruction',
+      'Halo: Combat Evolved, with room for your saved films',
+      'half of Morrowind (the other half is mods anyway)',
+      'every midi file from the early internet, probably',
+      'your GeoCities homepage and everyone else\'s too',
+      'RollerCoaster Tycoon, 12 times',
+      'the entire Neopets website circa 2004',
+      'every episode of Avatar: The Last Airbender'
+    ];
+    document.getElementById('space-joke').textContent = jokes[Math.floor(Math.random() * jokes.length)];
+  </script>
+</body>
+</html>
+HTMLEOF

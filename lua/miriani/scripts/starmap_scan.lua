@@ -683,13 +683,16 @@ end
   <trigger
    enabled="y"
    group="computer"
-   match="^General sector report for "
+   match="^General sector report for (.+)$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
   <send>
    endScan()
+   print("%1	")
+   mplay("ship/computer/scan")
   </send>
   </trigger>
 

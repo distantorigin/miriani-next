@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.03 (In Progress)
+
+### New
+- Play the scan sound for scan all.
+
 ## Version 4.1.02
 
 ### New

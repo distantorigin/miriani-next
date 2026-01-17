@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.02 (In Progress)
+## Version 4.1.02
 
 ### New
 - Update Bass to 2.4.18. Consequently, audio will now correctly follow the default device set in Windows.
@@ -11,7 +11,8 @@
 - Update MUSHclient to version distantorigin.1.
 - MUSHclient window will now size itself correctly when automatically opening the accessible output window.
 - Formatted scan output for artifacts now includes the Type field, if applicable.
-- Added repair timer notifications: get notified when repairs complete while outside engineering (conf ship repair). Press Ctrl+E to check remaining repair time.
+- Added repair timer notifications: get notified when repairs complete while outside engineering (conf ship repair). Press Ctrl+E to check the timer.
+- Shiny new website at https://distantorigin.github.io/miriani-next/
 
 ### Changed
 - Reorganized scan filter shortcuts: sca is now Average Component Damage, scc is Coordinates, scp is Identifiable Power Sources, scs is Cargo. Removed scf, scg, and scv.

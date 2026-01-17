@@ -1,22 +1,19 @@
 -- Scan table
 scantable = {
-  a = "Atmospheric Composition",
-  c = "Average Component Damage",
-  f = "Coordinates",
+  a = "Average Component Damage",
+  c = "Coordinates",
   d = "Distance",
-  g = "Cargo",
   h = "Hull Damage",
   i = "IFF",
   l = "Classification",
   m = "Composition",
   n = "Natural Resources",
   o = "Occupancy",
-  p = "Power",
+  p = "Identifiable Power Sources",
   r = "Surface Conditions",
-  s = "Identifiable Power Sources",
+  s = "Cargo",
   t = "Type",
   u = "Hostile Military Occupation",
-  v = "Average Component Damage",
   w = "Weapons",
   y = "Integrity",
   z = "Size"
@@ -895,7 +892,7 @@ return 0
   <alias
    enabled="y"
    group="computer"
-   match="^sc([afcdghilmnoprstvwyz]|\.help)(?:\s+(.+))?$"
+   match="^sc([acdhilmnoprstuwyz]|\.help)(?:\s+(.+))?$"
    ignore_case="y"
    regexp="y"
    send_to="12"

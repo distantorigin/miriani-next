@@ -22,6 +22,7 @@
   - [Troubleshooting Update Issues](#troubleshooting-update-issues)
 - [Configuration](#configuration)
   - [Configuration Options Reference](#configuration-options-reference)
+  - [Alternate Sounds](#alternate-sounds)
 - [Commands Reference](#commands-reference)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [What's New in Miriani-Next](#whats-new-in-miriani-next)
@@ -355,6 +356,16 @@ Select your preferred version for each. Adds variety and personalization without
 - **Debug notifications (missing audio files, etc)**: Shows debug notifications for missing audio files, trigger errors, and other development issues. Enable if you're developing scripts or troubleshooting problems. Creates extra noise for normal users.
 - **Sound Playback History**: Creates a buffer showing all recently played sounds with their file names and playback details. Identify which sound file corresponds to which action.
 - **Hooks buffer**: Shows hook executions (when triggers fire special events). For developers creating extensions or debugging trigger interactions.
+
+### Alternate Sounds
+
+You can override any sound with your own version by placing files in the `sounds/alternate/` directory. The client checks this directory first before falling back to the default sounds in `sounds/miriani/`.
+
+To replace a sound, mirror the path structure from `sounds/miriani/` in `sounds/alternate/`. For example, to replace the ship acceleration sound at `sounds/miriani/ship/move/accelerate.ogg`, create `sounds/alternate/ship/move/accelerate.ogg`.
+
+Sound files must be OGG Vorbis format using the`.ogg` extension.
+
+Tip for finding sound paths: Enable "Sound Playback History" in `conf developer` to see which sound file plays for each game event. This buffer shows the file paths, making it easy to identify which sound to override.
 
 ## Commands Reference
 

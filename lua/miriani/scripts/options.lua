@@ -59,6 +59,8 @@ local options = {
   scan_format_star = {descr="Stars", value="{object_name}: Class {classification} star {distance} units away, at {coordinates}", group="scan_formats", type="string"},
   -- Available variables for Debris: object_name, type, size, distance, coordinates
   scan_format_debris = {descr="Debris", value="{object_name}: {type} {distance} units away, at {coordinates}", group="scan_formats", type="string"},
+  -- Available variables for Artifact: object_name, type, distance, coordinates
+  scan_format_artifact = {descr="Artifacts", value="{object_name}: {type} {distance} units away, at {coordinates}", group="scan_formats", type="string"},
   -- Available variables for Proximity Weapon: object_name, distance, coordinates, damage, available_charge, launched_by
   scan_format_weapon = {descr="Proximity Weapons", value="{object_name}: {distance} units away, at {coordinates}. {damage}{available_charge}{launched_by}", group="scan_formats", type="string"},
   -- Available variables for Probe: object_name, distance, coordinates, launched_by

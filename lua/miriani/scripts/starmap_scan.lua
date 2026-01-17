@@ -149,6 +149,8 @@ function formatScanOutput()
     objectType = "Asteroid"
   elseif scanData.size and not scanData.composition then
     objectType = "Debris"
+  elseif scanData.object_name == "Artifact" then
+    objectType = "Artifact"
   elseif scanData.damage then
     objectType = "Weapon"
   end

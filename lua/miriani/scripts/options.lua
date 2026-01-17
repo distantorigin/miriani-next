@@ -78,6 +78,7 @@ local options = {
   tab_activates_notepad = {descr="Use Tab to activate output window instead of tab completion.", value="no", group="general", type="bool"},
   alt_space_shows_exits = {descr="Alt+Space shows exits instead of current history item.", value="yes", group="general", type="bool"},
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},
+  repair_notifs = {descr="Notify when repairs complete while outside engineering.", value="no", group="ship", type="bool"},
   relativity_drive_freq = {descr="Relativity drive frequency.", value="44100", group="ship", type="string"},
   spam = {descr="Reduce spam by gagging flavored text.", value="yes", group="gags", type="bool"},
   shorten_communication = {descr="Shorten communication by removing verbs (e.g. 'Player says' becomes 'Player:').", value="no", group="gags", type="bool"},

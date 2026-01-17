@@ -551,6 +551,7 @@ AcceleratorTo("SHIFT+Esc", [[
 ]], script)
 
 Accelerator("alt+space", "altspace")
+Accelerator("CTRL+e", "checkrepairtimer")
 
 
 

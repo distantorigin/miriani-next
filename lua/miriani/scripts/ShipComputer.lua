@@ -1,5 +1,45 @@
 anomaly_found = false
 
+-- Repair timer tracking
+repair_timer_id = nil
+repair_start_room = nil
+repair_component = nil
+repair_end_time = nil
+
+-- Parse time string like "2 minutes" or "1 hour and 30 minutes" to seconds
+function parseTimeToSeconds(timeStr)
+  local seconds = 0
+
+  -- Match hours
+  local hours = string.match(timeStr, "(%d+)%s*hours?")
+  if hours then seconds = seconds + tonumber(hours) * 3600 end
+
+  -- Match minutes
+  local minutes = string.match(timeStr, "(%d+)%s*minutes?")
+  if minutes then seconds = seconds + tonumber(minutes) * 60 end
+
+  -- Match seconds
+  local secs = string.match(timeStr, "(%d+)%s*seconds?")
+  if secs then seconds = seconds + tonumber(secs) end
+
+  return seconds
+end
+
+-- Called when repair timer fires
+function onRepairTimerComplete()
+  if repair_start_room and roomName ~= repair_start_room then
+    -- We're not in engineering, notify the user
+    mplay("ship/computer/repStop", "notification")
+    print("Repair complete!")
+  end
+  -- Clear repair state
+  repair_timer_id = nil
+  repair_start_room = nil
+  repair_component = nil
+  repair_end_time = nil
+end
+
+
 computer_actions = {
   ["There is insufficient weapons-grade bardenium available for firing."] = {
     sound = "ship/combat/noBarde",
@@ -180,11 +220,41 @@ computer_actions_wildcard = {
   },
   ["I am beginning the repair of (.+)%. Estimated time to completion: (.+)"] = {
     sound = "ship/computer/repStart",
-    group = "computer"
+    group = "computer",
+    func = function(component, time_estimate)
+      -- Store repair info
+      repair_start_room = roomName
+      repair_component = component
+      local seconds = parseTimeToSeconds(time_estimate)
+      repair_end_time = os.time() + seconds
+      -- Only set timer if repair notifications are enabled
+      if config:get_option("repair_notifs").value == "yes" and seconds > 0 then
+        -- Add 5 second buffer to account for timing variations
+        DoAfterSpecial(seconds + 5, "onRepairTimerComplete()", sendto.script)
+        repair_timer_id = true
+      end
+    end
   },
   ["I have completed the repair of (.+)%."] = {
     sound = "ship/computer/repStop",
-    group = "computer"
+    group = "computer",
+    func = function()
+      -- Clear repair timer state since we got the completion message
+      repair_timer_id = nil
+      repair_start_room = nil
+      repair_component = nil
+      repair_end_time = nil
+    end
+  },
+  ["I have aborted the repair of (.+)%."] = {
+    group = "computer",
+    func = function()
+      -- Clear repair timer state on abort
+      repair_timer_id = nil
+      repair_start_room = nil
+      repair_component = nil
+      repair_end_time = nil
+    end
   },
   ["(.+) has been destroyed%."] = {
     sound = "ship/computer/otherDestroy",
@@ -361,6 +431,35 @@ ImportXML([=[
   >
   <send>mplay("ship/computer/NoDamage", "computer")</send>
   </trigger>
-
 </triggers>
+
+<aliases>
+  <alias
+   enabled="y"
+   group="computer"
+   match="^checkrepairtimer$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   if repair_end_time then
+     local remaining = repair_end_time - os.time()
+     if remaining > 0 then
+       local mins = math.floor(remaining / 60)
+       local secs = remaining % 60
+       if mins > 0 then
+         print(string.format("Repairing %s: %d minutes %d seconds remaining", repair_component or "component", mins, secs))
+       else
+         print(string.format("Repairing %s: %d seconds remaining", repair_component or "component", secs))
+       end
+     else
+       print("Repair should be complete any moment now.")
+     end
+   else
+     print("No repair in progress.")
+   end
+  </send>
+  </alias>
+  </aliases>
 ]=])

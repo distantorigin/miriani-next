@@ -11,6 +11,7 @@
 - Update MUSHclient to version distantorigin.1.
 - MUSHclient window will now size itself correctly when automatically opening the accessible output window.
 - Formatted scan output for artifacts now includes the Type field, if applicable.
+- Added repair timer notifications: get notified when repairs complete while outside engineering (conf ship repair). Press Ctrl+E to check remaining repair time.
 
 ### Changed
 - Reorganized scan filter shortcuts: sca is now Average Component Damage, scc is Coordinates, scp is Identifiable Power Sources, scs is Cargo. Removed scf, scg, and scv.

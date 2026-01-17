@@ -10,9 +10,14 @@
 - Shortened several sounds that were on the longer side. The original versions will be reinstalled in version 4.2 with the optional memescape version of the pack.
 - Update MUSHclient to version distantorigin.1.
 - MUSHclient window will now size itself correctly when automatically opening the accessible output window.
+- Formatted scan output for artifacts now includes the Type field, if applicable.
+
+### Changed
+- Reorganized scan filter shortcuts: sca is now Average Component Damage, scc is Coordinates, scp is Identifiable Power Sources, scs is Cargo. Removed scf, scg, and scv.
 
 ### Fixed
 - Planetary mining scan sound now stops if the drone isn't being held.
+- Fixed wormhole speech interrupt not working due to curly braces in object name.
 
 ## Version 4.1.01
 

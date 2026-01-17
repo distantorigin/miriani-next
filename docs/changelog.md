@@ -4,6 +4,7 @@
 
 ### New
 - Play the scan sound for scan all.
+- Add a sound for NAVI being aborted due to interdiction.
 
 ## Version 4.1.02
 

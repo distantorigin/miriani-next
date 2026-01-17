@@ -78,6 +78,14 @@ computer_actions = {
     sound = "ship/computer/failFtl",
     group = "computer"
   },
+  ["An interdiction field is preventing the validation of cached navigational beacon data. Safety overrides are now in effect."] = {
+    sound = "ship/computer/error",
+    group = "computer"
+  },
+  ["An interdiction field prevents the ship from communicating with the navigational beacons."] = {
+    sound = "ship/computer/error",
+    group = "computer"
+  },
   ["This starship has triggered a push pulse device. Brace for impact."] = {
     sound = "ship/computer/pushPulse",
     group = "computer"

@@ -498,7 +498,7 @@ if config:get_option("external_camera").value == "no" then
    name="PlanetarySurveyor"
    group="devices"
    script="gagline"
-   match="^A .+? planetary surveyor indicates that the scan was successful\.$"
+   match="^(A|An) .+? planetary surveyor indicates that the scan was successful\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

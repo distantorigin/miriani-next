@@ -473,7 +473,9 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/misc/creak")</send>
+  <send>if not should_gag_engine_sounds() then
+  mplay ("ship/misc/creak")
+  end</send>
   </trigger>
 
   <trigger
@@ -486,7 +488,9 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/misc/creak")</send>
+  <send>if not should_gag_engine_sounds() thenltl
+  mplay ("ship/misc/creak")
+end</send>
   </trigger>
 
   <trigger
@@ -500,7 +504,9 @@ end -- camera</send>
    sequence="100"
   >
   <send>if not originating_from_camera("%0") then
+    if not should_gag_engine_sounds() then
       mplay ("ship/move/orbit", "ship")
+    end
   else
     print("%0")
   end</send>

@@ -5,8 +5,9 @@
 -- the player has recently:
 --   - Typed movement commands (m, mo, mov, move)
 --   - Typed numeric commands (1-9, -, +, +1, -1, =, =1, etc.)
---   - Typed weapon commands (la, las, lase, laser, can, cann, canno, cannon)
+--   - Typed weapon commands (laser, cannon, aim, lock)
 --   - Typed directional/cone commands (w, a, s, d, q, e, x, z, c, f, r, rw, fw, etc.)
+--   - Typed travel commands (subwarp, slip, wavewarp)
 --   - Moved rooms
 --
 -- "Quiet" engine sounds (pings) still play regardless.
@@ -138,11 +139,11 @@ Send("%0")</send>
 Send("%0")</send>
   </alias>
 
-  <!-- Aim commands: a (with args), ai, aim -->
+  <!-- Aim command -->
   <alias
    enabled="y"
    group="artifact_hunting"
-   match="^a\s+.+$|^ai(?:m)?(?:\s+.*)?$"
+   match="^aim(?:\s+.*)?$"
    regexp="y"
    send_to="12"
    sequence="1"
@@ -151,11 +152,24 @@ Send("%0")</send>
 Send("%0")</send>
   </alias>
 
-  <!-- Lock commands: l, lo, loc, lock -->
+  <!-- Lock command -->
   <alias
    enabled="y"
    group="artifact_hunting"
-   match="^l(?:o(?:c(?:k)?)?)?(?:\s+.*)?$"
+   match="^lock(?:\s+.*)?$"
+   regexp="y"
+   send_to="12"
+   sequence="1"
+  >
+  <send>update_artifact_hunting_activity()
+Send("%0")</send>
+  </alias>
+
+  <!-- subwarp/slip/wavewarp commands -->
+  <alias
+   enabled="y"
+   group="artifact_hunting"
+   match="^(?:subwarp|slip|wavewarp)(?:\s+.*)?$"
    regexp="y"
    send_to="12"
    sequence="1"

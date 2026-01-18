@@ -625,11 +625,6 @@ ImportXML([=[
    -- Skip room processing when peering into another room
    if peering then return end
 
-   -- Update artifact hunting activity on room change
-   if update_artifact_hunting_activity then
-     update_artifact_hunting_activity()
-   end
-
    room = "%0"
    cameraFeed = nil
    roomName = extractRoomName("%1")

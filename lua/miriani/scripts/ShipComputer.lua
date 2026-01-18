@@ -92,11 +92,13 @@ computer_actions = {
   },
   ["The starship has entered an H II region. Caution is advised."] = {
     sound = "ship/computer/nebula",
-    group = "notification"
+    group = "notification",
+    PlayComputerSound = true
   },
   ["Warning! Aquatic life form has entered scooper chamber. Expulsion in progress..."] = {
     sound = "ship/computer/warning",
-    group = "computer"
+    group = "computer",
+    PlayComputerSound = true
   },
   ["We have arrived at the target destination. Lifting anchor and establishing standard dock."] = {
     func = function()
@@ -229,6 +231,7 @@ computer_actions_wildcard = {
   ["I am beginning the repair of (.+)%. Estimated time to completion: (.+)"] = {
     sound = "ship/computer/repStart",
     group = "computer",
+    PlayComputerSound = true,
     func = function(component, time_estimate)
       -- Store repair info
       repair_start_room = roomName
@@ -246,6 +249,7 @@ computer_actions_wildcard = {
   ["I have completed the repair of (.+)%."] = {
     sound = "ship/computer/repStop",
     group = "computer",
+    PlayComputerSound = true,
     func = function()
       -- Clear repair timer state since we got the completion message
       repair_timer_id = nil
@@ -256,6 +260,7 @@ computer_actions_wildcard = {
   },
   ["I have aborted the repair of (.+)%."] = {
     group = "computer",
+    PlayComputerSound = true,
     func = function()
       -- Clear repair timer state on abort
       repair_timer_id = nil
@@ -279,6 +284,7 @@ computer_actions_wildcard = {
     group = "ship"
   },
   ["Scans reveal the debris to be (.+)%."] = {
+    PlayComputerSound = true,
     func = function(debris_type)
       mplay("ship/misc/debrisSalvage", "computer")
       if string.find(debris_type, "lifeform") then
@@ -351,41 +357,51 @@ ImportXML([=[
 
    -- Check exact match actions first
    local action = computer_actions[message]
-   local sound_played = false
+   local PlayComputerSound = false
 
    if action then
      if action.condition then
        if loadstring("return " .. action.condition)() then
          if action.sound then
            mplay(action.sound, action.group or "computer")
-           sound_played = true
          end
        end
      elseif action.sound then
        mplay(action.sound, action.group or "computer")
-       sound_played = true
      end
      if action.func then
        action.func()
      end
+     if action.PlayComputerSound then
+       PlayComputerSound = true
+     end
    else
      -- Check wildcard patterns
+     local matched = false
      for pattern, action in pairs(computer_actions_wildcard) do
        local matches = {string.match(string.lower(message), string.lower(pattern))}
        if #matches > 0 then
+         matched = true
          if action.sound then
            mplay(action.sound, action.group or "computer")
          end
          if action.func then
            action.func(unpack(matches))
          end
+         if action.PlayComputerSound then
+           PlayComputerSound = true
+         end
          break
        end
      end
+     -- No action matched, play generic sound
+     if not matched then
+       PlayComputerSound = true
+     end
    end
 
-   -- Default computer sounds if no specific action matched
-   if not sound_played then
+   -- Play generic computer sound if requested
+   if PlayComputerSound then
      if string.find(message, "Control room reports") then
        mplay("ship/computer/control", "computer")
      elseif string.find(message, "Warning") or string.find(message, "Alert") then

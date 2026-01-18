@@ -488,7 +488,7 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>if not should_gag_engine_sounds() thenltl
+  <send>if not should_gag_engine_sounds() then
   mplay ("ship/misc/creak")
 end</send>
   </trigger>

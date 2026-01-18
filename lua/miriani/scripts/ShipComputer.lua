@@ -312,14 +312,16 @@ computer_actions_wildcard = {
       mplay("ship/combat/destroy/targetDestroyed", "ship")
     end
   },
-  ["Hit on (.+)%."] = {
+  ["^Hit on (.+)%."] = {
     sound = "ship/combat/hit/otherHit",
     group = "ship"
   },
   ["Partial hit on (.+)"] = {
-    sound = "ship/combat/hit/partialHit",
-    group = "ship"
-  },
+    func = function()
+      mplay("ship/combat/hit/partialHit", "computer", nil, nil, nil, nil, nil, nil, 10)
+	  mplay("ship/combat/hit/otherHit", "computer")
+    end
+	},
   ["Scans reveal the debris to be (.+)%."] = {
     PlayComputerSound = true,
     func = function(debris_type)

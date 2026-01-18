@@ -1276,7 +1276,7 @@ function open_url()
   end -- if
 end -- open_url
 
-function mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
+function mplay(file, group, interrupt, pan, loop, slide, sec, frequency, volume_offset)
   -- DND mode: Block all sounds when Do Not Disturb is enabled
   if config and config:is_dnd() then
     return
@@ -1302,7 +1302,7 @@ function mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
     filepath = string.format(SOUNDPATH.."%s%s", file, EXTENSION)
   end -- if
 
-  play(filepath, group, interrupt, pan, loop, slide, sec, nil, nil, frequency)
+  play(filepath, group, interrupt, pan, loop, slide, sec, nil, volume_offset, frequency)
 end -- mplay
 
 function speech_interrupt(line)

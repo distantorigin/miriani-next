@@ -265,8 +265,10 @@ computer_actions_wildcard = {
     end
   },
   ["(.+) has been destroyed%."] = {
-    sound = "ship/computer/otherDestroy",
-    group = "computer"
+    func = function()
+      mplay("ship/computer/otherDestroy", "computer")
+      mplay("ship/combat/destroy/targetDestroyed", "ship")
+    end
   },
   ["Hit on (.+)%."] = {
     sound = "ship/combat/hit/otherHit",

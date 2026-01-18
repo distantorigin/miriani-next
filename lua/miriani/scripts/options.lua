@@ -34,6 +34,7 @@ local options = {
   count_praelor = {descr="Print the number of insectoids detected in a room.", value="no", group="room", type="bool"},
   digsite_detector = {descr="Play a sound when detecting a digsite.", value="yes", group="room", type="bool"},
   external_camera = {descr="Gag external camera output.", value="no", group="gags", type="bool"},
+  gag_holographic_avatar = {descr="Gag holographic avatar names in computer announcements.", value="no", group="gags", type="bool"},
   internal_camera = {descr="Gag internal camera output.", value="no", group="gags", type="bool"},
   follow_interrupt = {descr="Interrupt speech when following.", value="no", group="screen reader", type="bool"},
   follow_direction_sounds = {descr="Play direction sounds when following or being dragged.", value="no", group="general", type="bool"},

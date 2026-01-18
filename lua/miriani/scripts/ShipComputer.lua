@@ -334,15 +334,16 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="computer"
-   match="^(?:The computer|.+? flickers into existence and) (announces|reports).?(?:that)? &quot;?(?:Arrr! )?(.+?)&quot;?$"
+   match="^(?:The computer|(.+?) flickers into existence and) (announces|reports).?(?:that)? &quot;?(?:Arrr! )?(.+?)&quot;?$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
    sequence="100"
   >
   <send>
-   local action_type = "%1"  -- announces or reports
-   local message = "%2"
+   local avatar_name = "%1"  -- holographic avatar name (empty if standard computer)
+   local action_type = "%2"  -- announces or reports
+   local message = "%3"
 
    -- Build output string depending on config option
    local str
@@ -350,6 +351,19 @@ ImportXML([=[
      str = message
    else
      str = "%0"
+   end
+
+   -- Check if we should show the holographic avatar name
+   -- Standard computer names are always gagged (they're just the default computer)
+   local standard_names = {
+     ["A holographic representation of the ship's computer"] = true,
+     ["Computer"] = true,
+     ["The computer"] = true,
+     ["The ship's computer"] = true,
+   }
+
+   if avatar_name ~= "" and not standard_names[avatar_name] and config:get_option("gag_holographic_avatar").value == "no" then
+     str = avatar_name .. ": " .. str
    end
 
    -- Add to history

@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.03 (In Progress)
+## Version 4.1.03
 
 ### New
 - Play the scan sound for scan all.
@@ -9,11 +9,14 @@
 - Add option to gag holographic avatar names in computer announcements (conf gag holo). This is disabled by default, so custom holographic avatar names will now be visible in computer announcements.
 - Add self-destruct countdown sequence sounds (60s, 30s, 10s, 5-4-3-2-1, goodbye).
 - Add Artifact Hunting Mode (conf ship artifact). When enabled, gags engine sounds (acceleration, deceleration, subwarp, slip, wavewarp, bias drive) unless you've been actively piloting or gunning in the last 30 seconds. Activity is detected from movement commands, targeting, weapon firing, room changes, and red alerts.
+- Raise partial hit volume by 10%.
 
 ### Changed
 - Wake on Red now also triggers on blue, purple, and orange alerts.
+- Change locked on nothing sound.
 
 ### Fixed
+- Handheld planetary surveyors that start with "an" will now play the correct sound upon being used.
 - Partial hit sound now plays.
 - Peering into another room no longer changes the background ambiance.
 

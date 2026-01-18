@@ -81,6 +81,7 @@ local options = {
   secondary_lock = {descr="Play a different sound for unfocus locks.", value="no", group="ship", type="bool"},
   repair_notifs = {descr="Notify when repairs complete while outside engineering.", value="no", group="ship", type="bool"},
   relativity_drive_freq = {descr="Relativity drive frequency.", value="44100", group="ship", type="string"},
+  artifact_hunting_mode = {descr="Artifact Hunting Mode (gag engine sounds when not actively piloting or gunning).", value="no", group="ship", type="bool"},
   spam = {descr="Reduce spam by gagging flavored text.", value="yes", group="gags", type="bool"},
   shorten_communication = {descr="Shorten communication by removing verbs (e.g. 'Player says' becomes 'Player:').", value="no", group="gags", type="bool"},
   store_detector = {descr="Play a sound when detecting stores.", value="no", group="room", type="bool"},

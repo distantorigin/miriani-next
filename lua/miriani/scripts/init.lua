@@ -32,6 +32,7 @@ local namespace = {
   "market", -- tradesman market procedures
   "gags", -- text throttle
   "ship", -- starship-related procedures
+  "artifact_hunting", -- artifact hunting mode (gag engine sounds when idle)
   "ShipComputer", -- Starship computer
   "combat", -- combat procedures
   "starmap_scan", -- starmap and scan routines

@@ -165,6 +165,11 @@ match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z].{0,19}?(?: \w+ feet)? out of th
   sequence="100"
   >
   <send>if not originating_from_camera("%0") then
+  -- Gag subwarp/slip/wavewarp in artifact hunting mode (but not wormhole)
+  local drive_type = "%1"
+  if drive_type ~= "wormhole" and should_gag_engine_sounds() then
+    return
+  end
   mplay ("ship/move/%1", "ship")
   else
     print("%0")
@@ -182,7 +187,9 @@ match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z].{0,19}?(?: \w+ feet)? out of th
    sequence="100"
   >
   <send>if not originating_from_camera("%0") then
-  mplay ("ship/move/BiasStart", "ship")
+  if not should_gag_engine_sounds() then
+    mplay ("ship/move/BiasStart", "ship")
+  end
   else
     print("%0")
   end</send>
@@ -198,7 +205,9 @@ match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z].{0,19}?(?: \w+ feet)? out of th
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/BiasContinues", "ship")</send>
+  <send>if not should_gag_engine_sounds() then
+  mplay ("ship/move/BiasContinues", "ship")
+end</send>
   </trigger>
 
   <trigger
@@ -211,7 +220,9 @@ match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z].{0,19}?(?: \w+ feet)? out of th
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/BiasEnds", "ship")</send>
+  <send>if not should_gag_engine_sounds() then
+  mplay ("ship/move/BiasEnds", "ship")
+end</send>
   </trigger>
 
   <trigger
@@ -246,8 +257,10 @@ end -- camera</send>
    sequence="100"
   >
   <send>
-  local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
-  mplay ("ship/move/accelerate", "ship", false, nil, false, false, nil, frequency)
+  if not should_gag_engine_sounds() then
+    local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
+    mplay ("ship/move/accelerate", "ship", false, nil, false, false, nil, frequency)
+  end
   </send>
   </trigger>
 
@@ -262,8 +275,10 @@ end -- camera</send>
    sequence="100"
   >
   <send>
-  local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
-  mplay ("ship/move/decelerate", "ship", false, nil, false, false, nil, frequency)
+  if not should_gag_engine_sounds() then
+    local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
+    mplay ("ship/move/decelerate", "ship", false, nil, false, false, nil, frequency)
+  end
   </send>
 </trigger>
 
@@ -872,6 +887,7 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    end
 
    if "%1" == "red" and "%2" == "" then
+    update_artifact_hunting_activity()
     mplay ("ship/alarm/redStart", "notification", 1)
    elseif "%1" == "red" and "%2" == "continue to " then
     mplay ("ship/alarm/redContinue", "notification", 1)

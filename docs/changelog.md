@@ -8,6 +8,7 @@
 - Play targetDestroyed sound when the computer reports another ship has been destroyed.
 - Add option to gag holographic avatar names in computer announcements (conf gag holo). This is disabled by default, so custom holographic avatar names will now be visible in computer announcements.
 - Add self-destruct countdown sequence sounds (60s, 30s, 10s, 5-4-3-2-1, goodbye).
+- Add Artifact Hunting Mode (conf ship artifact). When enabled, gags engine sounds (acceleration, deceleration, subwarp, slip, wavewarp, bias drive) unless you've been actively piloting or gunning in the last 30 seconds. Activity is detected from movement commands, targeting, weapon firing, room changes, and red alerts.
 
 ### Changed
 - Wake on Red now also triggers on blue, purple, and orange alerts.

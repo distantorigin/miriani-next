@@ -746,7 +746,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("combat/fuzzy/FuzzyDeath", "melee")</send>z
+  <send>mplay("combat/fuzzy/FuzzyDeath", "melee")</send>
   </trigger>
 
   <trigger

@@ -95,7 +95,7 @@ function check_and_recover_device()
           table.insert(streams_to_recover, {
             file = sound_data.file,
             group = group,
-            position = sound_data.stream:get_position()
+            position = sound_data.stream:GetPosition()
           })
         end
       end

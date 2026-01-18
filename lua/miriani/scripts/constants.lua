@@ -23,7 +23,7 @@ constants.IDLE_CUTOFF = 1200
 
 -- sound groups to disable:
 
-constants.minimal_groups = {"ship", "combat", "sounds", "sounds", "misc", "market", "hauling", "asteroid", "archaeology", "planetary mining"}
+constants.minimal_groups = {"ship", "combat", "sounds", "misc", "market", "hauling", "asteroid", "archaeology", "planetary mining"}
 
 
 -- Global table of walkstyle:

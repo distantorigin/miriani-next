@@ -5,6 +5,8 @@
 ### New
 - Play the scan sound for scan all.
 - Add a sound for NAVI being aborted due to interdiction.
+- Play targetDestroyed sound when the computer reports another ship has been destroyed.
+- Add option to gag holographic avatar names in computer announcements (conf gag holo). This is disabled by default, so custom holographic avatar names will now be visible in computer announcements.
 
 ## Version 4.1.02
 

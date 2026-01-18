@@ -1,8 +1,8 @@
-function check_red_alert_autowake()
+function check_alert_autowake(alert_color)
   if config and config:is_dnd() and config:get_option("dnd_wake_on_red").value == "yes" then
     config:set_dnd(false)
     Execute("tts_enable_silent")
-    notify("important", "Do Not Disturb auto-disabled: Red alert!")
+    notify("important", "Do Not Disturb auto-disabled: " .. alert_color:gsub("^%l", string.upper) .. " alert!")
   end
 end
 
@@ -866,8 +866,12 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   >
   <send>
 
+   -- Wake on alert for all alert colors (red, blue, purple, orange)
+   if "%2" == "" then
+    check_alert_autowake("%1")
+   end
+
    if "%1" == "red" and "%2" == "" then
-    check_red_alert_autowake()
     mplay ("ship/alarm/redStart", "notification", 1)
    elseif "%1" == "red" and "%2" == "continue to " then
     mplay ("ship/alarm/redContinue", "notification", 1)

@@ -28,7 +28,7 @@ local options = {
 
   play_theme_music = {descr="Play theme music at startup.", value="yes", group="general", type="bool"},
   dnd_mode = {descr="Do Not Disturb mode (stops all sounds and TTS).", value="no", group="general", type="bool"},
-  dnd_wake_on_red = {descr="Disable DND mode when ship goes to red alert (Wake on Red).", value="no", group="general", type="bool"},
+  dnd_wake_on_red = {descr="Disable DND mode on red, blue, purple, or orange alerts.", value="no", group="general", type="bool"},
   service_comm_interrupt = {descr="Link Recipients (Auction Service, combat mission notification service, etc) bypass foreground sounds.", value="no", group="general", type="bool"},
   count_cannon = {descr="Print remaining cannon shots (use WEAPON command in weapon room to initialize).", value="yes", group="helpers", type="bool"},
   count_praelor = {descr="Print the number of insectoids detected in a room.", value="no", group="room", type="bool"},

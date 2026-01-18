@@ -264,6 +264,12 @@ directionSounds = {
 -- Global zone name for zone-specific ambiance
 zoneName = nil
 
+-- Exits tracking for alt+space functionality
+current_exits = nil
+
+-- Peering flag to prevent ambiance changes when peering into another room
+peering = false
+
 function extractRoomName(rawName)
   -- Starship format: "ShipName" RoomName - extract after the closing quote
   local afterQuote = string.match(rawName, '^".-"%s*(.+)$')
@@ -616,6 +622,9 @@ ImportXML([=[
    sequence="100"
   >
   <send>
+   -- Skip room processing when peering into another room
+   if peering then return end
+
    room = "%0"
    cameraFeed = nil
    roomName = extractRoomName("%1")
@@ -678,5 +687,34 @@ ImportXML([=[
 
   </send>
   </trigger>
+
+  <trigger
+   enabled="y"
+   name="exits_tracker"
+   match="^You (?:can go (nowhere|.+)|see nowhere obvious to go)\.$"
+   regexp="y"
+   send_to="14"
+   keep_evaluating="y"
+  >
+  <send>
+   -- Reset peering flag after exits line
+   peering = false
+
+   local exits_string = "%1"
+   current_exits = {}
+
+   -- Parse exits if we have any (not "nowhere" or empty)
+   if exits_string ~= "" and exits_string ~= "nowhere" then
+     -- Remove "and" and split by commas and spaces
+     exits_string = exits_string:gsub(" and ", ", ")
+
+     -- Split by comma and extract direction words
+     for exit in exits_string:gmatch("[%w]+") do
+       table.insert(current_exits, exit)
+     end
+   end
+  </send>
+  </trigger>
+
 </triggers>
 ]=])

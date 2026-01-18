@@ -12,6 +12,9 @@
 ### Changed
 - Wake on Red now also triggers on blue, purple, and orange alerts.
 
+### Fixed
+- Peering into another room no longer changes the background ambiance.
+
 ## Version 4.1.02
 
 ### New

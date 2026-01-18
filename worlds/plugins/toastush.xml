@@ -195,29 +195,6 @@ show_paralyzed(roundtime, stuntime)
   </send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   name="exits_tracker"
-   match="^You can go (.+)\.$"
-   regexp="y"
-   script="capture_exits"
-   send_to="14"
-   keep_evaluating="y"
-  >
-  </trigger>
-
-  <trigger
-   enabled="y"
-   name="no_exits_tracker"
-   match="^You can go nowhere\.$"
-   regexp="y"
-   script="capture_no_exits"
-   send_to="14"
-   keep_evaluating="y"
-  >
-  </trigger>
-
-
 </triggers>
 
 <aliases>
@@ -1512,28 +1489,6 @@ end
 function originating_from_emote()
   return os.clock() - (last_emote_time or 0) < 0.1
 end
-
--- Exits tracking functionality
-current_exits = nil
-
-function capture_exits(name, line, wildcards)
-  local exits_string = wildcards[1]
-
-  -- Parse the exits string (handles "east, south, and west" or "east" or "west and south" etc)
-  current_exits = {}
-
-  -- Remove "and" and split by commas and spaces
-  exits_string = exits_string:gsub(" and ", ", ")
-
-  -- Split by comma and extract direction words
-  for exit in exits_string:gmatch("[%w]+") do
-    table.insert(current_exits, exit)
-  end
-end -- capture_exits
-
-function capture_no_exits(name, line, wildcards)
-  current_exits = {}
-end -- capture_no_exits
 
 function handle_alt_space()
   -- Check config option

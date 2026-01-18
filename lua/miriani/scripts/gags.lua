@@ -47,8 +47,13 @@ ImportXML([=[
    match="^You peer \w+ and see[.]{3}$"
    regexp="y"
    omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
+  <send>
+   -- Set peering flag to prevent ambiance changes from peered room
+   peering = true
+  </send>
   </trigger>
 
   <trigger

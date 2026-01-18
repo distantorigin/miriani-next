@@ -90,6 +90,43 @@ computer_actions = {
     sound = "ship/computer/pushPulse",
     group = "computer"
   },
+  -- Self-destruct countdown sequence
+  ["Self-destruct sequence initiated. Destruction in sixty seconds."] = {
+    sound = "ship/computer/selfDestructStart",
+    group = "computer"
+  },
+  ["Self-destruct in thirty seconds."] = {
+    sound = "ship/computer/selfDestructThirty",
+    group = "computer"
+  },
+  ["Self-destruct in ten seconds."] = {
+    sound = "ship/computer/selfDestructTen",
+    group = "computer"
+  },
+  ["Five."] = {
+    sound = "ship/computer/selfDestructFive",
+    group = "computer"
+  },
+  ["Four."] = {
+    sound = "ship/computer/selfDestructFour",
+    group = "computer"
+  },
+  ["Three."] = {
+    sound = "ship/computer/selfDestructThree",
+    group = "computer"
+  },
+  ["Two."] = {
+    sound = "ship/computer/selfDestructTwo",
+    group = "computer"
+  },
+  ["One."] = {
+    sound = "ship/computer/selfDestructOne",
+    group = "computer"
+  },
+  ["Goodbye."] = {
+    sound = "ship/computer/selfDestructEnd",
+    group = "computer"
+  },
   ["The starship has entered an H II region. Caution is advised."] = {
     sound = "ship/computer/nebula",
     group = "notification",

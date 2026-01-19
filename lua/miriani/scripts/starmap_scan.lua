@@ -882,6 +882,7 @@ return 0
    enabled="y"
    group="computer"
    match="^s(?:can|c)$|^s(?:can|c)\s+(.+)$"
+   ignore_case="y"
    regexp="y"
    send_to="12"
    sequence="200"

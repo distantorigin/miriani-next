@@ -167,11 +167,10 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^(?:subwarp|slip|wavewarp)(?:\s+.*)?$"
    regexp="y"
-   send_to="12"
-   sequence="1"
-  >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+sequence="200"
+   keep_evaluating="y"
+     >
+  <send>%0</send>
   </alias>
 </aliases>
 ]=])

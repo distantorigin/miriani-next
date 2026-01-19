@@ -67,11 +67,11 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^[1-9]$"
    regexp="y"
-   send_to="12"
-   sequence="1"
+   sequence="200"
+   keep_evaluating="y"
+   script = "update_artifact_hunting_activity"
   >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
   <!-- Plus/minus movement: -, +, -1, +1, -2, +2, etc. -->
@@ -80,9 +80,9 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^[-+]\d*$"
    regexp="y"
-   send_to="12"
-   sequence="1"
-  >
+sequence="200"
+   keep_evaluating="y"
+     >
   <send>update_artifact_hunting_activity()
 Send("%0")</send>
   </alias>
@@ -93,9 +93,9 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^=\d*$"
    regexp="y"
-   send_to="12"
-   sequence="1"
-  >
+sequence="200"
+   keep_evaluating="y"
+     >
   <send>update_artifact_hunting_activity()
 Send("%0")</send>
   </alias>
@@ -106,9 +106,9 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^[wasdqexzcfr]$|^[rf][wasdqezxvc]$"
    regexp="y"
-   send_to="12"
-   sequence="1"
-  >
+sequence="200"
+   keep_evaluating="y"
+     >
   <send>update_artifact_hunting_activity()
 Send("%0")</send>
   </alias>

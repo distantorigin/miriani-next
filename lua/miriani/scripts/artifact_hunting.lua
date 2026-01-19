@@ -83,8 +83,7 @@ Send("%0")</send>
 sequence="200"
    keep_evaluating="y"
      >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
   <!-- Equals movement: =, =1, =2, =3, etc. -->
@@ -96,9 +95,7 @@ Send("%0")</send>
 sequence="200"
    keep_evaluating="y"
      >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
-  </alias>
+  <send>%0</alias>
 
   <!-- Directional/cone commands: w,a,s,d,q,e,x,z,c,f,r and prefixed rw,ra,fw,fa,rc,fc,etc. -->
   <alias
@@ -109,11 +106,10 @@ Send("%0")</send>
 sequence="200"
    keep_evaluating="y"
      >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
-  <!-- Laser commands: la, las, lase, laser -->
+  <lL!-- Laser commands: la, las, lase, laser -->
   <alias
    enabled="y"
    group="artifact_hunting"

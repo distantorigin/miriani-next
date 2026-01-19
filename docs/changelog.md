@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.04
+
+### Fixed
+- Don't intercept menu numbres in conf and other menus.
+
 ## Version 4.1.03
 
 ### New

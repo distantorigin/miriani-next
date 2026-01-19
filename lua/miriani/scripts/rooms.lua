@@ -626,6 +626,7 @@ ImportXML([=[
    if peering then return end
 
    room = "%0"
+   SetVariable("last_room", room)
    cameraFeed = nil
    roomName = extractRoomName("%1")
 

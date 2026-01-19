@@ -661,6 +661,10 @@ function OnPluginInstall()
     if (GetVariable("last_environment_line")) then
       replicate_line(GetVariable("last_environment_line"))
     end
+    -- Restore room for playstep (walk style sounds)
+    if (GetVariable("last_room")) then
+      room = GetVariable("last_room")
+    end
     -- Restore ambiance directly from saved state
     DoAfterSpecial(0.5, "restoreAmbiance()", sendto.script)
   end -- if

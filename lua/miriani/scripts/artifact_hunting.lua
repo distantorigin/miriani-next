@@ -45,7 +45,7 @@ function should_gag_engine_sounds()
 end
 
 -- Aliases to track piloting/gunning commands
--- These use sequence="1" to run early, update activity, then forward the command
+-- These use sequence="200" with keep_evaluating to update activity then forward the command
 ImportXML([=[
 <aliases>
   <!-- Movement commands: m, mo, mov, move (with optional destination) -->
@@ -54,11 +54,11 @@ ImportXML([=[
    group="artifact_hunting"
    match="^m(?:o(?:v(?:e)?)?)?(?:\s+.*)?$"
    regexp="y"
-   send_to="12"
-   sequence="1"
+   sequence="200"
+   keep_evaluating="y"
+   script="update_artifact_hunting_activity"
   >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
   <!-- Numeric movement/targeting: 1-9 -->
@@ -69,7 +69,7 @@ Send("%0")</send>
    regexp="y"
    sequence="200"
    keep_evaluating="y"
-   script = "update_artifact_hunting_activity"
+   script="update_artifact_hunting_activity"
   >
   <send>%0</send>
   </alias>
@@ -80,9 +80,10 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^[-+]\d*$"
    regexp="y"
-sequence="200"
+   sequence="200"
    keep_evaluating="y"
-     >
+   script="update_artifact_hunting_activity"
+  >
   <send>%0</send>
   </alias>
 
@@ -92,10 +93,12 @@ sequence="200"
    group="artifact_hunting"
    match="^=\d*$"
    regexp="y"
-sequence="200"
+   sequence="200"
    keep_evaluating="y"
-     >
-  <send>%0</alias>
+   script="update_artifact_hunting_activity"
+  >
+  <send>%0</send>
+  </alias>
 
   <!-- Directional/cone commands: w,a,s,d,q,e,x,z,c,f,r and prefixed rw,ra,fw,fa,rc,fc,etc. -->
   <alias
@@ -103,23 +106,24 @@ sequence="200"
    group="artifact_hunting"
    match="^[wasdqexzcfr]$|^[rf][wasdqezxvc]$"
    regexp="y"
-sequence="200"
+   sequence="200"
    keep_evaluating="y"
-     >
+   script="update_artifact_hunting_activity"
+  >
   <send>%0</send>
   </alias>
 
-  <lL!-- Laser commands: la, las, lase, laser -->
+  <!-- Laser commands: la, las, lase, laser -->
   <alias
    enabled="y"
    group="artifact_hunting"
    match="^la(?:s(?:e(?:r)?)?)?(?:\s+.*)?$"
    regexp="y"
-   send_to="12"
-   sequence="1"
+   sequence="200"
+   keep_evaluating="y"
+   script="update_artifact_hunting_activity"
   >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
   <!-- Cannon commands: can, cann, canno, cannon -->
@@ -128,11 +132,11 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^can(?:n(?:o(?:n)?)?)?(?:\s+.*)?$"
    regexp="y"
-   send_to="12"
-   sequence="1"
+   sequence="200"
+   keep_evaluating="y"
+   script="update_artifact_hunting_activity"
   >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
   <!-- Aim command -->
@@ -141,11 +145,11 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^aim(?:\s+.*)?$"
    regexp="y"
-   send_to="12"
-   sequence="1"
+   sequence="200"
+   keep_evaluating="y"
+   script="update_artifact_hunting_activity"
   >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
   <!-- Lock command -->
@@ -154,11 +158,11 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^lock(?:\s+.*)?$"
    regexp="y"
-   send_to="12"
-   sequence="1"
+   sequence="200"
+   keep_evaluating="y"
+   script="update_artifact_hunting_activity"
   >
-  <send>update_artifact_hunting_activity()
-Send("%0")</send>
+  <send>%0</send>
   </alias>
 
   <!-- subwarp/slip/wavewarp commands -->
@@ -167,9 +171,10 @@ Send("%0")</send>
    group="artifact_hunting"
    match="^(?:subwarp|slip|wavewarp)(?:\s+.*)?$"
    regexp="y"
-sequence="200"
+   sequence="200"
    keep_evaluating="y"
-     >
+   script="update_artifact_hunting_activity"
+  >
   <send>%0</send>
   </alias>
 </aliases>

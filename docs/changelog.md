@@ -1,5 +1,14 @@
 # Miriani-Next Changelog
 
+## Version 4.1.05
+
+### Fixed
+- Artifact hunting mode is now less invasive.
+- Artifact hunting mode will now disable engine and drive sounds after 60 seconds instead of 30.
+- Scanning while using all caps will no longer break scan formatting.
+- Others walking after the soundpack freshly reloads will no longer fail to play step sounds.
+
+
 ## Version 4.1.04
 
 ### Fixed

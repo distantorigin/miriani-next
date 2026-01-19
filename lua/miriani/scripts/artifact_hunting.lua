@@ -16,7 +16,7 @@
 local last_activity_time = 0
 
 -- Activity timeout in seconds
-local ACTIVITY_TIMEOUT = 30
+local ACTIVITY_TIMEOUT = 60
 
 -- Update the last activity timestamp
 function update_artifact_hunting_activity()

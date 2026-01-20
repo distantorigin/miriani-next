@@ -1,5 +1,15 @@
 # Miriani-Next Changelog
 
+## Version 4.1.06 (in progress)
+
+### New
+- Add coordinate formatting option to display space-separated coordinates (e.g., "3 3 3" instead of "3, 3, 3"). Enabled by default. Configure with conf ship 2.
+- Add shower sounds (entering shower, water running, turning off).
+
+### Fixed
+- Fix coordinate formatting not being applied to scan TTS interrupt.
+- Fix metafrequency buffer names getting corrupted when messages contain brackets.
+
 ## Version 4.1.05
 
 ### Fixed

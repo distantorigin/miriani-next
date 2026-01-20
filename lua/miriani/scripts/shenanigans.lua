@@ -247,5 +247,51 @@ ImportXML([=[
   <send>mplay("misc/slotPayout")</send>
   </trigger>
 
+  <!-- Shower Sounds -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^You slide open the shower door and enter"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/showerdoor")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="enters through the sliding glass door\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/showerdoor")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^The .+ water continues to spray down on you"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/shower")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="turn.+ the water off"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/ShowerEnd")</send>
+  </trigger>
+
   </triggers>
 ]=])

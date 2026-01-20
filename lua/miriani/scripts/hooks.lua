@@ -294,6 +294,7 @@ ImportXML([=[
    SetVariable("proxiani_enabled", 1)
    --register()
    EnableGroup("starmap", 0)
+   create_proxiani_bypass_aliases()
   </send>
   </trigger>
 

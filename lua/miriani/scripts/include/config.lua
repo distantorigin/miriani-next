@@ -531,6 +531,11 @@ function Config:save()
   local result1 = self:save_to_file()
   local result2 = self:save_auto_login_to_file()
 
+  -- Recreate Proxiani bypass aliases after a short delay to avoid interfering with current command
+  if create_proxiani_bypass_aliases then
+    DoAfterSpecial(0.1, "create_proxiani_bypass_aliases()", sendto.script)
+  end
+
   -- Return OK if both succeeded, otherwise return first error
   if result1 == self.consts.error.OK and result2 == self.consts.error.OK then
     return self.consts.error.OK

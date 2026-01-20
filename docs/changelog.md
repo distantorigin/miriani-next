@@ -5,6 +5,7 @@
 ### New
 - Add coordinate formatting option to display space-separated coordinates (e.g., "3 3 3" instead of "3, 3, 3"). Enabled by default. Configure with conf ship 2.
 - Add shower sounds (entering shower, water running, turning off).
+- Add a Proxiani bypass commands option. Using this, you can configure a comma-separated list of commands (e.g., "atsm,pc") that will automatically be sent with a "px pass" prefix when Proxiani is detected. Configure with conf gen proxiani.
 
 ### Fixed
 - Fix coordinate formatting not being applied to scan TTS interrupt.

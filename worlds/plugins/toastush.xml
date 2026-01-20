@@ -679,6 +679,7 @@ if config:get_option("reset_counters_on_startup").value == "yes" then
 
   if (GetVariable("proxiani_enabled")) then
     EnableGroup("starmap", 0)
+    create_proxiani_bypass_aliases()
   end -- if
 
   -- check for minimal mode.
@@ -761,6 +762,44 @@ function OnPluginSend(text)
 
   return true  -- Send the original text
 end -- OnPluginSend
+
+function create_proxiani_bypass_aliases()
+  -- First, clear any existing bypass aliases
+  clear_proxiani_bypass_aliases()
+
+  -- Only create if Proxiani is enabled
+  if not GetVariable("proxiani_enabled") then return end
+
+  local bypass_list = config:get_option("proxiani_bypass_commands").value or ""
+  if bypass_list == "" then return end
+
+  for cmd in bypass_list:gmatch("([^,]+)") do
+    cmd = cmd:match("^%s*(.-)%s*$") -- trim whitespace
+    if cmd ~= "" then
+      local alias_name = "px_bypass_" .. cmd:lower()
+      -- Pattern: ^cmd\b(.*)$ matches command at word boundary, captures rest (including space)
+      -- ResponseText: "px pass cmd%1" sends the bypass with any arguments
+      local pattern = "^" .. cmd .. "\\b(.*)$"
+      local response = "px pass " .. cmd .. "%1"
+      -- Flags: eEnabled(1) + eIgnoreAliasCase(32) + eAliasRegularExpression(128) + eTemporary(16384)
+      local flags = 16545
+      AddAlias(alias_name, pattern, response, flags, "")
+    end
+  end
+end -- create_proxiani_bypass_aliases
+
+function clear_proxiani_bypass_aliases()
+  -- Delete ALL px_bypass_* aliases regardless of current config
+  -- This handles cases where user removed commands from the list
+  local alias_list = GetAliasList()
+  if alias_list then
+    for _, alias_name in ipairs(alias_list) do
+      if alias_name:match("^px_bypass_") then
+        DeleteAlias(alias_name)
+      end
+    end
+  end
+end -- clear_proxiani_bypass_aliases
 
 function OnPluginLoseFocus()
 

@@ -7,6 +7,9 @@
 - Add shower sounds (entering shower, water running, turning off).
 - Add a Proxiani bypass commands option. Using this, you can configure a comma-separated list of commands (e.g., "atsm,pc") that will automatically be sent with a "px pass" prefix when Proxiani is detected. Configure with conf gen proxiani.
 
+### changed
+- Increase artifact hunting timeout to 150 seconds (approx. 2 and a half minutes).
+
 ### Fixed
 - Fix coordinate formatting not being applied to scan TTS interrupt.
 - Fix metafrequency buffer names getting corrupted when messages contain brackets.

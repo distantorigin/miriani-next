@@ -4,7 +4,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^(\[Frequency ([0-9]{1,3}\.[0-9]{1,2}) ?\|? ?(.+)?\]) (.+? transmits,?)? ?(.+?)$"
+   match="^(\[Frequency ([0-9]{1,3}\.[0-9]{1,2}) ?\|? ?([^\]]+)?\]) (.+? transmits,?)? ?(.+?)$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

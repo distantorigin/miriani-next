@@ -8,7 +8,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    send_to="14"
-   sequence="75"
+   sequence="100"
   >
   <send>
    -- Determine custom sound file based on label or frequency number
@@ -79,7 +79,7 @@ ImportXML([=[
    regexp="y"
    send_to="14"
    omit_from_output="y"
-   sequence="50"
+   sequence="100"
   >
   <send>
    local message = "%1"
@@ -102,7 +102,7 @@ ImportXML([=[
    regexp="y"
    send_to="14"
    omit_from_output="y"
-   sequence="50"
+   sequence="100"
   >
   <send>
    local bidder = "%1"
@@ -223,7 +223,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    send_to="14"
-   sequence="99"
+   sequence="100"
   >
   <send>
    local speaker = "%1"

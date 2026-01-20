@@ -178,6 +178,7 @@ show_paralyzed(roundtime, stuntime)
    regexp="y"
    send_to="14"
    keep_evaluating="y"
+   sequence="1"
   >
   </trigger>
 

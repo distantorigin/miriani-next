@@ -526,9 +526,7 @@ mplay("ship/computer/scan", "other")
    -- Track last scanned coordinates and update status bar
    if fieldName == "Coordinates" then
      lastScannedCoords = fieldValue
-     -- Format coordinates (remove commas if option enabled)
-     scanData[key] = format_coords(fieldValue)
-     local coords = string.gsub(format_coords(lastScannedCoords), "[()]", "")  -- Strip parentheses
+     local coords = string.gsub(lastScannedCoords, "[()]", "")  -- Strip parentheses
      infobar("scan", "Scan: " .. coords)
 
      -- Auto-interrupt TTS on coordinates with delay (only when not filtering/formatting)
@@ -560,7 +558,7 @@ mplay("ship/computer/scan", "other")
        end
 
        if shouldInterrupt then
-         local coords = string.gsub(fieldValue, "[()]", "")  -- Strip parentheses
+         local coords = format_coords(fieldValue)
 
          -- Use coroutine for delay
          local wait = require("wait")
@@ -591,9 +589,9 @@ mplay("ship/computer/scan", "other")
    if scanFiltering then
      -- Filtering mode (sch/sco/etc): only show the matching field
      if scan == fieldName then
-       local displayValue = (fieldName == "Coordinates") and format_coords(fieldValue) or fieldValue
-       print(fieldName .. ": " .. displayValue)
-       speech_interrupt(displayValue)
+       print(fieldName .. ": " .. fieldValue)
+       local interruptValue = (fieldName == "Coordinates") and format_coords(fieldValue) or fieldValue
+       speech_interrupt(interruptValue)
        mplay("ship/computer/scan", "other")
        if fieldName == "Distance" then
          if fieldValue == "1" then
@@ -617,8 +615,7 @@ end
 end          
      else
      -- Normal mode: show all fields
-     local displayValue = (fieldName == "Coordinates") and format_coords(fieldValue) or fieldValue
-     print(fieldName .. ": " .. displayValue)
+     print(fieldName .. ": " .. fieldValue)
      if fieldName == "Distance" then
        if fieldValue == "1" then
          mplay("ship/computer/oneUnit", "notification")

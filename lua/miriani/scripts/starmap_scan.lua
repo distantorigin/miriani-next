@@ -590,8 +590,11 @@ mplay("ship/computer/scan", "other")
      -- Filtering mode (sch/sco/etc): only show the matching field
      if scan == fieldName then
        print(fieldName .. ": " .. fieldValue)
-       local interruptValue = (fieldName == "Coordinates") and format_coords(fieldValue) or fieldValue
-       speech_interrupt(interruptValue)
+       if fieldName == "Coordinates" then
+         speech_interrupt(format_coords(fieldValue))
+       else
+         speech_interrupt(fieldValue)
+       end
        mplay("ship/computer/scan", "other")
        if fieldName == "Distance" then
          if fieldValue == "1" then

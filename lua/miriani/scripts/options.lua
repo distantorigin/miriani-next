@@ -86,6 +86,7 @@ local options = {
   shorten_communication = {descr="Shorten communication by removing verbs (e.g. 'Player says' becomes 'Player:').", value="no", group="gags", type="bool"},
   store_detector = {descr="Play a sound when detecting stores.", value="no", group="room", type="bool"},
   unchange_coords = {descr="Print 'unchanged' before coordinates if the target has not moved since its last scan.", value="no", group="ship", type="bool"},
+  format_coordinates = {descr="Format coordinates as space-separated (3 3 3 instead of 3, 3, 3).", value="yes", group="ship", type="bool"},
 
   update_idle = {descr="Automatically apply updates while idle.", value="no", group="general", type="bool"},
   update_sound = {descr="Play a sound for pending updates.", value="yes", group="general", type="bool"},

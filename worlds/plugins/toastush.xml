@@ -1482,6 +1482,14 @@ function print_color(...)
   ColourNote(unpack(content))
 end -- print_color
 
+function format_coords(coords_str)
+  local result = string.gsub(coords_str, "[()]", "")  -- Always strip parentheses
+  if config:get_option("format_coordinates").value == "yes" then
+    result = string.gsub(result, ", ", " ")
+  end
+  return result
+end
+
 function originating_from_camera(line)
   if GetVariable("last_camera_line") and GetVariable("last_camera_line") == line then
   DeleteVariable("last_camera_line")

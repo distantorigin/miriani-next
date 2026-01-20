@@ -206,7 +206,10 @@ function formatScanOutput()
   if scanData.available_charge then
     scanData.available_charge = "Available charge: " .. scanData.available_charge .. ". "
   end
-  
+  if scanData.coordinates then
+    scanData.coordinates = format_coords(scanData.coordinates)
+  end
+
   for key, value in pairs(scanData) do
     if value and value ~= "" and key ~= "in_scan" and key ~= "object_type" and key ~= "potential_object_name" then
       local placeholder = "{" .. key .. "}"

@@ -221,13 +221,41 @@ function should_play_social(social_name)
   return true
 end
 
---- Resolve a social action to its canonical name (handle aliases)
+--- Resolve a social action to its canonical name (handle aliases and plurals)
 -- @param action string The social action name
 -- @return string The canonical social name
 function resolve_social_alias(action)
   if not action then return nil end
   local lower_action = string.lower(action)
-  return social_aliases[lower_action] or lower_action
+
+  -- Check explicit aliases first
+  if social_aliases[lower_action] then
+    return social_aliases[lower_action]
+  end
+
+  -- Check if action exists directly in socials
+  if socials[lower_action] then
+    return lower_action
+  end
+
+  -- Try stripping trailing 'es' for pluralized forms (e.g., "belches" -> "belch")
+  if string.sub(lower_action, -2) == "es" then
+    local singular = string.sub(lower_action, 1, -3)
+    if socials[singular] or social_aliases[singular] then
+      return social_aliases[singular] or singular
+    end
+  end
+
+  -- Try stripping trailing 's' for pluralized forms (e.g., "screams" -> "scream")
+  if string.sub(lower_action, -1) == "s" then
+    local singular = string.sub(lower_action, 1, -2)
+    if socials[singular] or social_aliases[singular] then
+      return social_aliases[singular] or singular
+    end
+  end
+
+  -- Return as-is if no match found
+  return lower_action
 end
 
 --- Check if a social exists in the database

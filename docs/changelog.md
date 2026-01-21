@@ -7,13 +7,16 @@
 - Add shower sounds (entering shower, water running, turning off).
 - Add a Proxiani bypass commands option. Using this, you can configure a comma-separated list of commands (e.g., "atsm,pc") that will automatically be sent with a "px pass" prefix when Proxiani is detected. Configure with conf gen proxiani.
 - Suppress repeated piloting action messages in artifact hunting mode. Messages like "Person inputs a series of commands into a navigation console" and "Person flicks a switch" are now suppressed for 30 seconds after the last occurrence. The cooldown resets on each repeat message and is per-person.
+- Add keyboard typing sounds to weapon lock announcements.
+- Add new weapons locked sound variant (now the default). The original sound is available as variant 1 in conf sound variants.
 
-### changed
+### Changed
 - Increase artifact hunting timeout to 150 seconds (approx. 2 and a half minutes).
 
 ### Fixed
 - Fix coordinate formatting not being applied to scan TTS interrupt.
 - Fix metafrequency buffer names getting corrupted when messages contain brackets.
+- Fix social hooks not playing for pluralized social names (e.g., "screams", "belches").
 
 ## Version 4.1.05
 

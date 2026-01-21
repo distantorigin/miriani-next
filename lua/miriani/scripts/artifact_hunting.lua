@@ -11,6 +11,11 @@
 --   - Moved rooms
 --
 -- "Quiet" engine sounds (pings) still play regardless.
+--
+-- Also suppresses repeated piloting action messages like:
+--   "Person inputs a series of commands into a navigation console."
+--   "Person flicks a switch."
+-- with a 30-second cooldown (resets on each occurrence).
 
 -- Track last activity timestamp (in seconds)
 local last_activity_time = 0
@@ -42,6 +47,36 @@ function should_gag_engine_sounds()
 
   -- No recent activity, gag the sounds
   return true
+end
+
+-- Cooldown for repeated messages (in seconds)
+local MESSAGE_COOLDOWN = 30
+
+-- Track last time each message was seen
+-- Format: { ["full message text"] = timestamp, ... }
+local message_times = {}
+
+-- Check if a message should be suppressed
+-- Returns true if the message should be gagged (seen within cooldown)
+function should_suppress_message(line)
+  -- Check if artifact hunting mode is enabled
+  if not config or config:get_option("artifact_hunting_mode").value ~= "yes" then
+    return false
+  end
+
+  local current_time = os.time()
+  local last_time = message_times[line] or 0
+  local time_since_last = current_time - last_time
+
+  -- Always update timestamp (resets cooldown on every occurrence)
+  message_times[line] = current_time
+
+  -- If within cooldown, suppress the message
+  if time_since_last < MESSAGE_COOLDOWN then
+    return true
+  end
+
+  return false
 end
 
 -- Aliases to track piloting/gunning commands
@@ -178,4 +213,44 @@ ImportXML([=[
   <send>%0</send>
   </alias>
 </aliases>
+]=])
+
+-- Triggers to suppress repeated piloting action messages
+ImportXML([=[
+<triggers>
+  <!-- Suppress repeated "inputs commands into navigation console" messages -->
+  <trigger
+   enabled="y"
+   group="artifact_hunting"
+   match="^[A-Z][A-Za-z]+(?:\s[A-Z][A-Za-z]+)* inputs a series of commands into a navigation console\.$"
+   regexp="y"
+   sequence="50"
+   omit_from_output="y"
+   send_to="14"
+  >
+  <send>
+if not should_suppress_message("%0") then
+  print("%0")
+  mplay("device/keyboard")
+end
+  </send>
+  </trigger>
+
+  <!-- Suppress repeated "flicks a switch" messages -->
+  <trigger
+   enabled="y"
+   group="artifact_hunting"
+   match="^[A-Z][A-Za-z]+(?:\s[A-Z][A-Za-z]+)* flicks a switch\.$"
+   regexp="y"
+   sequence="50"
+   omit_from_output="y"
+   send_to="14"
+  >
+  <send>
+if not should_suppress_message("%0") then
+  print("%0")
+end
+  </send>
+  </trigger>
+</triggers>
 ]=])

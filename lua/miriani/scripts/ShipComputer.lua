@@ -215,6 +215,7 @@ computer_actions_wildcard = {
   },
   ["Bardenium Cannons? (.+) locked on (.+)%. Firing%."] = {
     func = function(cannon_list, target)
+      mplay("device/keyboard", "ship")
       -- Extract cannon count
       local count = 0
       for num in string.gmatch(cannon_list, "%d+") do
@@ -251,17 +252,18 @@ computer_actions_wildcard = {
         print("Shots: "..cannonShots)
       end
 
-      mplay("ship/combat/weaponFire", "ship")
+      mplay("ship/combat/weaponsLocked", "ship")
     end
   },
   -- Unified turret and long-range weapon triggers (using Lua patterns, not PCRE)
   -- Matches anything ending with "locking onto [target]."
   [".+ locking ont?o (.+)%."] = {
     func = function(target)
+      mplay("device/keyboard", "ship")
       if target == "empty space" then
         mplay("ship/combat/noLock", "ship")
       else
-        mplay("ship/combat/weaponFire", "ship")
+        mplay("ship/combat/weaponsLocked", "ship")
       end
     end
   },

@@ -7,8 +7,12 @@ ImportXML([=[
    match="^[-]{3,}$"
    regexp="y"
    omit_from_output="y"
+   send_to="12"
    sequence="100"
   >
+  <send>
+   EnableTrigger("damage_reader", false)
+  </send>
   </trigger>
 
   <trigger

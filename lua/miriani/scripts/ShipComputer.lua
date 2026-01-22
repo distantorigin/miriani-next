@@ -370,6 +370,24 @@ computer_actions_wildcard = {
   }
 }
 
+-- Damage reader: check for critical damage (80-99%) and play alert sound
+-- Called by damage_reader trigger, enabled by dam/damage alias
+function checkDamageLine(line)
+  for component, damage_str in string.gmatch(line, "([A-Za-z0-9 ]+):%s*(%d+)") do
+    local damage = tonumber(damage_str)
+    if damage and damage >= 80 and damage < 100 then
+      local name = component:match("^%s*(.-)%s*$"):upper()
+      if name == "HULL" then
+        mplay("ship/combat/hullCritical", "ship", nil, nil, nil, nil, nil, nil, -20)
+      else
+        mplay("ship/combat/componentCritical", "ship", nil, nil, nil, nil, nil, nil, -15)
+      end
+      EnableTrigger("damage_reader", false)
+      return
+    end
+  end
+end
+
 ImportXML([=[
 <triggers>
   <trigger
@@ -513,31 +531,38 @@ ImportXML([=[
   <send>mplay("ship/computer/NoDamage", "computer")</send>
   </trigger>
 
-  <!-- Component/hull critical damage sounds for damage command output -->
+  <!-- Damage reader: plays critical sounds for components at 80-99% damage -->
   <trigger
-   enabled="y"
+   enabled="n"
+   name="damage_reader"
    group="computer"
-   match="^([A-Za-z0-9 ]+): (\d{1,3})%$"
+   match="[A-Za-z0-9 ]+: \d+%"
    regexp="y"
    send_to="12"
    sequence="100"
    keep_evaluating="y"
   >
-  <send>
-   local component = "%1"
-   local damage = tonumber("%2")
-   if damage and damage >= 80 and damage &lt; 100 then
-     if string.upper(component) == "HULL" then
-       mplay("ship/combat/hullCritical", "ship", nil, nil, nil, nil, nil, nil, -20)
-     else
-       mplay("ship/combat/componentCritical", "ship", nil, nil, nil, nil, nil, nil, -15)
-     end
-   end
-  </send>
+  <send>checkDamageLine("%0")</send>
   </trigger>
+
 </triggers>
 
 <aliases>
+  <!-- Damage command aliases - activate damage reader mode for critical sounds -->
+  <alias
+   enabled="y"
+   group="computer"
+   match="^dam(?:a(?:g(?:e)?)?)?(.*)$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   EnableTrigger("damage_reader", true)
+   Send("%0")
+  </send>
+  </alias>
+
   <alias
    enabled="y"
    group="computer"

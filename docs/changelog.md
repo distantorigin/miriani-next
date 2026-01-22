@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.07
+
+### Fixed
+- Fix critical damage sound playing on various other output like the CHARGE command.
+
 ## Version 4.1.06
 
 ### New

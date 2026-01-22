@@ -9,9 +9,13 @@
 - Suppress repeated piloting action messages in artifact hunting mode. Messages like "Person inputs a series of commands into a navigation console" and "Person flicks a switch" are now suppressed for 30 seconds after the last occurrence. The cooldown resets on each repeat message and is per-person.
 - Add keyboard typing sounds to weapon lock announcements.
 - Add new weapons locked sound variant (now the default). The original sound is available as variant 1 in conf sound variants.
+- Add option to vary hit sound volume based on Praelor ship class (smaller ships = quieter hits). Disabled by default. Configure with conf ship class.
+- Add a potentially useless option under conf gen to sync random sounds using a time-based seed--everyone hears the same sound if the option is on. Disabled by default.
+- Add hull and component critical sounds when viewing damage report. Plays when damage is between 80 and 99 percent.
 
 ### Changed
 - Increase artifact hunting timeout to 150 seconds (approx. 2 and a half minutes).
+- 1-unit range beep now plays when using scan filters (sch, sca, sco, etc.).
 
 ### Fixed
 - Fix coordinate formatting not being applied to scan TTS interrupt.

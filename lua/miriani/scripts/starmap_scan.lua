@@ -599,17 +599,16 @@ mplay("ship/computer/scan", "other")
          speech_interrupt(fieldValue)
        end
        mplay("ship/computer/scan", "other")
-       if fieldName == "Distance" then
-         if fieldValue == "1" then
-           mplay("ship/computer/oneUnit", "notification")
-         end
-       end
-	     	 if fieldName == "Starships" then
-          mplay("ship/computer/starship", "notification")
-end          
        scanData.field_found = true
-      end
-          elseif useFormatting then
+     end
+     -- Always check for 1-unit distance and starships in filter mode
+     if fieldName == "Distance" and fieldValue == "1" then
+       mplay("ship/computer/oneUnit", "notification")
+     end
+     if fieldName == "Starships" then
+       mplay("ship/computer/starship", "notification")
+     end
+   elseif useFormatting then
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then
        if fieldValue == "1" then

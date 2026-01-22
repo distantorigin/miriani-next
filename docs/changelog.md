@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.06 (in progress)
+## Version 4.1.06
 
 ### New
 - Add coordinate formatting option to display space-separated coordinates (e.g., "3 3 3" instead of "3, 3, 3"). Enabled by default. Configure with conf ship 2.
@@ -10,7 +10,7 @@
 - Add keyboard typing sounds to weapon lock announcements.
 - Add new weapons locked sound variant (now the default). The original sound is available as variant 1 in conf sound variants.
 - Add option to vary hit sound volume based on Praelor ship class (smaller ships = quieter hits). Disabled by default. Configure with conf ship class.
-- Add a potentially useless option under conf gen to sync random sounds using a time-based seed--everyone hears the same sound if the option is on. Disabled by default.
+- Add a potentially useless option under conf gen to sync random sounds using a time-based seed--everyone hears the same sound if the option is on. Disabled by default. You probably don't want to turn this on.
 - Add hull and component critical sounds when viewing damage report. Plays when damage is between 80 and 99 percent.
 
 ### Changed

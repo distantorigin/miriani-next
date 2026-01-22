@@ -20,7 +20,26 @@ local excluded_groups = {
   environment = true,
 }
 
+-- Synced random: deterministic "random" that produces the same result
+-- for all players within the same second
+-- @param context: string to seed the random (e.g., sound file path)
+-- @param max: maximum value (1 to max inclusive)
+-- @return: deterministic "random" number between 1 and max
+local function synced_random(context, max)
+  if max <= 1 then return 1 end
 
+  -- 1-second time blocks
+  local time_block = os.time()
+  local combined = tostring(time_block) .. "|" .. context
+
+  -- Simple hash that produces consistent results
+  local hash = 0
+  for i = 1, #combined do
+    hash = (hash * 31 + string.byte(combined, i)) % 2147483647
+  end
+
+  return (hash % max) + 1
+end
 
 -- Device health monitoring variables
 local last_device_check = 0
@@ -430,8 +449,15 @@ function find_sound_file(file)
     end
 
     if #files > 0 then
-      -- Pick a random file from the list and return its full path
-      return files[math.random(#files)]
+      -- Check if synced random is enabled
+      local use_synced = config:get_option("synced_random").value == "yes"
+      if use_synced then
+        -- Pick a synced "random" file - deterministic within 5-minute windows
+        return files[synced_random(file, #files)]
+      else
+        -- Pick a truly random file
+        return files[math.random(#files)]
+      end
     end
   end
 

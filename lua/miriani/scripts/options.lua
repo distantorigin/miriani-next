@@ -92,6 +92,9 @@ local options = {
   update_idle = {descr="Automatically apply updates while idle.", value="no", group="general", type="bool"},
   update_sound = {descr="Play a sound for pending updates.", value="yes", group="general", type="bool"},
 
+  -- Synced randomness
+  synced_random = {descr="Sync random sounds using time-based seed (everyone hears the same sounds).", value="no", group="general", type="bool"},
+
   -- Channel buffers:
 
   -- default:

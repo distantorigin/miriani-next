@@ -23,7 +23,31 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("ship/combat/hit/youHit", "ship")
+   local volume_offset = 0
+   if config:get_option("class_dependent_hits").value == "yes" then
+     local attacker = "%1"
+     if string.find(attacker, "^Praelor ") then
+       local ship_class = string.match(attacker, "^Praelor (%w+)")
+       if ship_class then
+         local class_offsets = {
+           Bzani = -35,
+           Ontanka = -20,
+           Otono = -12,
+           Otona = -12,
+           Muzati = -8,
+           Muzatini = -15,
+           Orta = -8,
+           Onati = 5,
+           Muzano = 10,
+           Potate = 10,
+           Potateoton = 15,
+           Ohaxx = 10,
+         }
+         volume_offset = class_offsets[ship_class] or 0
+       end
+     end
+   end
+   mplay("ship/combat/hit/youHit", "ship", nil, nil, nil, nil, nil, nil, volume_offset)
    print_color({"Hit by %1", "combat"})
    channel("combat", "Hit by %1", {"combat"})
   </send>

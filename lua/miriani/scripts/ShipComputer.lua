@@ -512,6 +512,29 @@ ImportXML([=[
   >
   <send>mplay("ship/computer/NoDamage", "computer")</send>
   </trigger>
+
+  <!-- Component/hull critical damage sounds for damage command output -->
+  <trigger
+   enabled="y"
+   group="computer"
+   match="^([A-Za-z0-9 ]+): (\d{1,3})%$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+   keep_evaluating="y"
+  >
+  <send>
+   local component = "%1"
+   local damage = tonumber("%2")
+   if damage and damage >= 80 and damage &lt; 100 then
+     if string.upper(component) == "HULL" then
+       mplay("ship/combat/hullCritical", "ship", nil, nil, nil, nil, nil, nil, -20)
+     else
+       mplay("ship/combat/componentCritical", "ship", nil, nil, nil, nil, nil, nil, -15)
+     end
+   end
+  </send>
+  </trigger>
 </triggers>
 
 <aliases>

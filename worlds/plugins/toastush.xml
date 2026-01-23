@@ -1292,6 +1292,9 @@ function OnPluginLineReceived(line)
   if GetVariable("logged_in") ~= "1" then
     return true
   end
+  if not line:find("://", 1, true) then
+    return true
+  end
   local url = line:match("(https?://[^%s\"]+)") or
               line:match("(ftp://[^%s\"]+)") or
               line:match("(telnet://[^%s\"]+)") or

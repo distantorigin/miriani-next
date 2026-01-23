@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.09 (In Progress)
+
+### Fixed
+- Differentiate sound when your ship transmits or broadcasts a message.
+
 ## Version 4.1.08
 
 ### New

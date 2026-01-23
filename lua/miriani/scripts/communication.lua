@@ -527,11 +527,12 @@ ImportXML([=[
    group="comm"
    match="^This (?:ship|planet|station|moon) (transmits|demands|broadcasts),? &quot;?.+&quot;?$"
    regexp="y"
-   send_to="12"
+   send_to="14"
    sequence="100"
   >
   <send>
-   mplay ("comm/ship", "communication")
+   local sound = "%1" == "broadcasts" and "comm/ship" or "comm/sector"
+   mplay (sound, "communication")
    channel("ship", "%0", {"ship", "communication"})
   </send>
   </trigger>

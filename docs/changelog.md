@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.08 (In Progress)
+## Version 4.1.08
 
 ### New
 - Artifact Hunting Mode now plays audio feedback when engine silencing activates or deactivates. You'll hear a sound when the mode kicks in after inactivity and another when you start piloting again.

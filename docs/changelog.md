@@ -1,5 +1,13 @@
 # Miriani-Next Changelog
 
+## Version 4.1.08 (In Progress)
+
+### New
+- Artifact Hunting Mode now plays audio feedback when engine silencing activates or deactivates. You'll hear a sound when the mode kicks in after inactivity and another when you start piloting again.
+- Artifact Hunting Mode now prints "Engines silenced" when silencing activates.
+- Add the hush command to immediately enter engine silence mode while in Artifact Hunting Mode. This is useful when you want to silence engines without waiting for the timeout.
+- Add option to autosilence engines when the window loses focus in Artifact Hunting Mode. Configure with conf ship autosilence.
+
 ## Version 4.1.07
 
 ### Fixed

@@ -8,6 +8,9 @@
 - Add the hush command to immediately enter engine silence mode while in Artifact Hunting Mode. This is useful when you want to silence engines without waiting for the timeout.
 - Add option to autosilence engines when the window loses focus in Artifact Hunting Mode. Configure with conf ship autosilence.
 
+### Fixed
+- Fix computer messages in pipe mode so the content after Control room reports triggers appropriate sounds.
+
 ## Version 4.1.07
 
 ### Fixed

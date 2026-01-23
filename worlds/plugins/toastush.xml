@@ -171,18 +171,6 @@ show_paralyzed(roundtime, stuntime)
   </trigger>
 
   <trigger
-  name="url_catcher"
-   enabled="n"
-   script="OnURL"
-     match="((?:https?|ftp|telnet|rsync|mailto|gopher)://[[:graph:]]+[^&quot;])"
-   regexp="y"
-   send_to="14"
-   keep_evaluating="y"
-   sequence="1"
-  >
-  </trigger>
-
-  <trigger
    enabled="n"
    name="MCP"
    match="^#\$#mcp(-\w+)?(?:-(\w+))? (\S+)(?: (.*))?$"
@@ -457,8 +445,6 @@ roundtime, stuntime = 0, 0
 stunned = false
 has_alternate_audio = false
 
-EnableTrigger("url_catcher", false)
-
 ---------------------
 -- Macros
 Accelerator('F1', 'next:config')
@@ -656,7 +642,6 @@ function OnPluginInstall()
   end
 
     if (IsConnected() and GetVariable("logged_in") == "1") then
-    EnableTrigger("url_catcher", true) -- Temporary fix before I rip it all out
     register()
     OnPluginGetFocus()
     if (GetVariable("last_environment_line")) then
@@ -1303,15 +1288,25 @@ function channel(name, line, wc)
   end -- for loop
 end -- channel
 
-function OnURL(name, line, wc)
-  channel("url", wc[1], {"url"})
-  --Add the url to a recent url buffer.
-  link =
-  {
-    url = wc[1],
-    timestamp = os.clock()
- }
-end -- OnURL
+function OnPluginLineReceived(line)
+  if GetVariable("logged_in") ~= "1" then
+    return true
+  end
+  local url = line:match("(https?://[^%s\"]+)") or
+              line:match("(ftp://[^%s\"]+)") or
+              line:match("(telnet://[^%s\"]+)") or
+              line:match("(rsync://[^%s\"]+)") or
+              line:match("(mailto:[^%s\"]+)") or
+              line:match("(gopher://[^%s\"]+)")
+  if url then
+    channel("url", url, {"url"})
+    link = {
+      url = url,
+      timestamp = os.clock()
+    }
+  end
+  return true
+end
 
 function open_url()
   if not link or not link.timestamp

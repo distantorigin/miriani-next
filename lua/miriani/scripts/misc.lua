@@ -56,8 +56,7 @@ end
    send_to="12"
    sequence="100"
   >
-  <send>EnableTrigger("url_catcher", true)
-  SetVariable("logged_in", 1)
+  <send>SetVariable("logged_in", 1)
   register()
 endScan()</send>
   </trigger>

@@ -10,6 +10,7 @@
 
 ### Fixed
 - Fix computer messages in pipe mode so the content after Control room reports triggers appropriate sounds.
+- Play the correct transmit sound when your ship transmits a message over General Sector Communication.
 
 ## Version 4.1.07
 

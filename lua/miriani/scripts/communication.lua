@@ -659,7 +659,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^([\w\s]+) transmits?(?: in an? \w+ voice)?, &quot;(.+?)&quot;$"
+   match="^(?!This (?:ship|planet|station|moon) )([\w\s]+) transmits?(?: in an? \w+ voice)?, &quot;(.+?)&quot;$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

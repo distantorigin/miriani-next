@@ -23,6 +23,9 @@ local last_activity_time = 0
 -- Activity timeout in seconds
 local ACTIVITY_TIMEOUT = 150
 
+-- Track the last known gag state to detect transitions
+local last_gag_state = false
+
 -- Update the last activity timestamp
 function update_artifact_hunting_activity()
   last_activity_time = os.time()
@@ -33,6 +36,11 @@ end
 function should_gag_engine_sounds()
   -- Check if artifact hunting mode is enabled
   if not config or config:get_option("artifact_hunting_mode").value ~= "yes" then
+    -- If artifact hunting mode is disabled, reset state tracking
+    if last_gag_state then
+      last_gag_state = false
+      mplay("ship/misc/autosilenceDisable")
+    end
     return false
   end
 
@@ -42,10 +50,21 @@ function should_gag_engine_sounds()
 
   -- If activity within timeout, don't gag
   if time_since_activity < ACTIVITY_TIMEOUT then
+    -- Transitioning from gagged to not gagged
+    if last_gag_state then
+      last_gag_state = false
+      mplay("ship/misc/autosilenceDisable")
+    end
     return false
   end
 
   -- No recent activity, gag the sounds
+  -- Transitioning from not gagged to gagged
+  if not last_gag_state then
+    last_gag_state = true
+    mplay("ship/misc/autosilenceEnable")
+    Note("Engines silenced")
+  end
   return true
 end
 

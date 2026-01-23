@@ -11,6 +11,11 @@
 ### Fixed
 - Fix computer messages in pipe mode so the content after Control room reports triggers appropriate sounds.
 - Play the correct transmit sound when your ship transmits a message over General Sector Communication.
+- Fix camera feed corruption when messages contain parentheses.
+- No longer print a message multiple times if it contains a URL.
+
+### Removed
+- Hyperlink_url2.xml plugin
 
 ## Version 4.1.07
 

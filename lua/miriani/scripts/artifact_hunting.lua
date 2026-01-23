@@ -17,55 +17,77 @@
 --   "Person flicks a switch."
 -- with a 30-second cooldown (resets on each occurrence).
 
--- Track last activity timestamp (in seconds)
-local last_activity_time = 0
-
 -- Activity timeout in seconds
 local ACTIVITY_TIMEOUT = 150
 
 -- Track the last known gag state to detect transitions
 local last_gag_state = false
 
--- Update the last activity timestamp
+-- Track last activity time and whether a timer is pending
+local last_activity_time = 0
+local timer_pending = false
+
+-- Update activity and manage silence state transitions
 function update_artifact_hunting_activity()
   last_activity_time = os.time()
+
+  -- Immediately unsilence if we were silenced
+  if last_gag_state then
+    last_gag_state = false
+    mplay("ship/misc/autosilenceDisable")
+  end
+
+  -- Schedule silence check if none pending
+  if not timer_pending then
+    timer_pending = true
+    DoAfterSpecial(ACTIVITY_TIMEOUT, "check_silence_timeout()", sendto.script)
+  end
+end
+
+-- Called after timeout to enter silence mode if no new activity
+function check_silence_timeout()
+  timer_pending = false
+  local elapsed = os.time() - last_activity_time
+
+  if elapsed >= ACTIVITY_TIMEOUT then
+    -- Enter silence
+    if config and config:get_option("artifact_hunting_mode").value == "yes" then
+      if not last_gag_state then
+        last_gag_state = true
+        mplay("ship/misc/autosilenceEnable")
+        Note("Engines silenced")
+      end
+    end
+  else
+    -- Not enough time passed, reschedule for remaining time
+    timer_pending = true
+    DoAfterSpecial(ACTIVITY_TIMEOUT - elapsed, "check_silence_timeout()", sendto.script)
+  end
+end
+
+-- Immediately enter engine silence mode
+function force_engine_silence()
+  if config and config:get_option("artifact_hunting_mode").value == "yes" then
+    if not last_gag_state then
+      last_gag_state = true
+      mplay("ship/misc/autosilenceEnable")
+      Note("Engines silenced")
+    end
+  end
 end
 
 -- Check if engine sounds should be gagged
--- Returns true if sounds should be gagged (artifact hunting mode active and no recent activity)
+-- Returns true if sounds should be gagged (artifact hunting mode active and silenced)
 function should_gag_engine_sounds()
-  -- Check if artifact hunting mode is enabled
   if not config or config:get_option("artifact_hunting_mode").value ~= "yes" then
-    -- If artifact hunting mode is disabled, reset state tracking
+    -- Mode disabled - unsilence if we were silenced
     if last_gag_state then
       last_gag_state = false
       mplay("ship/misc/autosilenceDisable")
     end
     return false
   end
-
-  -- Check if there was recent activity
-  local current_time = os.time()
-  local time_since_activity = current_time - last_activity_time
-
-  -- If activity within timeout, don't gag
-  if time_since_activity < ACTIVITY_TIMEOUT then
-    -- Transitioning from gagged to not gagged
-    if last_gag_state then
-      last_gag_state = false
-      mplay("ship/misc/autosilenceDisable")
-    end
-    return false
-  end
-
-  -- No recent activity, gag the sounds
-  -- Transitioning from not gagged to gagged
-  if not last_gag_state then
-    last_gag_state = true
-    mplay("ship/misc/autosilenceEnable")
-    Note("Engines silenced")
-  end
-  return true
+  return last_gag_state
 end
 
 -- Cooldown for repeated messages (in seconds)
@@ -230,6 +252,16 @@ ImportXML([=[
    script="update_artifact_hunting_activity"
   >
   <send>%0</send>
+  </alias>
+
+  <!-- Immediately enter engine silence mode -->
+  <alias
+   enabled="y"
+   group="artifact_hunting"
+   match="^hush$"
+   regexp="y"
+   script="force_engine_silence"
+  >
   </alias>
 </aliases>
 ]=])

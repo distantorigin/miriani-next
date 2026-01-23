@@ -809,6 +809,11 @@ function OnPluginLoseFocus()
   -- Call our focus handling function
   pause_all_sounds()
 
+  -- Autosilence engines if option is enabled
+  if config and config:get_option("autosilence_on_focus_loss").value == "yes" then
+    force_engine_silence()
+  end
+
 end -- OnPluginLoseFocus
 
 function OnPluginGetFocus()

@@ -428,8 +428,12 @@ ImportXML([=[
    -- Add to history
    channel("computer", str, {"computer"})
 
+   -- Check for "Control room reports:" prefix and extract content for action matching
+   local control_room_message = string.match(message, "^Control room reports:%s*(.+)")
+   local action_message = control_room_message or message
+
    -- Check exact match actions first
-   local action = computer_actions[message]
+   local action = computer_actions[action_message]
    local PlayComputerSound = false
 
    if action then
@@ -452,7 +456,7 @@ ImportXML([=[
      -- Check wildcard patterns
      local matched = false
      for pattern, action in pairs(computer_actions_wildcard) do
-       local matches = {string.match(string.lower(message), string.lower(pattern))}
+       local matches = {string.match(string.lower(action_message), string.lower(pattern))}
        if #matches > 0 then
          matched = true
          if action.sound then
@@ -473,11 +477,15 @@ ImportXML([=[
      end
    end
 
-   -- Play generic computer sound if requested
-   if PlayComputerSound then
-     if string.find(message, "Control room reports") then
-       mplay("ship/computer/control", "computer")
-     elseif string.find(message, "Warning") or string.find(message, "Alert") then
+   -- Always play control room sound for control room messages
+   if control_room_message then
+     mplay("ship/computer/control", "computer")
+     -- Also check for Warning/Alert in the control room content
+     if PlayComputerSound and (string.find(action_message, "Warning") or string.find(action_message, "Alert")) then
+       mplay("ship/computer/warning", "computer")
+     end
+   elseif PlayComputerSound then
+     if string.find(message, "Warning") or string.find(message, "Alert") then
        mplay("ship/computer/warning", "computer")
      elseif action_type == "reports" then
        mplay("ship/computer/report", "computer")

@@ -1299,6 +1299,16 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   <trigger
    enabled="y"
    group="ship"
+   match="^.+? emerges from a nearby console\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("ship/misc/print")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
    match="^The ship wrenches violently as the wavewarp drive interacts with stellar material\.$"
    regexp="y"
    send_to="12"

@@ -77,6 +77,7 @@ local socials = {
   fart      = {genders = {"neuter"}, category = "bodily"},
   gag       = {genders = {"neuter"}, category = "bodily"},
   puke      = {genders = {"neuter"}, category = "bodily"},
+  retch      = {genders = {"neuter"}, category = "bodily"},
   spit      = {genders = {"neuter"}, category = "bodily"},
   squish    = {genders = {"neuter"}, category = "bodily"},
   vomit     = {genders = {"neuter"}, category = "bodily"},

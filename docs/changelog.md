@@ -4,6 +4,7 @@
 
 ### New
 - Starship hits now count as activity for Artifact Hunting Mode.
+- Added new sound for retch social.
 
 ### Fixed
 - Differentiate sound when your ship transmits or broadcasts a message.

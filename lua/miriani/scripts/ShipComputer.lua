@@ -370,6 +370,127 @@ computer_actions_wildcard = {
   }
 }
 
+-- Text transforms for "shorten_computer" option (ordered array for deterministic matching)
+-- Each entry: {pattern = "...", transform = function(...) return "shortened" end}
+computer_transforms = {
+  {
+    pattern = "Scans reveal the debris to be (.+)%.",
+    transform = function(debris_type)
+      return "Salvaged " .. debris_type .. "."
+    end
+  },
+  {
+    pattern = "I am beginning the repair of (.+)%. Estimated time to completion: (.+)%.",
+    transform = function(component, time_estimate)
+      return time_estimate .. " for " .. component .. " to be repaired."
+    end
+  },
+  {
+    pattern = "(.+) will be completely repaired in approximately (.+)%.",
+    transform = function(component, time_estimate)
+      return time_estimate .. " for " .. component .. " to be repaired."
+    end
+  },
+  {
+    pattern = "I am currently repairing: (.+), which is (.+)%% damaged%. Estimated time to completion is (.+)%.",
+    transform = function(component, damage_pct, time_estimate)
+      return damage_pct .. "% damage to " .. component .. " will take " .. time_estimate .. " to repair."
+    end
+  },
+  {
+    pattern = "I have completed the repair of (.+)%.",
+    transform = function(component)
+      return component .. " repaired."
+    end
+  },
+  {
+    pattern = "I have aborted the repair of (.+)%.",
+    transform = function(component)
+      return "Aborted repair of " .. component .. "."
+    end
+  },
+  {
+    pattern = "Turret.+ locking onto empty space%.",
+    transform = function()
+      return "Nothing targeted."
+    end
+  },
+  {
+    pattern = "Long%-Range Laser .+ is locking onto empty space%.",
+    transform = function()
+      return "Nothing targeted."
+    end
+  },
+  {
+    pattern = ".+ is locking onto empty space%.",
+    transform = function()
+      return "Nothing targeted."
+    end
+  },
+  {
+    pattern = "Direct hit%. (.+) destroyed%.",
+    transform = function(target)
+      return target .. " destroyed."
+    end
+  },
+  {
+    pattern = "Bardenium Cannon(.+) locked on (.+)%. Firing%.",
+    transform = function(cannon_suffix, target)
+      return "Cannon" .. cannon_suffix .. " locked on " .. target .. "."
+    end
+  },
+  {
+    pattern = "This vessel is of the (.+) design%. It was manufactured on (.+) at the (.+) and commissioned by the (.+)%. The vessel came under licensed control on (.+) and is presently licensed to (.+)%.",
+    transform = function(design, mfg_date, mfg_location, commissioner, license_date, owner)
+      return "This " .. design .. " is licensed to " .. owner .. "."
+    end
+  },
+  {
+    pattern = "Via synchronized text message broadcasts, (.+)",
+    transform = function(message)
+      return "[STMB] " .. message
+    end
+  },
+  {
+    pattern = "The target has moved from the locked coordinates%.",
+    transform = function()
+      return "Target moved."
+    end
+  },
+  {
+    pattern = "There is insufficient weapons%-grade bardenium available for firing%.",
+    transform = function()
+      return "Insufficient bardenium."
+    end
+  },
+  {
+    pattern = "The target is no longer available%. Probable cause for lost sensor contact is destruction%.",
+    transform = function()
+      return "Target destroyed."
+    end
+  },
+}
+
+-- Apply computer transform if shorten_computer is enabled
+-- Returns transformed string or nil if no transform applies
+function apply_computer_transform(message)
+  if config:get_option("shorten_computer").value ~= "yes" then
+    return nil
+  end
+
+  for _, entry in ipairs(computer_transforms) do
+    local matches = {string.match(message, entry.pattern)}
+    if #matches > 0 then
+      local ok, result = pcall(entry.transform, unpack(matches))
+      if ok and result and result ~= "" then
+        return result
+      end
+    end
+  end
+
+  return nil
+end
+
 -- Damage reader: check for critical damage (80-99%) and play alert sound
 -- Called by damage_reader trigger, enabled by dam/damage alias
 function checkDamageLine(line)
@@ -410,6 +531,12 @@ ImportXML([=[
      str = message
    else
      str = "%0"
+   end
+
+   -- Apply computer transforms if shorten_computer option is enabled
+   local transformed = apply_computer_transform(message)
+   if transformed then
+     str = transformed
    end
 
    -- Check if we should show the holographic avatar name

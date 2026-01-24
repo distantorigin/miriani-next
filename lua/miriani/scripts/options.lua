@@ -86,6 +86,7 @@ local options = {
   artifact_hunting_mode = {descr="Artifact Hunting Mode (gag engine sounds when not actively piloting or gunning).", value="no", group="ship", type="bool"},
   autosilence_on_focus_loss = {descr="Autosilence engines when window loses focus in Artifact Hunting Mode.", value="no", group="ship", type="bool"},
   spam = {descr="Reduce spam by gagging flavored text.", value="yes", group="gags", type="bool"},
+  shorten_computer = {descr="Shorten repetitive computer announcements.", value="no", group="gags", type="bool"},
   shorten_communication = {descr="Shorten communication by removing verbs (e.g. 'Player says' becomes 'Player:').", value="no", group="gags", type="bool"},
   store_detector = {descr="Play a sound when detecting stores.", value="no", group="room", type="bool"},
   unchange_coords = {descr="Print 'unchanged' before coordinates if the target has not moved since its last scan.", value="no", group="ship", type="bool"},

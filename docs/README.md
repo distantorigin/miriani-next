@@ -561,7 +561,7 @@ These principles guide how we build and maintain this client package:
 
 - **Preserve the character of the game.** We believe gags should reduce redundancy, not strip personality. Gagging "The computer announces," before every message is fine - it's repetitive. Gagging atmospheric station descriptions removes immersion. If flavor text must go, replace it with a sound that captures the mood.
 
-- **Never alter the game's words.** We don't shorten or paraphrase output. "I am beginning the repair of your hyperdrive. I estimate 30 minutes remaining." should never become "Repairing hyperdrive 30m". We believe the game's writing is part of its identity.
+- **Respect the game's words by default.** Out of the box, we don't shorten or paraphrase output - we believe the game's writing is part of its identity. However, for users who prefer brevity, there are opt-in options under conf gag that transform verbose messages that are seen frequently and have little variation to them. For example, "Shorten communication" turns "Player says" into "Player:", and "Shorten repetitive computer announcements" transforms repair messages like "I am beginning the repair of X. Estimated time: Y." into "Y for X to be repaired."
 
 - **Everything is configurable.** If a feature might annoy someone, we make it toggleable. Baby sounds, social sounds, specific gags - users decide. Our preferences aren't everyone's preferences.
 

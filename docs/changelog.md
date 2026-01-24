@@ -2,6 +2,9 @@
 
 ## Version 4.1.09 (In Progress)
 
+### New
+- Starship hits now count as activity for Artifact Hunting Mode.
+
 ### Fixed
 - Differentiate sound when your ship transmits or broadcasts a message.
 

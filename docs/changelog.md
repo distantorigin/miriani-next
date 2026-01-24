@@ -9,6 +9,7 @@
 - Repairing components via unknown starships will now play the repair sound.
 - Rename "Spam and Gag Filters" to "Gags and Substitutions" in conf.
 - Component manifests and commodity listings emerging from consoles will now play the print sound.
+- Added sound for pant social.
 
 ### Fixed
 - Differentiate sound when your ship transmits or broadcasts a message.

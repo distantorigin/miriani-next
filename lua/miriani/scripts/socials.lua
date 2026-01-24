@@ -62,6 +62,7 @@ local socials = {
   eep     = {genders = {"male", "female"}, category = "reflex"},
   gulp      = {genders = {"neuter"}, category = "reflex"},
   sigh      = {genders = {"male", "female"}, category = "reflex"},
+    pant      = {genders = {"neuter"}, category = "reflex"},
   sneeze    = {genders = {"male", "female"}, category = "reflex"},
   snore     = {genders = {"neuter"}, category = "reflex"},
   snort     = {genders = {"neuter"}, category = "reflex"},

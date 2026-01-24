@@ -164,7 +164,7 @@ local group_metadata = {
   {key = "room", title = "Room and Environment", order = 4},
   {key = "helpers", title = "Helpers and Extras", order = 5},
   {key = "screen reader", title = "Screen Reader Integration", order = 6},
-  {key = "gags", title = "Spam and Gag Filters", order = 7},
+  {key = "gags", title = "Gags and Substitutions", order = 7},
   {key = "socials", title = "Social Sounds", order = 8},
   {key = "socials_laughter", title = "Laughter", order = 9},
   {key = "socials_distress", title = "Distress", order = 10},

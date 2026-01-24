@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.09 (In Progress)
+## Version 4.1.09
 
 ### New
 - Starship hits now count as activity for Artifact Hunting Mode.

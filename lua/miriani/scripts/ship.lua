@@ -516,7 +516,7 @@ end</send>
    enabled="y"
    group="ship"
    script="gagline"
-   match="^You hear (?:several clinking|a deafening booming|a buzzing|a shrill screeching|an electrical zapping) sound.+?\.$"
+   match="^You hear (?:several clinking|a deafening booming|a buzzing|a shrill screeching|an electrical zapping|a piercing) sound.+?\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

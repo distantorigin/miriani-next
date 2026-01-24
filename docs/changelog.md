@@ -6,6 +6,7 @@
 - Starship hits now count as activity for Artifact Hunting Mode.
 - Added new sound for retch social.
 - Add "Shorten repetitive computer announcements" option under `conf gag`. When enabled, verbose computer announcements are transformed into shorter forms: "Scans reveal the debris to be X." becomes "Salvaged X.", repair time estimates are simplified, and weapons locking onto empty space becomes "Nothing targeted." Disabled by default.
+- Repairing components via unknown starships will now play the repair sound.
 
 ### Fixed
 - Differentiate sound when your ship transmits or broadcasts a message.

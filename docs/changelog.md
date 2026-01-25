@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.10 (In Progress)
+
+### Fixed
+- Play the debris and blockade destroyed sounds when debris and blockades are destroyed.
+
 ## Version 4.1.09
 
 ### New

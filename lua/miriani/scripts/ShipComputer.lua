@@ -62,6 +62,14 @@ computer_actions = {
     sound = "ship/combat/destroy/targetDestroyed",
     group = "ship"
   },
+  ["Debris destroyed."] = {
+    sound = "ship/combat/destroy/debrisDestroyed",
+    group = "ship"
+  },
+  ["Blockade destroyed."] = {
+    sound = "ship/combat/destroy/blockadeDestroyed",
+    group = "ship"
+  },
   ["Firing on empty space complete."] = {
     sound = "ship/combat/noTarget",
     group = "ship"

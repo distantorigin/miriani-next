@@ -112,6 +112,7 @@ local socials = {
   tackle    = {genders = {"neuter"}, category = "physical"},
   tapdance    = {genders = {"neuter"}, category = "physical"},
   thump     = {genders = {"neuter"}, category = "physical"},
+  twirl    = {genders = {"neuter"}, category = "physical"},
   twitch    = {genders = {"neuter"}, category = "physical"},
 
   -- Novelty sounds (animals, musical, memes, misc expressions)

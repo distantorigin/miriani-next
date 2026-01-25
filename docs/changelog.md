@@ -5,6 +5,9 @@
 ### New
 - Added sound for air fresheners.
 - Added sounds for choke and strangle.
+- Boosted the volume of ship corridor ambiance.
+- Added sounds for twirl social.
+- Added a new invalid command sound.
 
 ### Fixed
 - Play the debris and blockade destroyed sounds when debris and blockades are destroyed.

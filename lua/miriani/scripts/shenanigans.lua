@@ -247,6 +247,30 @@ ImportXML([=[
   <send>mplay("misc/slotPayout")</send>
   </trigger>
 
+  <!-- Air Freshener Sounds -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^A.+ air freshener freshens the room with the scent of .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/scent")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^You carefully spray a fine mist from .+ at .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/scent")</send>
+  </trigger>
+
   <!-- Shower Sounds -->
 
   <trigger

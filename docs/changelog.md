@@ -2,6 +2,9 @@
 
 ## Version 4.1.10 (In Progress)
 
+### New
+- Added sound for air fresheners.
+
 ### Fixed
 - Play the debris and blockade destroyed sounds when debris and blockades are destroyed.
 

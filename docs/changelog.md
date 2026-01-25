@@ -4,6 +4,7 @@
 
 ### New
 - Added sound for air fresheners.
+- Added sounds for choke and strangle.
 
 ### Fixed
 - Play the debris and blockade destroyed sounds when debris and blockades are destroyed.

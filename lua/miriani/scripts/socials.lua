@@ -93,7 +93,7 @@ local socials = {
   collapse  = {genders = {"neuter"}, category = "physical"},
   fall      = {genders = {"neuter"}, category = "physical"},
   flap      = {genders = {"neuter"}, category = "physical"},
-frenchkiss = {genders = {"neuter"}, category = "physical", sound = "kiss"},
+french = {genders = {"neuter"}, category = "physical", sound = "kiss"},
   headdesk  = {genders = {"neuter"}, category = "physical"},
   hop       = {genders = {"male", "female"}, category = "physical"},
   jig    = {genders = {"neuter"}, category = "physical"},

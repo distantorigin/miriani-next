@@ -8,6 +8,7 @@
 - Boosted the volume of ship corridor ambiance.
 - Added sounds for twirl social.
 - Added a new invalid command sound.
+- Pointed frenchkiss, makeout, smooch and snog socials to the kiss social sounds.
 
 ### Fixed
 - Play the debris and blockade destroyed sounds when debris and blockades are destroyed.

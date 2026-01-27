@@ -54,6 +54,7 @@ function check_silence_timeout()
     if config and config:get_option("artifact_hunting_mode").value == "yes" then
       if not last_gag_state then
         last_gag_state = true
+        stop("ship")
         mplay("ship/misc/autosilenceEnable")
         Note("Engines silenced")
       end
@@ -70,6 +71,7 @@ function force_engine_silence()
   if config and config:get_option("artifact_hunting_mode").value == "yes" then
     if not last_gag_state then
       last_gag_state = true
+      stop("ship")
       mplay("ship/misc/autosilenceEnable")
       Note("Engines silenced")
     end

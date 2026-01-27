@@ -13,6 +13,7 @@
 
 ### Fixed
 - Play the debris and blockade destroyed sounds when debris and blockades are destroyed.
+- Sector notifications for unrecognized objects (like debris) now play a fallback computer sound.
 
 ## Version 4.1.09
 

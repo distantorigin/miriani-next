@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.10 (In Progress)
+## Version 4.1.10
 
 ### New
 - Added sound for air fresheners.

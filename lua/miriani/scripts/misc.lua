@@ -1232,6 +1232,14 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   </trigger>
   <trigger
    enabled="y"
+   match="^\*{3} The server will be shut down"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/hosts/announcement")</send>
+  </trigger>
+  <trigger
+   enabled="y"
    match="^.+ (pitch|pitches) forward and slam.+head into the .+$"
    regexp="y"
    send_to="12"

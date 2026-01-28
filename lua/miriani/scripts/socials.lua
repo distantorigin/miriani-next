@@ -122,6 +122,7 @@ french = {genders = {"neuter"}, category = "physical", sound = "kiss"},
   -- Novelty sounds (animals, musical, memes, misc expressions)
   airguitar = {genders = {"neuter"}, category = "novelty"},
   applaud   = {genders = {"neuter"}, category = "novelty"},
+  bears       = {genders = {"neuter"}, category = "novelty"},
   beep      = {genders = {"neuter"}, category = "novelty"},
   boggle    = {genders = {"female"}, category = "novelty"},
   bongo     = {genders = {"neuter"}, category = "novelty"},

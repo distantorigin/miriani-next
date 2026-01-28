@@ -11,6 +11,7 @@
 - Pointed frenchkiss, makeout, smooch and snog socials to the kiss social sounds.
 - Added I love Horses song for the horses social.
 - Added sound for server shutdown announcements.
+- Added sounds for the fire and bears song socials.
 
 ### Fixed
 - Play the debris and blockade destroyed sounds when debris and blockades are destroyed.

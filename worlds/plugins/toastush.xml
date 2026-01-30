@@ -633,6 +633,9 @@ function OnPluginInstall()
 
   initialize_audio()
 
+  -- Reset Do Not Disturb mode on plugin reload
+  config:set_dnd(false)
+
   -- Check if alternate audio folder exists
   local path = require("pl.path")
   local alt_path = (config:get("SOUND_DIRECTORY") .. ALTPATH):gsub("/$", "")

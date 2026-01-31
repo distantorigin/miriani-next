@@ -1,5 +1,11 @@
 # Miriani-Next Changelog
 
+## Version 4.1.11 (In Progress)
+
+### New
+- Added sound for cake social.
+- Added sound for pirate social.
+
 ## Version 4.1.10
 
 ### New
@@ -12,7 +18,6 @@
 - Added I love Horses song for the horses social.
 - Added sound for server shutdown announcements.
 - Added sounds for the fire and bears song socials.
-- Added sound for cake social.
 
 ### Fixed
 - Play the debris and blockade destroyed sounds when debris and blockades are destroyed.

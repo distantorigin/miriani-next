@@ -4,7 +4,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="market"
-   match="^\[Tradesman Market\] ([A-Z][a-z]+? [A-Z][a-z]+?) has commenced a sale\. [SsHhe]{2,3} is selling (\w+?) tradesman item (certificates?) for ([0-9,]+[.0-9]{3}) credits\s?(a piece)?\.$"
+match="^\[Tradesman Market\] ([A-Z][a-z]+) ([A-Z][a-zA-Z]*?) has commenced a sale\. (?:She|He) is selling (one|\d+) tradesman item (certificate|certificates) for ((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{2})?) credits\s?(a piece)?\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -20,7 +20,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="market"
-   match="^\[Tradesman Market\] ([A-Z][a-z]+ [A-Z][a-z]+?) has (lowered|raised) the price of ([ehisr]{3}) sale from ([0-9,]+[.0-9]{3}) credits to ([0-9,]+[.0-9]{3}) credits per certificate\.$"
+match="^\[Tradesman Market\]\s+([A-Z][a-z]+(?:\s+(?:Mc)?[A-Z][a-z]+))\s+has\s+(lowered|raised)\s+the\s+price\s+of\s+(his|her)\s+sale\s+from\s+((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{2})?)\s+credits\s+to\s+((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{2})?)\s+credits\s+per\s+certificate\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
@@ -50,7 +50,7 @@ print_color ({"[Tradesman Market] ", "default"}, {line, "market"})
   <trigger
    enabled="y"
    group="market"
-   match="^\[Tradesman Market\] [A-Z][a-z]+ [A-Z][a-z]+'?s? (?:has canceled \w+ sale|sale has completed)\.$"
+match="^\[Tradesman Market\]\s+[A-Z][a-z]+\s+(?:Mc)?[A-Z][a-z]+'s\s+(?:has\s+canceled\s+(?:his|her)\s+sale|sale\s+has\s+completed)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -64,7 +64,7 @@ print_color ({"[Tradesman Market] ", "default"}, {line, "market"})
   <trigger
    enabled="y"
    group="market"
-   match="^\[Tradesman Market\] [A-Z][a-z]+ [A-Z][a-z]+ has bought .+? tradesman certificates? from [A-Z][a-z]+ [A-Z][a-z]+\.$"
+match="^\[Tradesman Market\]\s+(?:[A-Z][a-z]+\s+(?:Mc)?[A-Z][a-z]+)\s+has\s+bought\s+.+?\s+tradesman\s+certificates?\s+from\s+(?:[A-Z][a-z]+\s+(?:Mc)?[A-Z][a-z]+)\.$"
    regexp="y"
    send_to="12"
    sequence="100"

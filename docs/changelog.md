@@ -5,6 +5,7 @@
 ### New
 - Added sound for cake social.
 - Added sound for pirate social.
+- Added airlock chime sound variant and gagged the text output.
 
 ## Version 4.1.10
 

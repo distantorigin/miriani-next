@@ -11,7 +11,8 @@ local variant_sounds = {
   {path = "miriani/vehicle/accelerate.ogg", name = "Vehicle Accelerate (Salvagers and ACVs)", default = 1},
   {path = "miriani/vehicle/decelerate.ogg", name = "Vehicle Decelerate (Salvagers and ACVs)", default = 1},
   {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
-  {path = "miriani/misc/jingleBell.ogg", name = "Jingle Bells", default = 1}
+  {path = "miriani/misc/jingleBell.ogg", name = "Jingle Bells", default = 1},
+  {path = "miriani/ship/misc/chime.ogg", name = "Airlock Chime", default = 2}
 }
 
 -- Special groups that have no regular options

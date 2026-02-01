@@ -278,6 +278,7 @@ local variant_defaults = {
   ["miriani/vehicle/decelerate.ogg"] = 1,
   ["miriani/misc/jingleBell.ogg"] = 1,
   ["miriani/ship/combat/weaponsLocked.ogg"] = 2,
+  ["miriani/ship/misc/chime.ogg"] = 2,
 }
 
 -- Sound variant preferences: maps sound base name to selected variant number

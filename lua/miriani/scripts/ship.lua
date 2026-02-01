@@ -64,10 +64,7 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>
-   mplay ("ship/misc/chime", "ship")
-   print("Airlock Chime")
-  </send>
+  <send>mplay ("ship/misc/chime", "ship")</send>
   </trigger>
 
   <trigger

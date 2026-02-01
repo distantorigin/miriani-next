@@ -10,11 +10,11 @@ match="^\[Tradesman Market\] ([A-Z][a-z]+) ([A-Z][a-zA-Z]*?) has commenced a sal
    send_to="14"
    sequence="100"
   >
-  <send>
-   mplay ("misc/tradesmanSale", "notification")
-   print_color ({"[Tradesman Market] ", "default"}, {"New Sale by %1: %2 %3 for %4 credits.", "market"})
-   channel ("market", "[Tradesman Market] New Sale by %1: %2 %3 for %4 credits.", {"market"})
-  </send>
+<send>
+ mplay ("misc/tradesmanSale", "notification")
+ print_color ({"[Tradesman Market] ", "default"}, {"New Sale by %1 %2: %3 %4 for %5 credits.", "market"})
+ channel ("market", "[Tradesman Market] New Sale by %1 %2: %3 %4 for %5 credits.", {"market"})
+</send>
   </trigger>
 
   <trigger

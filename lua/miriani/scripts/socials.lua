@@ -163,6 +163,7 @@ french = {genders = {"neuter"}, category = "physical", sound = "kiss"},
   whistle   = {genders = {"neuter"}, category = "novelty"},
   why       = {genders = {"neuter"}, category = "novelty"},
   yess      = {genders = {"neuter"}, category = "novelty"},
+yodel      = {genders = {"neuter"}, category = "novelty"},
 }
 
 --- Check if social sounds are globally enabled in config

@@ -3,6 +3,8 @@
 ## Version 4.1.12
 ## New
 - By request, added pizza song social
+- Added yodel sound by request.
+
 ### Fixed
 - Updated tradesman marketplace to support names like McKnight so sounds would play. Also updated the display to match the new rejex patterns, and tightened things up just a bit. I tested most things but stuff might be odd so if something is, please post on metaf.
 

@@ -1,11 +1,11 @@
 # Miriani-Next Changelog
 
-## Version 4.1.11 (In Progress)
+## Version 4.1.11
 
 ### New
 - Added sound for cake social.
 - Added sound for pirate social.
-- Added airlock chime sound variant and gagged the text output.
+- Added a new airlock chime sound variant and gagged the text output. The new variant is set as the default.
 - Added songs category for social sounds (bears, cake, fire, horses, pirate). This category is disabled by default.
 
 ## Version 4.1.10

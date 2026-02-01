@@ -24,6 +24,7 @@ local options = {
   social_cat_bodily = {descr="Bodily (fart, burp, belch, etc).", value="yes", group="socials", type="bool"},
   social_cat_physical = {descr="Physical (punch, kick, clap, etc).", value="yes", group="socials", type="bool"},
   social_cat_novelty = {descr="Novelty (animals, musical, memes, etc).", value="yes", group="socials", type="bool"},
+  social_cat_songs = {descr="Songs (bears, cake, fire, horses, pirate).", value="no", group="socials", type="bool"},
   social_cat_uncategorized = {descr="Uncategorized.", value="yes", group="socials", type="bool"},
 
   play_theme_music = {descr="Play theme music at startup.", value="yes", group="general", type="bool"},
@@ -172,13 +173,14 @@ local group_metadata = {
   {key = "socials_bodily", title = "Bodily", order = 12},
   {key = "socials_physical", title = "Physical", order = 13},
   {key = "socials_novelty", title = "Novelty", order = 14},
-  {key = "socials_uncategorized", title = "Uncategorized", order = 15},
-  {key = "scan_formats", title = "Configure Scan Templates", order = 16},
-  {key = "buffers", title = "Output Buffers", order = 17},
-  {key = "colors", title = "Color Customization", order = 18},
-  {key = "audio groups", title = "Toggle Sound Categories", order = 19},
-  {key = "sound variants", title = "Sound Variants", order = 20},
-  {key = "developer", title = "Developer Options", order = 21},
+  {key = "socials_songs", title = "Songs", order = 15},
+  {key = "socials_uncategorized", title = "Uncategorized", order = 16},
+  {key = "scan_formats", title = "Configure Scan Templates", order = 17},
+  {key = "buffers", title = "Output Buffers", order = 18},
+  {key = "colors", title = "Color Customization", order = 19},
+  {key = "audio groups", title = "Toggle Sound Categories", order = 20},
+  {key = "sound variants", title = "Sound Variants", order = 21},
+  {key = "developer", title = "Developer Options", order = 22},
 } -- group_metadata
 
 return {

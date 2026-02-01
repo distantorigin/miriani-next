@@ -6,6 +6,7 @@
 - Added sound for cake social.
 - Added sound for pirate social.
 - Added airlock chime sound variant and gagged the text output.
+- Added songs category for social sounds (bears, cake, fire, horses, pirate). This category is disabled by default.
 
 ## Version 4.1.10
 

@@ -30,7 +30,7 @@ local social_aliases = {
 --   -- Override sound filename (when different from social name):
 --   lmao = {genders = {"neuter"}, category = "laughter", sound = "rofl"},
 --
--- Categories: laughter, distress, reflex, bodily, physical, novelty
+-- Categories: laughter, distress, reflex, bodily, physical, novelty, songs
 -- (socials without a category will appear under "uncategorized")
 --
 local socials = {
@@ -122,21 +122,21 @@ french = {genders = {"neuter"}, category = "physical", sound = "kiss"},
   -- Novelty sounds (animals, musical, memes, misc expressions)
   airguitar = {genders = {"neuter"}, category = "novelty"},
   applaud   = {genders = {"neuter"}, category = "novelty"},
-  bears       = {genders = {"neuter"}, category = "novelty"},
+  bears       = {genders = {"neuter"}, category = "songs"},
   beep      = {genders = {"neuter"}, category = "novelty"},
   boggle    = {genders = {"female"}, category = "novelty"},
   bongo     = {genders = {"neuter"}, category = "novelty"},
   bonk      = {genders = {"neuter"}, category = "novelty"},
   boo       = {genders = {"neuter"}, category = "novelty"},
-  cake      = {genders = {"neuter"}, category = "novelty"},
+  cake      = {genders = {"neuter"}, category = "songs"},
   cheer     = {genders = {"male", "female"}, category = "novelty"},
-  fire       = {genders = {"neuter"}, category = "novelty"},
+  fire       = {genders = {"neuter"}, category = "songs"},
   frog      = {genders = {"neuter"}, category = "novelty"},
   golfclap  = {genders = {"neuter"}, category = "novelty"},
   growl     = {genders = {"male", "female"}, category = "novelty"},
   hiss      = {genders = {"neuter"}, category = "novelty"},
   hoot      = {genders = {"neuter"}, category = "novelty"},
-  horses       = {genders = {"neuter"}, category = "novelty"},
+  horses       = {genders = {"neuter"}, category = "songs"},
   howl      = {genders = {"neuter"}, category = "novelty"},
   itsatrap  = {genders = {"neuter"}, category = "novelty"},
   khan      = {genders = {"neuter"}, category = "novelty"},
@@ -147,7 +147,7 @@ french = {genders = {"neuter"}, category = "physical", sound = "kiss"},
   oicic     = {genders = {"neuter"}, category = "novelty"},
   oink      = {genders = {"neuter"}, category = "novelty"},
   pimp      = {genders = {"neuter"}, category = "novelty"},
-  pirate    = {genders = {"neuter"}, category = "novelty"},
+  pirate    = {genders = {"neuter"}, category = "songs"},
   please    = {genders = {"neuter"}, category = "novelty"},
   ponder    = {genders = {"male", "female"}, category = "novelty"},
   purr      = {genders = {"neuter"}, category = "novelty"},
@@ -177,18 +177,21 @@ function is_socials_enabled()
 end
 
 --- Check if a specific category is enabled
--- @param category string The category name (laughter, distress, reflex, bodily, physical, novelty)
+-- @param category string The category name (laughter, distress, reflex, bodily, physical, novelty, songs)
 -- @return boolean
 function is_social_category_enabled(category)
+  -- songs category defaults to off
+  local default_enabled = category ~= "songs"
+
   if not config or not config.get_option then
-    return true -- default to enabled
+    return default_enabled
   end
   local option_key = "social_cat_" .. category
   local option = config:get_option(option_key)
   if option then
     return option.value == "yes"
   end
-  return true -- default to enabled if option not found
+  return default_enabled
 end
 
 --- Check if a specific social is individually enabled

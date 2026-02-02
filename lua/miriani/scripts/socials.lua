@@ -73,16 +73,27 @@ local socials = {
   yawn      = {genders = {"male", "female"}, category = "reflex"},
 
   -- Bodily sounds (gross/bodily functions)
+  barf = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   belch     = {genders = {"neuter"}, category = "bodily"},
   bubble    = {genders = {"neuter"}, category = "bodily"},
   burp      = {genders = {"neuter"}, category = "bodily"},
   fart      = {genders = {"neuter"}, category = "bodily"},
   gag       = {genders = {"neuter"}, category = "bodily"},
+  hurf = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
+  hurl = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
+  lurch = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   puke      = {genders = {"neuter"}, category = "bodily"},
+  ralph = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   retch      = {genders = {"neuter"}, category = "bodily"},
+  sickup = {genders = {"neuter"}, category = "bodily", sound = "vomit"},  
+  spew = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   spit      = {genders = {"neuter"}, category = "bodily"},
+splat = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   squish    = {genders = {"neuter"}, category = "bodily"},
+  upchuck = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   vomit     = {genders = {"neuter"}, category = "bodily"},
+yak = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
+yark = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
 
   -- Physical sounds (movement/contact)
   bap       = {genders = {"neuter"}, category = "physical"},

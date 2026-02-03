@@ -64,7 +64,10 @@ ImportXML([=[
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/misc/chime", "ship")</send>
+  <send>mplay ("ship/misc/chime", "ship")
+  if config:get_option("print_airlock_chime").value == "yes" then
+    print("Airlock chime")
+  end</send>
   </trigger>
 
   <trigger

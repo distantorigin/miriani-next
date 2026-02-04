@@ -53,6 +53,7 @@ local socials = {
   shriek    = {genders = {"male", "female"}, category = "distress"},
   sniffle   = {genders = {"neuter"}, category = "distress"},
   sob       = {genders = {"male", "female"}, category = "distress"},
+wail      = {genders = {"neuter"}, category = "distress"},
   yelp      = {genders = {"neuter"}, category = "distress"},
   yowl      = {genders = {"neuter"}, category = "distress"},
 

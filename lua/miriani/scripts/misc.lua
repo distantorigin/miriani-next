@@ -412,7 +412,7 @@ endScan()</send>
   <trigger
    name="interruptFollow"
    group="misc"
-   match="^You follow [A-Z][a-z]+[\s\w]+ (north|south|east|west|northeast|northwest|southeast|southwest|up|down|into the airlock|into|out|through)(.*)\.$"
+   match="^You follow [A-Z][a-z]+[\s\w]+ (northeast|northwest|southeast|southwest|north|south|east|west|up|down|into the airlock|into|out|through)(.*)\.$"
    regexp="y"
    enabled="y"
    omit_from_output="y"
@@ -436,7 +436,7 @@ endScan()</send>
   <trigger
    name="interruptDrag"
    group="misc"
-   match="^(.+?) drags you (north|south|east|west|northeast|northwest|southeast|southwest|up|down|into|out|through)(.*)\.$"
+   match="^(.+?) drags you (northeast|northwest|southeast|southwest|north|south|east|west|up|down|into|out|through)(.*)\.$"
    enabled="y"
    regexp="y"
    omit_from_output="y"

@@ -153,6 +153,47 @@ enabled="y"
   </send>
   </trigger>
 
+  <!-- Gag others piloting in the room (fallback when artifact hunting disabled) -->
+  <trigger
+   enabled="y"
+   group="gags"
+   match="^[A-Z][A-Za-z]+(?:\s[A-Z][A-Za-z]+)* inputs a series of commands into a navigation console\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="60"
+  >
+  <send>
+if GetVariable("piloting_message_handled") == "yes" then
+  SetVariable("piloting_message_handled", "no")
+  return
+end
+if config:get_option("gag_others_piloting").value == "no" then
+  print("%0")
+  mplay("device/keyboard")
+end
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="gags"
+   match="^[A-Z][A-Za-z]+(?:\s[A-Z][A-Za-z]+)* flicks a switch\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="60"
+  >
+  <send>
+if GetVariable("piloting_message_handled") == "yes" then
+  SetVariable("piloting_message_handled", "no")
+  return
+end
+if config:get_option("gag_others_piloting").value == "no" then
+  print("%0")
+end
+  </send>
+  </trigger>
 
 </triggers>
 ]=])

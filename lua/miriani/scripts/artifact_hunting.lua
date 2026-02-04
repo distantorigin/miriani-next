@@ -282,6 +282,10 @@ ImportXML([=[
    send_to="14"
   >
   <send>
+SetVariable("piloting_message_handled", "yes")
+if config:get_option("gag_others_piloting").value == "yes" then
+  return
+end
 if not should_suppress_message("%0") then
   print("%0")
   mplay("device/keyboard")
@@ -300,6 +304,10 @@ end
    send_to="14"
   >
   <send>
+SetVariable("piloting_message_handled", "yes")
+if config:get_option("gag_others_piloting").value == "yes" then
+  return
+end
 if not should_suppress_message("%0") then
   print("%0")
 end

@@ -10,6 +10,7 @@
 - Added option under conf gags to gag messages when others pilot in the room, independent of artifact hunting mode.
 - Ported baby wail sounds to the wail social. Because they make me happy that's why.
 - Added two new theme songs.
+- Added sound for devil social.
 
 ### Fixed
 - Updated tradesman marketplace to support names like McKnight so sounds would play. Also updated the display to match the new rejex patterns, and tightened things up just a bit. I tested most things but stuff might be odd so if something is, please post on metaf.

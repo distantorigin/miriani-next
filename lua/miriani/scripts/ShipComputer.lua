@@ -674,7 +674,10 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("ship/computer/NoDamage", "computer")</send>
+  <send>
+   mplay("ship/computer/NoDamage", "computer")
+   EnableTrigger("damage_reader", false)
+  </send>
   </trigger>
 
   <!-- Damage reader: plays critical sounds for components at 80-99% damage -->
@@ -682,7 +685,7 @@ ImportXML([=[
    enabled="n"
    name="damage_reader"
    group="computer"
-   match="[A-Za-z0-9 ]+: \d+%"
+   match="^(?!.*\[)[A-Za-z0-9 ]+: \d+%"
    regexp="y"
    send_to="12"
    sequence="100"

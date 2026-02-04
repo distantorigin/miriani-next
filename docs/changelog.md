@@ -6,6 +6,7 @@
 - Added yodel sound by request.
 - Pointed a bunch of aliases for vomit to play the vomit sound.
 - Added print_airlock_chime config option to control whether the airlock chime text is printed.
+- Added sound variants for radio receiver transmission detected.
 
 ### Fixed
 - Updated tradesman marketplace to support names like McKnight so sounds would play. Also updated the display to match the new rejex patterns, and tightened things up just a bit. I tested most things but stuff might be odd so if something is, please post on metaf.

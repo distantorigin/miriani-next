@@ -206,22 +206,22 @@ computer_actions_wildcard = {
   ["(.+) been detected in the sector%."] = {
     func = function(match1)
       local found = false
-      if string.find(string.lower(match1), "artifact") then mplay("ship/computer/artifact", "notification") found = true end
-      if string.find(match1, "planet") then mplay("ship/computer/planet", "notification") found = true end
-      if string.find(match1, "starship") or string.find(match1, "furner") or string.find(match1, "sleigh") then mplay("ship/computer/starship", "notification") found = true end
-      if string.find(match1, "space station") then mplay("ship/computer/station", "notification") found = true end
+      if string.find(string.lower(match1), "artifact") then mplay("ship/computer/artifact", "computer") found = true end
+      if string.find(match1, "planet") then mplay("ship/computer/planet", "computer") found = true end
+      if string.find(match1, "starship") or string.find(match1, "furner") or string.find(match1, "sleigh") then mplay("ship/computer/starship", "computer") found = true end
+      if string.find(match1, "space station") then mplay("ship/computer/station", "computer") found = true end
       if string.find(match1, "anomaly") then
         if not anomaly_found then
-          mplay("ship/computer/anomaly", "notification")
+          mplay("ship/computer/anomaly", "computer")
           anomaly_found = true
           DoAfterSpecial(10, "anomaly_found = false", sendto.script)
         end
         found = true
       end
-      if string.find(match1, "wormhole") then mplay("ship/computer/wormhole", "notification") found = true end
-      if string.find(match1, "long%-range communication beacon") then mplay("ship/computer/beacon", "notification") found = true end
-      if string.find(match1, " star ") then mplay("ship/computer/star", "notification") found = true end
-      if not found then mplay("ship/computer/announce", "notification") end
+      if string.find(match1, "wormhole") then mplay("ship/computer/wormhole", "computer") found = true end
+      if string.find(match1, "long%-range communication beacon") then mplay("ship/computer/beacon", "computer") found = true end
+      if string.find(match1, " star ") then mplay("ship/computer/star", "computer") found = true end
+      if not found then mplay("ship/computer/announce", "computer") end
     end
   },
   ["Bardenium Cannons? (.+) locked on (.+)%. Firing%."] = {

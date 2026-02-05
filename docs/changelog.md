@@ -11,6 +11,8 @@
 - Ported baby wail sounds to the wail social. Because they make me happy that's why.
 - Added two new theme songs.
 - Added sound for devil social.
+- Added flirt and insult sounds.
+- Removed yodel3 as it was the same as 1.
 
 ### Fixed
 - Updated tradesman marketplace to support names like McKnight so sounds would play. Also updated the display to match the new rejex patterns, and tightened things up just a bit. I tested most things but stuff might be odd so if something is, please post on metaf.

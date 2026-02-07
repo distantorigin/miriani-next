@@ -54,7 +54,7 @@ ImportXML([=[
    enabled="y"
    name="MessageBoardNewMessage"
    group="devices"
-   match="^A.+message board reader beeps quietly, indicating to you that there is a new message.+\.$"
+   match="^.+beeps quietly, indicating to you that there is a new message.+\.$"
    regexp="y"
    send_to="12"
   >
@@ -65,7 +65,7 @@ ImportXML([=[
    enabled="y"
    name="MessageBoardNewMessageDetailed"
    group="devices"
-   match="^A message board reader beeps quietly, indicating to you that there is a new message in (.+?)\. It was posted by (.+?) with the subject (.+?)\.$"
+   match="^.+ beeps quietly, indicating to you that there is a new message in (.+?)\. It was posted by (.+?) with the subject (.+?)\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

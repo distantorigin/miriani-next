@@ -18,6 +18,7 @@
 - Updated tradesman marketplace to support names like McKnight so sounds would play. Also updated the display to match the new rejex patterns, and tightened things up just a bit. I tested most things but stuff might be odd so if something is, please post on metaf.
 - Fixed internal camera feed pattern.
 - Fixed drawing and holstering with holsters that start with An instead of A.
+- Fixed message board readers to play sounds for custom board readers.
 
 ## Version 4.1.11
 

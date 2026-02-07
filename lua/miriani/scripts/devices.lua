@@ -110,7 +110,7 @@ ImportXML([=[
    enabled="y"
    name="MessageBoardUnreadPosts"
    group="devices"
-   match="^(There are new messages in.+\.|A.+message board reader beeps urgently, notifying you that there are new messages in .+\.)$"
+   match="^(There are new messages in.+\.|.+ beeps urgently, notifying you that there are new messages in .+\.)$"
    regexp="y"
    send_to="12"
   >

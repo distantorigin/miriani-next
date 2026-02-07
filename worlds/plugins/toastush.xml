@@ -416,6 +416,27 @@ show_paralyzed(roundtime, stuntime)
   </send>
   </alias>
 
+  <alias
+   enabled="y"
+   name="VolumeControl"
+   match="^vol(?:ume)?\s+(up|down|next)$"
+   regexp="y"
+   send_to="12"
+   omit_from_log="y"
+   omit_from_output="y"
+  >
+  <send>
+    local action = string.lower("%1")
+    if action == "up" then
+      increase_attribute("volume")
+    elseif action == "down" then
+      decrease_attribute("volume")
+    elseif action == "next" then
+      forward_cycle_audio_groups()
+    end
+  </send>
+  </alias>
+
 </aliases>
 
 <script>

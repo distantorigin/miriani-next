@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.12 (In Progress)
+## Version 4.1.12
 ### New
 - By request, added pizza song social
 - Added yodel sound by request.

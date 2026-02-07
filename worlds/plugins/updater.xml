@@ -160,7 +160,9 @@ function run_updater_hidden(args, callback)
   end
 
   local homedir = GetInfo(66)
-  local cmd = homedir .. "update.exe " .. args .. " -non-interactive"
+local updater = homedir .. "update.exe"
+local cmd = '"' .. updater .. '" ' .. args .. " -non-interactive"
+
 
   execute.doAsyncExecute(cmd, function(success, output, exit_code, err)
     if success then
@@ -194,8 +196,10 @@ function run_updater_visible(args)
   end
 
   local homedir = GetInfo(66)
-  local cmd = "update.exe"
-  utils.shellexecute(cmd, args, homedir, "open", 1)
+  local updater = homedir .. "update.exe"
+
+  -- Prefer explicit path; homedir can contain spaces
+  utils.shellexecute('"' .. updater .. '"', args, homedir, "open", 1)
 end
 
 function update_dispatcher(name, line, wildcards)

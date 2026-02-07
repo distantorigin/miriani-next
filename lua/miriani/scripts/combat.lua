@@ -169,7 +169,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="combat"
-   match="^[A-Z][a-z]+?[A-Za-z\s]*? deftly (draw|insert)s? an? .+? (?:from|into) a .+?\.$"
+   match="^[A-Z][a-z]+?[A-Za-z\s]*? deftly (draw|insert)s? an? .+? (?:from|into) an? .+?\.$"
    regexp="y"
    send_to="12"
    sequence="100"

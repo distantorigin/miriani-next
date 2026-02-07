@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.13 (In Progress)
+
+### Fixed
+- Possibly fixed autoupdating and ctrl+U updating on windows to update via client. While this fixed on windows, I have not yet tested on other platforms, so please let me know of issues.
+
 ## Version 4.1.12
 ### New
 - By request, added pizza song social
@@ -19,7 +24,6 @@
 - Fixed internal camera feed pattern.
 - Fixed drawing and holstering with holsters that start with An instead of A.
 - Fixed message board readers to play sounds for custom board readers.
-- Possibly fixed autoupdating and ctrl+U updating on windows to update via client. While this fixed on windows, I have not yet tested on other platforms, so please let me know of issues.
 
 ## Version 4.1.11
 

@@ -121,6 +121,17 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
+   match="^A .+ splats on to .+, leaving them with the scent of .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("social/slimeMachineHit")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
    match="^You smash your foot into a.+ of .+ and it forms a large puddle\.$"
    regexp="y"
    send_to="12"

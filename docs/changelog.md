@@ -4,6 +4,7 @@
 
 ### Fixed
 - Possibly fixed autoupdating and ctrl+U updating on windows to update via client. 
+- Trimmed excess silence from flirt and why social sounds.
 
 ### New
 

@@ -1382,5 +1382,17 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   >
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="ship"
+   match="^You float out of the ship into space\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/airlock/AirlockExit", "ship")</send>
+  </trigger>
+
 </triggers>
 ]=])

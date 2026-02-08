@@ -11,6 +11,7 @@
 - Boosted volume on quarters ambiance.
 - Removed rocky5 and rocky6 ambiances as they were identical to other ones.
 - Added exiting from a ship into space airlock exit sound
+- Added more types for slime launchers
 
 ## Version 4.1.12
 ### New

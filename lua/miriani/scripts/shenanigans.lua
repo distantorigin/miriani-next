@@ -121,7 +121,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
-   match="^A .+ splats on to .+, leaving them with the scent of .+\.$"
+   match="^A.+ splats on to .+, leaving .+ with the scent of .+\.$"
    regexp="y"
    send_to="12"
    sequence="100"

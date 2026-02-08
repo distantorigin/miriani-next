@@ -5,6 +5,11 @@
 ### Fixed
 - Possibly fixed autoupdating and ctrl+U updating on windows to update via client. While this fixed on windows, I have not yet tested on other platforms, so please let me know of issues.
 
+### New
+
+- Boosted volume on quarters ambiance.
+- Removed rocky5 and rocky6 ambiances as they were identical to other ones.
+
 ## Version 4.1.12
 ### New
 - By request, added pizza song social

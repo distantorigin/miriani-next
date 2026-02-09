@@ -131,6 +131,7 @@ french = {genders = {"neuter"}, category = "physical", sound = "kiss"},
   thump     = {genders = {"neuter"}, category = "physical"},
   twirl    = {genders = {"neuter"}, category = "physical"},
   twitch    = {genders = {"neuter"}, category = "physical"},
+wink    = {genders = {"neuter"}, category = "physical"},
 
   -- Novelty sounds (animals, musical, memes, misc expressions)
   airguitar = {genders = {"neuter"}, category = "novelty"},

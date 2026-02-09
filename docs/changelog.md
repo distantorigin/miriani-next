@@ -13,6 +13,7 @@
 - Added exiting from a ship into space airlock exit sound
 - Added more types for slime launchers
 - Added sound for whimper.
+- Added new scream sound and two wink sounds.
 
 ## Version 4.1.12
 ### New

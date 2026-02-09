@@ -5,6 +5,7 @@
 ### Fixed
 - Possibly fixed autoupdating and ctrl+U updating on windows to update via client. 
 - Trimmed excess silence from flirt and why social sounds.
+- Trimmed silence from wink1.
 
 ### New
 
@@ -14,6 +15,7 @@
 - Added more types for slime launchers
 - Added sound for whimper.
 - Added new scream sound and two wink sounds.
+- Added sound for whine social.
 
 ## Version 4.1.12
 ### New

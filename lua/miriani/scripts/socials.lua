@@ -55,6 +55,7 @@ local socials = {
   sob       = {genders = {"male", "female"}, category = "distress"},
 wail      = {genders = {"neuter"}, category = "distress"},
 whimper      = {genders = {"neuter"}, category = "distress"},  
+whine      = {genders = {"neuter"}, category = "distress"},  
 yelp      = {genders = {"neuter"}, category = "distress"},
   yowl      = {genders = {"neuter"}, category = "distress"},
 

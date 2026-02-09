@@ -16,6 +16,7 @@
 - Added sound for whimper.
 - Added new scream sound and two wink sounds.
 - Added sound for whine social.
+- Removed a bunch of duplicate sounds. Thanks Mark for taking one for the team and seeing which ones were identical to others.
 
 ## Version 4.1.12
 ### New

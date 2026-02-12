@@ -1,14 +1,7 @@
 # Miriani-Next Changelog
 
-## Version 4.1.13 (In Progress)
-
-### Fixed
-- Possibly fixed autoupdating and ctrl+U updating on windows to update via client. 
-- Trimmed excess silence from flirt and why social sounds.
-- Trimmed silence from wink1.
-
+## Version 4.1.13
 ### New
-
 - Boosted volume on quarters ambiance.
 - Removed rocky5 and rocky6 ambiances as they were identical to other ones.
 - Added exiting from a ship into space airlock exit sound
@@ -17,6 +10,11 @@
 - Added new scream sound and two wink sounds.
 - Added sound for whine social.
 - Removed a bunch of duplicate sounds. Thanks Mark for taking one for the team and seeing which ones were identical to others.
+
+### Fixed
+- Possibly fixed autoupdating and ctrl+U updating on windows to work more consistently from inside the client.
+- Trimmed excess silence from flirt and why social sounds.
+- Trimmed silence from wink1.
 
 ## Version 4.1.12
 ### New

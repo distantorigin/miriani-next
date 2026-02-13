@@ -237,6 +237,10 @@ function formatScanOutput()
   output = string.gsub(output, "%s+is%s+units", " units") -- Remove "is units"
   output = string.gsub(output, "\"\"", "")      -- Remove empty quotes
   output = string.gsub(output, "%(%)%s*", "")   -- Remove empty parens
+  -- Fix singular/plural for "units" (e.g., "1 units" -> "1 unit")
+  output = string.gsub(output, "(%d+) units", function(n)
+    if n == "1" then return "1 unit" else return n .. " units" end
+  end)
 
   -- Clean up multiple spaces and trailing periods
   output = string.gsub(output, "%s+", " ")

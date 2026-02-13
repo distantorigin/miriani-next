@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.14 (In Progress)
+
+### Fixed
+- Fixed scan output showing "1 units away" instead of "1 unit away" when an object is exactly 1 unit away.
+
 ## Version 4.1.13
 ### New
 - Boosted volume on quarters ambiance.

@@ -12,6 +12,7 @@
 
 ### Fixed
 - Fixed scan output showing "1 units away" instead of "1 unit away" when an object is exactly 1 unit away.
+- Fixed scan misidentifying planets (e.g. Class Marine) as stars when their classification began with a star classification letter.
 
 ## Version 4.1.13
 ### New

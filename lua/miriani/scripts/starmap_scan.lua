@@ -134,7 +134,7 @@ function formatScanOutput()
     end
   elseif scanData.object_type == "Video Probe" or scanData.object_type == "Interdictor" then
     objectType = scanData.object_type == "Video Probe" and "Probe" or "Interdictor"
-  elseif scanData.classification and string.match(scanData.classification or "", "[OBAFGKM]") then
+  elseif scanData.classification and string.match(scanData.classification or "", "^[OBAFGKM]$") then
     objectType = "Star"
   elseif scanData.orbiting then
     objectType = "Moon"

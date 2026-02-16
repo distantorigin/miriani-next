@@ -3,6 +3,7 @@
 ## Version 4.1.14 (In Progress)
 
 ### New
+- Mute and speech are now reset when reloading the scripts, similarly to Do Not Disturb.
 - Update MUSHclient to version distantorigin.2:
   - Added dark mode support for the UI.
   - Added MCCP4 (Zstandard) compression support (telopt 88).

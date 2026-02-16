@@ -9,6 +9,7 @@
   - Added MCCP4 (Zstandard) compression support (telopt 88).
   - Upgraded accessible output viewer to RichEdit 4.1 for better performance.
   - Disabled the WIP plugin permission system for sensitive options (will revisit later).
+  - Added a new screech sound (Contributed by Gage)
 
 ### Fixed
 - Fixed scan output showing "1 units away" instead of "1 unit away" when an object is exactly 1 unit away.

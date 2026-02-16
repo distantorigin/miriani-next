@@ -6,8 +6,7 @@
 - Update MUSHclient to version distantorigin.2:
   - Added dark mode support for the UI.
   - Added MCCP4 (Zstandard) compression support (telopt 88).
-  - Upgraded accessible output viewer to RichEdit 4.1 for better performance and modern text rendering.
-  - Improved accessible output viewer behavior and reliability.
+  - Upgraded accessible output viewer to RichEdit 4.1 for better performance.
   - Disabled the WIP plugin permission system for sensitive options (will revisit later).
 
 ### Fixed

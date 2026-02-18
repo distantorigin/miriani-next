@@ -1313,7 +1313,8 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    regexp="y"
    send_to="12"
   >
-  <send>mplay("ship/misc/starWavewarp")</send>
+  <send>mplay("ship/misc/starWavewarp")
+mplay("ship/computer/warning", "computer")</send>
   </trigger>
 
   <trigger

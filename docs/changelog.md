@@ -11,6 +11,7 @@
   - Disabled the WIP plugin permission system for sensitive options (will revisit later).
   - Added a new shriek sound (Contributed by Gage)
 - Added another male shriek sound.
+- Added computer warning sound when wavewarping stars.
 
 ### Fixed
 - Fixed scan output showing "1 units away" instead of "1 unit away" when an object is exactly 1 unit away.

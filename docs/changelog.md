@@ -1,17 +1,15 @@
 # Miriani-Next Changelog
 
-## Version 4.1.14 (In Progress)
-
+## Version 4.1.14
 ### New
 - Mute and speech are now reset when reloading the scripts, similarly to Do Not Disturb.
 - Update MUSHclient to version distantorigin.2:
-  - Added dark mode support for the UI.
+  - Added dark mode support for most of the UI. (Preferences coming soon!)
   - Added MCCP4 (Zstandard) compression support (telopt 88).
   - Upgraded accessible output viewer to RichEdit 4.1 for better performance.
-  - Disabled the WIP plugin permission system for sensitive options (will revisit later).
   - Added a new shriek sound (Contributed by Gage)
 - Added another male shriek sound.
-- Added computer warning sound when wavewarping stars.
+- Added the computer warning sound when wavewarping stars.
 
 ### Fixed
 - Fixed scan output showing "1 units away" instead of "1 unit away" when an object is exactly 1 unit away.

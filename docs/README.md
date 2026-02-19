@@ -98,7 +98,7 @@ Categorized message buffers that let you review specific types of messages witho
 - **Alt+Left/Right** - Switch between buffers (e.g., from "Communication" to "Combat")
 - **Alt+Up/Down** - Navigate through messages in the current buffer
 - **Alt+1-0** - Jump to the 1st-10th most recent message
-- **Alt+Q** - Cycle through your "quick buffers" (favorites)
+- **Alt+Q / Alt+Shift+Q** - Cycle forward/backward through your "quick buffers" (favorites)
 
 Configure which buffers are enabled under `conf buffers`. By default, useful buffers like Communication, Combat, and Private comms are enabled.
 
@@ -472,8 +472,9 @@ This is a mostly complete reference of keyboard shortcuts. For the most up-to-da
 | Alt+Backslash | Search buffer for typed text (Shift = search from top) |
 | Alt+Shift+Enter | Copy current buffer to notepad |
 | Alt+Shift+T | Toggle timestamp announcements |
-| Alt+Q | Cycle through quick buffers |
-| Alt+Shift+Q | Add/remove buffer from quick list |
+| Alt+Q | Cycle forward through quick buffers |
+| Alt+Shift+Q | Cycle backward through quick buffers |
+| Ctrl+Alt+Q | Add/remove buffer from quick list |
 
 **Output Window**
 | Shortcut | Action |
@@ -507,7 +508,7 @@ See the [changelog](/docs/changelog.md) for a comprehensive list of changes sinc
 - Terminal-based configuration system (`conf`) - navigate menus with number or text selection
 - Automatic daily log rotation with full-text search (`lg find`)
 - Enhanced scan system with filters, single-line formatting, and scan history
-- Channel history with infinite scrollback, quick buffer cycling (Alt+Q), and search
+- Channel history with infinite scrollback, quick buffer cycling (Alt+Q/Alt+Shift+Q), and search
 - Automatic login with character selection
 - Do Not Disturb mode with wake-on-red-alert option
 

@@ -1,5 +1,9 @@
 # Miriani-Next Changelog
 
+## Version 4.1.15 (In Progress)
+### New
+- Quick buffers now support backward cycling with Alt+Shift+Q; Ctrl+Alt+Q is now used to add/remove them.
+
 ## Version 4.1.14
 ### New
 - Mute and speech are now reset when reloading the scripts, similarly to Do Not Disturb.

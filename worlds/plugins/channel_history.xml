@@ -37,8 +37,9 @@ alt+shift+enter; copy current buffer to a notepad
 alt + shift + t: toggle timestamp announcements
 
 **NEW QUICK BUFFER SYSTEM:**
-Alt + Q: Cycle through your quick list of buffers endlessly
-Alt + Shift + Q: Add/remove current buffer from quick list, or remove missing buffers after "not found" messages
+Alt + Q: Cycle forward through your quick list of buffers
+Alt + Shift + Q: Cycle backward through your quick list of buffers
+Ctrl + Alt + Q: Add/remove current buffer from quick list, or remove missing buffers after "not found" messages
 Commands: history_quicklist, history_quickclear
 
 CHANGELOG:
@@ -219,8 +220,18 @@ Execute("tts_interrupt You will now hear an approximate time after every message
 end</send>
   </alias>
   <alias
-   script="history_quickcycle"
-   match="history_quickcycle"
+   script="history_quickcycle_forward"
+   match="history_quickcycle_forward"
+   enabled="y"
+   omit_from_command_history="y"
+   omit_from_log="y"
+   omit_from_output="y"
+   sequence="100"
+  >
+  </alias>
+  <alias
+   script="history_quickcycle_back"
+   match="history_quickcycle_back"
    enabled="y"
    omit_from_command_history="y"
    omit_from_log="y"
@@ -461,8 +472,9 @@ AcceleratorTo("alt+shift+\\","history_find(0)",12)
 Accelerator("alt+shift+`","history_catsearch")
 Accelerator("alt+`","history_catsearch")
 Accelerator("alt+shift+t","timestamps")
-Accelerator("alt+q","history_quickcycle")
-Accelerator("alt+shift+q","history_quicktoggle")
+Accelerator("alt+q","history_quickcycle_forward")
+Accelerator("alt+shift+q","history_quickcycle_back")
+Accelerator("ctrl+alt+q","history_quicktoggle")
 
 -- Helper function to delete a buffer by name (returns true if found and deleted)
 function delete_buffer_by_name(cat)
@@ -1275,9 +1287,9 @@ function apply_category_order()
 end
 
 -- Cycle through quick buffers with Alt+Q
-function history_quickcycle(name, line, wc)
+function history_quickcycle_forward(name, line, wc)
   if #quick_buffers == 0 then
-    say("No buffers in quick list. Use Alt+Shift+Q to add the current buffer.")
+    say("No buffers in quick list. Use Ctrl+Alt+Q to add the current buffer.")
     return
   end
 
@@ -1293,7 +1305,7 @@ function history_quickcycle(name, line, wc)
       end
     end
     last_not_found_buffer = buffer_name
-    say("Buffer " .. buffer_name .. " not found. Press Alt+Shift+Q to remove it.")
+    say("Buffer " .. buffer_name .. " not found. Press Ctrl+Alt+Q to remove it.")
     return
   end
 
@@ -1316,10 +1328,53 @@ function history_quickcycle(name, line, wc)
   end
 
   last_not_found_buffer = buffer_name
-  say("Buffer " .. buffer_name .. " not found. Press Alt+Shift+Q to remove it.")
+  say("Buffer " .. buffer_name .. " not found. Press Ctrl+Alt+Q to remove it.")
 end
 
--- Toggle current buffer in/out of quick buffers list with Alt+Shift+Q
+-- Cycle backward through quick buffers with Alt+Shift+Q
+function history_quickcycle_back(name, line, wc)
+  if #quick_buffers == 0 then
+    say("No buffers in quick list. Use Ctrl+Alt+Q to add the current buffer.")
+    return
+  end
+
+  if #quick_buffers == 1 then
+    local buffer_name = quick_buffers[1]
+    for i, cat in ipairs(categories) do
+      if cat == buffer_name then
+        current_category = i
+        ensure_index()
+        announce_status()
+        return
+      end
+    end
+    last_not_found_buffer = buffer_name
+    say("Buffer " .. buffer_name .. " not found. Press Ctrl+Alt+Q to remove it.")
+    return
+  end
+
+  -- Multiple buffers, cycle backward
+  quick_buffer_index = quick_buffer_index - 1
+  if quick_buffer_index < 1 then
+    quick_buffer_index = #quick_buffers
+  end
+
+  local buffer_name = quick_buffers[quick_buffer_index]
+
+  for i, cat in ipairs(categories) do
+    if cat == buffer_name then
+      current_category = i
+      ensure_index()
+      announce_status()
+      return
+    end
+  end
+
+  last_not_found_buffer = buffer_name
+  say("Buffer " .. buffer_name .. " not found. Press Ctrl+Alt+Q to remove it.")
+end
+
+-- Toggle current buffer in/out of quick buffers list
 function history_quicktoggle(name, line, wc)
   -- Check if we should remove the last not-found buffer
   if last_not_found_buffer then

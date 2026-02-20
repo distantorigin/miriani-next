@@ -5,7 +5,9 @@
 - Quick buffers now support backward cycling with Alt+Shift+Q; Ctrl+Alt+Q is now used to add/remove them.
 - Added a short range communication buffer.
 - Added 'vol prev' command to cycle backward through volume categories, matching the existing 'vol next'.
-- Hull damage and average component damage are now saved when scanning ships. Press Ctrl+Shift+H to repeat the last hull damage and Ctrl+Shift+D for component damage.
+- Hull damage and average component damage are now saved when scanning ships. Press Ctrl+H to repeat the last hull damage and Ctrl+D for component damage.
+### Changed
+- Moved Do Not Disturb from Ctrl+D to Ctrl+Shift+D.
 ### Fixed
 - Fixed cries and cry so they both call the cry sound
 

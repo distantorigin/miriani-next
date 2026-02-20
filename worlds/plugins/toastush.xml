@@ -488,7 +488,7 @@ AcceleratorTo("CTRL + F9", [[
   mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
   config:save()
 ]], script)
-AcceleratorTo("CTRL+D", 'toggle_dnd()', script)
+AcceleratorTo("CTRL+SHIFT+D", 'toggle_dnd()', script)
 AcceleratorTo("F11", 'decrease_attribute("volume")', script)
 AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
@@ -540,7 +540,7 @@ AcceleratorTo("SHIFT+Esc", [[
 Accelerator("alt+space", "altspace")
 Accelerator("CTRL+e", "checkrepairtimer")
 
-AcceleratorTo("CTRL+SHIFT+H", [[
+AcceleratorTo("CTRL+H", [[
   if lastScannedHullDamage then
     Execute("tts_interrupt Hull: " .. lastScannedHullDamage)
   else
@@ -548,7 +548,7 @@ AcceleratorTo("CTRL+SHIFT+H", [[
   end
 ]], script)
 
-AcceleratorTo("CTRL+SHIFT+D", [[
+AcceleratorTo("CTRL+D", [[
   if lastScannedComponentDamage then
     Execute("tts_interrupt Components: " .. lastScannedComponentDamage)
   else

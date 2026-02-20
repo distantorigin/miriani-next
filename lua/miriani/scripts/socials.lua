@@ -9,6 +9,20 @@ local social_aliases = {
   ["sock"] = "punch",
   ["hit"] = "punch",
   ["pop"] = "punch",
+  ["puke"] = "vomit",
+  ["barf"] = "vomit",
+  ["hurl"] = "vomit",
+  ["spew"] = "vomit",
+  ["upchuck"] = "vomit",
+  ["lurch"] = "vomit",
+  ["yak"] = "vomit",
+  ["ralph"] = "vomit",
+  ["splutter"] = "vomit",
+  ["yark"] = "vomit",
+  ["splat"] = "vomit",
+  ["retch"] = "vomit",
+  ["hurf"] = "vomit",
+  ["sickup"] = "vomit",
 }
 
 -- Socials database
@@ -47,7 +61,6 @@ local socials = {
 
   -- Distress sounds
   cry       = {genders = {"male", "female"}, category = "distress"},
-  cries       = {genders = {"male", "female"}, category = "distress", sound = "cry"},
   gasp      = {genders = {"male", "female"}, category = "distress"},
   moan      = {genders = {"male", "female"}, category = "distress"},
   screech   = {genders = {"neuter"}, category = "distress"},
@@ -71,33 +84,19 @@ yelp      = {genders = {"neuter"}, category = "distress"},
   sneeze    = {genders = {"male", "female"}, category = "reflex"},
   snore     = {genders = {"neuter"}, category = "reflex"},
   snort     = {genders = {"neuter"}, category = "reflex"},
-  splutter  = {genders = {"male", "female"}, category = "reflex"},
   swallow   = {genders = {"neuter"}, category = "reflex"},
   throatfix = {genders = {"male"}, category = "reflex"},
   yawn      = {genders = {"male", "female"}, category = "reflex"},
 
   -- Bodily sounds (gross/bodily functions)
-  barf = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   belch     = {genders = {"neuter"}, category = "bodily"},
   bubble    = {genders = {"neuter"}, category = "bodily"},
   burp      = {genders = {"neuter"}, category = "bodily"},
   fart      = {genders = {"neuter"}, category = "bodily"},
   gag       = {genders = {"neuter"}, category = "bodily"},
-  hurf = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
-  hurl = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
-  lurch = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
-  puke      = {genders = {"neuter"}, category = "bodily"},
-  ralph = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
-  retch      = {genders = {"neuter"}, category = "bodily"},
-  sickup = {genders = {"neuter"}, category = "bodily", sound = "vomit"},  
-  spew = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   spit      = {genders = {"neuter"}, category = "bodily"},
-splat = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   squish    = {genders = {"neuter"}, category = "bodily"},
-  upchuck = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
   vomit     = {genders = {"neuter"}, category = "bodily"},
-yak = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
-yark = {genders = {"neuter"}, category = "bodily", sound = "vomit"},
 
   -- Physical sounds (movement/contact)
   bap       = {genders = {"neuter"}, category = "physical"},
@@ -274,6 +273,14 @@ function resolve_social_alias(action)
   -- Check if action exists directly in socials
   if socials[lower_action] then
     return lower_action
+  end
+
+  -- Try converting trailing 'ies' to 'y' for irregular plurals (e.g., "cries" -> "cry")
+  if string.sub(lower_action, -3) == "ies" then
+    local singular = string.sub(lower_action, 1, -4) .. "y"
+    if socials[singular] or social_aliases[singular] then
+      return social_aliases[singular] or singular
+    end
   end
 
   -- Try stripping trailing 'es' for pluralized forms (e.g., "belches" -> "belch")

@@ -419,7 +419,7 @@ show_paralyzed(roundtime, stuntime)
   <alias
    enabled="y"
    name="VolumeControl"
-   match="^vol(?:ume)?\s+(up|down|next)$"
+   match="^vol(?:ume)?\s+(up|down|next|prev)$"
    regexp="y"
    send_to="12"
    omit_from_log="y"
@@ -433,6 +433,8 @@ show_paralyzed(roundtime, stuntime)
       decrease_attribute("volume")
     elseif action == "next" then
       forward_cycle_audio_groups()
+    elseif action == "prev" then
+      previous_cycle_audio_groups()
     end
   </send>
   </alias>

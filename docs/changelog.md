@@ -4,6 +4,7 @@
 ### New
 - Quick buffers now support backward cycling with Alt+Shift+Q; Ctrl+Alt+Q is now used to add/remove them.
 - Added a short range communication buffer.
+- Added 'vol prev' command to cycle backward through volume categories, matching the existing 'vol next'.
 ### Fixed
 - Fixed cries and cry so they both call the cry sound
 

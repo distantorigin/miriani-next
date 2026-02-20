@@ -3,6 +3,8 @@
 ## Version 4.1.15 (In Progress)
 ### New
 - Quick buffers now support backward cycling with Alt+Shift+Q; Ctrl+Alt+Q is now used to add/remove them.
+### Fixed
+- Fixed cries and cry so they both call the cry sound
 
 ## Version 4.1.14
 ### New

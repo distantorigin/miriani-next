@@ -47,6 +47,7 @@ local socials = {
 
   -- Distress sounds
   cry       = {genders = {"male", "female"}, category = "distress"},
+  cries       = {genders = {"male", "female"}, category = "distress", sound = "cry"},
   gasp      = {genders = {"male", "female"}, category = "distress"},
   moan      = {genders = {"male", "female"}, category = "distress"},
   screech   = {genders = {"neuter"}, category = "distress"},

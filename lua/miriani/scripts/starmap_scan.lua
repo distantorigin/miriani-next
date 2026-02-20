@@ -530,6 +530,13 @@ mplay("ship/computer/scan", "other")
    local key = string.lower(string.gsub(fieldName, " ", "_"))
    scanData[key] = fieldValue
 
+   -- Save hull and component damage for quick recall
+   if fieldName == "Hull Damage" then
+     lastScannedHullDamage = fieldValue
+   elseif fieldName == "Average Component Damage" then
+     lastScannedComponentDamage = fieldValue
+   end
+
    -- Track last scanned coordinates and update status bar
    if fieldName == "Coordinates" then
      lastScannedCoords = fieldValue

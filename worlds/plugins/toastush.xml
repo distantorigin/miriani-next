@@ -540,6 +540,22 @@ AcceleratorTo("SHIFT+Esc", [[
 Accelerator("alt+space", "altspace")
 Accelerator("CTRL+e", "checkrepairtimer")
 
+AcceleratorTo("CTRL+SHIFT+H", [[
+  if lastScannedHullDamage then
+    Execute("tts_interrupt Hull: " .. lastScannedHullDamage)
+  else
+    Execute("tts_interrupt No hull damage data")
+  end
+]], script)
+
+AcceleratorTo("CTRL+SHIFT+D", [[
+  if lastScannedComponentDamage then
+    Execute("tts_interrupt Components: " .. lastScannedComponentDamage)
+  else
+    Execute("tts_interrupt No component damage data")
+  end
+]], script)
+
 
 
 

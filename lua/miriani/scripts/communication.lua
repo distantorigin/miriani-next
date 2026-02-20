@@ -181,7 +181,7 @@ ImportXML([=[
 
    if channel_name == "Short-range Communication" then
      -- Keep full name for short-range
-     sound_name = "short"
+     sound_name = "short_range"
    elseif channel_name == "General Communication" then
      -- Shorten General Communication to just General
      display_name = "General"

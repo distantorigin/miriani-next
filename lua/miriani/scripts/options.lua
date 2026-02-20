@@ -106,6 +106,7 @@ local options = {
   -- default:
   communication_buffer = {descr="Communication (all channels).", value="yes", group="buffers", type="bool"},
   private_buffer = {descr="Private communication.", value="yes", group="buffers", type="bool"},
+  short_range_buffer = {descr="Short-range Communication.", value="yes", group="buffers", type="bool"},
   combat_buffer = {descr="Combat.", value="yes", group="buffers", type="bool"},
   general_buffer = {descr="General communication.", value="yes", group="buffers", type="bool"},
   url_buffer = {descr="URLs (http, mailto, gofer, etc).", value="yes", group="buffers", type="bool"},

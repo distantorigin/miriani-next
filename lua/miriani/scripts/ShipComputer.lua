@@ -618,6 +618,10 @@ ImportXML([=[
    -- Always play control room sound for control room messages
    if control_room_message then
      mplay("ship/computer/control", "computer")
+     -- Play interdiction sound for GATE interruption relayed outside CR
+     if string.find(action_message, "has been interrupted") then
+       mplay("ship/computer/error", "computer")
+     end
      -- Also check for Warning/Alert in the control room content
      if PlayComputerSound and (string.find(action_message, "Warning") or string.find(action_message, "Alert")) then
        mplay("ship/computer/warning", "computer")

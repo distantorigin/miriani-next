@@ -476,6 +476,15 @@ mplay("ship/computer/scan", "other")
      -- Always generate and store formatted output
      local formatted = formatScanOutput()
 
+     -- Play Praelor alliance sounds
+     if scanData.alliance then
+       if scanData.alliance == "Krenelia" then
+         mplay("ship/computer/praelorFriend", "notification")
+       elseif scanData.alliance == "Ontanka" or scanData.alliance == "Praelor" then
+         mplay("ship/computer/praelorEnemy", "notification")
+       end
+     end
+
      -- Store in scan channel buffer (but not when filtering)
      if not scanFiltering then
        channel("scan", formatted, {"scan"})

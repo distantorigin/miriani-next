@@ -492,9 +492,9 @@ mplay("ship/computer/scan", "other")
      -- Play Praelor alliance sounds
      if scanData.alliance then
        if scanData.alliance == "Krenelia" then
-         mplay("ship/computer/praelorFriend", "notification")
+         mplay("ship/computer/praelorFriend", "other")
        elseif scanData.alliance == "Ontanka" or scanData.alliance == "Praelor" then
-         mplay("ship/computer/praelorEnemy", "notification")
+         mplay("ship/computer/praelorEnemy", "other")
        end
      end
 

@@ -7,10 +7,12 @@
 - Added 'vol prev' command to cycle backward through volume categories, matching the existing 'vol next'.
 - Hull damage and average component damage are now saved when scanning ships. Press Ctrl+H to repeat the last hull damage and Ctrl+D for component damage.
 - Added sound for picking up sanitation drones.
-- Play distinct sounds when scanning Krenelia (friendly) vs Ontanka/Praelor (enemy) ships.
-- Play interdiction sound when GATE travel is interrupted outside comms range.
+- Play distinct sounds when scanning Krenelia (friendly) vs Ontanka (enemy) ships.
+- Play error sound indiscriminately when a piped computer announcement contains "has been interrupted", hopefully covering all GATE/NAVI messages that may result.
+
 ### Changed
 - Moved Do Not Disturb from Ctrl+D to Ctrl+Shift+D.
+
 ### Fixed
 - Fixed cries and cry so they both call the cry sound
 

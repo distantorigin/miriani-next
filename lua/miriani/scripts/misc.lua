@@ -1256,6 +1256,16 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   >
   <send>mplay("social/neuter/swallow")</send>
 </trigger>
+  <trigger
+   enabled="y"
+   match="You make a grab for .+ sanitation drone. The drone makes a loud buzzing noise and you feel a sudden jolt of electricity\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/sanitationzap")</send>
+</trigger>
+
 </triggers>
 ]=])
 

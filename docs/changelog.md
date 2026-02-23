@@ -6,6 +6,7 @@
 - Added a short range communication buffer.
 - Added 'vol prev' command to cycle backward through volume categories, matching the existing 'vol next'.
 - Hull damage and average component damage are now saved when scanning ships. Press Ctrl+H to repeat the last hull damage and Ctrl+D for component damage.
+- Added sound for picking up sanitation drones.
 ### Changed
 - Moved Do Not Disturb from Ctrl+D to Ctrl+Shift+D.
 ### Fixed

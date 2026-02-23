@@ -15,6 +15,7 @@
 
 ### Fixed
 - Fixed cries and cry so they both call the cry sound
+- Fixed up the permissiveness of the computer trigger so metafrequency transmissions (and other things) won't trigger holographic avatars.
 
 ## Version 4.1.14
 ### New

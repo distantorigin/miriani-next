@@ -92,15 +92,28 @@ function formatScanOutput()
         line = string.gsub(line, "%s*%[Organization:.-%]%s*$", "")
       end
 
+      -- Strip any remaining bracket tags
+      while string.match(line, "%[.-%]%s*$") do
+        line = string.gsub(line, "%s*%[.-%]%s*$", "")
+      end
+
       -- Now parse ship type, name, and alliance
       local shipType, shipName, alliance = string.match(line, "^[Tt]he%s+(.-)%s+\"([^\"]+)\"%s+%((.+)%)%s*$")
       if not shipName then
         -- Try without "The" prefix
         shipType, shipName, alliance = string.match(line, "^(.-)%s+\"([^\"]+)\"%s+%((.+)%)%s*$")
       end
+      if not shipName then
+        -- Try unquoted name with alliance, e.g. "Praelor Ontanka (Ontanka)"
+        local unquotedName, unquotedAlliance = string.match(line, "^(.-)%s+%((.+)%)%s*$")
+        if unquotedName then
+          shipName = unquotedName
+          alliance = unquotedAlliance
+        end
+      end
       if shipName then
         scanData.name = shipName
-        scanData.ship_type = shipType
+        scanData.ship_type = shipType or "unknown"
         scanData.alliance = alliance
       else
         -- Fallback: use object_name as ship name if we couldn't parse it

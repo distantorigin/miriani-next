@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.15 (In Progress)
+## Version 4.1.15
 ### New
 - Quick buffers now support backward cycling with Alt+Shift+Q; Ctrl+Alt+Q is now used to add/remove them.
 - Added a short range communication buffer.

@@ -383,18 +383,21 @@ ImportXML([=[
    local dashCount = string.len(line)
    local potentialName = scanData.potential_object_name
 
-   -- For starships, check if dashes match up to the parenthesis (not including what's after)
+   -- Check if dashes match the object name length
+   -- For starships, dashes match the name before the parenthesized class/alliance
+   -- For stations with descriptors like "Pax (Neutral Docking Station)",
+   -- dashes may match the full display name instead
    local nameBeforeParen = string.match(potentialName, "^(.-)%s+%(")
    local isValid = false
 
    if nameBeforeParen then
-     -- Starship: dash length should match name before parenthesis
      local nameLen = string.len(nameBeforeParen)
      if dashCount == nameLen then
        isValid = true
      end
-   else
-     -- Non-starship: dash length should match entire line
+   end
+
+   if not isValid then
      local lineLen = string.len(potentialName)
      if dashCount == lineLen then
        isValid = true
@@ -455,21 +458,23 @@ ImportXML([=[
    if scanData.potential_object_name then
      local potentialName = scanData.potential_object_name
 
-     -- For ships, check if dashes match up to the parenthesis
+     -- Try matching dashes to name before parens (ships), then full name (stations)
      local nameBeforeParen = string.match(potentialName, "^(.-)%s+%(")
+     local matched = false
+
      if nameBeforeParen then
-       local nameLen = string.len(nameBeforeParen)
-       if dashCount == nameLen then
-         scanData.object_name = potentialName
-         scanData.potential_object_name = nil
+       if dashCount == string.len(nameBeforeParen) then
+         matched = true
        end
-     else
-       -- For non-ships, check if dashes match the entire line
-       local lineLen = string.len(potentialName)
-       if dashCount == lineLen then
-         scanData.object_name = potentialName
-         scanData.potential_object_name = nil
-       end
+     end
+
+     if not matched and dashCount == string.len(potentialName) then
+       matched = true
+     end
+
+     if matched then
+       scanData.object_name = potentialName
+       scanData.potential_object_name = nil
      end
    end
 

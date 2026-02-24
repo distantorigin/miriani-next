@@ -1,5 +1,9 @@
 # Miriani-Next Changelog
 
+## Version 4.1.16 (In Progress)
+### Fixed
+- Fixed scanning stations with parenthesized names like "Pax (Neutral Docking Station)" producing no output.
+
 ## Version 4.1.15
 ### New
 - Quick buffers now support backward cycling with Alt+Shift+Q; Ctrl+Alt+Q is now used to add/remove them.

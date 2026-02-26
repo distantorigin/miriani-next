@@ -1,6 +1,9 @@
 # Miriani-Next Changelog
 
 ## Version 4.1.16 (In Progress)
+### Changed
+- Background ambiance option is now a tri-state setting: Off, Focused (default, previous behavior), or Always (keeps playing when the window is backgrounded).
+
 ### Fixed
 - Fixed scanning stations with parenthesized names like "Pax (Neutral Docking Station)" producing no output.
 - Bump MUSHclient to version distantorigin.3, fixing the find dialog in the accessible output window.

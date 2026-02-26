@@ -209,6 +209,7 @@ roomPatterns = {
   },
 
   general = {
+    {"Sandy Beach", "ocean"},
     {"Cave", "cave"},
     {"^Cell", "brig"},
     {"Cockpit$", "salvager"},

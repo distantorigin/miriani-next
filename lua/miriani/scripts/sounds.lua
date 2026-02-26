@@ -494,8 +494,11 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
       -- When foreground sounds is enabled, don't play any new sounds when not in focus (except ignore_focus bypass)
       return
     elseif group == "ambiance" then
-      -- When foreground sounds is disabled, still don't start new ambience when not in focus
-      return
+      -- Allow ambiance to play without focus if mode is "always"
+      local ambiance_mode = getAmbianceMode()
+      if ambiance_mode ~= "always" then
+        return
+      end
     end -- if
   end -- if
 
@@ -784,8 +787,9 @@ function pause_all_sounds()
     cleanup_group(group)
   end
 
-  -- Always pause ambience when losing focus (regardless of foreground sounds setting)
-  if streamtable["ambiance"] then
+  -- Only pause ambiance if not in "always" mode
+  local ambiance_mode = getAmbianceMode()
+  if ambiance_mode ~= "always" and streamtable["ambiance"] then
     for _, sound_data in ipairs(streamtable["ambiance"]) do
       if sound_data.stream then
         sound_data.stream:Pause()
@@ -814,9 +818,10 @@ end
 
 function resume_all_sounds()
   window_has_focus = true
-  
-  -- Always resume paused ambience when window regains focus (regardless of foreground sounds setting)
-  if streamtable["ambiance"] then
+
+  -- Only resume ambiance if it was actually paused (i.e., mode is not "always")
+  local ambiance_mode = getAmbianceMode()
+  if ambiance_mode ~= "always" and streamtable["ambiance"] then
     for _, sound_data in ipairs(streamtable["ambiance"]) do
       if sound_data.stream then
         sound_data.stream:Play()

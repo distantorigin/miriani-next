@@ -14,7 +14,7 @@ local options = {
   reset_counters_on_startup = {descr="Reset activity counters at startup.", value="yes", group="helpers", type="bool"},
   fc_sector_numbers = {descr="Show sector numbers instead of names in flight control messages.", value="no", group="helpers", type="bool"},
   show_point_calculations = {descr="Show point difference calculations when using your portable point unit.", value="yes", group="helpers", type="bool"},
-  background_ambiance = {descr="Play background ambiances.", value="yes", group="room", type="bool"},
+  background_ambiance = {descr="Play background ambiances.", value="focused", group="room", type="enum", options={"off", "focused", "always"}},
   foreground_sounds = {descr="Restrict sounds to only when window has focus.", value="no", group="general", type="bool"},
   -- Social sounds (master toggle and category toggles only - individual socials are generated dynamically from socials.lua)
   social_sounds = {descr="Enable all social sounds (master toggle).", value="yes", group="socials", type="bool"},

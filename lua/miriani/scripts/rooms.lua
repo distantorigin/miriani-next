@@ -405,14 +405,23 @@ end -- set_environment
 -- Track current ambiance to avoid repeating
 currentAmbianceFile = nil
 
+-- Normalize background_ambiance option value (handles legacy "yes"/"no" values)
+function getAmbianceMode()
+  local val = config:get_option("background_ambiance").value
+  if val == "yes" then return "focused" end
+  if val == "no" then return "off" end
+  return val
+end
+
 -- Check all conditions that would block ambiance playback
 function shouldPlayAmbiance()
   if not environment then return false end
-  if not focusWindow then return false end
   if cameraFeed then return false end
   if stunned then return false end
   if config:is_dnd() then return false end
-  if config:get_option("background_ambiance").value == "no" then return false end
+  local mode = getAmbianceMode()
+  if mode == "off" then return false end
+  if mode == "focused" and not focusWindow then return false end
   return true
 end
 
@@ -584,9 +593,10 @@ function restoreAmbiance()
   if not file then return end
 
   -- Basic checks that don't depend on environment state
-  if not focusWindow then return end
   if config:is_dnd() then return end
-  if config:get_option("background_ambiance").value == "no" then return end
+  local mode = getAmbianceMode()
+  if mode == "off" then return end
+  if mode == "focused" and not focusWindow then return end
 
   currentAmbianceFile = file
   mplay("ambiance/"..file, "ambiance", 1, nil, 1, 1, 0.8)

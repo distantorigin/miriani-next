@@ -138,6 +138,10 @@ function Config:init(options, audio)
                 value = "starships"
               elseif key == "scan_interrupt" and (value == "no" or value == false) then
                 value = "off"
+              elseif key == "background_ambiance" and (value == "yes" or value == true) then
+                value = "focused"
+              elseif key == "background_ambiance" and (value == "no" or value == false) then
+                value = "off"
               end
             end
             -- Keep the user's value but update metadata from defaults
@@ -184,6 +188,11 @@ function Config:init(options, audio)
               if key == "scan_interrupt" and (value == "yes" or value == true) then
                 value = "starships"
               elseif key == "scan_interrupt" and (value == "no" or value == false) then
+                value = "off"
+              -- Handle background_ambiance migration from boolean to enum
+              elseif key == "background_ambiance" and (value == "yes" or value == true) then
+                value = "focused"
+              elseif key == "background_ambiance" and (value == "no" or value == false) then
                 value = "off"
               end
             end

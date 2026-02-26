@@ -543,7 +543,7 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
     end
 
     dialog.menu({
-      title = string.format("Make a selection for %s", strip_trailing_punctuation(option.descr)),
+      title = strip_trailing_punctuation(option.descr),
       choices = choices,
       callback = function(result, reason)
         if result then

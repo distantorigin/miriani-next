@@ -12,7 +12,6 @@ ImportXML([=[
    regexp="y"
    send_to="12"
    sequence="10"
-   keep_evaluating="y"
   >
   <send>
 -- Check if dialog is active
@@ -47,11 +46,15 @@ if dialog and dialog.is_active() then
     end
   end
 
-  if not should_bypass then
-    -- Handle as dialog input
+  if should_bypass then
+    -- Temporarily disable this alias to avoid recursion, then re-inject the command
+    EnableAlias("dialog_input_handler", false)
+    Execute(input)
+    EnableAlias("dialog_input_handler", true)
+  else
+    -- Handle as dialog input (alias consumes the command, nothing sent to MUD)
     dialog.handle_input(input)
   end
-  -- With keep_evaluating=y, bypassed commands will be processed by their actual aliases, so reading history doesn't cancel out a menu.
 end
   </send>
   </alias>

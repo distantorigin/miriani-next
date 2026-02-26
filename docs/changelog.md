@@ -3,8 +3,6 @@
 ## Version 4.1.16 (In Progress)
 ### Changed
 - Background ambiance option is now a tri-state setting: Off, Focused (default, previous behavior), or Always (keeps playing when the window is backgrounded).
-
-###Changed
 - Anchored the trigger line for picking up a sanitation drone so no one can attempt spoofing it.
 
 ###New

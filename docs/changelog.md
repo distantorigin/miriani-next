@@ -3,7 +3,7 @@
 ## Version 4.1.16 (In Progress)
 ### New
 - Added a zap for witnessing someone pick up a sanitation drone. Now it literally hurts to watch.
-- Added AI generated NPC voices to select NPCs on Acrylon
+- Added AI generated NPC voices to NPCs on Acrylon, Angelus and Outreach
 - Bump to MUSHclient version distantorigin.4:
     - Forward accelerator keys from the accessible output window to the companion world.
   - Restore cursor position after Find dialog in output viewer.

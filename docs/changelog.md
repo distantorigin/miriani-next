@@ -4,6 +4,13 @@
 ### Changed
 - Background ambiance option is now a tri-state setting: Off, Focused (default, previous behavior), or Always (keeps playing when the window is backgrounded).
 
+###Changed
+- Anchored the trigger line for picking up a sanitation drone so no one can attempt spoofing it.
+
+###New
+- Added a zap for witnessing someone pick up a sanitation drone. Now it literally hurts to watch.
+- Added AI generated NPC voices to select NPCs on Acrylon
+
 ### Fixed
 - Fixed scanning stations with parenthesized names like "Pax (Neutral Docking Station)" producing no output.
 - Bump MUSHclient to version distantorigin.3, fixing the find dialog in the accessible output window.

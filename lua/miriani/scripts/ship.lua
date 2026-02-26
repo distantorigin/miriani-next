@@ -1347,6 +1347,19 @@ mplay("ship/computer/warning", "computer")</send>
   </send>
   </trigger>
 
+
+  <trigger
+   enabled="y"
+   group="ship"
+      match="^A fresh cloud of frozen water crystals rains down upon the room, drifting lazily down until it impacts the deck plating, where it immediately melts\. Seconds later, the sound of rushing air comes somewhere from within the walls\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/waterCrystals", "ship")
+  </send>
+  </trigger>
+
   <trigger
    enabled="y"
    group="ship"

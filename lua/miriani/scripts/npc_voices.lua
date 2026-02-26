@@ -33,7 +33,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("npc/harried_woman_prompt2", "npc", 1)</send>
+  <send>mplay("npc/harried_woman_end", "npc", 1)</send>
   </trigger>
 
   <trigger
@@ -44,7 +44,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("npc/harried_woman_prompt3", "npc", 1)</send>
+  <send>mplay("npc/harried_woman_prompt2", "npc", 1)</send>
   </trigger>
 
   <trigger
@@ -55,7 +55,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("npc/harried_woman_prompt4", "npc", 1)</send>
+  <send>mplay("npc/harried_woman_prompt3", "npc", 1)</send>
   </trigger>
 
   <trigger
@@ -77,7 +77,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("npc/charming_woman_prompt1", "npc", 1)</send>
+  <send>mplay("npc/charming_woman_end", "npc", 1)</send>
   </trigger>
 
   <trigger
@@ -111,6 +111,50 @@ ImportXML([=[
    sequence="100"
   >
   <send>mplay("npc/salesman_prompt3", "npc", 1)</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="npc_voices"
+   match="^A sales droid says, &quot;Input request for information\.&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("npc/sales_droid_intro", "npc", 1)</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="npc_voices"
+   match="^A sales droid says, &quot;You are welcome\.&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("npc/sales_droid_end", "npc", 1)</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="npc_voices"
+   match="^A pudgy looking clerk says, &quot;Welcome to Outreach! See any upgrades that interest you\?&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("npc/pudgy_clerk_intro", "npc", 1)</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="npc_voices"
+   match="^A pudgy looking clerk says, &quot;Not a problem\.&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("npc/pudgy_clerk_end", "npc", 1)</send>
   </trigger>
 
   </triggers>

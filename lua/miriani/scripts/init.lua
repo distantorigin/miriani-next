@@ -50,6 +50,7 @@ local namespace = {
   "devices", -- Device sounds and notifications (message board readers, etc.)
   "dialog_handlers", -- Dialog system input handlers
 "mcp", -- MCP protocol
+"npc_voices", -- AI generated NPC voices
 } -- namespace
 
 

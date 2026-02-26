@@ -5,6 +5,7 @@
 ImportXML([=[
 <aliases>
   <!-- Dialog input interceptor - only enabled when dialog is active -->
+  <!-- keep_evaluating="y" lets bypass commands (vol, history_, tts, etc.) flow naturally to their aliases -->
   <alias
    name="dialog_input_handler"
    enabled="n"
@@ -12,6 +13,7 @@ ImportXML([=[
    regexp="y"
    send_to="12"
    sequence="10"
+   keep_evaluating="y"
   >
   <send>
 -- Check if dialog is active
@@ -46,16 +48,28 @@ if dialog and dialog.is_active() then
     end
   end
 
-  if should_bypass then
-    -- Temporarily disable this alias to avoid recursion, then re-inject the command
-    EnableAlias("dialog_input_handler", false)
-    Execute(input)
-    EnableAlias("dialog_input_handler", true)
-  else
-    -- Handle as dialog input (alias consumes the command, nothing sent to MUD)
+  if not should_bypass then
+    -- Enable the consumer alias to stop this input from reaching the MUD
+    EnableAlias("dialog_input_consumer", true)
     dialog.handle_input(input)
   end
+  -- Bypass commands: do nothing here; keep_evaluating passes them to their actual aliases.
 end
+  </send>
+  </alias>
+
+  <!-- Consumes dialog input so it doesn't leak to the MUD via keep_evaluating -->
+  <!-- Enabled on-demand by dialog_input_handler for non-bypass commands only -->
+  <alias
+   name="dialog_input_consumer"
+   enabled="n"
+   match="^(.*)$"
+   regexp="y"
+   send_to="12"
+   sequence="11"
+  >
+  <send>
+EnableAlias("dialog_input_consumer", false)
   </send>
   </alias>
 

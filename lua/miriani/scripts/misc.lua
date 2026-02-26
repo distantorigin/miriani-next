@@ -1258,13 +1258,24 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
 </trigger>
   <trigger
    enabled="y"
-   match="You make a grab for .+ sanitation drone. The drone makes a loud buzzing noise and you feel a sudden jolt of electricity\.$"
+   match="^You make a grab for .+ sanitation drone. The drone makes a loud buzzing noise and you feel a sudden jolt of electricity\.$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>mplay("misc/sanitationzap")</send>
 </trigger>
+
+  <trigger
+   enabled="y"
+   match="^.+? makes a grab for a compact pink sanitation drone, only to be met with an electric shock from the drone's body\."
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/sanitationzap")</send>
+</trigger>
+
 
 </triggers>
 ]=])

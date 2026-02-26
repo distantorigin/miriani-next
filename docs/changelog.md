@@ -2,6 +2,8 @@
 
 ## Version 4.1.16 (In Progress)
 ### New
+- Added a zap for witnessing someone pick up a sanitation drone. Now it literally hurts to watch.
+- Added AI generated NPC voices to select NPCs on Acrylon
 - Bump to MUSHclient version distantorigin.4:
     - Forward accelerator keys from the accessible output window to the companion world.
   - Restore cursor position after Find dialog in output viewer.
@@ -9,10 +11,6 @@
 ### Changed
 - Background ambiance option is now a tri-state setting: Off, Focused (default, previous behavior), or Always (keeps playing when the window is backgrounded).
 - Anchored the trigger line for picking up a sanitation drone so no one can attempt spoofing it.
-
-###New
-- Added a zap for witnessing someone pick up a sanitation drone. Now it literally hurts to watch.
-- Added AI generated NPC voices to select NPCs on Acrylon
 
 ### Fixed
 - Fixed scanning stations with parenthesized names like "Pax (Neutral Docking Station)" producing no output.

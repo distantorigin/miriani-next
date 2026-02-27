@@ -1,5 +1,9 @@
 # Miriani-Next Changelog
 
+## Version 4.1.17
+### Fixed
+- Fix ambiance not immediately following power or config changes.
+
 ## Version 4.1.16
 ### New
 - Added a zap for witnessing someone pick up a sanitation drone. Now it literally hurts to watch.

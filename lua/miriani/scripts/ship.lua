@@ -29,7 +29,7 @@ ImportXML([=[
   >
   <send>
    mplay ("ship/move/enablePower", "ship")
-   if config:get_option("background_ambiance").value == "yes"
+   if getAmbianceMode() ~= "off"
    and environment then
      replicate_line(string.gsub(environment.line, "unpowered", "powered"))
    end -- if
@@ -48,7 +48,7 @@ ImportXML([=[
   >
   <send>
    mplay ("ship/move/disablePower", "ship")
-   if config:get_option("background_ambiance").value == "yes"
+   if getAmbianceMode() ~= "off"
    and environment then
      replicate_line(string.gsub(environment.line, "powered", "unpowered"))
    end -- if

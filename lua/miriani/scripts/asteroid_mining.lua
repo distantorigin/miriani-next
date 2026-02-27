@@ -249,7 +249,7 @@ ImportXML([=[
   >
   <send>
    mplay ("vehicle/togglePower", "vehicle")
-   if config:get_option("background_ambiance").value == "yes"
+   if getAmbianceMode() ~= "off"
    and environment then
      replicate_line(
      "%1" == "up" and string.gsub(environment.line, "unpowered", "powered") or string.gsub(environment.line, "powered", "unpowered"))

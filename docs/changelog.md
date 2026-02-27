@@ -2,8 +2,11 @@
 
 ## Version 4.1.17
 ### Fixed
-- Fix ambiance not immediately following power or config changes.
 - Fixed bug with disabling separate metafrequency buffers causing duplicate messages in the metaf buffer.
+- Fix ambiance not immediately following power or config changes.
+
+### New
+- Added ambiance for ferries.
 
 ## Version 4.1.16
 ### New

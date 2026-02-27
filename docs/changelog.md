@@ -1,20 +1,26 @@
 # Miriani-Next Changelog
 
-## Version 4.1.16 (In Progress)
+## Version 4.1.17
+### Fixed
+- Fix ambiance not immediately following power or config changes.
+- Fixed bug with disabling separate metafrequency buffers causing duplicate messages in the metaf buffer.
+
+## Version 4.1.16
 ### New
 - Added a zap for witnessing someone pick up a sanitation drone. Now it literally hurts to watch.
 - Added AI generated NPC voices to NPCs on Acrylon, Angelus and Outreach
 - Bump to MUSHclient version distantorigin.4:
-    - Forward accelerator keys from the accessible output window to the companion world.
+    - Forward accelerator keys from the accessible output window to the companion world. This means that things like perusing history will work while focused on the output field.
   - Restore cursor position after Find dialog in output viewer.
 
 ### Changed
-- Background ambiance option is now a tri-state setting: Off, Focused (default, previous behavior), or Always (keeps playing when the window is backgrounded).
+- Background ambiance (conf room 3) is now a tri-state setting: Off, Focused (default, previous behavior), or Always (keeps playing when the window is backgrounded).
 - Anchored the trigger line for picking up a sanitation drone so no one can attempt spoofing it.
 
 ### Fixed
+- Fixed the shorten communication option not working for ROOC and SOOC messages.
 - Fixed scanning stations with parenthesized names like "Pax (Neutral Docking Station)" producing no output.
-- Bump MUSHclient to version distantorigin.3, fixing the find dialog in the accessible output window.
+- Bump MUSHclient to version distantorigin.3, fixing the find dialog in the accessible output window to instantiate once again.
 
 ## Version 4.1.15
 ### New

@@ -1306,12 +1306,6 @@ function channel(name, line, wc)
       if separate_buffers and separate_buffers.value == "yes" then
         -- Use frequency/label-specific buffer (no need to check metaf_buffer)
         Execute("history_add " .. v .. "=" .. line)
-      else
-        -- Use single metaf buffer if it's enabled
-        local metaf_buffer = config:get_option("metaf_buffer")
-        if metaf_buffer and metaf_buffer.value == "yes" then
-          Execute("history_add metaf=" .. line)
-        end
       end
     elseif v == "metaf" then
       -- Regular metaf without frequency/label - only use if separate buffers is disabled

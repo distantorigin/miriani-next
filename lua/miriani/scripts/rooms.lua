@@ -174,6 +174,7 @@ roomNames = {
     ["Public Docking Bay"] = "landingpad",
     ["Recovery Room"] = "quarters",
     ["Sandy Clearing"] = "planet",
+    {"Small Wooden Ferry"} = "ferry",
     ["Starship Computer Services"] = "shadius",
     ["Swimming Pool"] = "pool",
     ["The Gift Garage"] = "planet",

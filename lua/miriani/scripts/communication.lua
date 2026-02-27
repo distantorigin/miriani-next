@@ -314,13 +314,34 @@ ImportXML([=[
    sequence="100"
   >
   <send>
+   local speaker = "%1"
+   local msg = "%3"
+
+   -- Apply shortening if enabled
+   local display_msg = msg
+   local sep = " "
+   if config:get_option("shorten_communication").value == "yes" then
+     local verb, rest = string.match(msg, '^(%a+),%s*(.+)$')
+     if verb and rest then
+       local unquoted = string.match(rest, '^"(.+)"$') or rest
+       local v = string.lower(verb)
+       if v == "says" or v == "say" or v == "asks" or v == "ask" or
+          v == "exclaims" or v == "exclaim" then
+         display_msg = unquoted
+         sep = ": "
+       else
+         display_msg = verb .. ": " .. unquoted
+       end
+     end
+   end
+
    if "%2" == "ship-wide" or "%2" == "structure-wide" then
-    print_color({"[SOOC] %1 ", "default"}, {"%3", "pub_comm"})
-    channel("sooc", "[SOOC] %1 %3", {"ooc", "communication"})
+    print_color({"[SOOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
+    channel("sooc", "[SOOC] " .. speaker .. " " .. msg, {"ooc", "communication"})
     mplay ("comm/sooc", "communication")
    else
-    print_color({"[ROOC] %1 ", "default"}, {"%3", "pub_comm"})
-   channel(name, "[ROOC] %1 %3", {"ooc", "communication"})
+    print_color({"[ROOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
+   channel(name, "[ROOC] " .. speaker .. " " .. msg, {"ooc", "communication"})
    mplay ("comm/rooc", "communication")
    end -- if ship wide
   </send>

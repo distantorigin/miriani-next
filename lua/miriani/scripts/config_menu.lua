@@ -553,6 +553,11 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
             local display_value = selected_value:gsub("^%l", string.upper)
             notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), display_value))
             config:save()
+
+            -- Update ambiance immediately when the setting changes
+            if option_key == "background_ambiance" then
+              updateAmbiance()
+            end
           end
         end
         -- Return to group menu

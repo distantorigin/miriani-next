@@ -13,6 +13,7 @@
 - Anchored the trigger line for picking up a sanitation drone so no one can attempt spoofing it.
 
 ### Fixed
+- Fixed the shorten communication option not working for ROOC and SOOC messages.
 - Fixed scanning stations with parenthesized names like "Pax (Neutral Docking Station)" producing no output.
 - Bump MUSHclient to version distantorigin.3, fixing the find dialog in the accessible output window.
 

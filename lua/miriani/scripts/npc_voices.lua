@@ -157,5 +157,27 @@ ImportXML([=[
   <send>mplay("npc/pudgy_clerk_end", "npc", 1)</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="npc_voices"
+   match="^Plump Paul looks up from .+?\. &quot;What can I get you\?&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("npc/plump_paul_intro", "npc", 1)</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="npc_voices"
+   match="^Plump Paul says, &quot;Coming right up\.&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("npc/plump_paul_end", "npc", 1)</send>
+  </trigger>
+
   </triggers>
 ]=])

@@ -1,12 +1,16 @@
 # Miriani-Next Changelog
 
 ## Version 4.1.17
-### Fixed
-- Fixed bug with disabling separate metafrequency buffers causing duplicate messages in the metaf buffer.
-- Fix ambiance not immediately following power or config changes.
-
 ### New
+- Added two NPC voice prompts for Plump Paul
 - Added ambiance for ferries.
+
+### Changed
+- Set the infamous "say" trigger to continue evaluating. This allows for continued scripting with other triggers. Report anything going horribly wrong.
+
+### Fixed
+- Fixed disabling separate metafrequency buffers causing duplicate messages in the metaf buffer.
+- Fix ambiance not immediately following power or config changes.
 
 ## Version 4.1.16
 ### New

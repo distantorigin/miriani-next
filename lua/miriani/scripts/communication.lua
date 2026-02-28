@@ -224,6 +224,7 @@ ImportXML([=[
    omit_from_output="y"
    send_to="14"
    sequence="100"
+   keep_evaluating="y"
   >
   <send>
    local speaker = "%1"

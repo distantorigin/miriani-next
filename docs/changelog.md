@@ -5,7 +5,7 @@
 - Updated games.lua to reflect accurate sound path following  misc sound re-organization
 -  Moved other game-related triggers to games.lua
 
-## Version 4.1.17
+## Version 4.1.18 (In Progress)
 ### New
 - Added all new Chicken Chase arcade sounds. Thanks to Mark for requesting. This one was fun.
 - Added two NPC voice prompts for Plump Paul
@@ -16,6 +16,9 @@
 
 ### Fixed
 - Fixed disabling separate metafrequency buffers causing duplicate messages in the metaf buffer.
+
+## Version 4.1.17
+### Fixed
 - Fix ambiance not immediately following power or config changes.
 
 ## Version 4.1.16

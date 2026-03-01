@@ -95,6 +95,17 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="games"
+   match="^Nice shot!  You nailed it right in the head!  The chicken explodes in a burst of feathers\. \d+ points?!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/chicken_chase_game_explode", "games", 1)</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
    match="^The screen flashes &quot;Game Over\.&quot;  Your final score is \d+$"
    regexp="y"
    send_to="12"

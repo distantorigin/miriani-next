@@ -51,6 +51,7 @@ local namespace = {
   "dialog_handlers", -- Dialog system input handlers
 "mcp", -- MCP protocol
 "npc_voices", -- AI generated NPC voices
+"games", -- Arcade and miscellaneous style games.
 } -- namespace
 
 

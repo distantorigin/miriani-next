@@ -2,6 +2,7 @@
 
 ## Version 4.1.17
 ### New
+- Added all new Chicken Chase arcade sounds. Thanks to Mark for requesting. This one was fun.
 - Added two NPC voice prompts for Plump Paul
 - Added ambiance for ferries.
 

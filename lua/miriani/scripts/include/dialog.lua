@@ -76,7 +76,7 @@ function Menu:handle_input(input)
 
   -- Handle abort
   if trimmed == "@abort" then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     Note(">> Command Aborted <<")
     -- Store callback and result, don't call yet
     self.result = {callback = self.callback, data = nil, reason = "aborted"}
@@ -94,7 +94,7 @@ function Menu:handle_input(input)
       self.result = {callback = self.callback, data = nil, reason = "blank"}
       return true
     else
-      mplay("misc/cancel")
+      mplay("misc/Uncategorized/cancel")
       Note("Invalid selection.")
       return true
     end
@@ -125,7 +125,7 @@ function Menu:handle_input(input)
   end
 
   if match_count == 0 then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     Note("Invalid selection.")
     self.result = {callback = self.callback, data = nil, reason = "invalid"}
     return true
@@ -141,7 +141,7 @@ function Menu:handle_input(input)
       Note(string.format("%d options match. Please choose one.", match_count))
     end
     self.matches = matches
-    mplay("misc/prompt")
+    mplay("misc/Uncategorized/prompt")
     self:display()
     return false
   end
@@ -183,7 +183,7 @@ function Prompt:handle_input(input)
 
   -- Handle abort
   if trimmed:lower() == "@abort" then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     Note(">> Command Aborted <<")
     self.result = {callback = self.callback, data = nil, reason = "aborted"}
     return true
@@ -253,7 +253,7 @@ function Confirm:handle_input(input)
   local trimmed = input:match("^%s*(.-)%s*$"):lower()
 
   if trimmed == "@abort" then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     Note(">> Command Aborted <<")
     self.result = {callback = self.callback, data = nil, reason = "aborted"}
     return true
@@ -290,7 +290,7 @@ function dialog.menu(options)
   -- Enable the dialog input interceptor alias
   EnableAlias("dialog_input_handler", true)
 
-  mplay("misc/prompt")
+  mplay("misc/Uncategorized/prompt")
   menu:display()
   return true
 end
@@ -310,7 +310,7 @@ function dialog.prompt(options)
   -- Enable the dialog input interceptor alias
   EnableAlias("dialog_input_handler", true)
 
-  mplay("misc/prompt")
+  mplay("misc/Uncategorized/prompt")
   prompt:display()
   return true
 end

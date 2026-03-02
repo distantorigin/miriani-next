@@ -276,7 +276,7 @@ local variant_defaults = {
   ["miriani/activity/archaeology/artifactHere.ogg"] = 1,
   ["miriani/vehicle/accelerate.ogg"] = 1,
   ["miriani/vehicle/decelerate.ogg"] = 1,
-  ["miriani/misc/jingleBell.ogg"] = 1,
+  ["miriani/misc/Santa Box Sounds/jingleBell.ogg"] = 1,
   ["miriani/ship/combat/weaponsLocked.ogg"] = 2,
   ["miriani/ship/misc/chime.ogg"] = 2,
   ["miriani/device/radio/detect.ogg"] = 1,
@@ -855,7 +855,7 @@ function forward_cycle_audio_groups()
     active_group = 1
   end
 
-  mplay("misc/mouseClick")
+  mplay("misc/Uncategorized/mouseClick")
   local group_name = volume_groups[active_group]
   local volume
 
@@ -874,7 +874,7 @@ function previous_cycle_audio_groups()
     active_group = #volume_groups
   end
 
-  mplay("misc/mouseClick")
+  mplay("misc/Uncategorized/mouseClick")
   local group_name = volume_groups[active_group]
   local volume
 
@@ -913,7 +913,7 @@ function increase_attribute(attribute)
         end
 
         Execute(string.format("tts_interrupt master %d%%", new_val))
-        mplay("misc/volume")
+        mplay("misc/Soundpack/volume")
         BroadcastPlugin(999, "audio_volume_changed|master," .. new_val)
       end
     else
@@ -945,7 +945,7 @@ function increase_attribute(attribute)
         end
 
         Execute(string.format("tts_interrupt %s %d%%", group_name, new_val))
-        mplay("misc/volume")
+        mplay("misc/Soundpack/volume")
         BroadcastPlugin(999, "audio_volume_changed|" .. group_name .. "," .. new_val)
       elseif attribute == "pan" then
         local current_val = config:get_attribute(group_name, "pan") or 0
@@ -985,7 +985,7 @@ function decrease_attribute(attribute)
         end
 
         Execute(string.format("tts_interrupt master %d%%", new_val))
-        mplay("misc/volume")
+        mplay("misc/Soundpack/volume")
         BroadcastPlugin(999, "audio_volume_changed|master," .. new_val)
       end
     else
@@ -1017,7 +1017,7 @@ function decrease_attribute(attribute)
         end
 
         Execute(string.format("tts_interrupt %s %d%%", group_name, new_val))
-        mplay("misc/volume")
+        mplay("misc/Soundpack/volume")
         BroadcastPlugin(999, "audio_volume_changed|" .. group_name .. "," .. new_val)
       elseif attribute == "pan" then
         local current_val = config:get_attribute(group_name, "pan") or 0
@@ -1038,7 +1038,7 @@ function toggle_mute()
   if was_muted then
     -- If currently muted, unmute first then play click
     local result = config:toggle_mute()
-    mplay("misc/mouseClick", "notification")
+    mplay("misc/Uncategorized/mouseClick", "notification")
     -- Restore current group volumes when unmuting (in case they changed while muted)
     for group, sounds in pairs(streamtable) do
       local master_vol = config:get_master_volume() or 100
@@ -1055,7 +1055,7 @@ function toggle_mute()
     end
   else
     -- If currently unmuted, play click then mute by setting volume to 0
-    mplay("misc/mouseClick", "notification")
+    mplay("misc/Uncategorized/mouseClick", "notification")
     local result = config:toggle_mute()
     -- Set volume to 0 for all currently playing sounds when muting (they continue playing silently)
     for group, sounds in pairs(streamtable) do

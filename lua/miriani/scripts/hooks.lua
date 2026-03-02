@@ -184,7 +184,7 @@ ImportXML([=[
   <send>
 
    if config:get_option("update_sound").value == "yes" then
-     mplay("misc/update", "notification", 1)
+     mplay("misc/Soundpack/update", "notification", 1)
    end -- if
 
    if IsPluginInstalled(UPDATE_ID) then

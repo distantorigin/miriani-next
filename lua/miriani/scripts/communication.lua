@@ -111,7 +111,7 @@ ImportXML([=[
    local item = "%4"
 
    -- Play auction bid sound
-   mplay("misc/bid", "notification")
+   mplay("misc/Transactions/bid", "notification")
 
    -- Format display text
    local display_text = bidder .. " has bid " .. amount .. " credits on auction " .. auction_num .. ": " .. item .. "!"
@@ -859,7 +859,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    mplay("misc/wake_up", "communication")
+    mplay("misc/Connections/wake_up", "communication")
   </send>
   </trigger>
 
@@ -872,7 +872,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    mplay("misc/sanin", "communication")
+    mplay("misc/Sanitation Drones/sanin", "communication")
   </send>
   </trigger>
 
@@ -885,7 +885,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    mplay("misc/sanout", "communication")
+    mplay("misc/Sanitation Drones/sanout", "communication")
   </send>
   </trigger>
 

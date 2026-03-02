@@ -121,7 +121,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/door%1")</send>
+  <send>mplay ("misc/Doors/door%1")</send>
   </trigger>
 
   <trigger
@@ -132,7 +132,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/deny")</send>
+  <send>mplay ("misc/Uncategorized/deny")</send>
   </trigger>
 
   <trigger
@@ -154,7 +154,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/paste")</send>
+  <send>mplay ("misc/Books and Papers/paste")</send>
   </trigger>
 
   <trigger
@@ -165,7 +165,7 @@ endScan()</send>
    send_to="12"
    sequence="75"
   >
-  <send>mplay("misc/prompt")</send>
+  <send>mplay("misc/Uncategorized/prompt")</send>
   </trigger>
 
   <trigger
@@ -176,7 +176,7 @@ endScan()</send>
    send_to="12"
    sequence="75"
   >
-  <send>mplay("misc/prompt")</send>
+  <send>mplay("misc/Uncategorized/prompt")</send>
   </trigger>
 
 
@@ -188,7 +188,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/cancel")</send>
+  <send>mplay ("misc/Uncategorized/cancel")</send>
   </trigger>
 
   <trigger
@@ -199,7 +199,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/cancel")
+  <send>mplay ("misc/Uncategorized/cancel")
   endScan()</send>
   </trigger>
 
@@ -212,7 +212,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/command")
+  <send>mplay("misc/Invalid Commands/command")
    endScan()
   </send>
   </trigger>
@@ -227,7 +227,7 @@ endScan()</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("misc/bioDoor")</send>
+  <send>mplay ("misc/Doors/bioDoor")</send>
   </trigger>
 
   <trigger
@@ -245,7 +245,7 @@ endScan()</send>
     fName = "stand"
    end -- if
 
-   mplay ("misc/"..fName)
+   mplay ("misc/Chairs/"..fName)
   </send>
   </trigger>
 
@@ -257,7 +257,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/mail")</send>
+  <send>mplay ("misc/Uncategorized/mail")</send>
   </trigger>
 
   <trigger
@@ -290,7 +290,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/notFound")</send>
+  <send>mplay ("misc/Uncategorized/notFound")</send>
   </trigger>
 
   <trigger
@@ -340,7 +340,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay ("misc/crumble")</send>
+  <send>mplay ("misc/Books and Papers/crumble")</send>
   </trigger>
 
   <trigger
@@ -373,7 +373,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/change")</send>
+  <send>mplay("misc/Uncategorized/change")</send>
   </trigger>
 
   <trigger
@@ -384,7 +384,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/joins")</send>
+  <send>mplay("misc/Groups/joins")</send>
   </trigger>
 
   <trigger
@@ -395,7 +395,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/disband")</send>
+  <send>mplay("misc/Groups/disband")</send>
   </trigger>
 
   <trigger
@@ -406,7 +406,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/cash")</send>
+  <send>mplay("misc/Transactions/cash")</send>
   </trigger>
 
   <trigger
@@ -557,7 +557,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/spam", "notification")</send>
+  <send>mplay("misc/Uncategorized/spam", "notification")</send>
   </trigger>
 
   <trigger
@@ -568,7 +568,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/certificate")</send>
+  <send>mplay("misc/Transactions/certificate")</send>
   </trigger>
 
   <trigger
@@ -579,7 +579,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/page")</send>
+  <send>mplay("misc/Books and Papers/page")</send>
   </trigger>
 
   <trigger
@@ -590,7 +590,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/liftButton")</send>
+  <send>mplay("misc/Lifts and Transports/liftButton")</send>
   </trigger>
 
   <trigger
@@ -601,7 +601,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/liftOpen")</send>
+  <send>mplay("misc/Lifts and Transports/liftOpen")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -612,8 +612,8 @@ endScan()</send>
    sequence="100"
   >
   <send>
-   mplay("misc/liftStop", "environment", 1, nil, nil, 1)
-   mplay("misc/liftOpen")
+   mplay("misc/Lifts and Transports/liftStop", "environment", 1, nil, nil, 1)
+   mplay("misc/Lifts and Transports/liftOpen")
    </send>
   </trigger>
 
@@ -627,9 +627,9 @@ endScan()</send>
   >
   <send>
    liftroom = room
-   mplay("misc/liftClose")
-   mplay("misc/liftStart", "loop")
-   mplay("misc/liftMoving", "environment", 1, nil, 1, 1)
+   mplay("misc/Lifts and Transports/liftClose")
+   mplay("misc/Lifts and Transports/liftStart", "loop")
+   mplay("misc/Lifts and Transports/liftMoving", "environment", 1, nil, 1, 1)
    </send>
   </trigger>
 
@@ -643,7 +643,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/ftlFall")</send>
+  <send>mplay("misc/Injuries and Malodies/ftlFall")</send>
   </trigger>
 
   <trigger
@@ -665,7 +665,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/droidHit")</send>
+  <send>mplay("misc/Uncategorized/droidHit")</send>
   </trigger>
 
   <trigger
@@ -675,7 +675,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/splash")</send>
+  <send>mplay("misc/Swimming Pool/splash")</send>
   </trigger>
 
   <trigger
@@ -685,7 +685,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/splash")</send>
+  <send>mplay("misc/Swimming Pool/splash")</send>
   </trigger>
 
   <trigger
@@ -695,7 +695,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/splash")</send>
+  <send>mplay("misc/Swimming Pool/splash")</send>
   </trigger>
 
   <trigger
@@ -705,7 +705,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/splash")</send>
+  <send>mplay("misc/Swimming Pool/splash")</send>
   </trigger>
 
   <trigger
@@ -715,7 +715,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/drown")</send>
+  <send>mplay("misc/Swimming Pool/drown")</send>
   </trigger>
 
   <trigger
@@ -726,7 +726,7 @@ endScan()</send>
    send_to="12"
   >
   <send>
-   mplay("misc/splash")
+   mplay("misc/Swimming Pool/splash")
 
    if (not getCurrentAmbiance())
    and environment then
@@ -785,7 +785,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/dumpDrink")</send>
+  <send>mplay("misc/Dishes and More/dumpDrink")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -794,7 +794,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/buckle")</send>
+  <send>mplay("misc/Chairs/buckle")</send>
   </trigger>
 
   <trigger
@@ -804,7 +804,7 @@ endScan()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/unbuckle")</send>
+  <send>mplay("misc/Chairs/unbuckle")</send>
   </trigger>
 
   <trigger
@@ -824,7 +824,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
  regexp="y"
  send_to="12"
 >
-  <send>mplay("misc/hitpuck", "other")</send>
+  <send>mplay("misc/Games/hitpuck", "other")</send>
 </trigger>
 
 <trigger
@@ -834,7 +834,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
  regexp="y"
  send_to="12"
 >
-  <send>mplay("misc/hitpuck", "other")</send>
+  <send>mplay("misc/Games/hitpuck", "other")</send>
 </trigger>
 
 
@@ -845,7 +845,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/pod", "other")</send>
+   <send>mplay("misc/Lifts and Transports/pod", "other")</send>
   </trigger>
 
   <trigger
@@ -855,7 +855,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/discardCash", "other")</send>
+   <send>mplay("misc/Transactions/discardCash", "other")</send>
   </trigger>
 
   <trigger
@@ -865,7 +865,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/transport%1", "other")</send>
+   <send>mplay("misc/Uncategorized/transport%1", "other")</send>
   </trigger>
 
   <trigger
@@ -876,7 +876,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    send_to="14"
    omit_from_output="y"
   >
-   <send>mplay("misc/hgLift", "other")</send>
+   <send>mplay("misc/Lifts and Transports/hgLift", "other")</send>
   </trigger>
 
   <trigger
@@ -886,7 +886,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/hgLift", "other")</send>
+   <send>mplay("misc/Lifts and Transports/hgLift", "other")</send>
   </trigger>
 
   <trigger
@@ -896,7 +896,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/breakBone", "other")</send>
+   <send>mplay("misc/Injuries and Malodies/breakBone", "other")</send>
   </trigger>
 
   <trigger
@@ -906,7 +906,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/flickLighter", "other")</send>
+   <send>mplay("misc/Uncategorized/flickLighter", "other")</send>
   </trigger>
 
   <trigger
@@ -916,7 +916,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/dragFollower", "other")</send>
+   <send>mplay("misc/Groups/dragFollower", "other")</send>
   </trigger>
 
   <trigger
@@ -926,7 +926,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/coinSpin", "other")</send>
+   <send>mplay("misc/Games/coinSpin", "other")</send>
   </trigger>
 
   <trigger
@@ -936,7 +936,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/slirp")</send>
+  <send>mplay("misc/Dishes and More/slirp")</send>
   </trigger>
 
   <trigger
@@ -946,7 +946,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/waterSlosh")</send>
+  <send>mplay("misc/Swimming Pool/waterSlosh")</send>
   </trigger>
 
   <trigger
@@ -956,7 +956,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/morph")</send>
+  <send>mplay("misc/Uncategorized/morph")</send>
   </trigger>
 
   <trigger
@@ -966,7 +966,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/shock")</send>
+  <send>mplay("misc/Injuries and Malodies/shock")</send>
   </trigger>
 
   <trigger
@@ -1019,7 +1019,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/shatter")</send>
+  <send>mplay("misc/Dishes and More/shatter")</send>
   </trigger>
 
   <trigger
@@ -1029,7 +1029,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/cash")</send>
+  <send>mplay("misc/Transactions/cash")</send>
   </trigger>
 
   <trigger
@@ -1039,7 +1039,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/tub")</send>
+  <send>mplay("misc/Bathroom/tub")</send>
   </trigger>
 
   <trigger
@@ -1049,7 +1049,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/waterSlosh")</send>
+  <send>mplay("misc/Swimming Pool/waterSlosh")</send>
   </trigger>
 
   <trigger
@@ -1069,7 +1069,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/fillBath")</send>
+  <send>mplay("misc/Bathroom/fillBath")</send>
   </trigger>
 
   <trigger
@@ -1079,7 +1079,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/drainBath")</send>
+  <send>mplay("misc/Bathroom/drainBath")</send>
   </trigger>
 
 
@@ -1090,7 +1090,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/strange")</send>
+  <send>mplay("misc/Uncategorized/strange")</send>
   </trigger>
 
   <trigger
@@ -1102,7 +1102,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    send_to="12"
   >
   <send>
-   mplay("misc/deny")
+   mplay("misc/Uncategorized/deny")
   </send>
   </trigger>
 
@@ -1114,7 +1114,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    send_to="12"
   >
   <send>
-   mplay("misc/morph")
+   mplay("misc/Uncategorized/morph")
   </send>
   </trigger>
 
@@ -1144,7 +1144,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    sequence="100"
   >
   <send>
-  mplay("misc/cash")
+  mplay("misc/Transactions/cash")
   </send>
   </trigger>
 
@@ -1164,7 +1164,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/leftPerson")</send>
+  <send>mplay("misc/Groups/leftPerson")</send>
   </trigger>
 <trigger
    enabled="y"
@@ -1172,7 +1172,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/leftPerson")</send>
+  <send>mplay("misc/Groups/leftPerson")</send>
   </trigger>
 <trigger
    enabled="y"
@@ -1180,7 +1180,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/leftPerson")</send>
+  <send>mplay("misc/Groups/leftPerson")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -1223,7 +1223,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/sanitationzap")</send>
+  <send>mplay("misc/Sanitation Drones/sanitationzap")</send>
 </trigger>
 
   <trigger
@@ -1233,7 +1233,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/sanitationzap")</send>
+  <send>mplay("misc/Sanitation Drones/sanitationzap")</send>
 </trigger>
 
   <trigger
@@ -1243,7 +1243,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/skillup", "notification")</send>
+   <send>mplay("misc/Uncategorized/skillup", "notification")</send>
   </trigger>
 
 

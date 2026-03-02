@@ -11,7 +11,7 @@ local variant_sounds = {
   {path = "miriani/vehicle/accelerate.ogg", name = "Vehicle Accelerate (Salvagers and ACVs)", default = 1},
   {path = "miriani/vehicle/decelerate.ogg", name = "Vehicle Decelerate (Salvagers and ACVs)", default = 1},
   {path = "miriani/activity/archaeology/artifactHere.ogg", name = "Archaeology Artifact Detected", default = 1},
-  {path = "miriani/misc/jingleBell.ogg", name = "Jingle Bells", default = 1},
+  {path = "miriani/misc/Santa Box Sounds/jingleBell.ogg", name = "Jingle Bells", default = 1},
   {path = "miriani/ship/misc/chime.ogg", name = "Airlock Chime", default = 2},
   {path = "miriani/device/radio/detect.ogg", name = "Radio Receiver Transmission Detected", default = 1}
 }
@@ -51,7 +51,7 @@ function config_menu.show_main()
   local main_menu = config:render_menu_list()
 
   if type(main_menu) ~= 'table' then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     notify("critical", "Unable to load configuration menu.")
     return
   end
@@ -441,7 +441,7 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
   end
 
   if not config:is_option(option_key) then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Invalid option: %s.", option_key))
     if not skip_menu then config_menu.show_group(group_name) end
     return
@@ -525,7 +525,7 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
   elseif opt_type == "enum" then
     -- Enum option - show menu of choices
     if not option.options or #option.options == 0 then
-      mplay("misc/cancel")
+      mplay("misc/Uncategorized/cancel")
       notify("critical", "No options defined for this enum.")
       if not skip_menu then config_menu.show_group(group_name) end
       return
@@ -711,7 +711,7 @@ function config_menu.find_and_edit(group_name, search_term)
     end
 
     -- If nothing matched, show error
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find social or category matching '%s'.", search_term))
     return
   end
@@ -742,7 +742,7 @@ function config_menu.find_and_edit(group_name, search_term)
       end
     end
 
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find sound group matching '%s'.", search_term))
     return
   end
@@ -768,7 +768,7 @@ function config_menu.find_and_edit(group_name, search_term)
       end
     end
 
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find sound variant matching '%s'.", search_term))
     return
   end
@@ -777,7 +777,7 @@ function config_menu.find_and_edit(group_name, search_term)
   local group_options = config:render_menu_list(actual_group_key)
 
   if type(group_options) ~= 'table' then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find group '%s'.", group_name))
     return
   end
@@ -814,7 +814,7 @@ function config_menu.find_and_edit(group_name, search_term)
   end
 
   if #matches == 0 then
-    mplay("misc/cancel")
+    mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find option matching '%s' in group '%s'.", search_term, group_name))
   elseif #matches == 1 then
     -- Single match - edit it

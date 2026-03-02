@@ -184,6 +184,20 @@ show_paralyzed(roundtime, stuntime)
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   name="updateAnnounced"
+   match="^Your soundpack has been updated to version '(.+?)'! You can download it here: .+$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="12"
+  >
+  <send>
+mplay("misc/Soundpack/updateAnnounced")
+notify("important", "A new version of Miriani-Next is available: version %1. Press Ctrl+U or type UPDATE to update now.")
+  </send>
+  </trigger>
+
 </triggers>
 
 <aliases>

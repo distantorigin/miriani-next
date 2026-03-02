@@ -838,46 +838,6 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
 </trigger>
 
 
- <trigger
-   enabled="y"
-   group="misc"
-   match="^.+? winds? up and sends? a ball down the lane\.(?:  Good luck\.)?$"
-   regexp="y"
-   send_to="12"
-  >
-   <send>mplay("misc/skeballRoll", "other")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   match="^A .+? skeeball machine announces, &quot;(?:.+? has \d+ points? with \d+ balls? remaining|Points: \d+\.  Balls left: \d+)\.&quot;$"
-   regexp="y"
-   send_to="12"
-  >
-   <send>mplay("misc/skeballScore", "other")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   match="^Game over\. .+? score (?:is|was) \d+(?: points?\.)?$"
-   regexp="y"
-   send_to="12"
-  >
-   <send>mplay("misc/skeballEnd", "other")</send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="misc"
-   match="^You suddenly feel more skilled in .+?!$"
-   regexp="y"
-   send_to="12"
-  >
-   <send>mplay("misc/skillup", "notification")</send>
-  </trigger>
-
   <trigger
    enabled="y"
    group="misc"
@@ -1275,6 +1235,16 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   >
   <send>mplay("misc/sanitationzap")</send>
 </trigger>
+
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^You suddenly feel more skilled in .+?!$"
+   regexp="y"
+   send_to="12"
+  >
+   <send>mplay("misc/skillup", "notification")</send>
+  </trigger>
 
 
 </triggers>

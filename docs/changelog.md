@@ -1,4 +1,9 @@
 # Miriani-Next Changelog
+## Version 4.1.18
+
+### Changed
+- Updated games.lua to reflect accurate sound path following  misc sound re-organization
+-  Moved other game-related triggers to games.lua
 
 ## Version 4.1.17
 ### New

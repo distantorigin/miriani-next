@@ -1,8 +1,11 @@
 # Miriani-Next Changelog
-## Version 4.1.19 (In Progress)
+## Version 4.1.19
+### New
+- Give up on Git-Cliff for now and make CI use the release notes from the changelog instead.
 
 ### Changed
 - Shorten communication option now also applies to buffer history.
+- Update many sound paths to point at their reorganized counterparts.
 
 ## Version 4.1.18
 

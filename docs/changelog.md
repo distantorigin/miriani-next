@@ -1,17 +1,19 @@
 # Miriani-Next Changelog
-## Version 4.1.18
+## Version 4.1.19 (In Progress)
 
 ### Changed
-- Updated games.lua to reflect accurate sound path following  misc sound re-organization
--  Moved other game-related triggers to games.lua
+- Shorten communication option now also applies to buffer history.
 
-## Version 4.1.18 (In Progress)
+## Version 4.1.18
+
 ### New
 - Added all new Chicken Chase arcade sounds. Thanks to Mark for requesting. This one was fun.
 - Added two NPC voice prompts for Plump Paul
 - Added ambiance for ferries.
 
 ### Changed
+- Updated games.lua to reflect accurate sound path following misc sound re-organization
+- Moved other game-related triggers to games.lua
 - Set the infamous "say" trigger to continue evaluating. This allows for continued scripting with other triggers. Report anything going horribly wrong.
 
 ### Fixed

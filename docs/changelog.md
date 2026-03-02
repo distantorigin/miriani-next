@@ -1,4 +1,9 @@
 # Miriani-Next Changelog
+
+## Version 4.1.20 (In Progress)
+### New
+- Replace the "Your soundpack has been updated to version 'x.y.z'! You can download it here: ..." text with something more relevant to Miriani-Next users.
+
 ## Version 4.1.19
 ### New
 - Give up on Git-Cliff for now and make CI use the release notes from the changelog instead.

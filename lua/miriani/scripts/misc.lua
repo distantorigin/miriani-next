@@ -373,7 +373,7 @@ endScan()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Uncategorized/change")</send>
+  <send>mplay("misc/hosts/change")</send>
   </trigger>
 
   <trigger

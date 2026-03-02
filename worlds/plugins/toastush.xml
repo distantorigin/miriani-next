@@ -110,7 +110,7 @@ As of October 13, 2025, Toastush-NG is now a hard fork of the Toastush soundpack
    local roundtime_option = config:get_option("roundtime")
    if (roundtime_option.value == "yes") and
    (roundtime == 1) then
-    mplay("misc/roundtime")
+    mplay("misc/Injuries and Malodies/roundtime")
    end -- if round time
 
 
@@ -319,7 +319,7 @@ show_paralyzed(roundtime, stuntime)
       config:set_option("foreground_sounds", "yes")
       Execute("tts_interrupt Sounds only when window has focus")
     end
-    mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
+    mplay("misc/Uncategorized/mouseClick", "notification", nil, nil, nil, nil, nil, true)
     config:save()
   </send>
   </alias>
@@ -485,7 +485,7 @@ AcceleratorTo("CTRL + F9", [[
     config:set_option("foreground_sounds", "yes")
     Execute("tts_interrupt Sounds only when window has focus")
   end
-  mplay("misc/mouseClick", "notification", nil, nil, nil, nil, nil, true)
+  mplay("misc/Uncategorized/mouseClick", "notification", nil, nil, nil, nil, nil, true)
   config:save()
 ]], script)
 AcceleratorTo("CTRL+SHIFT+D", 'toggle_dnd()', script)
@@ -878,7 +878,7 @@ function OnPluginBroadcast(msg, id, name, text)
   
   if id == "54846c23d8b15594e7eb4b8a" then
     if text=="output_boundary" then
-      mplay("misc/boundary")
+      mplay("misc/Uncategorized/boundary")
           end
   elseif id == "706cd88f4d441a81439bd421" or id == "79772f9b67c1e42f22a3eb95" then
     if msg == 777 then
@@ -906,9 +906,9 @@ function OnPluginBroadcast(msg, id, name, text)
         notepad_changelog(nil, nil, nil, files, channel)
       end
     elseif msg == 888 then
-      mplay("misc/updateAvailable")
+      mplay("misc/Soundpack/updateAvailable")
     elseif msg == 999 then
-      mplay("misc/alreadyUpToDate")
+      mplay("misc/Soundpack/alreadyUpToDate")
 end
   elseif id == "843d2f53cb3685465bda7d4c" then
     local message_type, data = text:match("([^|]+)|?(.*)")
@@ -1398,7 +1398,7 @@ end -- speech_interrupt
 function register()
   Send("#$#REGISTER_SOUNDPACK "..registry.." | "..VERSION.."\n")
   if not last_register_time or os.time() - last_register_time > 10 then
-    mplay("misc/negotiate", "notification")
+    mplay("misc/Soundpack/negotiate", "notification")
   end -- time
   last_register_time = os.time()
 end -- register

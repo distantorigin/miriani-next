@@ -3,6 +3,7 @@
 ## Version 4.1.20 (In Progress)
 ### New
 - Replace the "Your soundpack has been updated to version 'x.y.z'! You can download it here: ..." text with something more relevant to Miriani-Next users.
+- Added sounds for the hum social.
 
 ## Version 4.1.19
 ### New

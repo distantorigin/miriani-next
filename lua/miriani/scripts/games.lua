@@ -170,7 +170,7 @@ ImportXML([=[
 <trigger
    enabled="y"
    group="games"
-   match="After a few seconds, the sound of ravens cawing plays from a hidden speaker on a spiderweb-covered pyramidal machine as if in mockery\.$"
+   match="^After a few seconds, the sound of ravens cawing plays from a hidden speaker on a spiderweb-covered pyramidal machine as if in mockery\.$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -181,7 +181,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="games"
-   match="After a few seconds, a faint thud can be heard, and .+ falls into the retrieval slot at the bottom of a spiderweb-covered pyramidal machine\.(?: [A-Z][^.]{1,80}\.)?$"
+   match="^After a few seconds, a faint thud can be heard, and .+ falls into the retrieval slot at the bottom of a spiderweb-covered pyramidal machine\.(?: [A-Z][^.]{1,80}\.)?$"
    regexp="y"
    send_to="12"
    sequence="100"
@@ -189,6 +189,71 @@ ImportXML([=[
   <send>mplay("misc/games/prize machines/slotPayout", "games")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="games"
+   match="^A holographic representation of .+? flickers into existence on the dunking platform\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/dunk tank/dunk_tank_hologram_appear", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^A holographic depiction of .+? vanishes\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/dunk tank/dunk_tank_hologram_vanish", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^.+? throws? a scuffed dunk tank ball toward the bullseye on a gigantic dunk tank \(holo-.+? sitting on the dunking platform\)!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/dunk tank/throw_ball", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^A scuffed dunk tank ball hits the bullseye and a holographic representation of .+? plummets into the dunking tank, splashing quite real water all over the area!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/dunk tank/dunk_tank_bullseye", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^A scuffed dunk tank ball misses the bullseye just barely!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/dunk tank/dunk_tank_hit", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^A scuffed dunk tank ball misses the bullseye by a mile!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/dunk tank/dunk_tank_miss", "games")</send>
+  </trigger>
 
   </triggers>
 ]=])

@@ -5,7 +5,6 @@
 - Added sounds for the dunk tank game found on Venus.
 - Added sounds for the hum social.
 - Replace the "Your soundpack has been updated to version 'x.y.z'! You can download it here: ..." text with something more relevant to Miriani-Next users.
-- Replace the "Your soundpack has been updated to version 'x.y.z'! You can download it here: ..." text with something more relevant to Miriani-Next users.
 - Added a Mentions buffer for messages directly said to you.
 
 ### Fixed

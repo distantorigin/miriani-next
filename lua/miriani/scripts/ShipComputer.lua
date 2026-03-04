@@ -75,7 +75,7 @@ computer_actions = {
     group = "ship"
   },
   ["There is no target at those coordinates. Aborting."] = {
-    sound = "misc/cancel",
+    sound = "misc/Uncategorized/cancel",
     group = "ship"
   },
   ["Docking has failed."] = {

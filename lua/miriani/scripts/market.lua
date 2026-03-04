@@ -11,7 +11,7 @@ match="^\[Tradesman Market\] ([A-Z][a-z]+) ([A-Z][a-zA-Z]*?) has commenced a sal
    sequence="100"
   >
 <send>
- mplay ("misc/tradesmanSale", "notification")
+ mplay ("misc/Transactions/tradesmanSale", "notification")
  print_color ({"[Tradesman Market] ", "default"}, {"New Sale by %1 %2: %3 %4 for %5 credits.", "market"})
  channel ("market", "[Tradesman Market] New Sale by %1 %2: %3 %4 for %5 credits.", {"market"})
 </send>
@@ -27,7 +27,7 @@ match="^\[Tradesman Market\]\s+([A-Z][a-z]+(?:\s+(?:Mc)?[A-Z][a-z]+))\s+has\s+(l
    sequence="100"
   >
   <send>
-   mplay ("misc/tradesmanPrice", "notification")
+   mplay ("misc/Transactions/tradesmanPrice", "notification")
 local v1 = tonumber((string.gsub("%4", ",", "")))
 local v2 = tonumber((string.gsub("%5", ",", "")))
 local diff = 0
@@ -57,7 +57,7 @@ match="^\[Tradesman Market\]\s+[A-Z][a-z]+\s+(?:Mc)?[A-Z][a-z]+'s\s+(?:has\s+can
   >
   <send>
    channel("market", "%0", {"market"})
-   mplay ("misc/tradesmanComplete", "notification")
+   mplay ("misc/Transactions/tradesmanComplete", "notification")
   </send>
   </trigger>
 
@@ -71,7 +71,7 @@ match="^\[Tradesman Market\]\s+(?:[A-Z][a-z]+\s+(?:Mc)?[A-Z][a-z]+)\s+has\s+boug
   >
   <send>
    channel("market", "%0", {"market"})
-   mplay ("misc/tradesmanBid", "notification")
+   mplay ("misc/Transactions/tradesmanBid", "notification")
   </send>
   </trigger>
 

@@ -1272,7 +1272,7 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   >
   <send>
    mplay("ship/misc/anomalyHit")
-   if "%1" ~= nil then mplay("misc/bodyImpact") end
+   if "%1" ~= nil then mplay("misc/Injuries and Malodies/bodyImpact") end
   </send>
   </trigger>
 
@@ -1343,7 +1343,7 @@ mplay("ship/computer/warning", "computer")</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/waterCrystals", "ship")
+  <send>mplay("misc/Santa Box Sounds/waterCrystals", "ship")
   </send>
   </trigger>
 
@@ -1356,7 +1356,7 @@ mplay("ship/computer/warning", "computer")</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/waterCrystals", "ship")
+  <send>mplay("misc/Santa Box Sounds/waterCrystals", "ship")
   </send>
   </trigger>
 

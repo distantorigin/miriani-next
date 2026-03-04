@@ -48,7 +48,7 @@ function receive_contribution(name, line, wildcards, styles)
   table.insert(contrib.history, clean_amount)
 
   -- Play sound
-  mplay("misc/cash")
+  mplay("misc/Transactions/cash")
 
   -- Also send to contributions buffer
   Execute("history_add Contributions=" .. line)
@@ -137,7 +137,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/discardCash")</send>
+  <send>mplay("misc/Transactions/discardCash")</send>
   </trigger>
 </triggers>
 ]=])

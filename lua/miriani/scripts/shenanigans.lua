@@ -174,7 +174,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/toiletFlush")</send>
+  <send>mplay("misc/Bathroom/toiletFlush")</send>
   </trigger>
 
   <!-- Poo Accident -->
@@ -187,7 +187,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/oops")</send>
+  <send>mplay("misc/Bathroom/oops")</send>
   </trigger>
 
   <!-- Jingle Bells (Holiday) -->
@@ -200,7 +200,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/jingleBell")</send>
+  <send>mplay("misc/Santa Box Sounds/jingleBell")</send>
   </trigger>
 
   <trigger
@@ -271,7 +271,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/showerdoor")</send>
+  <send>mplay("misc/Bathroom/showerdoor")</send>
   </trigger>
 
   <trigger
@@ -282,7 +282,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/showerdoor")</send>
+  <send>mplay("misc/Bathroom/showerdoor")</send>
   </trigger>
 
   <trigger
@@ -293,7 +293,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/shower")</send>
+  <send>mplay("misc/Bathroom/shower")</send>
   </trigger>
 
   <trigger
@@ -304,7 +304,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/ShowerEnd")</send>
+  <send>mplay("misc/Bathroom/ShowerEnd")</send>
   </trigger>
 
   </triggers>

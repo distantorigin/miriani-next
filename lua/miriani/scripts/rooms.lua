@@ -679,7 +679,7 @@ ImportXML([=[
        if config:get_option("debug_mode").value == "yes" then
          notify("info", string.format("Store detector: room='%s', store='%s', equal=%s", tostring(room), tostring(store), tostring(room == store)))
        end
-       if room ~= store then mplay("misc/store", "notification", 1) end
+       if room ~= store then mplay("misc/Transactions/store", "notification", 1) end
        store = room
      elseif store then
        store = false

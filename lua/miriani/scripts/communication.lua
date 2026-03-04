@@ -64,10 +64,10 @@ ImportXML([=[
 
    if "%3" ~= "" then
     print_color({"[%3] " .. display_output, "priv_comm"})
-    channel(name, "[%3] %4 %5", {"metaf %3", "metaf", "communication"})
+    channel(name, "[%3] " .. display_output, {"metaf %3", "metaf", "communication"})
    else
     print_color({"[%2] " .. display_output, "priv_comm"})
-    channel(name, "%0", {"metaf %2", "metaf", "communication"})
+    channel(name, "[%2] " .. display_output, {"metaf %2", "metaf", "communication"})
    end -- if
   </send>
   </trigger>
@@ -111,7 +111,7 @@ ImportXML([=[
    local item = "%4"
 
    -- Play auction bid sound
-   mplay("misc/bid", "notification")
+   mplay("misc/Transactions/bid", "notification")
 
    -- Format display text
    local display_text = bidder .. " has bid " .. amount .. " credits on auction " .. auction_num .. ": " .. item .. "!"
@@ -156,7 +156,7 @@ ImportXML([=[
    end
 
    mplay ("comm/"..sound_file, "communication", nil, nil, nil, nil, nil, bypass_foreground)
-   channel("private", "[%2] %3", {"private %2", "private", "communication"})
+   channel("private", "[%2] " .. display_message, {"private %2", "private", "communication"})
    print_color({"[%2] ", "default"}, {display_message, "priv_comm"})
   </send>
   </trigger>
@@ -211,7 +211,7 @@ ImportXML([=[
    local display_text = "[" .. display_name .. "] " .. display_message
 
    mplay("comm/"..sound_name, "communication")
-   channel(display_name, "[" .. display_name .. "] " .. message, {"communication", sound_name})
+   channel(display_name, "[" .. display_name .. "] " .. display_message, {"communication", sound_name})
    print(display_text)
   </send>
   </trigger>
@@ -268,8 +268,8 @@ ImportXML([=[
      print_color({output, "pub_comm"})
    end
 
-   -- Add to say buffer (always use original format for buffer)
-   channel("say", "%0", {"say", "communication"})
+   -- Add to say buffer
+   channel("say", output, {"say", "communication"})
   </send>
   </trigger>
 
@@ -338,11 +338,11 @@ ImportXML([=[
 
    if "%2" == "ship-wide" or "%2" == "structure-wide" then
     print_color({"[SOOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
-    channel("sooc", "[SOOC] " .. speaker .. " " .. msg, {"ooc", "communication"})
+    channel("sooc", "[SOOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
     mplay ("comm/sooc", "communication")
    else
     print_color({"[ROOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
-   channel(name, "[ROOC] " .. speaker .. " " .. msg, {"ooc", "communication"})
+   channel(name, "[ROOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
    mplay ("comm/rooc", "communication")
    end -- if ship wide
   </send>
@@ -452,7 +452,7 @@ ImportXML([=[
    end
 
    print_color({output, "pub_comm"})
-   channel(name, speaker .. " " .. verb_form .. ", " .. q .. message .. q, {"say", "communication"})
+   channel(name, output, {"say", "communication"})
   </send>
   </trigger>
 
@@ -653,7 +653,7 @@ ImportXML([=[
 
    -- Always show as [shipname] format
    print_color({"[" .. ship_name .. "] ", "default"}, {display_message, "priv_comm"})
-   channel("ship", "[" .. ship_name .. "] " .. message, {"ship", "communication"})
+   channel("ship", "[" .. ship_name .. "] " .. display_message, {"ship", "communication"})
   </send>
   </trigger>
 
@@ -705,7 +705,7 @@ ImportXML([=[
    end
 
    print_color({output, "pub_comm"})
-   channel ("transmit", "%0", {"communication", "say"})
+   channel ("transmit", output, {"communication", "say"})
   </send>
   </trigger>
   
@@ -775,7 +775,6 @@ ImportXML([=[
      local file = require("pl.path").isfile(
      config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/"..channel_name..EXTENSION) and channel_name or "organization"
      mplay("comm/"..file, "communication")
-     channel(name, "%0", {"organization", "communication"})
 
      -- Apply shortening
      local display_message = message
@@ -792,12 +791,12 @@ ImportXML([=[
          end
        end
      end
+     channel(name, "[" .. channel_name .. "] " .. display_message, {"organization", "communication"})
      print_color({"[" .. channel_name .. "] ", "default"}, {display_message, "priv_comm"})
 
    elseif detected_courier and channel_name == detected_courier then
      -- This is our courier company
      mplay("comm/courier", "communication")
-     channel(name, "%0", {"courier", "communication"})
 
      -- Apply shortening
      local display_message = message
@@ -814,6 +813,7 @@ ImportXML([=[
          end
        end
      end
+     channel(name, "[" .. channel_name .. "] " .. display_message, {"courier", "communication"})
      print_color({"[" .. channel_name .. "] ", "default"}, {display_message, "priv_comm"})
    else
      -- Not our org or courier, just print original
@@ -859,7 +859,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    mplay("misc/wake_up", "communication")
+    mplay("misc/Connections/wake_up", "communication")
   </send>
   </trigger>
 
@@ -872,7 +872,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    mplay("misc/sanin", "communication")
+    mplay("misc/Sanitation Drones/sanin", "communication")
   </send>
   </trigger>
 
@@ -885,7 +885,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    mplay("misc/sanout", "communication")
+    mplay("misc/Sanitation Drones/sanout", "communication")
   </send>
   </trigger>
 

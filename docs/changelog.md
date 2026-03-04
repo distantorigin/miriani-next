@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.21 (In Progress)
+
+### Fixed
+- Fixed the repair ETA timer not updating when the repair time changes mid-repair.
+
 ## Version 4.1.20
 ### New
 - Added sounds for the dunk tank game found on Venus.

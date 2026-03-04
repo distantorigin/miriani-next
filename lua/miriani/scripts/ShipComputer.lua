@@ -27,6 +27,10 @@ end
 
 -- Called when repair timer fires
 function onRepairTimerComplete()
+  -- If repair_end_time is still in the future, this is a stale timer — ignore it
+  if repair_end_time and repair_end_time > os.time() then
+    return
+  end
   if repair_start_room and roomName ~= repair_start_room then
     -- We're not in engineering, notify the user
     mplay("ship/computer/repStop", "notification")
@@ -293,6 +297,28 @@ computer_actions_wildcard = {
         -- Add 5 second buffer to account for timing variations
         DoAfterSpecial(seconds + 5, "onRepairTimerComplete()", sendto.script)
         repair_timer_id = true
+      end
+    end
+  },
+  ["(.+) will be completely repaired in approximately (.+)%."] = {
+    func = function(component, time_estimate)
+      -- Update repair timer with new ETA (e.g. after hull hit during repair)
+      repair_component = component
+      local seconds = parseTimeToSeconds(time_estimate)
+      repair_end_time = os.time() + seconds
+      if config:get_option("repair_notifs").value == "yes" and seconds > 0 then
+        DoAfterSpecial(seconds + 5, "onRepairTimerComplete()", sendto.script)
+      end
+    end
+  },
+  ["I am currently repairing: (.+), which is (.+)%% damaged%. Estimated time to completion is (.+)%."] = {
+    func = function(component, damage_pct, time_estimate)
+      -- Update repair timer with new ETA
+      repair_component = component
+      local seconds = parseTimeToSeconds(time_estimate)
+      repair_end_time = os.time() + seconds
+      if config:get_option("repair_notifs").value == "yes" and seconds > 0 then
+        DoAfterSpecial(seconds + 5, "onRepairTimerComplete()", sendto.script)
       end
     end
   },

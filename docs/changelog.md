@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.20 (In Progress)
+## Version 4.1.20
 ### New
 - Added sounds for the dunk tank game found on Venus.
 - Added sounds for the hum social.

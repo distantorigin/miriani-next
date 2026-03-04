@@ -268,8 +268,11 @@ ImportXML([=[
      print_color({output, "pub_comm"})
    end
 
-   -- Add to say buffer
-   channel("say", output, {"say", "communication"})
+   local buffers = {"say", "communication"}
+   if is_direct_to_you then
+     table.insert(buffers, "mentions")
+   end
+   channel("say", output, buffers)
   </send>
   </trigger>
 
@@ -300,8 +303,11 @@ ImportXML([=[
      print_color({speaker .. " [to " .. target .. "]: ", "default"}, {message, "pub_comm"})
    end
 
-   -- Add to say buffer
-   channel("say", speaker .. " [to " .. target .. "]: " .. message, {"say", "communication"})
+   local buffers = {"say", "communication"}
+   if is_direct_to_you then
+     table.insert(buffers, "mentions")
+   end
+   channel("say", speaker .. " [to " .. target .. "]: " .. message, buffers)
   </send>
   </trigger>
 

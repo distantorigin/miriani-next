@@ -47,7 +47,7 @@ ImportXML([=[
        end
      end
    end
-   mplay("ship/combat/hit/youHit", "ship", nil, nil, nil, nil, nil, nil, volume_offset)
+   mplay("ship/combat/hit/youHit", "ship", nil, nil, nil, nil, nil, nil, nil, volume_offset)
    print_color({"Hit by %1", "combat"})
    channel("combat", "Hit by %1", {"combat"})
    update_artifact_hunting_activity()

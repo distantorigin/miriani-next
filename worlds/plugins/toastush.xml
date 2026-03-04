@@ -333,7 +333,7 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
       config:set_option("foreground_sounds", "yes")
       Execute("tts_interrupt Sounds only when window has focus")
     end
-    mplay("misc/Uncategorized/mouseClick", "notification", nil, nil, nil, nil, nil, true)
+    mplay("misc/Uncategorized/mouseClick", "notification")
     config:save()
   </send>
   </alias>
@@ -425,7 +425,7 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
 
     -- Call mplay with parsed arguments
     if file then
-      mplay(file, group, interrupt, pan, loop, slide, sec, frequency)
+      mplay(file, group, interrupt, pan, loop, slide, sec, nil, frequency)
     end
   </send>
   </alias>
@@ -499,7 +499,7 @@ AcceleratorTo("CTRL + F9", [[
     config:set_option("foreground_sounds", "yes")
     Execute("tts_interrupt Sounds only when window has focus")
   end
-  mplay("misc/Uncategorized/mouseClick", "notification", nil, nil, nil, nil, nil, true)
+  mplay("misc/Uncategorized/mouseClick", "notification")
   config:save()
 ]], script)
 AcceleratorTo("CTRL+SHIFT+D", 'toggle_dnd()', script)
@@ -1376,7 +1376,7 @@ function open_url()
   end -- if
 end -- open_url
 
-function mplay(file, group, interrupt, pan, loop, slide, sec, frequency, volume_offset)
+function mplay(file, group, interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
   -- DND mode: Block all sounds when Do Not Disturb is enabled
   if config and config:is_dnd() then
     return
@@ -1402,7 +1402,7 @@ function mplay(file, group, interrupt, pan, loop, slide, sec, frequency, volume_
     filepath = string.format(SOUNDPATH.."%s%s", file, EXTENSION)
   end -- if
 
-  play(filepath, group, interrupt, pan, loop, slide, sec, nil, volume_offset, frequency)
+  play(filepath, group, interrupt, pan, loop, slide, sec, bypass_foreground, volume_offset, frequency)
 end -- mplay
 
 function speech_interrupt(line)

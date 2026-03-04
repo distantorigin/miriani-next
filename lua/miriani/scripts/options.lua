@@ -136,6 +136,7 @@ local options = {
   scan_buffer = {descr="Starship Scans", value="yes", group="buffers", type="bool"},
   channel_history_persist = {descr="Keep channel history indefinitely (persists across restarts).", value="yes", group="buffers", type="bool"},
   rp_buffer = {descr="Roleplay.", value="yes", group="buffers", type="bool"},
+  mentions_buffer = {descr="Direct Say Messages.", value="yes", group="buffers", type="bool"},
 
   -- Colors --
 

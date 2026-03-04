@@ -331,7 +331,7 @@ computer_actions_wildcard = {
   },
   ["Partial hit on (.+)"] = {
     func = function()
-      mplay("ship/combat/hit/partialHit", "computer", nil, nil, nil, nil, nil, nil, 10)
+      mplay("ship/combat/hit/partialHit", "computer", nil, nil, nil, nil, nil, nil, nil, 10)
 	  mplay("ship/combat/hit/otherHit", "computer")
     end
 	},
@@ -510,9 +510,9 @@ function checkDamageLine(line)
     if damage and damage >= 80 and damage < 100 then
       local name = component:match("^%s*(.-)%s*$"):upper()
       if name == "HULL" then
-        mplay("ship/combat/hullCritical", "ship", nil, nil, nil, nil, nil, nil, -20)
+        mplay("ship/combat/hullCritical", "ship", nil, nil, nil, nil, nil, nil, nil, -20)
       else
-        mplay("ship/combat/componentCritical", "ship", nil, nil, nil, nil, nil, nil, -15)
+        mplay("ship/combat/componentCritical", "ship", nil, nil, nil, nil, nil, nil, nil, -15)
       end
       EnableTrigger("damage_reader", false)
       return

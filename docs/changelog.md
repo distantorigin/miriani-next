@@ -6,6 +6,10 @@
 - Added sounds for the hum social.
 - Replace the "Your soundpack has been updated to version 'x.y.z'! You can download it here: ..." text with something more relevant to Miriani-Next users.
 - Replace the "Your soundpack has been updated to version 'x.y.z'! You can download it here: ..." text with something more relevant to Miriani-Next users.
+- Added a Mentions buffer for messages directly said to you.
+
+### Fixed
+- Fixed various regressions, like direct says, that would have previously broken through foreground sounds mode but no longer did.
 
 ## Version 4.1.19
 ### New

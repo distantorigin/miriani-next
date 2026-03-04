@@ -259,7 +259,7 @@ end -- camera</send>
   <send>
   if not should_gag_engine_sounds() then
     local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
-    mplay ("ship/move/accelerate", "ship", false, nil, false, false, nil, frequency)
+    mplay ("ship/move/accelerate", "ship", false, nil, false, false, nil, nil, frequency)
   end
   </send>
   </trigger>
@@ -277,7 +277,7 @@ end -- camera</send>
   <send>
   if not should_gag_engine_sounds() then
     local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
-    mplay ("ship/move/decelerate", "ship", false, nil, false, false, nil, frequency)
+    mplay ("ship/move/decelerate", "ship", false, nil, false, false, nil, nil, frequency)
   end
   </send>
 </trigger>

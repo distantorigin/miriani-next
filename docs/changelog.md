@@ -1,6 +1,8 @@
 # Miriani-Next Changelog
 
 ## Version 4.1.21 (In Progress)
+### New
+- Added game sounds for the rock machine.
 
 ### Fixed
 - Fixed the repair ETA timer not updating when the repair time changes mid-repair.

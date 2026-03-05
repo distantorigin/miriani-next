@@ -255,5 +255,49 @@ ImportXML([=[
   <send>mplay("misc/games/dunk tank/dunk_tank_miss", "games")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="games"
+   match="^.+? pulls? a lever on an oddly shaped rock and watch(es)? as the reels start to spin!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/prize machines/spin_wheel", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^When the reels stop, you see that you've gotten:$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/prize machines/wheel_stop", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^.+? stares? sadly at an oddly shaped rock as .+? realizes? .+? (?:just|has) lost\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/prize machines/odd_rock_lost", "games")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="games"
+   match="^Bright lights flash on top of an oddly shaped rock as you notice you've won!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/games/prize machines/odd_rock_win", "games")</send>
+  </trigger>
+
   </triggers>
 ]=])

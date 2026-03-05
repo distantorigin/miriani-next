@@ -251,10 +251,17 @@ ImportXML([=[
    local output
    if config:get_option("shorten_communication").value == "yes" then
      -- Shortened format: Speaker: message (or Speaker [to Target]: message)
+     -- Preserve text before the verb so socials like insult/flirt keep their target visible
+     local emote_part = ""
+     if emotes and emotes ~= "" and emotes ~= " " then
+       -- Strip trailing " and " or " and then " to clean up before the colon
+       emote_part = " " .. string.gsub(emotes, "%s+and%s+then%s*$", "")
+       emote_part = string.gsub(emote_part, "%s+and%s*$", "")
+     end
      if target and target ~= "" then
-       output = speaker .. " [to " .. target .. "]: " .. message
+       output = speaker .. emote_part .. " [to " .. target .. "]: " .. message
      else
-       output = speaker .. ": " .. message
+       output = speaker .. emote_part .. ": " .. message
      end
    else
      -- Original format

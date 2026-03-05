@@ -5,6 +5,7 @@
 - Added game sounds for the rock machine.
 
 ### Fixed
+- Fixed socials like insult and flirt not showing their target when communication shortening is enabled.
 - Fixed the repair ETA timer not updating when the repair time changes mid-repair.
 
 ## Version 4.1.20

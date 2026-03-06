@@ -3,6 +3,7 @@
 ## Version 4.1.21 (In Progress)
 ### New
 - Added game sounds for the rock machine.
+- Added sounds for the grunt social.
 
 ### Fixed
 - Fixed socials like insult and flirt not showing their target when communication shortening is enabled.

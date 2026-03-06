@@ -4,8 +4,10 @@
 
 ## Version 4.1.21
 ### New
+
 - Added game sounds for the rock machine.
 - Added sounds for the grunt social.
+- Added sounds for the bustamove social.
 
 ### Fixed
 - Fixed hauling completion double trigger. It should now fire only once.

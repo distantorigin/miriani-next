@@ -6,6 +6,7 @@
 - Added sounds for the grunt social.
 
 ### Fixed
+- Fixed hauling completion double trigger. It should now fire only once.
 - Fixed socials like insult and flirt not showing their target when communication shortening is enabled.
 - Fixed the repair ETA timer not updating when the repair time changes mid-repair.
 

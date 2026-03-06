@@ -1,6 +1,8 @@
 # Miriani-Next Changelog
 ## Version 4.1.22 (in progress)
 
+### Fixed
+- Archaeology scanners detecting no nearby objects should now print this fact to the user.
 
 ## Version 4.1.21
 ### New

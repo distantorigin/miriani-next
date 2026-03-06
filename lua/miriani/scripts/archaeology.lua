@@ -114,6 +114,7 @@ match="^A level \w+ archaeological dig site scanner (indicates|reports) (nothing
    send_to="14"
   >
   <send>
+print("%2")
 mplay("activity/archaeology/nothing")
    </send>
   </trigger>

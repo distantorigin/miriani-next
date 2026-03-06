@@ -1,6 +1,8 @@
 # Miriani-Next Changelog
+## Version 4.1.22 (in progress)
 
-## Version 4.1.21 (In Progress)
+
+## Version 4.1.21
 ### New
 - Added game sounds for the rock machine.
 - Added sounds for the grunt social.

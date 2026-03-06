@@ -86,15 +86,5 @@ ImportXML([=[
   <send>mplay("activity/asteroid/anchorRemove")</send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   group="hauling"
-   match="^.+announces,.+Lifting anchor and establishing standard dock.+$"
-   regexp="y"
-   send_to="12"
-   >
-   <send>mplay("activity/asteroid/shipAnchorEnd")
-   increment_counter("asteroids_hauled")</send>
-   </trigger>
   </triggers>
 ]=])

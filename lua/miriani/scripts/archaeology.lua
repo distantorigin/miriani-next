@@ -156,7 +156,7 @@ mplay("activity/archaeology/nothing")
 
    if buried_artifact
    and room == artifact_room then
-     buried_artifact = buried_artifact - 0.5
+buried_artifact = math.max(0, buried_artifact - 0.5)
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
@@ -175,7 +175,7 @@ mplay("activity/archaeology/nothing")
 
    if buried_artifact
    and room == artifact_room then
-     buried_artifact = buried_artifact - 0.1
+buried_artifact = math.max(0, buried_artifact - 0.1)
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
@@ -194,7 +194,7 @@ mplay("activity/archaeology/nothing")
 
    if buried_artifact
    and room == artifact_room then
-     buried_artifact = buried_artifact - 0.3
+buried_artifact = math.max(0, buried_artifact - 0.3)
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
@@ -247,7 +247,7 @@ mplay("activity/archaeology/nothing")
 
    if buried_artifact
    and room == artifact_room then
-     buried_artifact = buried_artifact - 2.0
+buried_artifact = math.max(0, buried_artifact - 2.0)
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 

@@ -1,7 +1,8 @@
 # Miriani-Next Changelog
 ## Version 4.1.22 (in progress)
 ### New
-Added code for the communicator linkConfirmed sound
+- Added sounds for punching bags.
+- Added code for the communicator linkConfirmed sound.
 
 ### Fixed
 - Archaeology scanners detecting no nearby objects should now print this fact to the user.

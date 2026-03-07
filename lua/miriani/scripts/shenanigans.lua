@@ -261,6 +261,87 @@ ImportXML([=[
   <send>mplay("ship/misc/scent")</send>
   </trigger>
 
+  <!-- Punching Bag Sounds -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^.+ slams? .+ into .+ punching bag.+!$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    if string.find("%0", "kick") then
+      mplay("social/neuter/kick")
+    else
+      mplay("social/neuter/punch")
+    end
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^An? .+ punching bag .*(cries out in pain|shrieks? in agony|emits a long|lets out a blood curdling|lets out a scream|gurgles and moans|scream that cuts off)"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    if math.random(2) == 1 then
+      local gender = math.random(2) == 1 and "male" or "female"
+      mplay("social/" .. gender .. "/shriek")
+    else
+      mplay("social/neuter/scream")
+    end
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^An? .+ punching bag.* swings wildly through the air"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Punching Bags/bagSwings")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^An? .+ punching bag is hurled .+ from its position\."
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Punching Bags/bagUnbolt")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^Unable to withstand further punishment, an? .+ punching bag.* splits open"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Punching Bags/bagBreak")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^An? .+ punching bag says, &quot;You mad\?&quot;"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Punching Bags/youMad")</send>
+  </trigger>
+
   <!-- Shower Sounds -->
 
   <trigger

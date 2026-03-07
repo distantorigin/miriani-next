@@ -553,5 +553,15 @@ if config:get_option("external_camera").value == "no" then
   <send>mplay("device/jetEnd")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="devices"
+   match="^Your communicator flashes a series of cryptic looking numbers before confirming the secure link with .+?$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("comm/linkConfirmed")</send>
+  </trigger>
+
   </triggers>
 ]=])

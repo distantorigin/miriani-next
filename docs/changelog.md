@@ -1,11 +1,18 @@
 # Miriani-Next Changelog
 ## Version 4.1.22 (in progress)
+### New
+Added code for the communicator linkConfirmed sound
 
+### Fixed
+- Archaeology scanners detecting no nearby objects should now print this fact to the user.
+- Archaeology tools should no longer give you negative numbers when your digging would in theory give you them. Miriani doesn't show you negatives, we won't either.
 
 ## Version 4.1.21
 ### New
+
 - Added game sounds for the rock machine.
 - Added sounds for the grunt social.
+- Added sounds for the bustamove social.
 
 ### Fixed
 - Fixed hauling completion double trigger. It should now fire only once.

@@ -171,6 +171,7 @@ computer_actions_wildcard = {
     end
   },
   ["Processing complete%. One unit of (.+) has been secured%."] = {
+    PlayComputerSound = true,
     func = function(material_type)
       -- Define material categories
       local atmospheric_materials = {

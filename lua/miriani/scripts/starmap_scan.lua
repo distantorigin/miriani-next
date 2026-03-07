@@ -490,7 +490,9 @@ ImportXML([=[
    -- Check if this is the ending dash line (matches first dash line length)
    if firstDashLength and dashCount == firstDashLength then
      -- This is the ending dash line - scan is complete
-mplay("ship/computer/scan", "other")
+     if not scanFiltering then
+       mplay("ship/computer/scan", "other")
+     end
      -- Always generate and store formatted output
      local formatted = formatScanOutput()
 

@@ -312,7 +312,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
-   match="^An? .+ punching bag is hurled .+ from its position\."
+   match="^An? .+ punching bag.* is hurled .+ from its position\."
    regexp="y"
    send_to="12"
    sequence="100"
@@ -334,7 +334,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
-   match="^An? .+ punching bag says, &quot;You mad\?&quot;"
+   match="^An? .+ punching bag.* says, &quot;You mad\?&quot;"
    regexp="y"
    send_to="12"
    sequence="100"

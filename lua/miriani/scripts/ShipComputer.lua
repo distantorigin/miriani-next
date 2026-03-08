@@ -302,6 +302,8 @@ computer_actions_wildcard = {
     end
   },
   ["(.+) will be completely repaired in approximately (.+)%."] = {
+    group = "computer",
+    PlayComputerSound = true,
     func = function(component, time_estimate)
       -- Update repair timer with new ETA (e.g. after hull hit during repair)
       repair_component = component
@@ -313,6 +315,8 @@ computer_actions_wildcard = {
     end
   },
   ["I am currently repairing: (.+), which is (.+)%% damaged%. Estimated time to completion is (.+)%."] = {
+    group = "computer",
+    PlayComputerSound = true,
     func = function(component, damage_pct, time_estimate)
       -- Update repair timer with new ETA
       repair_component = component

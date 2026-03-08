@@ -150,7 +150,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="games"
-   match="^A .+? skeeball machine announces, &quot;(?:.+? has \d+ points? with \d+ balls? remaining|Points: \d+\.  Balls left: \d+)\.&quot;$"
+match="^A .*skeeball machine(?: .*?)? announces, &quot;Points: \d+\. +Balls left: \d+\.?&quot;?$"
    regexp="y"
    send_to="12"
   >

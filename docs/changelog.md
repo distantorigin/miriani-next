@@ -8,6 +8,7 @@
 - Archaeology scanners detecting no nearby objects should now print this fact to the user.
 - Archaeology tools should no longer give you negative numbers when your digging would in theory give you them. Miriani doesn't show you negatives, we won't either.
 - Fixed the CHECK and ETA commands not playing the computer sound after we updated the eta to calculate correctly.
+- Fixed highly decorative skeeball machines not playing sounds
 
 ## Version 4.1.21
 ### New

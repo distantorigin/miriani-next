@@ -3,6 +3,7 @@
 ### New
 - Added sounds for punching bags.
 - Added code for the communicator linkConfirmed sound.
+- Rewrote MushReader to help speech output. This is change 1 of 2 for testing. As this is the primary file for screen reader output, please report any changes, and expect odd behaviors. While I am fully confident it is fullproof tested, if you have speech that is not spoken, enormous amounts of continuing lag, or other issues that don't feel like regular trigger bugs, please ask Derrick over Miriani next metaf
 
 ### Fixed
 - Archaeology scanners detecting no nearby objects should now print this fact to the user.

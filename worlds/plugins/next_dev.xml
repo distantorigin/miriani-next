@@ -30,6 +30,22 @@ script="reload"
    sequence="100"
   >
 </alias>
+  <alias
+   match="^next:benchmark$"
+   regexp="y"
+   enabled="y"
+   script="benchmark_say"
+   sequence="100"
+  >
+  </alias>
+  <alias
+   match="^next:benchmark2$"
+   regexp="y"
+   enabled="y"
+   script="benchmark_no_viewer"
+   sequence="100"
+  >
+  </alias>
   </aliases>
 
 <!--  Script  -->
@@ -39,6 +55,62 @@ require "reload_all"
 function reload()
 Note("Reloading all installed plugins, please wait...")
 DoAfterSpecial (1, "reload_all_plugins()", sendto.script)
+end
+
+function benchmark_say()
+  local count = 200
+  Note("Benchmark: timing " .. count .. " nvda.say() calls...")
+
+  -- Phase 1: raw nvda.say() calls only
+  local t1 = utils.timer()
+  for i = 1, count do
+    Execute("tts_note Line number " .. i .. " of benchmark output for testing speech throughput")
+  end
+  local t2 = utils.timer()
+  local say_time = t2 - t1
+
+  Note(string.format("Phase 1 - %d tts_note calls: %.4f seconds (%.4f ms each)", count, say_time, say_time / count * 1000))
+
+  -- Phase 2: ColourNote calls (triggers Screendraw -> OnPluginScreendraw -> say)
+  local t3 = utils.timer()
+  for i = 1, count do
+    ColourNote("white", "black", "Benchmark line " .. i .. " of " .. count .. " for testing display and speech throughput")
+  end
+  local t4 = utils.timer()
+  local note_time = t4 - t3
+
+  Note(string.format("Phase 2 - %d ColourNote calls: %.4f seconds (%.4f ms each)", count, note_time, note_time / count * 1000))
+
+  -- Phase 3: ColourNote with speech disabled
+  Execute("tts_disable_silent")
+  local t5 = utils.timer()
+  for i = 1, count do
+    ColourNote("white", "black", "Silent benchmark line " .. i .. " of " .. count)
+  end
+  local t6 = utils.timer()
+  local silent_time = t6 - t5
+  Execute("tts_enable_silent")
+
+  Note(string.format("Phase 3 - %d ColourNote (speech off): %.4f seconds (%.4f ms each)", count, silent_time, silent_time / count * 1000))
+
+  Note(string.format("Speech overhead per ColourNote: %.4f ms", (note_time - silent_time) / count * 1000))
+  Note("Benchmark complete.")
+  Note("Now close the accessible output viewer (Display > Output Viewer) and run next:benchmark2")
+end
+
+function benchmark_no_viewer()
+  local count = 200
+
+  -- Phase A: ColourNote with speech on (output viewer should be closed)
+  local t1 = utils.timer()
+  for i = 1, count do
+    ColourNote("white", "black", "No-viewer benchmark line " .. i .. " of " .. count .. " for testing display throughput")
+  end
+  local t2 = utils.timer()
+  local no_viewer_time = t2 - t1
+
+  Note(string.format("Phase A - %d ColourNote (no output viewer): %.4f seconds (%.4f ms each)", count, no_viewer_time, no_viewer_time / count * 1000))
+  Note("Compare to Phase 2 from next:benchmark (with output viewer open) to see Rich Edit overhead.")
 end
 ]]>
 </script>

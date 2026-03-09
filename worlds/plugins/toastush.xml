@@ -1341,7 +1341,7 @@ function channel(name, line, wc)
   end -- for loop
 end -- channel
 
-function OnPluginLineReceived(line)
+function NoOpOnPluginLineReceived(line)
   if GetVariable("logged_in") ~= "1" then
     return true
   end

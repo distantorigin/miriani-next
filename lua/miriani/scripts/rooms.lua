@@ -27,6 +27,7 @@
 --    Use when multiple rooms share a naming pattern.
 --    Patterns use Lua pattern syntax (not regex).
 --    Matching is case-insensitive.
+--    Starship patterns are checked before general patterns.
 --
 --    Example - add to roomPatterns.general:
 --      {"Tunnel", "cave"},      -- any room containing "Tunnel"
@@ -227,6 +228,8 @@ roomPatterns = {
     {"River", "lake"},
     {"^Sector .+ Central Jumpgate Hub$", "spaceSuit"},
     {"Shady", "shadius"},
+    {"Corridor", "station_unknown"},
+    {"Level", "station_unknown"},
     {"Starship Simulators", "simShop"},
     {"Starship Storage", "garage"},
     {"^Transport Pod .+ to ", "ITPN"},
@@ -468,18 +471,7 @@ function computeAmbianceFile()
       file = findCaseInsensitive(roomNames.starship, roomName)
     end
 
-    -- Check general patterns (case-insensitive)
-    if (not file) and roomPatterns.general then
-      local lowerRoomName = string.lower(roomName)
-      for _, pattern in ipairs(roomPatterns.general) do
-        if string.find(lowerRoomName, string.lower(pattern[1])) then
-          file = pattern[2]
-          break
-        end
-      end
-    end
-
-    -- Check starship patterns if on a starship (case-insensitive)
+    -- Check starship patterns if on a starship (case-insensitive, before general)
     if (not file) and environment.name == "starship" then
       if roomPatterns.starship then
         local lowerRoomName = string.lower(roomName)
@@ -488,6 +480,17 @@ function computeAmbianceFile()
             file = pattern[2]
             break
           end
+        end
+      end
+    end
+
+    -- Check general patterns (case-insensitive)
+    if (not file) and roomPatterns.general then
+      local lowerRoomName = string.lower(roomName)
+      for _, pattern in ipairs(roomPatterns.general) do
+        if string.find(lowerRoomName, string.lower(pattern[1])) then
+          file = pattern[2]
+          break
         end
       end
     end

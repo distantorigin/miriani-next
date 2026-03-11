@@ -8,6 +8,7 @@
 - Updated to MUSHclient version 5.07+distantorigin.5:
   - Dramatically improved performance when receiving large blocks of output (e.g. room descriptions, status or cargo reports, long lists). The accessible output viewer now batches rapid lines together and updates the display once, instead of updating after every single line. In benchmarks, 200 lines of output went from taking ~1.9 seconds to ~0.14 seconds --  about 13x faster. This should noticeably reduce lag and speech delays when the server sends a lot of text at once.
   - Fixed the main window briefly flashing at default size before restoring to its saved position/maximized state on  startup.
+- Replaced the ocean ambiance sound with a longer version.
 
 ### Fixed
 - Archaeology scanners detecting no nearby objects should now print this fact to the user.

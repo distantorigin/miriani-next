@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.22 (in progress)
+## Version 4.1.22
 ### New
 - Added sounds for punching bags.
 - Added code for the communicator linkConfirmed sound.

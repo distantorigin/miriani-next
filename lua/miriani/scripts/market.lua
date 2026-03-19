@@ -4,7 +4,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="market"
-match="^\[Tradesman Market\] ([A-Z][a-z]+) ([A-Z][a-zA-Z]*?) has commenced a sale\. (?:She|He) is selling (one|\d+) tradesman item (certificate|certificates) for ((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{2})?) credits\s?(a piece)?\.$"
+match="^\[Tradesman Market\] ([A-Z][a-z]+) ([A-Z][a-zA-Z]*?) has commenced a sale\. (?:She|He) is selling (\w+) tradesman item (certificate|certificates) for ((?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{2})?) credits(?: a piece)?\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

@@ -1,5 +1,9 @@
 # Miriani-Next Changelog
 
+## Version 4.1.23
+### Fixed
+- Properly updated certificate market rejex for starting a sell.
+
 ## Version 4.1.22
 ### New
 - Added sounds for punching bags.

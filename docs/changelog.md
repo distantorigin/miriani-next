@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.23 (In Progress)
+## Version 4.1.23
 ### New
 - Added a bolt sound for bolting items down.
 

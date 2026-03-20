@@ -1246,6 +1246,17 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    <send>mplay("misc/Uncategorized/skillup", "notification")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^(You carefully bolt .+ down\. It's not going anywhere anytime soon\.|[A-Z].+ carefully bolts .+ down\.)$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Uncategorized/bolt")</send>
+  </trigger>
+
 
 </triggers>
 ]=])

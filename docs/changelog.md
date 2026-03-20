@@ -1,6 +1,9 @@
 # Miriani-Next Changelog
 
-## Version 4.1.23
+## Version 4.1.23 (In Progress)
+### New
+- Added a bolt sound for bolting items down.
+
 ### Fixed
 - Properly updated certificate market rejex for starting a sell.
 

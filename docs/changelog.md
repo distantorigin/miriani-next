@@ -4,6 +4,8 @@
 ### New
 - Added a bolt sound for bolting items down.
 - Trimmed silence from a couple sounds.
+- Boosted volume on bolt sound.
+- Replaced spit sound so it's not so over the top.
 
 ### Fixed
 - Properly updated certificate market rejex for starting a sale.

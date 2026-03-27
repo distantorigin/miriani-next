@@ -1,11 +1,17 @@
 # Miriani-Next Changelog
 
-## Version 4.1.23
+## Version 4.1.24 (In Progress)
 ### New
-- Added a bolt sound for bolting items down.
 - Trimmed silence from a couple sounds.
 - Boosted volume on bolt sound.
 - Replaced spit sound so it's not so over the top.
+
+### Changed
+- "There are no damaged components." is now gagged when reduce spam mode is enabled.
+
+## Version 4.1.23
+### New
+- Added a bolt sound for bolting items down.
 
 ### Fixed
 - Properly updated certificate market rejex for starting a sale.

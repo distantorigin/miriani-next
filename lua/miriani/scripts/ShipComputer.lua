@@ -704,9 +704,11 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="computer"
+   script="gagline"
    match="^There are no damaged components\.$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
   <send>

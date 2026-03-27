@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.24 (In Progress)
+## Version 4.1.24
 ### New
 - Trimmed silence from a couple sounds.
 - Boosted volume on bolt sound.

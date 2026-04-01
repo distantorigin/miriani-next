@@ -49,6 +49,10 @@ starmaptable = {
   Y = "Buoys"
  } -- starmaptable
 
+-- Starmap count state
+countingStarmap = false
+starmapCounts = {}
+
 -- Scan data storage
 scanData = {}
 
@@ -772,9 +776,19 @@ end
   >
   <send>
 
-    if (scan == "")
+    -- Count mode: tally entries per category
+    if countingStarmap and "%1" ~= "Current Coordinates" then
+     local count = 0
+     for _ in string.gmatch("%2", "%b()") do
+      count = count + 1
+     end -- for
+     starmapCounts["%1"] = count
+    end -- if counting
+
+    if (not countingStarmap)
+    and ((scan == "")
     or (scan == "%1")
-    or (string.gsub("%1", "s$", "") == scan) then
+    or (string.gsub("%1", "s$", "") == scan)) then
 
     starmap  = {}
 
@@ -821,6 +835,22 @@ end
 
    if "%1" == "Current Coordinates" then
     EnableTrigger("starmap_filter", false)
+
+    if countingStarmap then
+     Execute("tts_stop")
+     local total = 0
+     print("Starmap Summary:")
+     for category, count in pairs(starmapCounts) do
+      print(string.format("  %s: %d", category, count))
+      total = total + count
+     end -- for
+     print(string.format("Total: %d", total))
+     countingStarmap = false
+     starmapCounts = {}
+     searchingScan = false
+     scan = nil
+     return 0
+    end -- if counting
 
     if searchingScan and scan ~= "" then
      print ("No "..scan.." found.")
@@ -1020,7 +1050,6 @@ return 0
   >
   <send>
 
-   local count_ships
    if ("%1" == ".help") then
     local tprint = require ("tprint")
     print("Valid switches:")
@@ -1030,7 +1059,8 @@ return 0
     print("- smc [N].[class name] to show the Nth nearest ship matching that class.")
     return 0
    elseif ("%1" == ".count") then
-    count_ships = true
+    countingStarmap = true
+    starmapCounts = {}
    elseif ("%1" == "c" and "%2" == "") then
     -- smc without arguments should be sent to the game
     return Send("smc")
@@ -1039,7 +1069,7 @@ return 0
    searchingScan = true
    scan = ""
 
-   if (not count_ships) then
+   if (not countingStarmap) then
     scan = string.gsub("%1", "%a+",
      function (letter)
       return starmaptable[letter]

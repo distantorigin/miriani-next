@@ -1,5 +1,12 @@
 # Miriani-Next Changelog
 
+## Version 4.1.25
+### New
+- Added a new sm.count command, in line with what the sm.help command said should have been there. (Pull #5 - thanks Daniel!)
+
+### Changed
+- Changed the sound for entering a nebula.
+
 ## Version 4.1.24
 ### New
 - Trimmed silence from a couple sounds.

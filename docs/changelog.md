@@ -1,14 +1,19 @@
 # Miriani-Next Changelog
 
+## Version 4.1.26
+
+### Changed
+- Raised volume on nebula detection sound.
+
+### Fixed
+- Fixed tradesman market trigger not firing for expired sales.
+
 ## Version 4.1.25
 ### New
 - Added a new sm.count command, in line with what the sm.help command said should have been there. (Pull #5 - thanks Daniel!)
 
 ### Changed
 - Changed the sound for entering a nebula.
-
-### Fixed
-- Fixed tradesman market trigger not firing for expired sales (e.g. "Jimmy Stone's sale has expired.").
 
 ## Version 4.1.24
 ### New

@@ -50,7 +50,7 @@ print_color ({"[Tradesman Market] ", "default"}, {line, "market"})
   <trigger
    enabled="y"
    group="market"
-match="^\[Tradesman Market\]\s+[A-Z][a-z]+\s+(?:Mc)?[A-Z][a-z]+'s\s+(?:has\s+canceled\s+(?:his|her)\s+sale|sale\s+has\s+completed)\.$"
+match="^\[Tradesman Market\]\s+[A-Z][a-z]+\s+(?:Mc)?[A-Z][a-z]+'s\s+(?:has\s+canceled\s+(?:his|her)\s+sale|sale\s+has\s+(?:completed|expired))\.$"
    regexp="y"
    send_to="12"
    sequence="100"

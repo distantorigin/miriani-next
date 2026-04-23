@@ -7,6 +7,9 @@
 ### Changed
 - Changed the sound for entering a nebula.
 
+### Fixed
+- Fixed tradesman market trigger not firing for expired sales (e.g. "Jimmy Stone's sale has expired.").
+
 ## Version 4.1.24
 ### New
 - Trimmed silence from a couple sounds.

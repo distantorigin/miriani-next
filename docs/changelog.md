@@ -2,8 +2,12 @@
 
 ## Version 4.1.27 (In Progress)
 
+### Changed
+- The archaeology depth tracker now shows "dug" or "remaining" after the depth. If you walk to an artifact using the directional scanner and start digging without scanning again, it counts up (e.g., "0.50 feet dug"). If you scan at the dig site to get the actual depth, it counts down instead (e.g., "0.60 feet remaining"). You can scan at any point to switch.
+
 ### Fixed
 - The archaeology depth tracker extra now activates when arriving at artifact coordinates via the directional scanner. Previously, digging with a shovel, brush, pickaxe, or apparatus would not announce depth until manually scanning again.
+- Fixed archaeology depth tracker showing 0.00 feet on every dig when arriving via the directional scanner due to a room tracking issue.
 
 ## Version 4.1.26
 

@@ -358,8 +358,13 @@ function handle_coordinates(name, line, wildcards)
   -- Check if we've arrived at artifact coordinates
   if artifact_coordinates and artifact_coordinates.x == x and artifact_coordinates.y == y then
     mplay("activity/archaeology/artifactHere")
-    -- Clear the artifact coordinates so we don't keep playing the sound
     artifact_coordinates = nil
+    if config:get_option("archaeology_helper_dig").value == "yes" then
+      buried_artifact = 0
+      artifact_room = room
+      artifact_depth_unknown = true
+      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
+    end
   end
 
   -- Channel to hooks buffer if enabled

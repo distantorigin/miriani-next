@@ -659,7 +659,7 @@ ImportXML([=[
    and environment
    and (buried_artifact or artifact_room) then
      if not environment.digsite then
-       buried_artifact, artifact_room = nil
+       buried_artifact, artifact_room, artifact_depth_unknown = nil
        infobar_t["arch"] = nil
      end -- if
    end -- if

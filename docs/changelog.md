@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.27 (In Progress)
+
+### Fixed
+- The archaeology depth tracker extra now activates when arriving at artifact coordinates via the directional scanner. Previously, digging with a shovel, brush, pickaxe, or apparatus would not announce depth until manually scanning again.
+
 ## Version 4.1.26
 
 ### Changed

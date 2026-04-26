@@ -138,6 +138,7 @@ mplay("activity/archaeology/nothing")
    if config:get_option("archaeology_helper_dig").value == "yes" then
      buried_artifact = tonumber("%1")
      artifact_room = room
+     artifact_depth_unknown = nil
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
@@ -156,7 +157,11 @@ mplay("activity/archaeology/nothing")
 
    if buried_artifact
    and room == artifact_room then
-buried_artifact = math.max(0, buried_artifact - 0.5)
+     if artifact_depth_unknown then
+       buried_artifact = buried_artifact + 0.5
+     else
+       buried_artifact = math.max(0, buried_artifact - 0.5)
+     end
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
@@ -175,7 +180,11 @@ buried_artifact = math.max(0, buried_artifact - 0.5)
 
    if buried_artifact
    and room == artifact_room then
-buried_artifact = math.max(0, buried_artifact - 0.1)
+     if artifact_depth_unknown then
+       buried_artifact = buried_artifact + 0.1
+     else
+       buried_artifact = math.max(0, buried_artifact - 0.1)
+     end
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
@@ -194,7 +203,11 @@ buried_artifact = math.max(0, buried_artifact - 0.1)
 
    if buried_artifact
    and room == artifact_room then
-buried_artifact = math.max(0, buried_artifact - 0.3)
+     if artifact_depth_unknown then
+       buried_artifact = buried_artifact + 0.3
+     else
+       buried_artifact = math.max(0, buried_artifact - 0.3)
+     end
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 
@@ -211,7 +224,7 @@ buried_artifact = math.max(0, buried_artifact - 0.3)
   <send>  mplay("activity/archaeology/find")
 
    if buried_artifact or artifact_room then
-     buried_artifact, artifact_room = nil
+     buried_artifact, artifact_room, artifact_depth_unknown = nil
      infobar_t["arch"] = nil
    end -- if
 
@@ -229,7 +242,7 @@ buried_artifact = math.max(0, buried_artifact - 0.3)
   <send>
    mplay("activity/archaeology/shatter")
    if buried_artifact or artifact_room then
-     buried_artifact, artifact_room = nil
+     buried_artifact, artifact_room, artifact_depth_unknown = nil
      infobar_t["arch"] = nil
    end -- if
   </send>
@@ -247,7 +260,11 @@ buried_artifact = math.max(0, buried_artifact - 0.3)
 
    if buried_artifact
    and room == artifact_room then
-buried_artifact = math.max(0, buried_artifact - 2.0)
+     if artifact_depth_unknown then
+       buried_artifact = buried_artifact + 2.0
+     else
+       buried_artifact = math.max(0, buried_artifact - 2.0)
+     end
      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
    end -- if
 

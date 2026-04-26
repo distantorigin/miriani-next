@@ -139,7 +139,7 @@ mplay("activity/archaeology/nothing")
      buried_artifact = tonumber("%1")
      artifact_room = room
      artifact_depth_unknown = nil
-     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet %s", buried_artifact, artifact_depth_unknown and "dug" or "remaining"))
    end -- if
 
   </send>
@@ -162,7 +162,7 @@ mplay("activity/archaeology/nothing")
      else
        buried_artifact = math.max(0, buried_artifact - 0.5)
      end
-     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet %s", buried_artifact, artifact_depth_unknown and "dug" or "remaining"))
    end -- if
 
   </send>
@@ -185,7 +185,7 @@ mplay("activity/archaeology/nothing")
      else
        buried_artifact = math.max(0, buried_artifact - 0.1)
      end
-     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet %s", buried_artifact, artifact_depth_unknown and "dug" or "remaining"))
    end -- if
 
   </send>
@@ -208,7 +208,7 @@ mplay("activity/archaeology/nothing")
      else
        buried_artifact = math.max(0, buried_artifact - 0.3)
      end
-     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet %s", buried_artifact, artifact_depth_unknown and "dug" or "remaining"))
    end -- if
 
   </send>
@@ -265,7 +265,7 @@ mplay("activity/archaeology/nothing")
      else
        buried_artifact = math.max(0, buried_artifact - 2.0)
      end
-     infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
+     infobar("arch", string.format("Artifact: %.2f feet %s", buried_artifact, artifact_depth_unknown and "dug" or "remaining"))
    end -- if
 
   </send>
@@ -291,7 +291,7 @@ mplay("activity/archaeology/nothing")
   <send>mplay("activity/archaeology/cease")
    if config:get_option("archaeology_helper_dig").value == "yes"
    and buried_artifact then
-     print(string.format("%.2f feet.", buried_artifact))
+     print(string.format("%.2f feet %s.", buried_artifact, artifact_depth_unknown and "dug" or "remaining"))
      end -- if
    </send>
   </trigger>

@@ -363,7 +363,7 @@ function handle_coordinates(name, line, wildcards)
       buried_artifact = 0
       artifact_room = room
       artifact_depth_unknown = true
-      infobar("arch", string.format("Artifact: %.2f feet", buried_artifact))
+      infobar("arch", string.format("Artifact: %.2f feet dug", buried_artifact))
     end
   end
 

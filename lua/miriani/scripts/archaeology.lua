@@ -156,7 +156,7 @@ mplay("activity/archaeology/nothing")
    mplay("activity/archaeology/shovel")
 
    if buried_artifact
-   and room == artifact_room then
+   and (artifact_depth_unknown or room == artifact_room) then
      if artifact_depth_unknown then
        buried_artifact = buried_artifact + 0.5
      else
@@ -179,7 +179,7 @@ mplay("activity/archaeology/nothing")
    mplay("activity/archaeology/brush")
 
    if buried_artifact
-   and room == artifact_room then
+   and (artifact_depth_unknown or room == artifact_room) then
      if artifact_depth_unknown then
        buried_artifact = buried_artifact + 0.1
      else
@@ -202,7 +202,7 @@ mplay("activity/archaeology/nothing")
    mplay("activity/archaeology/shovel")
 
    if buried_artifact
-   and room == artifact_room then
+   and (artifact_depth_unknown or room == artifact_room) then
      if artifact_depth_unknown then
        buried_artifact = buried_artifact + 0.3
      else
@@ -259,7 +259,7 @@ mplay("activity/archaeology/nothing")
    mplay("activity/archaeology/apparatus")
 
    if buried_artifact
-   and room == artifact_room then
+   and (artifact_depth_unknown or room == artifact_room) then
      if artifact_depth_unknown then
        buried_artifact = buried_artifact + 2.0
      else

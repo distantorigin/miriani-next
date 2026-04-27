@@ -717,6 +717,20 @@ ImportXML([=[
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="computer"
+   match="^WARNING: Hull integrity has been compromised\."
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   stop("computer")
+   mplay("ship/alarm/hullCompromise", "computer")
+  </send>
+  </trigger>
+
   <!-- Damage reader: plays critical sounds for components at 80-99% damage -->
   <trigger
    enabled="n"

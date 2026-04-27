@@ -2,6 +2,9 @@
 
 ## Version 4.1.27 (In Progress)
 
+### New
+- Added an alert sound for hull integrity compromise warnings. When hull is compromised but components are undamaged, the "no damage" sound is replaced by the hull warning alert.
+
 ### Changed
 - The archaeology depth tracker now shows "dug" or "remaining" after the depth. If you walk to an artifact using the directional scanner and start digging without scanning again, it counts up (e.g., "0.50 feet dug"). If you scan at the dig site to get the actual depth, it counts down instead (e.g., "0.60 feet remaining"). You can scan at any point to switch.
 

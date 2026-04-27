@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.27 (In Progress)
+## Version 4.1.27
 
 ### New
 - Added an alert sound for hull integrity compromise warnings. When hull is compromised but components are undamaged, the "no damage" sound is replaced by the hull warning alert.
@@ -8,7 +8,6 @@
 ### Changed
 - The archaeology depth tracker now shows "dug" or "remaining" after the depth. If you walk to an artifact using the directional scanner and start digging without scanning again, it counts up (e.g., "0.50 feet dug"). If you scan at the dig site to get the actual depth, it counts down instead (e.g., "0.60 feet remaining"). You can scan at any point to switch.
 - Note: Directional archaeology scanners no longer provide exact coordinates, only a direction. This was a server-side change, not a soundpack bug. The coordinates were never intended to be sent to players. As a result, the sound that played when arriving at the destination room will no longer trigger.
-
 
 ### Fixed
 - The archaeology depth tracker extra now activates when arriving at artifact coordinates via the directional scanner. Previously, digging with a shovel, brush, pickaxe, or apparatus would not announce depth until manually scanning again.

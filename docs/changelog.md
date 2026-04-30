@@ -1,5 +1,14 @@
 # Miriani-Next Changelog
 
+## Version 4.1.28 (In Progress)
+
+### New
+- Added sounds and triggers for sensor interruption pulses (firing and being hit).
+- Added a distinct sound for pulse weapons locking onto a target.
+
+### Fixed
+- CDP, immobilization, and disarmament pulse firing triggers now respect the reduce spam option. Previously they always gagged the original text.
+
 ## Version 4.1.27
 
 ### New

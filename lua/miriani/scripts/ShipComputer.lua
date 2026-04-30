@@ -273,11 +273,13 @@ computer_actions_wildcard = {
   },
   -- Unified turret and long-range weapon triggers (using Lua patterns, not PCRE)
   -- Matches anything ending with "locking onto [target]."
-  [".+ locking ont?o (.+)%."] = {
-    func = function(target)
+  ["(.+) locking ont?o (.+)%."] = {
+    func = function(weapon, target)
       mplay("device/keyboard", "ship")
       if target == "empty space" then
         mplay("ship/combat/noLock", "ship")
+      elseif string.find(weapon, "pulse") then
+        mplay("ship/combat/pulse/lock", "ship")
       else
         mplay("ship/combat/weaponsLocked", "ship")
       end

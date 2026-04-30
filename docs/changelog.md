@@ -4,7 +4,7 @@
 
 ### New
 - Added sounds for sensor interruption pulses firing (and being hit by one).
-- Added a sound and trigger for being hit by a disarmament pulse.
+- Added a sound for being hit by a disarmament pulse.
 - Added distinct sounds for pulse weapons locking onto a target.
 
 ### Fixed

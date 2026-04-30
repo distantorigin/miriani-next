@@ -874,5 +874,19 @@ ImportXML([=[
   <send>mplay("ship/combat/pulse/sensorInterruptHit", "ship")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="combat"
+   match="^The (?:star)?ship shakes violently around you and a strange shriek is heard as a disarmament pulse impacts the hull and the charge spreads to the weapon arrays\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+   mplay("ship/combat/pulse/disarmHit", "ship")
+   mplay("ship/combat/pulse/disarmSqueal", "ship")
+  </send>
+  </trigger>
+
 </triggers>
 ]=])

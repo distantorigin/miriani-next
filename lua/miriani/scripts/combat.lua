@@ -757,9 +757,13 @@ ImportXML([=[
   >
   <send>
    mplay("ship/combat/pulse/cdp", "ship")
-   if gagline(nil, "%0") == 1 then
-     print_color({"CDP pulse discharged.", "combat"})
-   end -- if
+   if config:get_option("spam").value == "yes" then
+     if gagline(nil, "%0") == 1 then
+       print_color({"CDP pulse discharged.", "combat"})
+     end -- if
+   else
+     print_color({"%0", "combat"})
+   end -- if spam
   </send>
   </trigger>
 
@@ -807,9 +811,13 @@ ImportXML([=[
   >
   <send>
    mplay("ship/combat/pulse/immobilize", "ship")
-   if gagline(nil, "%0") == 1 then
-     print_color({"Immobilization pulse discharged.", "combat"})
-   end -- if
+   if config:get_option("spam").value == "yes" then
+     if gagline(nil, "%0") == 1 then
+       print_color({"Immobilization pulse discharged.", "combat"})
+     end -- if
+   else
+     print_color({"%0", "combat"})
+   end -- if spam
   </send>
   </trigger>
 
@@ -824,9 +832,13 @@ ImportXML([=[
   >
   <send>
    mplay("ship/combat/pulse/disarm", "ship")
-   if gagline(nil, "%0") == 1 then
-     print_color({"Disarmament pulse discharged.", "combat"})
-   end -- if
+   if config:get_option("spam").value == "yes" then
+     if gagline(nil, "%0") == 1 then
+       print_color({"Disarmament pulse discharged.", "combat"})
+     end -- if
+   else
+     print_color({"%0", "combat"})
+   end -- if spam
   </send>
   </trigger>
 

@@ -830,5 +830,37 @@ ImportXML([=[
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="combat"
+   match="^You hear a sharp .+ sound as a sensor interruption pulse is fired\.$"
+   regexp="y"
+   send_to="14"
+   omit_from_output="y"
+   sequence="100"
+  >
+  <send>
+   mplay("ship/combat/pulse/sensorInterrupt", "ship")
+   if config:get_option("spam").value == "yes" then
+     if gagline(nil, "%0") == 1 then
+       print_color({"Sensor interruption pulse fired.", "combat"})
+     end -- if
+   else
+     print_color({"%0", "combat"})
+   end -- if spam
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="combat"
+   match="^The (?:star)?ship sways slightly as a sensor interruption pulse impacts the sensor arrays\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/combat/pulse/sensorInterruptHit", "ship")</send>
+  </trigger>
+
 </triggers>
 ]=])

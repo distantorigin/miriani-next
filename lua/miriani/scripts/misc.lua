@@ -1257,6 +1257,16 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <send>mplay("misc/Uncategorized/bolt")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   name="DivingLowOxygen"
+   group="misc"
+   match="^The hud on .+? flashes alarmingly, indicating the oxygen supply has dropped below \d+%\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("activity/diving/lowOxygen")</send>
+  </trigger>
 
 </triggers>
 ]=])

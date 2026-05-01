@@ -6,6 +6,7 @@
 - Added sounds for sensor interruption pulses firing (and being hit by one).
 - Added a sound for being hit by a disarmament pulse.
 - Added distinct sounds for pulse weapons locking onto a target.
+- Added a low oxygen warning sound for divers. (Thanks Mark!)
 
 ### Fixed
 - CDP, immobilization, and disarmament pulse firing triggers now respect the reduce spam option. Previously they always gagged the original text.

@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.28 (In Progress)
+## Version 4.1.28
 
 ### New
 - Added sounds for sensor interruption pulses firing (and being hit by one).

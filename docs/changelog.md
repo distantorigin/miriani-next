@@ -7,6 +7,7 @@
 - Added a sound for being hit by a disarmament pulse.
 - Added distinct sounds for pulse weapons locking onto a target.
 - Added a low oxygen warning sound for divers. (Thanks Mark!)
+- After several months of testing, SSL is now enabled by default using port 1443 for new installs. To enable encrypted connections, you can press alt+enter to get to World Properties and on the IP address pane, change the port to 1443, checking the "Use SSL/TLS Encryption" checkbox that follows. Proxiani users need not change this, as the proxy already uses TLS.
 
 ### Fixed
 - CDP, immobilization, and disarmament pulse firing triggers now respect the reduce spam option. Previously they always gagged the original text.

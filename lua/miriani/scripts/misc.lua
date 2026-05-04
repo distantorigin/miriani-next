@@ -1268,6 +1268,16 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <send>mplay("activity/diving/lowOxygen")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^An indicator light on .+ diving air compressor turns to green and the low hiss fades away\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("activity/diving/compressorFinish")</send>
+  </trigger>
+
 </triggers>
 ]=])
 

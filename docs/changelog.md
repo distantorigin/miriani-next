@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.29 (In Progress)
+## Version 4.1.29
 
 ### New
 - Added a sound for diving air compressors completing the fill process.

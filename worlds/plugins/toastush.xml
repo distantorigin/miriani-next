@@ -787,6 +787,11 @@ function OnPluginSend(text)
 
   local s = text
 
+  -- Trim trailing spaces if configured
+  if config and config:get_option("trim_trailing_spaces").value == "yes" then
+    s = s:gsub("%s+$", "")
+  end
+
   -- Convert smart quotes and other special characters to ASCII equivalents
   -- This prevents the MOO server from dropping non-ASCII characters
   s = s:gsub("\147", "\"")  -- Left double quote (U+0093)

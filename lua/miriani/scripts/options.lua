@@ -77,6 +77,7 @@ local options = {
 
   roundtime = {descr="Play a sound when roundtime is up.", value="no", group="general", type="bool"},
   escape_abort = {descr="Use Escape key to send @abort command.", value="yes", group="general", type="bool"},
+  trim_trailing_spaces = {descr="Remove trailing spaces from commands before sending.", value="no", group="general", type="bool"},
   proxiani_bypass_commands = {descr="Commands to bypass Proxiani (comma-separated, e.g. 'atsm,pc').", value="", group="general", type="string"},
   text_editor = {descr="Text editor for local editing (MCP).", value="notepad.exe", group="general", type="string"},
   tab_activates_notepad = {descr="Use Tab to activate output window instead of tab completion.", value="no", group="general", type="bool"},

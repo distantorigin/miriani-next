@@ -12,6 +12,7 @@
 local audio = {
   sounds = {volume=60, pan=0},
   environment = {volume=50, pan=0},
+  socials = {volume=60, pan=0},
 }
 
 -- Fixed volume offsets (applied as: master * (category + offset))
@@ -22,7 +23,7 @@ audio.offsets = {
   computer = -10,        -- Ship computer slightly quieter
   ship = 0,              -- Ship sounds same as sounds
   melee = -5,            -- Combat slightly quieter
-  socials = 0,           -- Socials same as sounds
+  socials = 0,           -- Socials (has own volume, offset still applies)
   vehicle = 0,           -- Vehicle sounds same as sounds
   other = 0,             -- Other sounds same as sounds
 }
@@ -31,6 +32,7 @@ audio.offsets = {
 audio.category_map = {
   ambiance = "environment",
   loop = "environment",
+  socials = "socials",
 }
 
 return audio

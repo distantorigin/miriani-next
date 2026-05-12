@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.30 (In Progress)
+
+### New
+- Added a socials volume control to the F10 volume cycling (master, sounds, environment, socials).
+
 ## Version 4.1.29
 
 ### New

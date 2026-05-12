@@ -18,6 +18,7 @@ local registry_file = "worlds/settings/sound_groups.conf"
 local excluded_groups = {
   ambiance = true,
   environment = true,
+  socials = true,
 }
 
 -- Synced random: deterministic "random" that produces the same result
@@ -847,7 +848,7 @@ end
 
 -- Audio group management for volume controls
 -- Simplified: only cycle between master, sounds, environment
-local volume_groups = {"master", "sounds", "environment"}
+local volume_groups = {"master", "sounds", "environment", "socials"}
 
 function forward_cycle_audio_groups()
   active_group = active_group + 1

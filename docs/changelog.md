@@ -1,9 +1,10 @@
 # Miriani-Next Changelog
 
-## Version 4.1.30 (In Progress)
+## Version 4.1.30
 
 ### New
 - Added a socials volume control to the F10 volume cycling (master, sounds, environment, socials).
+- Added an option under 'conf gen' to trim trailing spaces from input commands. For example, with this option enabled, "sc art " would become "sc art" before it was sent to the game.
 
 ## Version 4.1.29
 

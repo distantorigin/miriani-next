@@ -60,7 +60,7 @@ local socials = {
   snicker   = {genders = {"male", "female"}, category = "laughter"},
 
   -- Distress sounds
-  cry       = {genders = {"male", "female"}, category = "distress"},
+    cry       = {genders = {"male", "female"}, category = "distress"},
   gasp      = {genders = {"male", "female"}, category = "distress"},
   grunt      = {genders = {"male", "female"}, category = "distress"},
   moan      = {genders = {"male", "female"}, category = "distress"},
@@ -140,7 +140,7 @@ wink    = {genders = {"neuter"}, category = "physical"},
   applaud   = {genders = {"neuter"}, category = "novelty"},
   bears       = {genders = {"neuter"}, category = "songs"},
   beep      = {genders = {"neuter"}, category = "novelty"},
-  boggle    = {genders = {"female"}, category = "novelty"},
+  boggle    = {genders = {"male", "female"}, category = "novelty"},
   bongo     = {genders = {"neuter"}, category = "novelty"},
   bonk      = {genders = {"neuter"}, category = "novelty"},
   boo       = {genders = {"neuter"}, category = "novelty"},

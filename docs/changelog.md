@@ -1,5 +1,12 @@
 # Miriani-Next Changelog
 
+## Version 4.1.31 in progress
+
+### New
+
+- Added female ponder sound
+- Added sounds for boggle social in both genders
+
 ## Version 4.1.30
 
 ### New

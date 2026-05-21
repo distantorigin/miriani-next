@@ -6,6 +6,7 @@
 
 - Added female ponder sound
 - Added sounds for boggle social in both genders
+- Replaced the female ponder sound due to multiple complaints of it sounding erotic.
 
 ## Version 4.1.30
 

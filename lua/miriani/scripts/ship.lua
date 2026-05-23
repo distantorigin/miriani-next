@@ -1408,5 +1408,17 @@ mplay("ship/computer/warning", "computer")</send>
   <send>mplay("ship/misc/airlock/AirlockExit", "ship")</send>
   </trigger>
 
-</triggers>
+<trigger
+   enabled="y"
+   group="ship"
+   match="^The starship is already moving\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay("ship/move/alreadyMoving", "ship")</send>
+  </trigger>
+  
+  </triggers>
 ]=])

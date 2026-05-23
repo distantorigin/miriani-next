@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.32 in progress
+
+### New
+- Added sounds for the highfive social.
+
 ## Version 4.1.31
 ### New
 - Added female ponder sound

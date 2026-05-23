@@ -4,6 +4,7 @@
 
 ### New
 - Added sounds for the highfive social.
+- Replaced the old chortle sound. I can revert if need be.
 
 ## Version 4.1.31
 ### New

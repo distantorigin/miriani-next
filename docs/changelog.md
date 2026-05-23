@@ -1,9 +1,7 @@
 # Miriani-Next Changelog
 
-## Version 4.1.31 in progress
-
+## Version 4.1.31
 ### New
-
 - Added female ponder sound
 - Added sounds for boggle social in both genders
 - Replaced the female ponder sound due to multiple complaints of it sounding erotic.

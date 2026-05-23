@@ -8,6 +8,7 @@
 - Added sounds for boggle social in both genders
 - Replaced the female ponder sound due to multiple complaints of it sounding erotic.
 - Added sounds for headshake, roll and shake socials.
+- Added a sound for when the ship is already moving per Roran's request.
 
 ## Version 4.1.30
 

@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.32 in progress
+## Version 4.1.32
 
 ### New
 - Added sounds for the highfive social.

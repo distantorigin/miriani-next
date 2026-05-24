@@ -4,7 +4,11 @@
 
 ### New
 - Added sounds for the highfive social.
-- Replaced the old chortle sound. I can revert if need be.
+- Replaced the old male chortle sound. I can revert if need be.
+- Reverted male chortle sound back to the original.
+
+### Fixed
+- In theory, a sound should play when you try to move an already moving ship, both in manual navigation and autopilot. Please call out if something seems off.
 
 ## Version 4.1.31
 ### New

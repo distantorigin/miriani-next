@@ -6,6 +6,8 @@
 - Added sounds for the highfive social.
 - Replaced the old male chortle sound. I can revert if need be.
 - Reverted male chortle sound back to the original.
+- Moved new male chortle sound to mlaugh social.
+- Added a sound for the new what social.
 
 ### Fixed
 - In theory, a sound should play when you try to move an already moving ship, both in manual navigation and autopilot. Please call out if something seems off.

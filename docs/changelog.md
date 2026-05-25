@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.33 in progress
+
+### New
+- Added a sound for the tap social.
+
 ## Version 4.1.32
 
 ### New

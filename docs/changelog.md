@@ -3,7 +3,8 @@
 ## Version 4.1.33 in progress
 
 ### New
-- Added a sound for the tap social.
+- Added sounds for the tap, bawl,  orgasm,and cower socials.
+- Added a new whistle sound.
 
 ## Version 4.1.32
 

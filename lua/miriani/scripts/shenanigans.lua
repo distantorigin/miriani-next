@@ -129,6 +129,36 @@ ImportXML([=[
   <send>mplay("social/slimeMachineHit")</send>
   </trigger>
 
+  <!-- Scent Sphere Sounds -->
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^.+ throws? an? .+ at .+\. An? .+ splats on to .+, leaving .+ with the scent of .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    local sounds = {"social/slimeMachineHit", "social/slimePuddleSplat", "social/neuter/squish"}
+    mplay(sounds[math.random(#sounds)])
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="shenanigans"
+   match="^.+ throws? an? .+ at you\. An? .+ falls on .+ with a splat\. You suddenly notice that you smell of .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>
+    local sounds = {"social/slimeMachineHit", "social/slimePuddleSplat", "social/neuter/squish"}
+    mplay(sounds[math.random(#sounds)])
+  </send>
+  </trigger>
+
   <trigger
    enabled="y"
    group="shenanigans"

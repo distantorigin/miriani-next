@@ -1,10 +1,11 @@
 # Miriani-Next Changelog
 
-## Version 4.1.33 in progress
+## Version 4.1.33 (In progress)
 
 ### New
 - Added sounds for the tap, bawl,  orgasm,and cower socials.
 - Added a new whistle sound.
+- Added sounds for throwing items from sent dispensers.
 
 ## Version 4.1.32
 

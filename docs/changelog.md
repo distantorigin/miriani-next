@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.1.33 (In progress)
+## Version 4.1.33
 
 ### New
 - Added sounds for the tap, bawl,  orgasm,and cower socials.

@@ -8,6 +8,7 @@
 - Added sounds for throwing items from sent dispensers.
 - Added a few new wake up sounds.
 - Added new flex, flip, jig and jiggle social sounds.
+- Added a new sound for the what and scream socials.
 
 ## Version 4.1.32
 

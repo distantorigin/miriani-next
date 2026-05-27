@@ -7,7 +7,7 @@
 - Added a new whistle sound.
 - Added sounds for throwing items from sent dispensers.
 - Added a few new wake up sounds.
-- Added new jig and jiggle social sounds.
+- Added new flex, flip, jig and jiggle social sounds.
 
 ## Version 4.1.32
 

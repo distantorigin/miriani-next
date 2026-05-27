@@ -9,6 +9,7 @@
 - Added a few new wake up sounds.
 - Added new flex, flip, jig and jiggle social sounds.
 - Added a new sound for the what and scream socials.
+- Added a sound for the grabfriendandshrieklikegirls social.
 
 ## Version 4.1.32
 

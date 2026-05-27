@@ -7,9 +7,10 @@
 - Added a new whistle sound.
 - Added sounds for throwing items from sent dispensers.
 - Added a few new wake up sounds.
-- Added new flex, flip, jig and jiggle social sounds.
-- Added a new sound for the what and scream socials.
-- Added a sound for the grabfriendandshrieklikegirls social.
+- Added new drool, flex, flip, jig and jiggle social sounds.
+- Added new sounds for the what and scream socials.
+- Added sounds for the drool and grabfriendandshrieklikegirls socials.
+- Replaced all of the female moan sounds.
 
 ## Version 4.1.32
 

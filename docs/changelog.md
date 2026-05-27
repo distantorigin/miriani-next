@@ -6,7 +6,7 @@
 - Added sounds for the tap, bawl,  orgasm,and cower socials.
 - Added a new whistle sound.
 - Added sounds for throwing items from sent dispensers.
-- Added a few new wake up and go to sleep sounds.
+- Added a few new wake up sounds.
 
 ## Version 4.1.32
 

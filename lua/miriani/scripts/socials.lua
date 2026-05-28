@@ -24,6 +24,7 @@ local social_aliases = {
   ["hurf"] = "vomit",
   ["sickup"] = "vomit",
 ["gfas"] = "grabfriendandshrieklikegirls",
+["gfas"] = "grabfriend",
 }
 
 -- Socials database

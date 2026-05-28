@@ -63,6 +63,7 @@ local socials = {
 
   -- Distress sounds
   bawl   = {genders = {"neuter"}, category = "distress"},  
+  blubber   = {genders = {"neuter"}, category = "distress"},  
   cry       = {genders = {"male", "female"}, category = "distress"},
   gasp      = {genders = {"male", "female"}, category = "distress"},
   grunt      = {genders = {"male", "female"}, category = "distress"},
@@ -73,6 +74,7 @@ local socials = {
   sniffle   = {genders = {"neuter"}, category = "distress"},
   sob       = {genders = {"male", "female"}, category = "distress"},
 wail      = {genders = {"neuter"}, category = "distress"},
+weep      = {genders = {"neuter"}, category = "distress"},
 whimper      = {genders = {"neuter"}, category = "distress"},  
 whine      = {genders = {"neuter"}, category = "distress"},  
 yelp      = {genders = {"neuter"}, category = "distress"},

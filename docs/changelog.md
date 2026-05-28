@@ -6,7 +6,8 @@
 - Added the GFAS alias in the code to trigger a sound on the GRABFRIEND social.
 
 ### New
-- Added sounds for the panic and prance socials.
+- Added sounds for the blubber, panic, prance and weep socials.
+- Added a new scream sound.
 
 ## Version 4.1.33
 

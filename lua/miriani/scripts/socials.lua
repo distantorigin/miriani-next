@@ -67,6 +67,7 @@ local socials = {
   gasp      = {genders = {"male", "female"}, category = "distress"},
   grunt      = {genders = {"male", "female"}, category = "distress"},
   moan      = {genders = {"male", "female"}, category = "distress"},
+  panic   = {genders = {"neuter"}, category = "distress"},
   screech   = {genders = {"neuter"}, category = "distress"},
   shriek    = {genders = {"male", "female"}, category = "distress"},
   sniffle   = {genders = {"neuter"}, category = "distress"},

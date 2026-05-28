@@ -23,6 +23,7 @@ local social_aliases = {
   ["retch"] = "vomit",
   ["hurf"] = "vomit",
   ["sickup"] = "vomit",
+["gfas"] = "grabfriendandshrieklikegirls",
 }
 
 -- Socials database

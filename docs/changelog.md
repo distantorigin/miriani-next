@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.34 (In progress)
+
+### Fixed
+- Added the GFAS alias in the code to trigger a sound on the GRABFRIEND social.
+
 ## Version 4.1.33
 
 ### New

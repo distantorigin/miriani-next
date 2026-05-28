@@ -6,7 +6,7 @@
 - Added the GFAS alias in the code to trigger a sound on the GRABFRIEND social.
 
 ### New
-- Added a sound for the panic social.
+- Added sounds for the panic and prance socials.
 
 ## Version 4.1.33
 

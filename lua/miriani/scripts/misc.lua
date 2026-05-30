@@ -1130,7 +1130,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <send>
    -- Play yawn social (randomly choose male or female)
    local yawn_gender = (math.random(2) == 1) and "male" or "female"
-   -- mplay("social/"..yawn_gender.."/yawn", "socials")
+    mplay("social/"..yawn_gender.."/yawn", "socials")
       -- Play collapse social (neuter has collapse sounds)
    mplay("social/neuter/collapse", "socials")
   </send>

@@ -5,6 +5,7 @@
 ### Fixed
 - Added the GFAS alias in the code to trigger a sound on the GRABFRIEND social.
 - Relocated a couple of sounds that were in the wrong place and fixed corresponding code.
+- Reverted disconnect change to the original sound sequence for the time being.
 
 ### New
 - Added sounds for the blubber, noogie, panic, prance, weep and worship socials.

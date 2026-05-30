@@ -27,6 +27,7 @@ local social_aliases = {
 ["gfaslg"] = "grabfriendandshrieklikegirls",
 ["gfs"] = "grabfriendandshrieklikegirls",
 ["gfslg"] = "grabfriendandshrieklikegirls",
+["shiver"] = "cower",
 }
 
 -- Socials database

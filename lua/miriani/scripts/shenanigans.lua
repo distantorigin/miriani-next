@@ -115,7 +115,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("social/slimeMachineHit")</send>
+  <send>mplay("misc/uncategorized/slimeMachineHit")</send>
   </trigger>
 
   <trigger
@@ -126,7 +126,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("social/slimeMachineHit")</send>
+  <send>mplay("misc/uncategorized/slimeMachineHit")</send>
   </trigger>
 
   <!-- Scent Sphere Sounds -->
@@ -140,7 +140,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    local sounds = {"social/slimeMachineHit", "social/slimePuddleSplat", "social/neuter/squish"}
+    local sounds = {"misc/uncategorized/slimeMachineHit", "misc/uncategorized/slimePuddleSplat", "social/neuter/squish"}
     mplay(sounds[math.random(#sounds)])
   </send>
   </trigger>
@@ -154,7 +154,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    local sounds = {"social/slimeMachineHit", "social/slimePuddleSplat", "social/neuter/squish"}
+    local sounds = {"misc/uncategorized/slimeMachineHit", "misc/uncategorized/slimePuddleSplat", "social/neuter/squish"}
     mplay(sounds[math.random(#sounds)])
   </send>
   </trigger>
@@ -167,7 +167,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("social/slimePuddleSplat")</send>
+  <send>mplay("misc/uncategorized/slimePuddleSplat")</send>
   </trigger>
 
   <trigger
@@ -178,7 +178,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("social/slimePuddleSplat")</send>
+  <send>mplay("misc/uncategorized/slimePuddleSplat")</send>
   </trigger>
 
   <!-- Paint Canister Explosions -->

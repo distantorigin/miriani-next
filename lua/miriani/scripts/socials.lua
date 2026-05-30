@@ -206,8 +206,9 @@ hum    = {genders = {"male", "female"}, category = "novelty"},
   squeak    = {genders = {"neuter"}, category = "novelty"},
   whistle   = {genders = {"neuter"}, category = "novelty"},
   what  = {genders = {"neuter"}, category = "novelty"},
-  why       = {genders = {"neuter"}, category = "novelty"},
-  yess      = {genders = {"neuter"}, category = "novelty"},
+    why       = {genders = {"neuter"}, category = "novelty"},
+worship  = {genders = {"neuter"}, category = "novelty"},
+    yess      = {genders = {"neuter"}, category = "novelty"},
 yodel      = {genders = {"neuter"}, category = "novelty"},
 }
 

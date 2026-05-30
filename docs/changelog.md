@@ -4,10 +4,12 @@
 
 ### Fixed
 - Added the GFAS alias in the code to trigger a sound on the GRABFRIEND social.
+- Relocated a couple of sounds that were in the wrong place and fixed corresponding code.
 
 ### New
-- Added sounds for the blubber, noogie, panic, prance and weep socials.
+- Added sounds for the blubber, noogie, panic, prance, weep and worship socials.
 - Added a new scream sound.
+- Added a new male sneeze sound.
 
 ## Version 4.1.33
 

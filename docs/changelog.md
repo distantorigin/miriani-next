@@ -6,12 +6,13 @@
 - Added the GFAS alias in the code to trigger a sound on the GRABFRIEND social.
 - Relocated a couple of sounds that were in the wrong place and fixed corresponding code.
 - Reverted disconnect change to the original sound sequence for the time being.
+-- Fixed the new disconnect sounds not playing, so they are now live.
 
 ### New
 - Added sounds for the blubber, noogie, panic, prance, weep and worship socials.
 - Added a new scream sound.
 - Added a new male sneeze sound.
--- Rather than playing a yawn sound when another player disconnects, the soundpack should choose from a disconnected sound.
+-- Rather than playing a yawn then collapse sound when another player disconnects, the soundpack should choose from a disconnected sound.
 
 ## Version 4.1.33
 

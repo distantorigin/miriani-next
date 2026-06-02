@@ -12,7 +12,7 @@
 - Added sounds for the blubber, noogie, panic, prance, weep and worship socials.
 - Added a new scream sound.
 - Added a new male sneeze sound.
--- Rather than playing a yawn then collapse sound when another player disconnects, the soundpack should choose from a disconnected sound.
+- Rather than playing a yawn then collapse sound when another player disconnects, the soundpack should choose from a disconnected sound.
 
 ## Version 4.1.33
 

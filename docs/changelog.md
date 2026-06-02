@@ -1,10 +1,10 @@
 # Miriani-Next Changelog
 
-## Version 4.1.34 (In progress)
+## Version 4.1.34
 
 ### Fixed
 - Added the GFAS alias in the code to trigger a sound on the GRABFRIEND social.
-- Relocated a couple of sounds that were in the wrong place and fixed corresponding code.
+- Relocated  slime machine sounds that were in the wrong place and fixed corresponding code.
 - Reverted disconnect change to the original sound sequence for the time being.
 -- Fixed the new disconnect sounds not playing, so they are now live.
 

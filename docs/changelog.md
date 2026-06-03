@@ -3,7 +3,10 @@
 ## Version 4.1.35 (In Progress)
 
 ### Changed
-- Moved the wake up sound script from misc to communication. In essence, this means if you turn communication off in conf 12 communication, you should no longer be pestered by sounds when people wake up and go to sleep in your location.
+- Moved the wake up sound script from misc to communication. In essence, this means if you turn communication off in conf 12 communication, you should no longer be pestered by sounds when people wake up and go to sleep in your location. I realize this is far from optimal, but it's a work around for the time being.
+
+### New
+- Added new male giggle and ponder sounds.
 
 ## Version 4.1.34
 
@@ -122,7 +125,7 @@
 ### New
 - Added sounds for punching bags.
 - Added code for the communicator linkConfirmed sound.
-- Rewrote MushReader to help speech output. This is change 1 of 2 for testing. As this is the primary file for screen reader output, please report any changes, and expect odd behaviors. While I am fully confident it is fullproof tested, if you have speech that is not spoken, enormous amounts of continuing lag, or other issues that don't feel like regular trigger bugs, please ask Derrick over Miriani next metaf
+- Rewrote MushReader to help speech output. This is change 1 of 2 for testing. As this is the primary file for screen reader output, please report any changes, and expect odd behaviors. While I am fully confident it is foolproof tested, if you have speech that is not spoken, enormous amounts of continuing lag, or other issues that don't feel like regular trigger bugs, please ask Derrick over Miriani next metaf
 - Updated to MUSHclient version 5.07+distantorigin.5:
   - Dramatically improved performance when receiving large blocks of output (e.g. room descriptions, status or cargo reports, long lists). The accessible output viewer now batches rapid lines together and updates the display once, instead of updating after every single line. In benchmarks, 200 lines of output went from taking ~1.9 seconds to ~0.14 seconds --  about 13x faster. This should noticeably reduce lag and speech delays when the server sends a lot of text at once.
   - Fixed the main window briefly flashing at default size before restoring to its saved position/maximized state on  startup.

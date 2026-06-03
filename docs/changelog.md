@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.1.35 (In Progress)
+
+### Changed
+- Moved the wake up sound script from misc to communication. In essence, this means if you turn communication off in conf 12 communication, you should no longer be pestered by sounds when people wake up and go to sleep in your location.
+
 ## Version 4.1.34
 
 ### Fixed

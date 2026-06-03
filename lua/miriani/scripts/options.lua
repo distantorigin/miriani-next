@@ -180,13 +180,12 @@ local group_metadata = {
   {key = "socials_novelty", title = "Novelty", order = 14},
   {key = "socials_songs", title = "Songs", order = 15},
   {key = "socials_uncategorized", title = "Uncategorized", order = 16},
-{key = "socials_connections", title = "Connections", order = 17},
-  {key = "scan_formats", title = "Configure Scan Templates", order = 18},
-  {key = "buffers", title = "Output Buffers", order = 19},
-  {key = "colors", title = "Color Customization", order = 20},
-  {key = "audio groups", title = "Toggle Sound Categories", order = 21},
-  {key = "sound variants", title = "Sound Variants", order = 22},
-  {key = "developer", title = "Developer Options", order = 23},
+  {key = "scan_formats", title = "Configure Scan Templates", order = 17},
+  {key = "buffers", title = "Output Buffers", order = 18},
+  {key = "colors", title = "Color Customization", order = 19},
+  {key = "audio groups", title = "Toggle Sound Categories", order = 20},
+  {key = "sound variants", title = "Sound Variants", order = 21},
+  {key = "developer", title = "Developer Options", order = 22},
 } -- group_metadata
 
 return {

@@ -212,36 +212,6 @@ worship  = {genders = {"neuter"}, category = "novelty"},
 yodel      = {genders = {"neuter"}, category = "novelty"},
 }
 
-<trigger
-   enabled="y"
-   group="socials"
-   match="^.+? (?:yawns suddenly and collapses to the ground, asleep|drifts off to sleep)\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>
-   -- Play yawn social (randomly choose male or female)
- --  local yawn_gender = (math.random(2) == 1) and "male" or "female"
-    --  mplay("social/"..yawn_gender.."/yawn", "socials")
-      mplay("misc/Connections/disconnected", "connections")
-    -- Play collapse social (neuter has collapse sounds)
-   -- mplay("social/neuter/collapse", "socials")
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="socials"
-   match="^.+ suddenly awakens\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-    mplay("misc/Connections/wake_up", "connections")
-  </send>
-  </trigger>
-
 --- Check if social sounds are globally enabled in config
 -- @return boolean
 function is_socials_enabled()
@@ -255,7 +225,7 @@ function is_socials_enabled()
 end
 
 --- Check if a specific category is enabled
--- @param category string The category name (laughter, distress, reflex, bodily, physical, novelty, songs, connections)
+-- @param category string The category name (laughter, distress, reflex, bodily, physical, novelty, songs)
 -- @return boolean
 function is_social_category_enabled(category)
   -- songs category defaults to off

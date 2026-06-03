@@ -847,53 +847,6 @@ ImportXML([=[
   <send>mplay("comm/static", "communication")</send>
   </trigger>
 
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^.+ yawns suddenly and collapses to the ground, asleep\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-    -- Pick random yawn from social directories
-    local yawn_sounds = {"social/male/yawn", "social/female/yawn1", "social/female/yawn2", "social/female/YAWN3"}
-    mplay(yawn_sounds[math.random(#yawn_sounds)], "communication")
-    mplay("social/neuter/collapse" .. math.random(1,3), "communication")
-  </send>
-  </trigger>
-
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^.+ suddenly awakens\.$"
-   regexp="y"
-   send_to="12"
-   sequence="100"
-  >
-  <send>
-    mplay("misc/Connections/wake_up", "communication")
-  </send>
-  </trigger>
-
-  
-  <trigger
-   enabled="y"
-   group="comm"
-   match="^.+? (?:yawns suddenly and collapses to the ground, asleep|drifts off to sleep)\.$"
-   regexp="y"
-   send_to="12"
-  >
-  <send>
-   -- Play yawn social (randomly choose male or female)
- --  local yawn_gender = (math.random(2) == 1) and "male" or "female"
-    --  mplay("social/"..yawn_gender.."/yawn", "socials")
-      mplay("misc/Connections/disconnected", "communication")
-    -- Play collapse social (neuter has collapse sounds)
-   -- mplay("social/neuter/collapse", "socials")
-  </send>
-  </trigger>
-  
   
   <trigger
    enabled="y"

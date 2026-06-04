@@ -442,9 +442,9 @@ function find_sound_file(file)
     local files = {}
     local basename = path.basename(file_base)
     local escaped_ext = ext:gsub("%.", "%%.")
-    local variant_pattern = "^" .. basename .. "%d*" .. escaped_ext .. "$"
+    local variant_pattern = "^" .. string.lower(basename) .. "%d*" .. escaped_ext .. "$"
     for filename, metadata in pairs(search) do
-      if not metadata.directory and string.match(filename, variant_pattern) then
+      if not metadata.directory and string.match(string.lower(filename), variant_pattern) then
         local full_path = sound_dir .. path.dirname(file)
         if path.dirname(file) ~= "." then
           full_path = full_path .. "/"

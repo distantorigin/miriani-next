@@ -97,12 +97,18 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="ship"
-match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z].{0,19}?(?: \w+ feet)? out of the (?:&quot;.+?&quot;|ship|hatch|airlock|docking bay|(?:\w+-person .+?)|Highguard)\.$"
+   match="^(You|[A-Z][a-z]+(?: [A-Z][a-z]+)*) [a-z].{0,19}?(?: \w+ feet)? out of the (?:&quot;.+?&quot;|ship|hatch|airlock|docking bay|(?:\w+-person .+?)|Highguard)\.$"
    regexp="y"
-   send_to="12"
-   sequence="100"
+   omit_from_output="y"
+   send_to="14"
+   sequence="99"
   >
-  <send>mplay ("ship/misc/exit", "ship")</send>
+  <send>
+mplay ("ship/misc/exit", "ship")
+if config:get_option("spam").value ~= "yes" then
+  print("%0")
+end
+  </send>
   </trigger>
 
   <trigger

@@ -28,6 +28,7 @@ local social_aliases = {
 ["gfs"] = "grabfriendandshrieklikegirls",
 ["gfslg"] = "grabfriendandshrieklikegirls",
 ["shiver"] = "cower",
+["q"] = "quack",
 }
 
 -- Socials database
@@ -162,12 +163,14 @@ wink    = {genders = {"neuter"}, category = "physical"},
   cheer     = {genders = {"male", "female"}, category = "novelty"},
 cower       = {genders = {"neuter"}, category = "novelty"},
   devil      = {genders = {"neuter"}, category = "novelty"},
+  duck      = {genders = {"neuter"}, category = "novelty"},
   fire       = {genders = {"neuter"}, category = "songs"},
 flex  = {genders = {"neuter"}, category = "novelty"},
 flip  = {genders = {"neuter"}, category = "novelty"},  
 flirt  = {genders = {"neuter"}, category = "novelty"},
   frog      = {genders = {"neuter"}, category = "novelty"},
   golfclap  = {genders = {"neuter"}, category = "novelty"},
+  goose      = {genders = {"neuter"}, category = "novelty"},
   grabfriendandshrieklikegirls      = {genders = {"neuter"}, category = "novelty"},  
   growl     = {genders = {"male", "female"}, category = "novelty"},
   headshake      = {genders = {"neuter"}, category = "novelty"},

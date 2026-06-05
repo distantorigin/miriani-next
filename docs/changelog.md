@@ -10,6 +10,7 @@
 
 ### New
 - Added new male giggle and ponder sounds.
+- Added duck and goose sounds.
 
 ## Version 4.1.34
 

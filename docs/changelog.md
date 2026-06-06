@@ -1,16 +1,14 @@
 # Miriani-Next Changelog
 
-## Version 4.1.35 (In Progress)
-
-### Fixed
-- Fixed sound file matching so that socials with similar names (e.g. jig/jiggle, noo/noogie) no longer randomly play each other's sounds.
-
-### Changed
-- Moved the wake up sound script from misc to communication. In essence, this means if you turn communication off in conf 12 communication, you should no longer be pestered by sounds when people wake up and go to sleep in your location. I realize this is far from optimal, but it's a work around for the time being.
+## Version 4.1.35
 
 ### New
 - Added new male giggle and ponder sounds.
 - Added duck and goose sounds.
+- Changed hum sound in preparation for sound theming.
+
+### Fixed
+- Fixed sound file matching so that socials with similar names (e.g. jig/jiggle, noo/noogie) no longer randomly play each other's sounds.
 
 ## Version 4.1.34
 

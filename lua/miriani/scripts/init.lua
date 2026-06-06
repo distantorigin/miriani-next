@@ -53,6 +53,7 @@ local namespace = {
 "mcp", -- MCP protocol
 "npc_voices", -- AI generated NPC voices
 "games", -- Arcade and miscellaneous style games.
+"sound_browser", -- Sound file browser for directory navigation
 } -- namespace
 
 

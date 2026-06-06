@@ -400,6 +400,75 @@ end
 -- Initialize variant preferences on module load
 load_variant_preferences()
 
+-- Ignored sounds registry
+local ignored_sounds = {}
+local ignored_sounds_file = "worlds/settings/ignored_sounds.conf"
+
+local function load_ignored_sounds()
+  local path = require("pl.path")
+  if path.isfile(ignored_sounds_file) then
+    local f = io.open(ignored_sounds_file, "r")
+    if f then
+      local content = f:read("*all")
+      f:close()
+      for line in content:gmatch("[^\r\n]+") do
+        local trimmed = line:match("^%s*(.-)%s*$")
+        if trimmed and trimmed ~= "" then
+          ignored_sounds[trimmed] = true
+        end
+      end
+    end
+  end
+end
+
+local function save_ignored_sounds()
+  local path = require("pl.path")
+  local dir = path.dirname(ignored_sounds_file)
+  if not path.isdir(dir) then
+    path.mkdir(dir)
+  end
+  local f = io.open(ignored_sounds_file, "w")
+  if f then
+    local sorted = {}
+    for sound_path in pairs(ignored_sounds) do
+      table.insert(sorted, sound_path)
+    end
+    table.sort(sorted)
+    for _, sound_path in ipairs(sorted) do
+      f:write(sound_path .. "\n")
+    end
+    f:close()
+  end
+end
+
+function is_sound_ignored(file)
+  if ignored_sounds[file] then return true end
+  local base = file:gsub("(%d+)(%.%w+)$", "%2")
+  if base ~= file and ignored_sounds[base] then return true end
+  return false
+end
+
+function ignore_sound(file)
+  ignored_sounds[file] = true
+  save_ignored_sounds()
+end
+
+function unignore_sound(file)
+  ignored_sounds[file] = nil
+  save_ignored_sounds()
+end
+
+function get_ignored_sounds()
+  local list = {}
+  for sound_path in pairs(ignored_sounds) do
+    table.insert(list, sound_path)
+  end
+  table.sort(list)
+  return list
+end
+
+load_ignored_sounds()
+
 
 function find_sound_file(file)
   local path = require("pl.path")
@@ -527,6 +596,10 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
 
   if not is_group_enabled(group) then
     return -- This group is disabled
+  end
+
+  if is_sound_ignored(file) then
+    return
   end
 
   -- foreground sounds: check foreground sounds mode

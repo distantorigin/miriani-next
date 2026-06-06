@@ -15,6 +15,8 @@
 - Added a sample theme with a README explaining how to create your own.
 - Added new meme headshake sound.
 - Added enable and disable sounds for the Memescape theme.
+- Added a sound file browser for navigating the sounds directory level by level from dialog menus.
+- Added per-sound muting. Browse and select individual sounds to mute or unmute with conf mutes. Muting a sound silences all of its variants.
 
 ### Fixed
 - Fixed dialog input leaking to the MUD when a conf or other dialog menu was active. Rewrote the input handler to use a single alias with a negative lookahead instead of the keep_evaluating + consumer alias approach that MUSHclient wasn't always evaluating in the same cycle.

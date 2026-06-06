@@ -17,7 +17,7 @@ local variant_sounds = {
 }
 
 -- Special groups that have no regular options
-local special_groups = {"audio groups", "sound variants", "themes"}
+local special_groups = {"audio groups", "sound variants", "themes", "mutes"}
 
 -- Get social categories dynamically from socials module
 local function get_social_categories()
@@ -39,7 +39,7 @@ local known_groups = {
   "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
   "socials_bodily", "socials_physical", "socials_novelty", "socials_songs",
   "socials_uncategorized", "scan_formats", "buffers", "colors", "developer",
-  "themes"
+  "themes", "mutes"
 }
 
 -- Helper function to strip trailing punctuation from option descriptions
@@ -67,7 +67,7 @@ function config_menu.show_main()
       end
     end
     if not found then
-      table.insert(main_menu, config:get_group_title(group_key))
+      table.insert(main_menu, (config:get_group_title(group_key)))
     end
   end
 
@@ -299,6 +299,16 @@ function config_menu.show_group(group_name)
       local status = enabled and "[On]" or "[Off]"
       secondary_menu[theme_key] = string.format("%s %s", theme.name, status)
     end
+
+  elseif actual_group_key == "mutes" then
+    secondary_menu["00_ignore_new"] = "Mute a sound..."
+
+    local ignored = get_ignored_sounds()
+    for i, sound_path in ipairs(ignored) do
+      local display = sound_path:gsub("^miriani/", ""):gsub("%.ogg$", ""):gsub("%.wav$", "")
+      secondary_menu["_ignored_" .. tostring(i)] = display
+    end
+
   else
     -- Normal menu rendering for other groups
     secondary_menu = config:render_menu_list(actual_group_key)
@@ -319,8 +329,8 @@ function config_menu.show_group(group_name)
   for key in pairs(secondary_menu) do
     table.insert(sorted_keys, key)
   end
-  if actual_group_key == "socials" or actual_group_key:match("^socials_") then
-    -- Sort by key to preserve intended order (00_ prefix sorts category toggle first)
+  if actual_group_key == "socials" or actual_group_key:match("^socials_") or actual_group_key == "mutes" then
+    -- Sort by key to preserve intended order (00_ prefix sorts action first)
     table.sort(sorted_keys)
   else
     -- Sort by display text for other menus
@@ -539,6 +549,47 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       })
       return
     end
+  end
+
+  -- Special handling for muted sounds
+  if option_key == "00_ignore_new" then
+    local sound_browser = require("lua/miriani/scripts/sound_browser")
+    sound_browser.browse({
+      title = "Select a sound to mute",
+      start_dir = "miriani/",
+      callback = function(selected_path)
+        if selected_path then
+          local normalized = selected_path:gsub("(%d+)(%.%w+)$", "%2")
+          ignore_sound(normalized)
+          local display = normalized:gsub("^miriani/", ""):gsub("%.ogg$", ""):gsub("%.wav$", "")
+          notify("info", string.format("Muted: %s", display))
+        end
+        if not skip_menu then config_menu.show_group(group_name) end
+      end
+    })
+    return
+  end
+
+  if option_key:match("^_ignored_") then
+    local index = tonumber(option_key:match("^_ignored_(%d+)$"))
+    local ignored = get_ignored_sounds()
+    if index and ignored[index] then
+      local sound_path = ignored[index]
+      local display = sound_path:gsub("^miriani/", ""):gsub("%.ogg$", ""):gsub("%.wav$", "")
+      dialog.confirm({
+        title = string.format("Unmute %s?", display),
+        callback = function(result, reason)
+          if result and result.confirmed then
+            unignore_sound(sound_path)
+            notify("info", string.format("Unmuted: %s", display))
+          end
+          if not skip_menu then config_menu.show_group(group_name) end
+        end
+      })
+    else
+      if not skip_menu then config_menu.show_group(group_name) end
+    end
+    return
   end
 
   if not config:is_option(option_key) then
@@ -898,6 +949,30 @@ function config_menu.find_and_edit(group_name, search_term)
 
     mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find theme matching '%s'.", search_term))
+    return
+  end
+
+  -- Special handling for muted sounds
+  if actual_group_key == "mutes" then
+    local ignored = get_ignored_sounds()
+
+    -- Try numeric index first
+    local index = tonumber(search_term)
+    if index and index >= 1 and index <= #ignored then
+      config_menu.edit_option("_ignored_" .. tostring(index), "mutes", true)
+      return
+    end
+
+    -- Try partial name match to unignore
+    for i, sound_path in ipairs(ignored) do
+      if string.find(string.lower(sound_path), string.lower(search_term)) then
+        config_menu.edit_option("_ignored_" .. tostring(i), "mutes", true)
+        return
+      end
+    end
+
+    mplay("misc/Uncategorized/cancel")
+    notify("critical", string.format("Could not find muted sound matching '%s'.", search_term))
     return
   end
 

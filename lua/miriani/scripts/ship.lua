@@ -842,6 +842,17 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   <trigger
    enabled="y"
    group="ship"
+   match="^The subwarp drive is nonfunctional due to high levels of sensor interference\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay ("ship/misc/noDebris", "ship")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="ship"
    match="^You (?:hear somebody)?\s?((?:impatiently)?\s?knock[ing]{0,3}|kick[ing]{0,3} furiously) on the .+?\.$"
    regexp="y"
    send_to="12"

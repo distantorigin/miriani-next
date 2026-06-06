@@ -496,6 +496,10 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       end
       table.insert(detail_lines, "Mode: " .. mode_label)
       table.insert(detail_lines, string.format("Files: %d (%s)", file_count, format_size(total_size)))
+      local last_updated = get_theme_last_updated(theme_id)
+      if last_updated then
+        table.insert(detail_lines, "Last updated: " .. os.date("%b %d, %Y at %I:%M %p", last_updated))
+      end
       table.insert(detail_lines, "")
 
       local toggle_label = current_state and "Disable theme" or "Enable theme"

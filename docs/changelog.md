@@ -9,6 +9,7 @@
 - Selecting a theme in conf themes now opens a detail panel showing author, description, mode, and file count with size before you toggle it.
 - Themes can include enable and disable sounds that play as feedback when you toggle them. Numbered variants are supported (enable1.ogg, enable2.ogg, etc.).
 - Themes can include a changelog viewable from the detail panel; add changelog.md to a theme's directory.
+- The theme detail panel now shows when the theme was last updated, based on the most recently modified file in its directory.
 - Themes can override the disconnect sound (yawn+collapse) by providing their own disconnected sound files.
 - Added "drifts off to sleep" to the disconnect trigger.
 - Added a sample theme with a README explaining how to create your own.

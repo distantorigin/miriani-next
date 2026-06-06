@@ -113,6 +113,35 @@ function count_theme_files(theme_id)
   return count, total_size
 end
 
+function get_theme_last_updated(theme_id)
+  local info = get_theme_info(theme_id)
+  if not info then return nil end
+
+  local latest = 0
+  local function scan_dir(dir)
+    local entries = utils.readdir(dir .. "/*")
+    if not entries then return end
+    for name, metadata in pairs(entries) do
+      if name ~= "." and name ~= ".." then
+        if metadata.directory then
+          scan_dir(dir .. "/" .. name)
+        else
+          local mtime = path.getmtime(dir .. "/" .. name)
+          if mtime and mtime > latest then
+            latest = mtime
+          end
+        end
+      end
+    end
+  end
+
+  scan_dir(info.path)
+  if latest > 0 then
+    return latest
+  end
+  return nil
+end
+
 function is_theme_enabled(theme_id)
   return enabled_themes[theme_id] == true
 end

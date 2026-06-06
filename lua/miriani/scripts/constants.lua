@@ -95,4 +95,8 @@ constants.walkStyle = {
   ["walks"] = "walk"
 } -- table of walk-styles
 
+for k, v in pairs(constants) do
+  _G[k] = v
+end
+
 return constants

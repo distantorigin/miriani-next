@@ -1,0 +1,7 @@
+{
+  "name": "Sample Theme",
+  "author": "Miriani-Next",
+  "description": "A sample theme demonstrating the theme folder structure. Add .ogg files mirroring the sounds/miriani/ layout to replace or supplement the default sounds.",
+  "mode": "additive",
+  "hidden": true
+}

@@ -185,7 +185,8 @@ local group_metadata = {
   {key = "colors", title = "Color Customization", order = 19},
   {key = "audio groups", title = "Toggle Sound Categories", order = 20},
   {key = "sound variants", title = "Sound Variants", order = 21},
-  {key = "developer", title = "Developer Options", order = 22},
+  {key = "themes", title = "Sound Themes", order = 22},
+  {key = "developer", title = "Developer Options", order = 23},
 } -- group_metadata
 
 return {

@@ -17,7 +17,7 @@ local variant_sounds = {
 }
 
 -- Special groups that have no regular options
-local special_groups = {"audio groups", "sound variants"}
+local special_groups = {"audio groups", "sound variants", "themes"}
 
 -- Get social categories dynamically from socials module
 local function get_social_categories()
@@ -38,7 +38,8 @@ local known_groups = {
   "general", "auto_login", "ship", "room", "helpers", "screen reader",
   "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
   "socials_bodily", "socials_physical", "socials_novelty", "socials_songs",
-  "socials_uncategorized", "scan_formats", "buffers", "colors", "developer"
+  "socials_uncategorized", "scan_formats", "buffers", "colors", "developer",
+  "themes"
 }
 
 -- Helper function to strip trailing punctuation from option descriptions
@@ -281,6 +282,23 @@ function config_menu.show_group(group_name)
       local display_name = group:gsub("^%l", string.upper)
       secondary_menu[group_key] = string.format("%s %s", display_name, status)
     end
+
+  elseif actual_group_key == "themes" then
+    discover_themes()
+    local themes = get_all_themes()
+
+    if #themes == 0 then
+      notify("info", "No themes found. Place theme folders in sounds/themes/ to get started.")
+      config_menu.show_main()
+      return
+    end
+
+    for _, theme in ipairs(themes) do
+      local theme_key = "_theme_" .. theme.id
+      local enabled = is_theme_enabled(theme.id)
+      local status = enabled and "[On]" or "[Off]"
+      secondary_menu[theme_key] = string.format("%s %s", theme.name, status)
+    end
   else
     -- Normal menu rendering for other groups
     secondary_menu = config:render_menu_list(actual_group_key)
@@ -436,6 +454,85 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
 
       -- Return to group menu
       if not skip_menu then config_menu.show_group(group_name) end
+      return
+    end
+  end
+
+  -- Special handling for themes
+  if option_key:match("^_theme_") then
+    local theme_id = option_key:match("^_theme_(.+)$")
+    if theme_id then
+      local theme_info = get_theme_info(theme_id)
+      if not theme_info then
+        notify("critical", string.format("Theme '%s' not found.", theme_id))
+        if not skip_menu then config_menu.show_group(group_name) end
+        return
+      end
+
+      local current_state = is_theme_enabled(theme_id)
+      local file_count, total_size = count_theme_files(theme_id)
+      local mode_label = theme_info.mode == "replace" and "Replace (overrides default sounds)" or "Additive (pools with default sounds)"
+
+      local function format_size(bytes)
+        if bytes >= 1024 * 1024 then
+          return string.format("%.2fMB", bytes / (1024 * 1024))
+        elseif bytes >= 1024 then
+          return string.format("%.1fKB", bytes / 1024)
+        else
+          return string.format("%dB", bytes)
+        end
+      end
+
+      local detail_lines = {}
+      table.insert(detail_lines, theme_info.name)
+      table.insert(detail_lines, string.rep("-", #theme_info.name))
+      if theme_info.author then
+        table.insert(detail_lines, "Author: " .. theme_info.author)
+      end
+      if theme_info.description then
+        table.insert(detail_lines, "")
+        table.insert(detail_lines, theme_info.description)
+        table.insert(detail_lines, "")
+      end
+      table.insert(detail_lines, "Mode: " .. mode_label)
+      table.insert(detail_lines, string.format("Files: %d (%s)", file_count, format_size(total_size)))
+      table.insert(detail_lines, "")
+
+      local toggle_label = current_state and "Disable theme" or "Enable theme"
+      local changelog_path = theme_info.path .. "/changelog.md"
+      local has_changelog = require("pl.path").isfile(changelog_path)
+
+      local choices = {
+        ["1"] = toggle_label,
+      }
+      if has_changelog then
+        choices["2"] = "View changelog"
+      end
+      choices["0"] = "Go back"
+
+      dialog.menu({
+        title = table.concat(detail_lines, "\n"),
+        choices = choices,
+        callback = function(result, reason)
+          if result and result.key == "1" then
+            local new_state = not current_state
+            set_theme_enabled(theme_id, new_state)
+            local status = new_state and "on" or "off"
+            notify("info", string.format("Theme \"%s\" set to %s", theme_info.name, status))
+          elseif result and result.key == "2" and has_changelog then
+            local f = io.open(changelog_path, "r")
+            if f then
+              local text = f:read("*all")
+              f:close()
+              local notepad_title = theme_info.name .. " Changelog"
+              SendToNotepad(notepad_title, string.gsub(text, "\n", "\r\n"))
+              NotepadReadOnly(notepad_title, true)
+              ActivateNotepad(notepad_title)
+            end
+          end
+          if not skip_menu then config_menu.show_group(group_name) end
+        end
+      })
       return
     end
   end
@@ -770,6 +867,33 @@ function config_menu.find_and_edit(group_name, search_term)
 
     mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find sound variant matching '%s'.", search_term))
+    return
+  end
+
+  -- Special handling for themes
+  if actual_group_key == "themes" then
+    discover_themes()
+    local themes = get_all_themes()
+
+    -- Try numeric index first
+    local index = tonumber(search_term)
+    if index and index >= 1 and index <= #themes then
+      local theme = themes[index]
+      config_menu.edit_option("_theme_" .. theme.id, "themes", true)
+      return
+    end
+
+    -- Try partial name match
+    for _, theme in ipairs(themes) do
+      if string.find(string.lower(theme.name), string.lower(search_term)) or
+         string.find(string.lower(theme.id), string.lower(search_term)) then
+        config_menu.edit_option("_theme_" .. theme.id, "themes", true)
+        return
+      end
+    end
+
+    mplay("misc/Uncategorized/cancel")
+    notify("critical", string.format("Could not find theme matching '%s'.", search_term))
     return
   end
 

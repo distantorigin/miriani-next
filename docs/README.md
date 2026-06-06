@@ -23,6 +23,8 @@
 - [Configuration](#configuration)
   - [Configuration Options Reference](#configuration-options-reference)
   - [Alternate Sounds](#alternate-sounds)
+  - [Sound Themes](#sound-themes)
+    - [Creating a Theme](#creating-a-theme)
 - [Commands Reference](#commands-reference)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [What's New in Miriani-Next](#whats-new-in-miriani-next)
@@ -352,6 +354,9 @@ Some sounds have multiple versions you can choose from:
 - **Jingle bells**: Holiday sound variants
 Select your preferred version for each. Adds variety and personalization without requiring custom sound files.
 
+**Sound Themes** (`conf theme`)
+Browse and toggle sound themes. Each theme shows its status (On/Off). Selecting one shows its details and lets you toggle it. See [Sound Themes](#sound-themes) for more.
+
 **Developer Options** (`conf developer`)
 - **Debug notifications (missing audio files, etc)**: Shows debug notifications for missing audio files, trigger errors, and other development issues. Enable if you're developing scripts or troubleshooting problems. Creates extra noise for normal users.
 - **Sound Playback History**: Creates a buffer showing all recently played sounds with their file names and playback details. Identify which sound file corresponds to which action.
@@ -367,6 +372,62 @@ Sound files must be OGG Vorbis format using the`.ogg` extension.
 
 Tip for finding sound paths: Enable "Sound Playback History" in `conf developer` to see which sound file plays for each game event. This buffer shows the file paths, making it easy to identify which sound to override.
 
+### Sound Themes
+
+Themes are drop-in sound packs that replace or add to the default sounds. Where alternate sounds give you a single override layer, themes are standalone packages you can mix, match, and toggle independently.
+
+Each theme is a folder under `sounds/themes/` that mirrors the directory layout of `sounds/miriani/`, with an optional `theme.json` for metadata.
+
+**Managing Themes**:
+- `conf theme` - Browse installed themes and toggle them on/off
+- `conf theme <number>` - Jump to a theme by its menu number
+- `conf theme <name>` - Jump to a theme by partial name match
+
+Selecting a theme shows its details (author, description, mode, file count and size) and lets you toggle it.
+
+**Modes**:
+
+Each theme runs in one of two modes (set in `theme.json`):
+
+- **Additive** - Theme sounds get pooled with the defaults. The client picks randomly from both sets, so you get more variety without losing anything.
+- **Replace** - Theme sounds override matching defaults entirely. Anything the theme doesn't cover still falls back to the default sounds.
+
+If you enable multiple themes, they stack. Replace-mode themes resolve last-enabled-wins per sound. Additive themes all feed into the pool.
+
+**Toggle Sounds**:
+
+A theme can include `enable.ogg` and/or `disable.ogg` in its root folder. These play when you toggle the theme on or off.
+
+#### Creating a Theme
+
+1. Create a folder under `sounds/themes/` (e.g., `sounds/themes/my-theme/`)
+2. Optionally add a `theme.json`:
+
+```json
+{
+  "name": "My Theme",
+  "author": "Your Name",
+  "description": "What this theme does.",
+  "mode": "additive"
+}
+```
+
+3. Add `.ogg` files mirroring the `sounds/miriani/` structure. For example, to theme the combat hit sound, place it at `sounds/themes/my-theme/combat/hit1.ogg`. You can also add `enable.ogg` and `disable.ogg` to the theme root — these play when the theme is toggled.
+
+4. Enable it in-game with `conf theme`
+
+**theme.json fields**:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | No | Display name (defaults to folder name) |
+| `author` | No | Theme author |
+| `description` | No | What the theme does |
+| `mode` | No | `"additive"` (default) or `"replace"` |
+| `hidden` | No | `true` to hide from the menu |
+
+Without a `theme.json`, the folder name is used as the display name and the mode defaults to additive.
+
 ## Commands Reference
 
 This section documents all major commands available in Miriani-Next.
@@ -375,6 +436,8 @@ This section documents all major commands available in Miriani-Next.
 - `conf` - Open main configuration menu
 - `conf <category>` - Jump to specific category (e.g., `conf ship`, `conf buffers`)
 - `conf <category> <option>` - Directly edit an option (e.g., `conf general roundtime`)
+- `conf theme` - Browse and toggle sound themes
+- `conf theme <number/name>` - Jump to a specific theme
 
 **Log Management**
 - `lg view` - Open today's log

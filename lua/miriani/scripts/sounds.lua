@@ -408,6 +408,23 @@ function find_sound_file(file)
 
   -- Check if the file already exists as-is
   if path.isfile(sound_dir .. file) then
+    -- Even if exact file exists, check for additive theme sounds to pool with
+    if collect_additive_theme_files then
+      local theme_files = collect_additive_theme_files(file)
+      if #theme_files > 0 then
+        local files = { sound_dir .. file }
+        for _, tf in ipairs(theme_files) do
+          table.insert(files, tf)
+        end
+        table.sort(files)
+        local use_synced = config:get_option("synced_random").value == "yes"
+        if use_synced then
+          return files[synced_random(file, #files)]
+        else
+          return files[math.random(#files)]
+        end
+      end
+    end
     return sound_dir .. file
   end
 
@@ -453,7 +470,16 @@ function find_sound_file(file)
       end
     end
 
+    -- Merge additive theme sounds into the pool
+    if collect_additive_theme_files then
+      local theme_files = collect_additive_theme_files(file)
+      for _, tf in ipairs(theme_files) do
+        table.insert(files, tf)
+      end
+    end
+
     if #files > 0 then
+      table.sort(files)
       -- Check if synced random is enabled
       local use_synced = config:get_option("synced_random").value == "yes"
       if use_synced then
@@ -462,6 +488,20 @@ function find_sound_file(file)
       else
         -- Pick a truly random file
         return files[math.random(#files)]
+      end
+    end
+  else
+    -- No main sound files found — check additive themes as fallback
+    if collect_additive_theme_files then
+      local theme_files = collect_additive_theme_files(file)
+      if #theme_files > 0 then
+        table.sort(theme_files)
+        local use_synced = config:get_option("synced_random").value == "yes"
+        if use_synced then
+          return theme_files[synced_random(file, #theme_files)]
+        else
+          return theme_files[math.random(#theme_files)]
+        end
       end
     end
   end

@@ -25,6 +25,7 @@ local namespace = {
   "sounds", -- specific audio functions.
   -- socials loaded earlier (before Config:init)
   "constants", -- Global constants
+  "themes", -- Sound theme discovery and management
   "options", -- global options
   "counters", -- Activity counters system
   "hooks", -- Miriani soundpack hooks:

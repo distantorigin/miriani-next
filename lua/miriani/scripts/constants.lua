@@ -8,6 +8,7 @@ constants.EXTENSION = ".ogg"
 constants.ALT_EXTENSION = ".ogg"
 constants.SOUNDPATH = "miriani/"
 constants.ALTPATH = "alternate/"
+constants.THEMES_PATH = "themes/"
 constants.TOASTUSH_ID = "843d2f53cb3685465bda7d4a"
 constants.UPDATE_ID = "706cd88f4d441a81439bd421"
 

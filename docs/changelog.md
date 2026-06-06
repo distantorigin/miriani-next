@@ -1,5 +1,29 @@
 # Miriani-Next Changelog
 
+## Version 4.2.00 (In Progress)
+
+### New
+- Added a sound theme system. Themes go in sounds/themes/ and can overlay or replace sounds from the base set. Two modes are supported: additive themes will pool their sounds with the defaults for random selection, and replace themes substitute matching sounds entirely. Toggle themes on and off from conf themes.
+- Added a Memescape theme (credit Jason Harkness et al.), containing 81 meme-inspired and over-the-top sounds migrated out of the base set. Includes socials, connection jingles, and invalid command sounds. Disable the theme if you'd rather not hear them, enable it and they'll pool back in with the defaults.
+- Selecting a theme in conf themes now opens a detail panel showing author, description, mode, and file count with size before you toggle it.
+- Themes can include enable and disable sounds that play as feedback when you toggle them. Numbered variants are supported (enable1.ogg, enable2.ogg, etc.).
+- Themes can include a changelog viewable from the detail panel; add changelog.md to a theme's directory.
+- Themes can override the disconnect sound (yawn+collapse) by providing their own disconnected sound files.
+- Added "drifts off to sleep" to the disconnect trigger.
+- Added a sample theme with a README explaining how to create your own.
+- Added new meme headshake sound.
+- Added enable and disable sounds for the Memescape theme.
+
+### Fixed
+- Fixed dialog input leaking to the MUD when a conf or other dialog menu was active. Rewrote the input handler to use a single alias with a negative lookahead instead of the keep_evaluating + consumer alias approach that MUSHclient wasn't always evaluating in the same cycle.
+- conf theme followed by a name now opens the detail panel instead of immediately toggling.
+- Themes marked as hidden in their theme.json no longer show up in the conf menu.
+- Sound variant preferences (conf sound variants) now take priority over replace-mode themes. If you've picked a specific variant for a sound, themes won't override it.
+
+### Changed
+- Moved all meme and novelty social sounds out of the base set and into the Memescape theme. Remaining base sounds are renumbered to stay contiguous.
+- Replaced an invalid command sound with a less abrasive one.
+
 ## Version 4.1.35
 
 ### New

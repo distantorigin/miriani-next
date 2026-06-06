@@ -175,6 +175,11 @@ function Config:init(options, audio)
         self.sound_variants = file_data.sound_variants
       end
 
+      -- Load enabled themes
+      if file_data.enabled_themes then
+        self.enabled_themes = file_data.enabled_themes
+      end
+
       -- Convert to new format by saving
       self:save_to_file()
     else
@@ -224,6 +229,11 @@ function Config:init(options, audio)
       -- Load sound variants
       if file_data.sound_variants then
         self.sound_variants = file_data.sound_variants
+      end
+
+      -- Load enabled themes
+      if file_data.enabled_themes then
+        self.enabled_themes = file_data.enabled_themes
       end
     end
 
@@ -384,7 +394,7 @@ function Config:save_to_file()
     master_volume = self.master_volume ~= 100 and self.master_volume or nil,
     master_mute = self.master_mute or nil,
     sound_variants = self.sound_variants or nil,
-    -- Note: we don't save consts anymore as they should come from code
+    enabled_themes = self.enabled_themes or nil,
   }
 
   local serialize = require("serialize")

@@ -850,16 +850,20 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^.+ yawns suddenly and collapses to the ground, asleep\.$"
+   match="^.+ (?:yawns suddenly and collapses to the ground, asleep|drifts off to sleep)\.$"
    regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>
-    -- Pick random yawn from social directories
-    local yawn_sounds = {"social/male/yawn", "social/female/yawn1", "social/female/yawn2", "social/female/YAWN3"}
-    mplay(yawn_sounds[math.random(#yawn_sounds)], "communication")
-    mplay("social/neuter/collapse" .. math.random(1,3), "communication")
+    local theme_disconnect = find_theme_override("misc/Connections/disconnected")
+    if theme_disconnect then
+      play(theme_disconnect, "communication")
+    else
+      local yawn_sounds = {"social/male/yawn", "social/female/yawn1", "social/female/yawn2", "social/female/YAWN3"}
+      mplay(yawn_sounds[math.random(#yawn_sounds)], "communication")
+      mplay("social/neuter/collapse" .. math.random(1,3), "communication")
+    end
   </send>
   </trigger>
 

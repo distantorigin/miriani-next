@@ -4,6 +4,7 @@
 
 ### New
 - Added a sound for subwarp drive being nonfunctional due to sensor interference.
+- Added a getting started wizard that runs automatically for new users. Currently, it walks through auto-login, social sounds, themes, volume, ambiance, screen reader settings, keybindings, and updates. You can run it again anytime with the 'setup' command or 'next:wizard'.
 - Added a sound theme system. Themes go in sounds/themes/ and can overlay or replace sounds from the base set. Two modes are supported: additive themes will pool their sounds with the defaults for random selection, and replace themes substitute matching sounds entirely. Toggle themes on and off from conf themes.
 - Added a Memescape theme, Maintained by Jason Harkness with input from the community. This theme contains numerous meme-inspired and over-the-top sounds migrated out of the base set. Please provide feedback on what sounds may or may not belong in this theme! Enable with 'conf theme meme'.
 - Selecting a theme in conf themes now opens a detail panel showing author, description, mode, and file count with size before you toggle it.

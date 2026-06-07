@@ -27,6 +27,7 @@
 - Sound variant preferences (conf sound variants) now take priority over replace-mode themes. If you've picked a specific variant for a sound, themes won't override it.
 
 ### Changed
+- The changelog (whatsnew / F2) now opens as a read-only document.
 - Moved all meme and novelty social sounds out of the base set and into the Memescape theme. Remaining base sounds are renumbered to stay contiguous.
 - Replaced an invalid command sound with a less abrasive one.
 

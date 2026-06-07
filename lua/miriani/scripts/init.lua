@@ -18,6 +18,7 @@ require(scripts .. "/socials")
 local Config = require(scripts .."/include/config")
 config = Config()
 notify = require(scripts .."/include/notify")
+require(scripts .. "/include/direction")
 require(scripts .. "/rooms")  -- Room mappings, direction utilities, and triggers
 
 -- Table of dependencies.

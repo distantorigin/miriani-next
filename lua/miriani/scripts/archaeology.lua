@@ -35,64 +35,21 @@ match="^A level \w+ archaeological dig site scanner (?:indicates|reports) that (
 
    -- Check if we should calculate direction
    if config:get_option("archaeology_calculate_direction").value == "yes" and current_coordinates and current_coordinates['x'] and current_coordinates['y'] then
-        local player_x = current_coordinates['x']
-        local player_y = current_coordinates['y']
-        if current_coordinates['z'] then
-          local player_z = current_coordinates['z']
-        end -- current_coordinates['z']
-
-     -- Try to extract coordinates from message like "(X, Y, Z)" or "(X, Y)"
      local coords_pattern = "%(([%-%d]+),%s*([%-%d]+)%s*,?%s*([%-%d]*)%)"
      local target_x, target_y, target_z = output_message:match(coords_pattern)
 
      if target_x and target_y then
        target_x = tonumber(target_x)
        target_y = tonumber(target_y)
-       target_z = target_z ~= "" and tonumber(target_z) or player_z
+       target_z = target_z ~= "" and tonumber(target_z) or current_coordinates['z']
 
-       -- Store artifact coordinates globally for coordinate hook to check
        artifact_coordinates = {
          x = target_x,
          y = target_y,
          z = target_z
        }
 
-       -- Calculate direction
-       local directions = {}
-       local x_diff = target_x - player_x
-       local y_diff = target_y - player_y
-
-       if x_diff ~= 0 then
-         if x_diff > 0 then
-           table.insert(directions, string.format("%dE", x_diff))
-         else
-           table.insert(directions, string.format("%dW", math.abs(x_diff)))
-         end
-       end
-
-       if y_diff ~= 0 then
-         if y_diff > 0 then
-           table.insert(directions, string.format("%dS", y_diff))
-         else
-           table.insert(directions, string.format("%dN", math.abs(y_diff)))
-         end
-       end
-
-       -- Only calculate Z if both coordinates exist
-       if target_z and player_z then
-         local z_diff = target_z - player_z
-         if z_diff ~= 0 then
-           if z_diff > 0 then
-             table.insert(directions, string.format("%dD", z_diff))
-           else
-             table.insert(directions, string.format("%dU", math.abs(z_diff)))
-           end
-         end
-       end
-
-       if #directions > 0 then
-         output_message = table.concat(directions, ", ")
-       end
+       output_message = calculate_direction(current_coordinates, artifact_coordinates, ", ")
      end
    end
 

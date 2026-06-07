@@ -17,6 +17,7 @@
 - Added enable and disable sounds for the Memescape theme.
 - Added a sound file browser for navigating the sounds directory level by level from dialog menus.
 - Added per-sound muting. Browse and select individual sounds to mute or unmute with conf mutes. Muting a sound silences all of its variants.
+- Added smd command to show starships with relative direction (e.g. 3E 2S 1D).
 
 ### Fixed
 - Fixed dialog input leaking to the MUD when a conf or other dialog menu was active. Rewrote the input handler to use a single alias with a negative lookahead instead of the keep_evaluating + consumer alias approach that MUSHclient wasn't always evaluating in the same cycle.
@@ -27,6 +28,9 @@
 ### Changed
 - Moved all meme and novelty social sounds out of the base set and into the Memescape theme. Remaining base sounds are renumbered to stay contiguous.
 - Replaced an invalid command sound with a less abrasive one.
+
+### Removed
+- 'smd' no longer matches to debris.
 
 ## Version 4.1.35
 

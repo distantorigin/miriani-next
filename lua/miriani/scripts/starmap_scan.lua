@@ -52,6 +52,7 @@ starmaptable = {
 -- Starmap count state
 countingStarmap = false
 starmapCounts = {}
+showDirection = false
 
 -- Scan data storage
 scanData = {}
@@ -897,12 +898,21 @@ return 0
      -- declare output in scope in order to have it default with each iteration
      local output
 
+     local showThis = false
      if classFilter and string.find(string.lower(v.name), classFilter) then
-            output = string.format("(%d, %d, %d) - (%s: %d) - (%s) - (Distance: %d)", v.x, v.y, v.z, scan, v.number, Trim(v.name), v.distance)
+      showThis = true
       matches = matches + 1
      elseif (not classFilter) then
-            output = string.format("(%d, %d, %d) - (%s: %d) - (%s) - (Distance: %d)", v.x, v.y, v.z, scan, v.number, Trim(v.name), v.distance)
-     end -- if
+      showThis = true
+     end
+     if showThis then
+      if showDirection then
+       local dir = calculate_direction(coordinates, v)
+       output = string.format("%s, %s, %d %d %d", dir, Trim(v.name), v.x, v.y, v.z)
+      else
+       output = string.format("(%d, %d, %d) - (%s: %d) - (%s) - (Distance: %d)", v.x, v.y, v.z, scan, v.number, Trim(v.name), v.distance)
+      end
+     end
 
      if output ~= nil and starmap[i].distance ~= 0 then
       -- Check if we should show this match based on nearestIndex
@@ -945,6 +955,7 @@ return 0
      nearestIndex = nil
     end -- if nearestIndex
 
+    showDirection = false
     scan = nil
    end -- if Current Coordinates
   </send>
@@ -1043,6 +1054,22 @@ return 0
   <alias
    enabled="y"
    group="starmap"
+   match="^smd$"
+   regexp="y"
+   send_to="12"
+   sequence="50"
+  >
+  <send>
+   searchingScan = true
+   scan = "Starship"
+   showDirection = true
+   Execute("starmap")
+  </send>
+  </alias>
+
+  <alias
+   enabled="y"
+   group="starmap"
    match="^sm([AabCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
    regexp="y"
    send_to="12"
@@ -1054,6 +1081,7 @@ return 0
     local tprint = require ("tprint")
     print("Valid switches:")
     tprint(starmaptable)
+    print("- smd to show starships with direction.")
     print("- sm.count to generate starmap breakdown summary.")
     print("- smc [class name] to show only the nearest ship matching that class.")
     print("- smc [N].[class name] to show the Nth nearest ship matching that class.")

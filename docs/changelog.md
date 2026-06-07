@@ -30,6 +30,7 @@
 ### Changed
 - The changelog (whatsnew / F2) now opens as a read-only document.
 - Moved all meme and novelty social sounds out of the base set and into the Memescape theme. Remaining base sounds are renumbered to stay contiguous.
+- Added a new "reaction" social category (approval, disapproval, confusion) containing: applaud, boggle, boo, clap, cower, golfclap, headdesk, headshake, hi5, mock, oic, oicic, ponder, twitch, and worship.
 - Replaced an invalid command sound with a less abrasive one.
 
 ### Removed

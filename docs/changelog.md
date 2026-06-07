@@ -19,6 +19,7 @@
 - Added a sound file browser for navigating the sounds directory level by level from dialog menus.
 - Added per-sound muting. Browse and select individual sounds to mute or unmute with conf mutes. Muting a sound silences all of its variants.
 - Added smd command to show starships with relative direction (e.g. 3E 2S 1D).
+- Added a Memescape changelog.
 
 ### Fixed
 - Fixed dialog input leaking to the MUD when a conf or other dialog menu was active. Rewrote the input handler to use a single alias with a negative lookahead instead of the keep_evaluating + consumer alias approach that MUSHclient wasn't always evaluating in the same cycle.

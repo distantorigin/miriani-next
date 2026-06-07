@@ -541,8 +541,9 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
               local text = f:read("*all")
               f:close()
               local notepad_title = theme_info.name .. " Changelog"
-              SendToNotepad(notepad_title, string.gsub(text, "\n", "\r\n"))
+              SendToNotepad(notepad_title, (string.gsub(text, "\n", "\r\n")))
               NotepadReadOnly(notepad_title, true)
+              NotepadSaveMethod(notepad_title, 2)
               ActivateNotepad(notepad_title)
             end
           end

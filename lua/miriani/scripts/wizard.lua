@@ -70,12 +70,12 @@ end
 
 function wizard.step_welcome()
   local result = msgbox(
-    "Welcome to Miriani-Next, a MUSHclient soundpack for Miriani!\n\n" ..
+    "Welcome to Miriani-Next, a fully-featured client package for Miriani!\n\n" ..
     "This wizard will walk you through some initial settings to help you " ..
-    "get the most out of the soundpack. It should only take a minute or two.\n\n" ..
-    "You'll see a mix of popup dialogs and in-game menus during setup. " ..
-    "The in-game menus work the same way as the rest of the soundpack's " ..
-    "configuration system, so this is a good preview of how things work.\n\n" ..
+    "get the most out of the scripts. It should only take a minute or two.\n\n" ..
+    "You'll see a mix of popup dialogs and textual menus during setup. " ..
+    "The textual menus work the same way as the rest of the configuration, as well as " ..
+    "menus inside the game itself, so this is a good preview of how things work.\n\n" ..
     "You can always change these settings later using the 'conf' command or by pressing F1.\n\n" ..
     "Click OK to begin, or Cancel to skip.",
     "Miriani-Next Setup Wizard",
@@ -259,7 +259,7 @@ function wizard.step_volume()
 
   local volume = utils.inputbox(
     "Set your master volume level (0 to 100).\n\n" ..
-    "This controls the overall volume of all soundpack audio. " ..
+    "This controls the overall volume of all sound audio. " ..
     "You can adjust it anytime with the F11 and F12 keys.\n\n" ..
     "There are also separate volume controls for sound effects, " ..
     "ambient sounds, and social sounds that you can tweak later " ..
@@ -332,7 +332,7 @@ end
 function wizard.step_screen_reader()
   if not yesno(
     "Miriani-Next includes screen reader integration features.\n\n" ..
-    "If you use a screen reader, the soundpack can interrupt speech " ..
+    "If you use a screen reader, the scripts can interrupt speech " ..
     "for important events so you don't miss critical information.\n\n" ..
     "Do you use a screen reader?",
     "Screen Reader Integration"
@@ -352,7 +352,7 @@ function wizard.step_screen_reader()
   end
 
   msgbox(
-    "When scanning from a starship, the soundpack can interrupt " ..
+    "When scanning from a starship, the scripts can interrupt " ..
     "your screen reader to announce coordinates.\n\n" ..
     "You can choose to have this happen for starships only, " ..
     "for everything that shows up on scan, or not at all.\n\n" ..
@@ -437,7 +437,7 @@ end
 
 function wizard.step_updates()
   msgbox(
-    "Miriani-Next includes a built-in updater to keep your soundpack current.\n\n" ..
+    "Miriani-Next includes a built-in updater to keep your scripts current.\n\n" ..
     "To check for updates, type 'update' or press Ctrl+U. " ..
     "If an update is available, you'll be walked through installing it.\n\n" ..
     "If you just want to see what's available without installing anything, " ..
@@ -456,7 +456,7 @@ function wizard.step_updates()
 
   if yesno(
     "Would you like to enable automatic updates?\n\n" ..
-    "When enabled, the soundpack will quietly check for and apply " ..
+    "When enabled, the scripts will quietly check for and apply " ..
     "updates when you log in, so you're always running the latest version.\n\n" ..
     "The changelog will also be shown automatically after each update " ..
     "so you can see what changed.",
@@ -477,7 +477,7 @@ function wizard.step_finish()
   msgbox(
     "Setup complete! Your settings have been saved.\n\n" ..
     "If you ever need help, type 'next:help' for a full overview " ..
-    "of the soundpack's features, commands, and key bindings.\n\n" ..
+    "of the package's features, commands, and key bindings.\n\n" ..
     "Here are some other useful commands:\n\n" ..
     "  conf - Open the full configuration menu (also F1).\n" ..
     "  whatsnew - View the changelog (also F2).\n" ..

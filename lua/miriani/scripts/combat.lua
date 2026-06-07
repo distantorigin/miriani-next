@@ -157,7 +157,7 @@ ImportXML([=[
    if config:get_option("secondary_lock").value == "yes" and focusTarget and focusTarget ~= "%1" then
     return mplay("ship/combat/secondaryLock", "ship")
    else -- main or unset target.
-    mplay ("ship/combat/enemyLock", "ship")
+    mplay ("ship/combat/enemyLocked", "ship")
    print_color({"Locked by %1", "combat"})
 
    end -- if

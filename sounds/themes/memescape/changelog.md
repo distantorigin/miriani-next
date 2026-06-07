@@ -4,6 +4,7 @@
 
 ### New
 - Added sounds for dust, headshake, roundtime and others.
+- Added ignore sound (comm/ignore).
 
 ## Version 4.1.35
 

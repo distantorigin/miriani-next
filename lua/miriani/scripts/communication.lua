@@ -850,6 +850,17 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
+   match="^You begin ignoring .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay ("comm/ignore", "communication")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="comm"
    match="^.+ (?:yawns suddenly and collapses to the ground, asleep|drifts off to sleep)\.$"
    regexp="y"
    send_to="12"

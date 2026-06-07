@@ -522,7 +522,9 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       if has_changelog then
         choices["2"] = "View changelog"
       end
-      choices["0"] = "Go back"
+      if not skip_menu then
+        choices["0"] = "Go back"
+      end
 
       dialog.menu({
         title = table.concat(detail_lines, "\n"),

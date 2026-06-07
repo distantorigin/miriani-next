@@ -1572,6 +1572,7 @@ function notepad_changelog(name, line, wc, updated_files, channel)
   if content ~= "" then
     SendToNotepad("Changelog", content)
     NotepadReadOnly("Changelog", true)
+    NotepadSaveMethod("Changelog", 2)
     ActivateNotepad("Changelog")
   end
 end -- notepad_changelog

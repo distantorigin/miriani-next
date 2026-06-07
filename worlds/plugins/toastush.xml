@@ -319,6 +319,16 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
 
   <alias
    enabled="y"
+   script="start_wizard"
+   match="^(next:wizard|setup)$"
+   regexp="y"
+   ignore_case="y"
+   sequence="100"
+  >
+  </alias>
+
+  <alias
+   enabled="y"
    name="fsounds_alias"
    match="^fsounds$"
    regexp="y"
@@ -736,6 +746,9 @@ if config:get_option("reset_counters_on_startup").value == "yes" then
 
   -- Ctrl+Shift+V pastes clipboard with linebreaks converted to spaces
   world.AcceleratorTo("Ctrl+Shift+V", "PasteAsOneLine()", sendto.script)
+
+  -- Launch the setup wizard for first-time users
+  DoAfterSpecial(1.5, "start_wizard_if_first_run()", sendto.script)
 
 end -- OnPluginInstall
 

@@ -55,6 +55,7 @@ local namespace = {
 "npc_voices", -- AI generated NPC voices
 "games", -- Arcade and miscellaneous style games.
 "sound_browser", -- Sound file browser for directory navigation
+"wizard", -- Getting Started Wizard for new users
 } -- namespace
 
 

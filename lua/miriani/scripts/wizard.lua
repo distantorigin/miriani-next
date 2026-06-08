@@ -474,6 +474,15 @@ function wizard.step_finish()
   config:save()
   SetVariable("wizard_completed", "1")
 
+  if yesno(
+    "Would you like to view the full README on GitHub?\n\n" ..
+    "It covers every configuration option, command, keyboard shortcut, " ..
+    "and more. This will open a browser window.",
+    "Documentation"
+  ) then
+    os.execute("start https://github.com/distantorigin/miriani-next/blob/main/docs/README.md")
+  end
+
   msgbox(
     "Setup complete! Your settings have been saved.\n\n" ..
     "If you ever need help, type 'next:help' for a full overview " ..

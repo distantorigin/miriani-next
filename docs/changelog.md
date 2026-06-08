@@ -3,11 +3,11 @@
 ## Version 4.2.00 (In Progress)
 
 ### New
-- Configuration is now stored in MUSHclient plugin state instead of .conf files, reverting to how Toastush originally stored settings before 4.0. The separate .conf files didn't offer much practical benefit. Legacy .conf files are automatically migrated and deleted on first load.
-- Added a conf reset command to reset all settings to defaults (with confirmation dialog).
-- Added inline value setting for config options (e.g., conf ship secondary lock yes sets the value directly without opening a dialog).
 - Added a sound for subwarp drive being nonfunctional due to sensor interference.
 - Added a getting started wizard that runs automatically for new users. Currently, it walks through auto-login, social sounds, themes, volume, ambiance, screen reader settings, keybindings, and updates. You can run it again anytime with the 'setup' command or 'next:wizard'.
+- Configuration is now stored in MUSHclient plugin state instead of .conf files, reverting to how Toastush originally stored settings before 4.0. The separate .conf files didn't offer much practical benefit. Legacy .conf files are automatically migrated and deleted on first load, and config is serialized into a variable automatically.
+- Added a conf reset command to reset all settings to defaults.
+- Added inline value setting for config options (e.g., 'conf room ambiance focused' to set ambiance to focused mode immediately).
 - Added a sound theme system. Themes go in sounds/themes/ and can overlay or replace sounds from the base set. Two modes are supported: additive themes will pool their sounds with the defaults for random selection, and replace themes substitute matching sounds entirely. Toggle themes on and off from conf themes.
 - Added a Memescape theme, Maintained by Jason Harkness with input from the community. This theme contains numerous meme-inspired and over-the-top sounds migrated out of the base set. Please provide feedback on what sounds may or may not belong in this theme! Enable with 'conf theme meme'.
 - Selecting a theme in conf themes now opens a detail panel showing author, description, mode, and file count with size before you toggle it.

@@ -1,5 +1,11 @@
 # Memescape Theme Changelog
 
+## Version 4.2.01 (In Progress)
+
+### New
+- Added a few new wake up and disconnect sounds.
+
+
 ## Version 4.2
 
 ### New

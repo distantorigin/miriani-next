@@ -1,10 +1,10 @@
 # Miriani-Next Changelog
 
-## Version 4.2.00 (In Progress)
+## Version 4.2.00
 
 ### New
 - Added a sound for subwarp drive being nonfunctional due to sensor interference.
-- Added a getting started wizard that runs automatically for new users. Currently, it walks through auto-login, social sounds, themes, volume, ambiance, screen reader settings, keybindings, and updates. You can run it again anytime with the 'setup' command or 'next:wizard'.
+- Added a getting started wizard that runs automatically for new users. Currently, it walks through auto-login, social sounds, themes, volume, ambiance, screen reader settings, keybindings, and updates. You can run it again anytime with the 'setup' command or 'next:wizard'. Existing users will also be prompted with the wizard, but this should only happen once.
 - Configuration is now stored in MUSHclient plugin state instead of .conf files, reverting to how Toastush originally stored settings before 4.0. The separate .conf files didn't offer much practical benefit. Legacy .conf files are automatically migrated and deleted on first load, and config is serialized into a variable automatically.
 - Added a conf reset command to reset all settings to defaults.
 - Added inline value setting for config options (e.g., 'conf room ambiance focused' to set ambiance to focused mode immediately).
@@ -26,6 +26,7 @@
 - Added a Memescape changelog.
 
 ### Fixed
+- The lg command will now respect the text editor set in 'conf gen editor'.
 - Fixed dialog input leaking to the MUD when a conf or other dialog menu was active. Rewrote the input handler to use a single alias with a negative lookahead instead of the keep_evaluating + consumer alias approach that MUSHclient wasn't always evaluating in the same cycle.
 - conf theme followed by a name now opens the detail panel instead of immediately toggling.
 - Themes marked as hidden in their theme.json no longer show up in the conf menu.

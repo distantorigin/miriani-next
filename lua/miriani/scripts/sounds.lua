@@ -9,10 +9,6 @@ local window_has_focus = true
 -- Group audio IDs for management
 local group_sounds = {}
 
--- Group registry for sound filtering
--- Tracks discovered sound groups (notification, computer, babies, etc.) and their enabled state
-local group_registry = {}
-local registry_file = "worlds/settings/sound_groups.conf"
 
 -- Groups that should not be filterable (they have their own volume controls)
 local excluded_groups = {
@@ -158,117 +154,60 @@ local function periodic_device_check()
   end
 end
 
--- Group registry functions
+-- Sound group functions (data stored in config.sound_groups)
 
--- Load group registry from file
-local function load_group_registry()
-  local path = require("pl.path")
-  local file_path = registry_file
-
-  if path.isfile(file_path) then
-    local f = io.open(file_path, "r")
-    if f then
-      local content = f:read("*all")
-      f:close()
-
-      -- Parse the registry file (format: group=enabled)
-      for line in content:gmatch("[^\r\n]+") do
-        local group, enabled = line:match("^([^=]+)=([^=]+)$")
-        if group and enabled then
-          group_registry[group] = (enabled == "true")
-        end
-      end
-    end
-  end
-end
-
--- Save group registry to file
-local function save_group_registry()
-  local path = require("pl.path")
-  local dir = path.dirname(registry_file)
-
-  -- Ensure directory exists
-  if not path.isdir(dir) then
-    path.mkdir(dir)
-  end
-
-  local f = io.open(registry_file, "w")
-  if f then
-    for group, enabled in pairs(group_registry) do
-      f:write(string.format("%s=%s\n", group, tostring(enabled)))
-    end
-    f:close()
-  end
-end
-
--- Register a group if not already registered
--- New groups default to enabled (true)
--- Excluded groups (ambiance, environment) are not registered
 local function register_group(group)
   if not group or group == "" then
     return
   end
 
-  -- Skip excluded groups
   if excluded_groups[group] then
     return
   end
 
-  -- If group is not in registry, add it as enabled
-  if group_registry[group] == nil then
-    group_registry[group] = true
-    save_group_registry()
+  if config.sound_groups[group] == nil then
+    config.sound_groups[group] = true
+    config:save()
   end
 end
 
--- Check if a group is enabled
--- Returns true if enabled or not yet registered (default enabled)
--- Excluded groups always return true
 function is_group_enabled(group)
   if not group or group == "" then
-    return true -- Unknown groups are enabled by default
+    return true
   end
 
-  -- Excluded groups are always enabled (they have their own controls)
   if excluded_groups[group] then
     return true
   end
 
-  -- If not in registry, it's enabled by default
-  if group_registry[group] == nil then
+  if config.sound_groups[group] == nil then
     return true
   end
 
-  return group_registry[group]
+  return config.sound_groups[group]
 end
 
--- Get all registered groups
 function get_all_sound_groups()
   local groups = {}
-  for group, _ in pairs(group_registry) do
+  for group, _ in pairs(config.sound_groups) do
     table.insert(groups, group)
   end
   table.sort(groups)
   return groups
 end
 
--- Set group enabled state
 function set_group_enabled(group, enabled)
   if not group or group == "" then
     return
   end
 
-  -- Don't allow changing excluded groups
   if excluded_groups[group] then
     return
   end
 
-  group_registry[group] = enabled
-  save_group_registry()
+  config.sound_groups[group] = enabled
+  config:save()
 end
-
--- Initialize group registry on module load
-load_group_registry()
 
 -- Default variants for sounds (defines which variant is used by default)
 local variant_defaults = {
@@ -294,7 +233,7 @@ local function load_variant_preferences()
     return
   end
 
-  local loaded = config:load_from_file()
+  local loaded = config:load()
   if loaded and loaded.sound_variants then
     variant_preferences = loaded.sound_variants
   end
@@ -306,10 +245,7 @@ local function save_variant_preferences()
     return
   end
 
-  -- Update the config's internal state
   config.sound_variants = variant_preferences
-
-  -- Save to toastush.conf
   config:save()
 end
 
@@ -400,74 +336,33 @@ end
 -- Initialize variant preferences on module load
 load_variant_preferences()
 
--- Ignored sounds registry
-local ignored_sounds = {}
-local ignored_sounds_file = "worlds/settings/ignored_sounds.conf"
-
-local function load_ignored_sounds()
-  local path = require("pl.path")
-  if path.isfile(ignored_sounds_file) then
-    local f = io.open(ignored_sounds_file, "r")
-    if f then
-      local content = f:read("*all")
-      f:close()
-      for line in content:gmatch("[^\r\n]+") do
-        local trimmed = line:match("^%s*(.-)%s*$")
-        if trimmed and trimmed ~= "" then
-          ignored_sounds[trimmed] = true
-        end
-      end
-    end
-  end
-end
-
-local function save_ignored_sounds()
-  local path = require("pl.path")
-  local dir = path.dirname(ignored_sounds_file)
-  if not path.isdir(dir) then
-    path.mkdir(dir)
-  end
-  local f = io.open(ignored_sounds_file, "w")
-  if f then
-    local sorted = {}
-    for sound_path in pairs(ignored_sounds) do
-      table.insert(sorted, sound_path)
-    end
-    table.sort(sorted)
-    for _, sound_path in ipairs(sorted) do
-      f:write(sound_path .. "\n")
-    end
-    f:close()
-  end
-end
+-- Ignored sounds functions (data stored in config.ignored_sounds)
 
 function is_sound_ignored(file)
-  if ignored_sounds[file] then return true end
+  if config.ignored_sounds[file] then return true end
   local base = file:gsub("(%d+)(%.%w+)$", "%2")
-  if base ~= file and ignored_sounds[base] then return true end
+  if base ~= file and config.ignored_sounds[base] then return true end
   return false
 end
 
 function ignore_sound(file)
-  ignored_sounds[file] = true
-  save_ignored_sounds()
+  config.ignored_sounds[file] = true
+  config:save()
 end
 
 function unignore_sound(file)
-  ignored_sounds[file] = nil
-  save_ignored_sounds()
+  config.ignored_sounds[file] = nil
+  config:save()
 end
 
 function get_ignored_sounds()
   local list = {}
-  for sound_path in pairs(ignored_sounds) do
+  for sound_path in pairs(config.ignored_sounds) do
     table.insert(list, sound_path)
   end
   table.sort(list)
   return list
 end
-
-load_ignored_sounds()
 
 
 function find_sound_file(file)

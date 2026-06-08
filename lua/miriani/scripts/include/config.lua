@@ -1,9 +1,6 @@
 -- @module config
 -- Defines methods for manipulating global constants.
--- Uses mush variables to serialize across sessions.
-
--- Author: Erick Rosso
--- Last updated on 2022.01.21
+-- Uses MUSHclient world variables to serialize across sessions.
 
 ---------------------------------------------
 
@@ -30,7 +27,7 @@ function Config:init(options, audio)
   vars.audio = audio or {}
   vars.group_metadata = group_metadata
 
-  -- Initialize master volume and mute (will be loaded from file if present)
+  -- Initialize master volume and mute (will be loaded from variable if present)
   self.master_volume = 50
   self.master_mute = false
 
@@ -61,6 +58,8 @@ function Config:init(options, audio)
   if not options and not audio then
     self.options = {}
     self.audio = {}
+    self.sound_groups = {}
+    self.ignored_sounds = {}
     return self.consts.error.OK
   end
 
@@ -111,14 +110,14 @@ function Config:init(options, audio)
 
   local error = vars.consts.error.OK
 
-  -- Try loading from file
-  local file_data = self:load_from_file()
+  -- Try loading saved config
+  local saved_data = self:load()
 
-  if file_data then
+  if saved_data then
     -- Check if this is old format (full option structures) or new format (values only)
     local is_old_format = false
-    if file_data.options then
-      for k, v in pairs(file_data.options) do
+    if saved_data.options then
+      for k, v in pairs(saved_data.options) do
         if type(v) == "table" and v.descr and v.value ~= nil then
           is_old_format = true
           break
@@ -128,11 +127,10 @@ function Config:init(options, audio)
 
     if is_old_format then
       -- Old format: merge full structures, keeping user values
-      if file_data.options then
-        for key, saved_option in pairs(file_data.options) do
+      if saved_data.options then
+        for key, saved_option in pairs(saved_data.options) do
           if self.options[key] and saved_option.value ~= nil then
             local value = saved_option.value
-            -- Migrate old boolean values to new enum values
             if self.options[key].type == "enum" then
               if key == "scan_interrupt" and (value == "yes" or value == true) then
                 value = "starships"
@@ -144,57 +142,26 @@ function Config:init(options, audio)
                 value = "off"
               end
             end
-            -- Keep the user's value but update metadata from defaults
             self.options[key].value = value
           end
         end
       end
 
-      if file_data.audio then
-        for group, attrs in pairs(file_data.audio) do
-          if self.audio[group] and type(attrs) == "table" then
-            for attr, value in pairs(attrs) do
-              if self.audio[group][attr] ~= nil then
-                self.audio[group][attr] = value
-              end
-            end
-          end
-        end
-      end
-
-      -- Load master volume and mute settings from old format
-      if file_data.master_volume then
-        self.master_volume = tonumber(file_data.master_volume) or 100
-      end
-      if file_data.master_mute ~= nil then
-        self.master_mute = file_data.master_mute
-      end
-
-      -- Load sound variants
-      if file_data.sound_variants then
-        self.sound_variants = file_data.sound_variants
-      end
-
-      -- Load enabled themes
-      if file_data.enabled_themes then
-        self.enabled_themes = file_data.enabled_themes
-      end
+      self:apply_audio_data(saved_data)
+      self:apply_extra_data(saved_data)
 
       -- Convert to new format by saving
-      self:save_to_file()
+      self:save()
     else
       -- New format: just apply user values to defaults
-      if file_data.options then
-        for key, value in pairs(file_data.options) do
+      if saved_data.options then
+        for key, value in pairs(saved_data.options) do
           if self.options[key] then
-            -- Migrate old boolean values to new enum values
             if self.options[key].type == "enum" then
-              -- Handle scan_interrupt migration from boolean to enum
               if key == "scan_interrupt" and (value == "yes" or value == true) then
                 value = "starships"
               elseif key == "scan_interrupt" and (value == "no" or value == false) then
                 value = "off"
-              -- Handle background_ambiance migration from boolean to enum
               elseif key == "background_ambiance" and (value == "yes" or value == true) then
                 value = "focused"
               elseif key == "background_ambiance" and (value == "no" or value == false) then
@@ -206,53 +173,316 @@ function Config:init(options, audio)
         end
       end
 
-      if file_data.audio then
-        for group, attrs in pairs(file_data.audio) do
-          if self.audio[group] and type(attrs) == "table" then
-            for attr, value in pairs(attrs) do
-              if self.audio[group][attr] ~= nil then
-                self.audio[group][attr] = value
-              end
-            end
+      self:apply_audio_data(saved_data)
+      self:apply_extra_data(saved_data)
+    end
+
+  end -- if saved_data
+
+  -- Initialize sound_groups and ignored_sounds tables if not loaded
+  self.sound_groups = self.sound_groups or {}
+  self.ignored_sounds = self.ignored_sounds or {}
+
+  -- Migrate legacy .conf files into world variables
+  self:migrate_legacy_files()
+
+  return error
+end -- _init
+
+function Config:apply_audio_data(data)
+  if data.audio then
+    for group, attrs in pairs(data.audio) do
+      if self.audio[group] and type(attrs) == "table" then
+        for attr, value in pairs(attrs) do
+          if self.audio[group][attr] ~= nil then
+            self.audio[group][attr] = value
           end
         end
       end
-
-      -- Load master volume and mute settings
-      if file_data.master_volume then
-        self.master_volume = tonumber(file_data.master_volume) or 100
-      end
-      if file_data.master_mute ~= nil then
-        self.master_mute = file_data.master_mute
-      end
-
-      -- Load sound variants
-      if file_data.sound_variants then
-        self.sound_variants = file_data.sound_variants
-      end
-
-      -- Load enabled themes
-      if file_data.enabled_themes then
-        self.enabled_themes = file_data.enabled_themes
-      end
     end
+  end
+end
 
-  end -- if file_data
+function Config:apply_extra_data(data)
+  if data.master_volume then
+    self.master_volume = tonumber(data.master_volume) or 100
+  end
+  if data.master_mute ~= nil then
+    self.master_mute = data.master_mute
+  end
+  if data.sound_variants then
+    self.sound_variants = data.sound_variants
+  end
+  if data.enabled_themes then
+    self.enabled_themes = data.enabled_themes
+  end
+  if data.sound_groups then
+    self.sound_groups = data.sound_groups
+  end
+  if data.ignored_sounds then
+    self.ignored_sounds = data.ignored_sounds
+  end
+end
 
-  -- Also load auto_login settings from separate file
-  local auto_login_data = self:load_auto_login_from_file()
+function Config:load()
+  local content = GetVariable("toastush_config")
+  if not content or content == "" then
+    return nil
+  end
 
-  if auto_login_data and auto_login_data.options then
-    -- Apply auto_login settings to current config
-    for key, value in pairs(auto_login_data.options) do
-      if self.options[key] then
-        self.options[key].value = value
+  local load_func, load_err = loadstring(content)
+  if not load_func then
+    return nil
+  end
+
+  load_func()
+
+  local result = toastush_config
+  toastush_config = nil
+  return result
+end
+
+function Config:save()
+  -- Only save values that differ from defaults
+  local user_options = {}
+  local default_options = vars.options or {}
+
+  for key, option in pairs(self.options) do
+    local default = default_options[key]
+    if default and option.value ~= default.value then
+      user_options[key] = option.value
+    end
+  end
+
+  local user_audio = {}
+  local default_audio = vars.audio or {}
+
+  for group, attrs in pairs(self.audio) do
+    local default_group = default_audio[group]
+    if default_group and type(attrs) == "table" then
+      for attr, value in pairs(attrs) do
+        if default_group[attr] ~= nil and value ~= default_group[attr] then
+          if not user_audio[group] then
+            user_audio[group] = {}
+          end
+          user_audio[group][attr] = value
+        end
       end
     end
   end
 
-  return error
-end -- _init
+  toastush_config = {
+    options = user_options,
+    audio = user_audio,
+    master_volume = self.master_volume ~= 100 and self.master_volume or nil,
+    master_mute = self.master_mute or nil,
+    sound_variants = self.sound_variants or nil,
+    enabled_themes = self.enabled_themes or nil,
+    sound_groups = next(self.sound_groups) and self.sound_groups or nil,
+    ignored_sounds = next(self.ignored_sounds) and self.ignored_sounds or nil,
+  }
+
+  local serialize = require("serialize")
+  local serial_config, err = serialize.save("toastush_config")
+  toastush_config = nil
+
+  if type(serial_config) ~= 'string' then
+    return err or self.consts.error.UNKNOWN
+  end
+
+  SetVariable("toastush_config", serial_config)
+
+  -- Recreate Proxiani bypass aliases after a short delay to avoid interfering with current command
+  if create_proxiani_bypass_aliases then
+    DoAfterSpecial(0.1, "create_proxiani_bypass_aliases()", sendto.script)
+  end
+
+  return self.consts.error.OK
+end -- save
+
+function Config:migrate_legacy_files()
+  local path = require("pl.path")
+  local mushclient_dir = GetInfo(59)
+  local settings_dir = path.join(mushclient_dir, "worlds", "settings")
+
+  if not utils.readdir(settings_dir) then
+    return
+  end
+
+  local legacy_files = {
+    "toastush.conf",
+    "auto_login.conf",
+    "sound_groups.conf",
+    "ignored_sounds.conf",
+  }
+
+  -- Also check for per-world-id .conf files from the intermediate migration
+  local world_id = (GetInfo(3) or "default"):gsub("[^%w_%-]", ""):lower()
+  local world_id_files = {
+    world_id .. ".conf",
+    world_id .. "_auto_login.conf",
+    world_id .. "_sound_groups.conf",
+    world_id .. "_ignored_sounds.conf",
+  }
+
+  local has_legacy = false
+  local all_files = {}
+  for _, f in ipairs(legacy_files) do table.insert(all_files, f) end
+  for _, f in ipairs(world_id_files) do table.insert(all_files, f) end
+
+  for _, filename in ipairs(all_files) do
+    if path.isfile(path.join(settings_dir, filename)) then
+      has_legacy = true
+      break
+    end
+  end
+
+  if not has_legacy then
+    return
+  end
+
+  -- Try loading config data from legacy files (prefer world-id variants)
+  local already_loaded = GetVariable("toastush_config") ~= nil
+
+  if not already_loaded then
+    -- Load main config from file
+    local main_files = { world_id .. ".conf", "toastush.conf" }
+    for _, filename in ipairs(main_files) do
+      local filepath = path.join(settings_dir, filename)
+      if path.isfile(filepath) then
+        local f = io.open(filepath, "r")
+        if f then
+          local content = f:read("*all")
+          f:close()
+          if content and content ~= "" then
+            local load_func = loadstring(content)
+            if load_func then
+              load_func()
+              local data = toastush_config
+              toastush_config = nil
+              if data then
+                if data.options then
+                  for key, value in pairs(data.options) do
+                    if self.options[key] then
+                      if type(value) == "table" and value.value ~= nil then
+                        self.options[key].value = value.value
+                      else
+                        self.options[key].value = value
+                      end
+                    end
+                  end
+                end
+                self:apply_audio_data(data)
+                self:apply_extra_data(data)
+              end
+            end
+          end
+        end
+        break
+      end
+    end
+
+    -- Load auto_login from file
+    local auto_files = { world_id .. "_auto_login.conf", "auto_login.conf" }
+    for _, filename in ipairs(auto_files) do
+      local filepath = path.join(settings_dir, filename)
+      if path.isfile(filepath) then
+        local f = io.open(filepath, "r")
+        if f then
+          local content = f:read("*all")
+          f:close()
+          if content and content ~= "" then
+            local load_func = loadstring(content)
+            if load_func then
+              load_func()
+              local data = auto_login_config
+              auto_login_config = nil
+              if data and data.options then
+                for key, value in pairs(data.options) do
+                  if self.options[key] then
+                    self.options[key].value = value
+                  end
+                end
+              end
+            end
+          end
+        end
+        break
+      end
+    end
+
+    -- Load sound_groups from file
+    if not next(self.sound_groups) then
+      local sg_files = { world_id .. "_sound_groups.conf", "sound_groups.conf" }
+      for _, filename in ipairs(sg_files) do
+        local filepath = path.join(settings_dir, filename)
+        if path.isfile(filepath) then
+          local f = io.open(filepath, "r")
+          if f then
+            local content = f:read("*all")
+            f:close()
+            for line in content:gmatch("[^\r\n]+") do
+              local group, enabled = line:match("^([^=]+)=([^=]+)$")
+              if group and enabled then
+                self.sound_groups[group] = (enabled == "true")
+              end
+            end
+          end
+          break
+        end
+      end
+    end
+
+    -- Load ignored_sounds from file
+    if not next(self.ignored_sounds) then
+      local is_files = { world_id .. "_ignored_sounds.conf", "ignored_sounds.conf" }
+      for _, filename in ipairs(is_files) do
+        local filepath = path.join(settings_dir, filename)
+        if path.isfile(filepath) then
+          local f = io.open(filepath, "r")
+          if f then
+            local content = f:read("*all")
+            f:close()
+            for line in content:gmatch("[^\r\n]+") do
+              local trimmed = line:match("^%s*(.-)%s*$")
+              if trimmed and trimmed ~= "" then
+                self.ignored_sounds[trimmed] = true
+              end
+            end
+          end
+          break
+        end
+      end
+    end
+
+    -- Save migrated data to world variable
+    self:save()
+  end
+
+  -- Delete all legacy files
+  for _, filename in ipairs(all_files) do
+    local filepath = path.join(settings_dir, filename)
+    if path.isfile(filepath) then
+      os.remove(filepath)
+    end
+  end
+end
+
+function Config:reset()
+  DeleteVariable("toastush_config")
+end
+
+function Config:get(var)
+  if not self.consts then
+    self.consts = require("miriani.scripts.include.vars.consts")
+  end
+
+  if self.consts.pack[var] == nil then
+    return self.consts.error.INVALID_ARG
+  end
+
+  return self.consts.pack[var]
+end -- get
 
 function Config:get_option(key)
   if not self.options then
@@ -333,259 +563,13 @@ function Config:get_base_category(group)
   return "sounds"
 end -- get_base_category
 
-function Config:save_to_file()
-  local path = require("pl.path")
-  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
-  local settings_dir = path.join(mushclient_dir, "worlds", "settings")
-  local settings_file = path.join(settings_dir, "toastush.conf")
-
-  -- Ensure directory exists
-  local dir_ok = utils.readdir(settings_dir)
-  if not dir_ok then
-    local worlds_dir = path.join(mushclient_dir, "worlds")
-    local ok = utils.shellexecute("cmd", "/C mkdir settings", worlds_dir, "open", 0)
-    if not ok then
-      return self.consts.error.NO_SAVE
-    end
-  end
-
-  -- Only save values that differ from defaults
-  local user_options = {}
-  local user_audio = {}
-
-  -- Get default options from vars (the original defaults from options.lua)
-  local default_options = vars.options or {}
-
-  -- Compare current options with defaults
-  -- Exclude auto_login options as they're saved separately
-  for key, option in pairs(self.options) do
-    local default = default_options[key]
-    -- Skip auto_login options - they go in separate file
-    if not key:match("^auto_login") then
-      if default and option.value ~= default.value then
-        -- Only save the value, not the entire option structure
-        user_options[key] = option.value
-      end
-    end
-  end
-
-  -- Get default audio from vars
-  local default_audio = vars.audio or {}
-
-  -- Compare current audio settings with defaults
-  for group, attrs in pairs(self.audio) do
-    local default_group = default_audio[group]
-    if default_group and type(attrs) == "table" then
-      for attr, value in pairs(attrs) do
-        if default_group[attr] ~= nil and value ~= default_group[attr] then
-          if not user_audio[group] then
-            user_audio[group] = {}
-          end
-          user_audio[group][attr] = value
-        end
-      end
-    end
-  end
-
-  -- Create global variable for serialization with only changed values
-  toastush_config = {
-    options = user_options,
-    audio = user_audio,
-    master_volume = self.master_volume ~= 100 and self.master_volume or nil,
-    master_mute = self.master_mute or nil,
-    sound_variants = self.sound_variants or nil,
-    enabled_themes = self.enabled_themes or nil,
-  }
-
-  local serialize = require("serialize")
-  local serial_config, error = serialize.save("toastush_config")
-
-  if type(serial_config) ~= 'string' then
-    return error or self.consts.error.UNKNOWN
-  end
-
-  local file, err = io.open(settings_file, "w")
-  if not file then
-    return self.consts.error.NO_SAVE
-  end
-
-  file:write(serial_config)
-  file:close()
-
-  return self.consts.error.OK
-end -- save_to_file
-
-function Config:save_auto_login_to_file()
-  local path = require("pl.path")
-  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
-  local settings_dir = path.join(mushclient_dir, "worlds", "settings")
-  local settings_file = path.join(settings_dir, "auto_login.conf")
-
-  -- Ensure directory exists
-  local dir_ok = utils.readdir(settings_dir)
-  if not dir_ok then
-    local worlds_dir = path.join(mushclient_dir, "worlds")
-    local ok = utils.shellexecute("cmd", "/C mkdir settings", worlds_dir, "open", 0)
-    if not ok then
-      return self.consts.error.NO_SAVE
-    end
-  end
-
-  -- Get default options from vars
-  local default_options = vars.options or {}
-
-  -- Only save auto_login options that differ from defaults
-  local auto_login_options = {}
-  for key, option in pairs(self.options) do
-    -- Only process auto_login options
-    if key:match("^auto_login") then
-      local default = default_options[key]
-      if default and option.value ~= default.value then
-        -- Only save the value, not the entire option structure
-        auto_login_options[key] = option.value
-      end
-    end
-  end
-
-  -- Create global variable for serialization
-  auto_login_config = {
-    options = auto_login_options,
-  }
-
-  local serialize = require("serialize")
-  local serial_config, error = serialize.save("auto_login_config")
-
-  if type(serial_config) ~= 'string' then
-    return error or self.consts.error.UNKNOWN
-  end
-
-  local file, err = io.open(settings_file, "w")
-  if not file then
-    return self.consts.error.NO_SAVE
-  end
-
-  file:write(serial_config)
-  file:close()
-
-  return self.consts.error.OK
-end -- save_auto_login_to_file
-
-function Config:load_from_file()
-  local path = require("pl.path")
-  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
-  local settings_file = path.join(mushclient_dir, "worlds", "settings", "toastush.conf")
-
-  if not path.isfile(settings_file) then
-    return nil -- File doesn't exist, not an error
-  end
-
-  local file, err = io.open(settings_file, "r")
-  if not file then
-    return nil
-  end
-
-  local content = file:read("*all")
-  file:close()
-
-  if not content or content == "" then
-    return nil
-  end
-
-  -- Load the serialized data
-  local load_func, load_err = loadstring(content)
-  if not load_func then
-    return nil
-  end
-
-  load_func()
-
-  if toastush_config then
-    -- New format: only user-modified values
-    -- We'll return this and merge with defaults in init
-    return toastush_config
-  end
-
-  return nil
-end -- load_from_file
-
-function Config:load_auto_login_from_file()
-  local path = require("pl.path")
-  local mushclient_dir = GetInfo(59) -- MUSHclient exe directory
-  local settings_file = path.join(mushclient_dir, "worlds", "settings", "auto_login.conf")
-
-  if not path.isfile(settings_file) then
-    return nil -- File doesn't exist, not an error
-  end
-
-  local file, err = io.open(settings_file, "r")
-  if not file then
-    return nil
-  end
-
-  local content = file:read("*all")
-  file:close()
-
-  if not content or content == "" then
-    return nil
-  end
-
-  -- Load the serialized data
-  local load_func, load_err = loadstring(content)
-  if not load_func then
-    return nil
-  end
-
-  load_func()
-
-  if auto_login_config then
-    -- Return the auto_login configuration
-    return auto_login_config
-  end
-
-  return nil
-end -- load_auto_login_from_file
-
-function Config:save()
-  -- Save both main config and auto_login config
-  local result1 = self:save_to_file()
-  local result2 = self:save_auto_login_to_file()
-
-  -- Recreate Proxiani bypass aliases after a short delay to avoid interfering with current command
-  if create_proxiani_bypass_aliases then
-    DoAfterSpecial(0.1, "create_proxiani_bypass_aliases()", sendto.script)
-  end
-
-  -- Return OK if both succeeded, otherwise return first error
-  if result1 == self.consts.error.OK and result2 == self.consts.error.OK then
-    return self.consts.error.OK
-  end
-
-  return result1 ~= self.consts.error.OK and result1 or result2
-end -- save
-
-function Config:get(var)
-
-  -- Safety check: ensure consts is initialized
-  if not self.consts then
-    -- Emergency initialization if somehow consts is missing
-    local vars_local = {
-      consts = require("miriani.scripts.include.vars.consts"),
-    }
-    self.consts = vars_local.consts
-  end
-
-  if self.consts.pack[var] == nil then
-    return self.consts.error.INVALID_ARG
-  end -- if
-
-  return self.consts.pack[var]
-end -- get
-
 function Config:render_menu_list(option)
   local menu, seen_previously = {}, {}
 
   for k,v in pairs(self.options) do
-    if option and string.find(v.group, option) then
+    if v.hidden then
+      -- skip
+    elseif option and string.find(v.group, option) then
 
       local value
 

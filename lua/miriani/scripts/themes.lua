@@ -183,11 +183,11 @@ function load_enabled_themes()
     return
   end
 
-  local file_data = config:load_from_file()
-  if file_data and file_data.enabled_themes then
+  local saved_data = config:load()
+  if saved_data and saved_data.enabled_themes then
     enabled_themes = {}
     local pruned = false
-    for _, theme_id in ipairs(file_data.enabled_themes) do
+    for _, theme_id in ipairs(saved_data.enabled_themes) do
       local theme_dir = get_themes_dir() .. theme_id
       if path.isdir(theme_dir) then
         enabled_themes[theme_id] = true

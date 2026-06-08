@@ -8,6 +8,7 @@
 - Configuration is now stored in MUSHclient plugin state instead of .conf files, reverting to how Toastush originally stored settings before 4.0. The separate .conf files didn't offer much practical benefit. Legacy .conf files are automatically migrated and deleted on first load, and config is serialized into a variable automatically.
 - Added a conf reset command to reset all settings to defaults.
 - Added inline value setting for config options (e.g., 'conf room ambiance focused' to set ambiance to focused mode immediately).
+- Updated the README to account for all changes and additions since Version 4.1.00.
 - Added a sound theme system. Themes go in sounds/themes/ and can overlay or replace sounds from the base set. Two modes are supported: additive themes will pool their sounds with the defaults for random selection, and replace themes substitute matching sounds entirely. Toggle themes on and off from conf themes.
 - Added a Memescape theme, Maintained by Jason Harkness with input from the community. This theme contains numerous meme-inspired and over-the-top sounds migrated out of the base set. Please provide feedback on what sounds may or may not belong in this theme! Enable with 'conf theme meme'.
 - Selecting a theme in conf themes now opens a detail panel showing author, description, mode, and file count with size before you toggle it.

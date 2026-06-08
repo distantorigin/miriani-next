@@ -1,6 +1,6 @@
 # Memescape Theme Changelog
 
-## Version 4.2 (In Progress)
+## Version 4.2
 
 ### New
 - Added sounds for dust, headshake, roundtime and others.

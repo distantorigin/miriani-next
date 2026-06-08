@@ -7,6 +7,7 @@
 - Added ignore sound (comm/ignore).
 - Boosted volume on ignore sound.
 - Added three more ignore sounds.
+- Added a new lick sound.
 
 ## Version 4.1.35
 

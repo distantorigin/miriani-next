@@ -392,10 +392,16 @@ function find_sound_file(file)
     return sound_dir .. file
   end
 
-  -- Check if the base filename already ends with a number
-  local has_number = string.match(file_base, "%d+$")
-  if has_number then
-    return nil -- Don't randomize numbered files that don't exist
+  -- Check if the base filename already ends with a number (e.g. laugh3).
+  -- Only treat it as a numbered variant if stripping the trailing digits
+  -- yields a base name that has actual sound files (avoids false positives
+  -- on names like hi5 that naturally contain digits).
+  local stripped_base = string.match(file_base, "^(.-)%d+$")
+  if stripped_base and stripped_base ~= "" then
+    local probe = sound_dir .. stripped_base .. ext
+    if path.isfile(probe) or utils.readdir(sound_dir .. stripped_base .. "*" .. ext) then
+      return nil
+    end
   end
 
   -- Check for user variant preference

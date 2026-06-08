@@ -298,13 +298,13 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
 
   <alias
    enabled="y"
-   script="notepad_changelog"
    match="^(whatsnew|next:changes)$"
    regexp="y"
    ignore_case="y"
    send_to="12"
   >
-  <send>notify("info", "Accessing the changelog...", 1)</send>
+  <send>notify("info", "Accessing the changelog...", 1)
+notepad_changelog()</send>
   </alias>
 
   <alias

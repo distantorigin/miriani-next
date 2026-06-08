@@ -1029,13 +1029,14 @@ function config_menu.find_and_edit(group_name, search_term)
   -- Try partial name matching (case-insensitive)
   local matches = {}
   local search_lower = string.lower(search_term)
+  local search_underscored = search_lower:gsub("%s+", "_")
 
   for _, key in ipairs(sorted_keys) do
     local option = config:get_option(key)
     local descr_lower = string.lower(option.descr or "")
     local key_lower = string.lower(key)
 
-    if string.find(descr_lower, search_lower) or string.find(key_lower, search_lower) then
+    if string.find(descr_lower, search_lower) or string.find(key_lower, search_lower) or string.find(key_lower, search_underscored) then
       table.insert(matches, key)
     end
   end
@@ -1046,7 +1047,7 @@ function config_menu.find_and_edit(group_name, search_term)
       if option.hidden and string.find(option.group, actual_group_key) then
         local descr_lower = string.lower(option.descr or "")
         local key_lower = string.lower(key)
-        if string.find(descr_lower, search_lower) or string.find(key_lower, search_lower) then
+        if string.find(descr_lower, search_lower) or string.find(key_lower, search_lower) or string.find(key_lower, search_underscored) then
           table.insert(matches, key)
         end
       end
@@ -1054,16 +1055,18 @@ function config_menu.find_and_edit(group_name, search_term)
   end
 
   -- If no matches and search term has multiple words, try splitting into option name + value
+  -- Try each possible split point from right to left (last word as value, then last two, etc.)
   if #matches == 0 then
     local option_name, inline_value = search_term:match("^(.+)%s+(%S+)$")
     if option_name then
       local name_lower = string.lower(option_name)
+      local name_underscored = name_lower:gsub("%s+", "_")
       -- Search visible options
       for _, key in ipairs(sorted_keys) do
         local option = config:get_option(key)
         local descr_lower = string.lower(option.descr or "")
         local key_lower = string.lower(key)
-        if string.find(descr_lower, name_lower) or string.find(key_lower, name_lower) then
+        if string.find(descr_lower, name_lower) or string.find(key_lower, name_lower) or string.find(key_lower, name_underscored) then
           table.insert(matches, key)
         end
       end
@@ -1073,7 +1076,7 @@ function config_menu.find_and_edit(group_name, search_term)
           if option.hidden and string.find(option.group, actual_group_key) then
             local descr_lower = string.lower(option.descr or "")
             local key_lower = string.lower(key)
-            if string.find(descr_lower, name_lower) or string.find(key_lower, name_lower) then
+            if string.find(descr_lower, name_lower) or string.find(key_lower, name_lower) or string.find(key_lower, name_underscored) then
               table.insert(matches, key)
             end
           end

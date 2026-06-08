@@ -122,6 +122,11 @@ end
 
 -- Show options for a specific group
 function config_menu.show_group(group_name)
+  if string.lower(group_name) == "reset" then
+    config_reset()
+    return
+  end
+
   -- Special handling for audio groups submenu - it has no regular options
   local secondary_menu = {}
 
@@ -333,8 +338,14 @@ function config_menu.show_group(group_name)
     -- Sort by key to preserve intended order (00_ prefix sorts action first)
     table.sort(sorted_keys)
   else
-    -- Sort by display text for other menus
     table.sort(sorted_keys, function(a, b)
+      local opt_a = config.options and config.options[a]
+      local opt_b = config.options and config.options[b]
+      local order_a = opt_a and opt_a.order
+      local order_b = opt_b and opt_b.order
+      if order_a or order_b then
+        return (order_a or 9999) < (order_b or 9999)
+      end
       return secondary_menu[a] < secondary_menu[b]
     end)
   end
@@ -1016,6 +1027,56 @@ function config_menu.find_and_edit(group_name, search_term)
 
     if string.find(descr_lower, search_lower) or string.find(key_lower, search_lower) then
       table.insert(matches, key)
+    end
+  end
+
+  -- Fallback: search hidden options directly
+  if #matches == 0 then
+    for key, option in pairs(config.options or {}) do
+      if option.hidden and string.find(option.group, actual_group_key) then
+        local descr_lower = string.lower(option.descr or "")
+        local key_lower = string.lower(key)
+        if string.find(descr_lower, search_lower) or string.find(key_lower, search_lower) then
+          table.insert(matches, key)
+        end
+      end
+    end
+  end
+
+  -- If no matches and search term has multiple words, try splitting into option name + value
+  if #matches == 0 then
+    local option_name, inline_value = search_term:match("^(.+)%s+(%S+)$")
+    if option_name then
+      local name_lower = string.lower(option_name)
+      -- Search visible options
+      for _, key in ipairs(sorted_keys) do
+        local option = config:get_option(key)
+        local descr_lower = string.lower(option.descr or "")
+        local key_lower = string.lower(key)
+        if string.find(descr_lower, name_lower) or string.find(key_lower, name_lower) then
+          table.insert(matches, key)
+        end
+      end
+      -- Search hidden options
+      if #matches == 0 then
+        for key, option in pairs(config.options or {}) do
+          if option.hidden and string.find(option.group, actual_group_key) then
+            local descr_lower = string.lower(option.descr or "")
+            local key_lower = string.lower(key)
+            if string.find(descr_lower, name_lower) or string.find(key_lower, name_lower) then
+              table.insert(matches, key)
+            end
+          end
+        end
+      end
+      if #matches == 1 then
+        config:set_option(matches[1], inline_value)
+        config:save()
+        local option = config:get_option(matches[1])
+        notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), inline_value))
+        return
+      end
+      matches = {}
     end
   end
 

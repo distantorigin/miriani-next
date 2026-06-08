@@ -265,6 +265,17 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
 
   <alias
    enabled="y"
+   match="^(?:next:config(?:ure)?|conf) reset$"
+   ignore_case="y"
+   regexp="y"
+   send_to="12"
+   sequence="80"
+  >
+  <send>config_reset()</send>
+  </alias>
+
+  <alias
+   enabled="y"
    match="^next:config(?:ure)? (\w+) (.+)$"
    ignore_case="y"
    regexp="y"
@@ -1254,6 +1265,20 @@ function config_option_direct(group, option)
   -- Directly access an option by partial name or index
   config_menu_module.find_and_edit(group, option)
 end -- config_option_direct
+
+function config_reset()
+  local result = utils.msgbox(
+    "This will reset all settings to their defaults.\n\nAre you sure?",
+    "Reset Configuration",
+    "yesno",
+    "!",
+    2
+  )
+  if result == "yes" then
+    config:reset()
+    notify("info", "Configuration has been reset to defaults. Please restart the world for changes to take effect.")
+  end
+end -- config_reset
 
 link = {}
 infobar_t = {}

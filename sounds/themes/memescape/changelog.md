@@ -9,6 +9,7 @@
 - Added three more ignore sounds.
 - Added a new lick sound.
 - Added new enable and disable sounds.
+- Renumbered enable and disable sounds to give them equal chance of playing.
 
 ## Version 4.1.35
 

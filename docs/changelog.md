@@ -1,5 +1,11 @@
 # Miriani-Next Changelog
 
+## Version 4.2.01 (In Progress)
+
+### Removed
+- Removed a few duplicate social sounds.
+
+
 ## Version 4.2.00
 
 ### New

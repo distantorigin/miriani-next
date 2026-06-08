@@ -3,6 +3,9 @@
 ## Version 4.2.00 (In Progress)
 
 ### New
+- Configuration is now stored in MUSHclient plugin state instead of .conf files, reverting to how Toastush originally stored settings before 4.0. The separate .conf files didn't offer much practical benefit. Legacy .conf files are automatically migrated and deleted on first load.
+- Added a conf reset command to reset all settings to defaults (with confirmation dialog).
+- Added inline value setting for config options (e.g., conf ship secondary lock yes sets the value directly without opening a dialog).
 - Added a sound for subwarp drive being nonfunctional due to sensor interference.
 - Added a getting started wizard that runs automatically for new users. Currently, it walks through auto-login, social sounds, themes, volume, ambiance, screen reader settings, keybindings, and updates. You can run it again anytime with the 'setup' command or 'next:wizard'.
 - Added a sound theme system. Themes go in sounds/themes/ and can overlay or replace sounds from the base set. Two modes are supported: additive themes will pool their sounds with the defaults for random selection, and replace themes substitute matching sounds entirely. Toggle themes on and off from conf themes.
@@ -28,6 +31,7 @@
 - Sound variant preferences (conf sound variants) now take priority over replace-mode themes. If you've picked a specific variant for a sound, themes won't override it.
 
 ### Changed
+- Sound groups and ignored sounds are now stored in the main config instead of separate files.
 - The changelog (whatsnew / F2) now opens as a read-only document.
 - Moved all meme and novelty social sounds out of the base set and into the Memescape theme. Remaining base sounds are renumbered to stay contiguous.
 - Added a new "reaction" social category (approval, disapproval, confusion) containing: applaud, boggle, boo, clap, cower, golfclap, headdesk, headshake, hi5, mock, oic, oicic, ponder, twitch, and worship.

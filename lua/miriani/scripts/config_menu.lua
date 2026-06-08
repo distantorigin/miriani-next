@@ -123,7 +123,17 @@ end
 -- Show options for a specific group
 function config_menu.show_group(group_name)
   if string.lower(group_name) == "reset" then
-    config_reset()
+    local result = utils.msgbox(
+      "This will reset all settings to their defaults.\n\nAre you sure?",
+      "Reset Configuration",
+      "yesno",
+      "!",
+      2
+    )
+    if result == "yes" then
+      config:reset()
+      notify("info", "Configuration has been reset to defaults. Please restart the world for changes to take effect.")
+    end
     return
   end
 

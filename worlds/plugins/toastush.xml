@@ -1267,17 +1267,7 @@ function config_option_direct(group, option)
 end -- config_option_direct
 
 function config_reset()
-  local result = utils.msgbox(
-    "This will reset all settings to their defaults.\n\nAre you sure?",
-    "Reset Configuration",
-    "yesno",
-    "!",
-    2
-  )
-  if result == "yes" then
-    config:reset()
-    notify("info", "Configuration has been reset to defaults. Please restart the world for changes to take effect.")
-  end
+  config_menu_module.show_group("reset")
 end -- config_reset
 
 link = {}

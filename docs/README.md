@@ -231,13 +231,11 @@ Miriani-Next uses an interactive, menu-based configuration system. Access it by 
 - **screen reader** - Screen Reader Integration (interrupt settings for different events)
 - **developer** - Developer Options (debug mode, sound buffer, hooks buffer)
 
-**File Storage**:
+**Config Storage**:
 
-All configuration for Miriani-Next is saved in the `worlds\settings` folder:
-- `toastush.conf` - Main configuration (only stores user-modified values)
-- `auto_login.conf` - Auto login credentials (saved separately)
+All configuration is stored in MUSHclient plugin state, saved automatically under `worlds\plugins\state\` and bound to the world file.
 
-**Security Note**: These files include auto login credentials if enabled. If you're sharing configurations, delete the `auto_login.conf` file first. Keep your Miriani-Next folder secure on shared machines.
+**Security Note**: Auto login credentials are included in the saved config if enabled. Keep your Miriani-Next folder secure on shared machines.
 
 **Client Configuration**:
 
@@ -271,7 +269,7 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 **Auto Login** (`conf auto_login`)
 - **Enable automatic login when connecting to the game**: Automatically sends your username and password when connecting to the game. The client package's login system ensures Miriani receives proper initialization before credentials are sent.
 - **Username for auto login (use underscores for spaces)**: Your character name. Use underscores (_) instead of spaces (e.g., `John_Smith` for "John Smith").
-- **Password for auto login**: Your password. Stored in `auto_login.conf` - keep this file secure and exclude it when sharing configurations.
+- **Password for auto login**: Your password. Stored in per-world config - keep your Miriani-Next folder secure on shared machines.
 
 **Starship Options** (`conf ship`)
 - **Print formatted single-line scan output instead of raw multi-line output**: Reformats scan output into single lines using customizable templates (see Scan Templates below). Makes scans much easier to read and parse, especially with screen readers. Compare raw multi-line output vs. formatted: "The Artemis (Interceptor) is 523 units away, at 12, 15, 7."
@@ -635,7 +633,7 @@ See the [changelog](/docs/changelog.md) for a comprehensive list of changes sinc
 - Automatic ASCII character translation (smart quotes, em dashes, etc.)
 - Info bar shows focus, scan results, and destination coordinates
 - Separate metafrequency buffers option
-- Configuration saved to external files for easy backup
+- Per-world configuration stored in MUSHclient world variables
 
 **MUSHclient Platform**
 - Upgraded to MUSHclient 5.07

@@ -8,6 +8,7 @@
 - Boosted volume on ignore sound.
 - Added three more ignore sounds.
 - Added a new lick sound.
+- Added new enable and disable sounds.
 
 ## Version 4.1.35
 

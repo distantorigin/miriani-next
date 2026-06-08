@@ -20,7 +20,7 @@ ImportXML([=[
 if config:get_option("auto_login").value == "yes" then
   local username = config:get_option("auto_login_username").value
   local password = config:get_option("auto_login_password").value
-  local menu_number = 1
+  local menu_number = config:get_option("auto_login_menu_number").value or "1"
 
   if username and username ~= "" then
     if password and password ~= "" then

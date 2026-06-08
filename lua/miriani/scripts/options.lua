@@ -1,8 +1,9 @@
 
 local options = {
-  auto_login = {descr="Enable automatic login when connecting to the game.", value="no", group="auto_login", type="bool"},
-  auto_login_username = {descr="Username for auto login (use underscores for spaces).", value="", group="auto_login", type="string"},
-  auto_login_password = {descr="Password for auto login.", value="", group="auto_login", type="password"},
+  auto_login = {descr="Enable automatic login when connecting to the game.", value="no", group="auto_login", type="bool", order=1},
+  auto_login_username = {descr="Username for auto login (use underscores for spaces).", value="", group="auto_login", type="string", order=2},
+  auto_login_password = {descr="Password for auto login.", value="", group="auto_login", type="password", order=3},
+  auto_login_menu_number = {descr="Menu number to select during auto login.", value="1", group="auto_login", type="string", hidden=true},
   automatic_changelog = {descr="Automatically open changelog after updates.", value="no", group="general", type="bool"},
   automatic_updates = {descr="Automatically apply updates quietly at login.", value="no", group="general", type="bool"},
   beep_on_keepalive = {descr="Play beep sound on keep-alive messages.", value="no", group="general", type="bool"},

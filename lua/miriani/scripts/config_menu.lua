@@ -47,6 +47,33 @@ local function strip_trailing_punctuation(text)
   return text:gsub("[%.,:;!?]+%s*$", "")
 end
 
+-- Validate and normalize a value for a given option type.
+-- Returns normalized_value, error_message
+local function validate_option_value(option, value)
+  local opt_type = option.type or "string"
+  if opt_type == "bool" or opt_type == "boolean" then
+    local v = string.lower(value)
+    if v == "yes" or v == "on" or v == "true" or v == "1" then
+      return "yes", nil
+    elseif v == "no" or v == "off" or v == "false" or v == "0" then
+      return "no", nil
+    end
+    return nil, string.format("Invalid value '%s' for toggle option. Use yes/no, on/off, or true/false.", value)
+  elseif opt_type == "enum" then
+    if option.options then
+      for _, valid in ipairs(option.options) do
+        if string.lower(valid) == string.lower(value) then
+          return valid, nil
+        end
+      end
+      return nil, string.format("Invalid value '%s'. Options: %s", value, table.concat(option.options, ", "))
+    end
+  elseif opt_type == "password" then
+    return nil, "Passwords cannot be set inline."
+  end
+  return value, nil
+end
+
 -- Main configuration menu
 function config_menu.show_main()
   local main_menu = config:render_menu_list()
@@ -1018,11 +1045,25 @@ function config_menu.find_and_edit(group_name, search_term)
     return group_options[a] < group_options[b]
   end)
 
-  -- Try numeric index first
-  local index = tonumber(search_term)
+  -- Try numeric index first (with optional inline value: "2 yes")
+  local index_str, index_value = search_term:match("^(%d+)%s+(%S+)$")
+  local index = tonumber(index_str) or tonumber(search_term)
   if index and index >= 1 and index <= #sorted_keys then
     local option_key = sorted_keys[index]
-    config_menu.edit_option(option_key, actual_group_key, true)
+    if index_value then
+      local option = config:get_option(option_key)
+      local validated, err = validate_option_value(option, index_value)
+      if err then
+        mplay("misc/Uncategorized/cancel")
+        notify("critical", err)
+        return
+      end
+      config:set_option(option_key, validated)
+      config:save()
+      notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), validated))
+    else
+      config_menu.edit_option(option_key, actual_group_key, true)
+    end
     return
   end
 
@@ -1083,10 +1124,16 @@ function config_menu.find_and_edit(group_name, search_term)
         end
       end
       if #matches == 1 then
-        config:set_option(matches[1], inline_value)
-        config:save()
         local option = config:get_option(matches[1])
-        notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), inline_value))
+        local validated, err = validate_option_value(option, inline_value)
+        if err then
+          mplay("misc/Uncategorized/cancel")
+          notify("critical", err)
+          return
+        end
+        config:set_option(matches[1], validated)
+        config:save()
+        notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), validated))
         return
       end
       matches = {}

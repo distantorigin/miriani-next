@@ -104,7 +104,7 @@ function wizard.step_auto_login()
   end
 
   local username = utils.inputbox(
-    "Enter your Miriani character name:\n\n" ..
+    "Enter your Miriani username:\n\n" ..
     "(If your name contains spaces, use underscores instead.)",
     "Auto-Login - Username",
     ""

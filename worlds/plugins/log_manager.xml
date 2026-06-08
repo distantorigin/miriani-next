@@ -50,8 +50,15 @@ Type 'lg help' for commands.
 
 local scripts = "lua/miriani/scripts/"
 
+local MAIN_PLUGIN_ID = "843d2f53cb3685465bda7d4a"
+
 function mplay(file, group)
-  CallPlugin("843d2f53cb3685465bda7d4a", "mplay", file, group or "notification")
+  CallPlugin(MAIN_PLUGIN_ID, "mplay", file, group or "notification")
+end
+
+function OpenInEditor(filepath)
+  local editor = CallPlugin(MAIN_PLUGIN_ID, "GetTextEditor") or "notepad.exe"
+  utils.shellexecute(editor, '"' .. filepath .. '"', "", "open", 1)
 end
 
 local dialog_ok, dialog_module = pcall(require, scripts.."include/dialog")
@@ -296,7 +303,7 @@ function DisplaySearchPage(page)
         elseif result.value.nav == "prev" then
           DisplaySearchPage(current_page - 1)
         else
-          utils.shellexecute(result.value.file, "", "", "open", 1)
+          OpenInEditor(result.value.file)
           Note("Opened log. Result is on line " .. result.value.line_num)
         end
       end
@@ -372,7 +379,7 @@ function CmdView(args)
     end
 
     Note("Opening log from " .. days .. " day" .. (days == 1 and "" or "s") .. " ago...")
-    utils.shellexecute(log_file, "", "", "open", 1)
+    OpenInEditor(log_file)
   else
     local current_log = GetInfo(51)
     if not current_log or current_log == "" then
@@ -388,7 +395,7 @@ function CmdView(args)
     end
 
     Note("Opening today's log...")
-    utils.shellexecute(current_log, "", "", "open", 1)
+    OpenInEditor(current_log)
   end
 end
 

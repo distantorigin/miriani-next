@@ -228,7 +228,6 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
    ignore_case="y"
    regexp="y"
    sequence="100"
-   omit_from_command_history="n"
   >
   </alias>
 
@@ -239,7 +238,6 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
    regexp="y"
    send_to="12"
    sequence="100"
-   omit_from_command_history="n"
   >
   <send>config_secondary_menu("%1")</send>
   </alias>
@@ -251,7 +249,6 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
    ignore_case="y"
    regexp="y"
    sequence="100"
-   omit_from_command_history="n"
   >
   </alias>
 
@@ -262,7 +259,6 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
    regexp="y"
    send_to="12"
    sequence="100"
-   omit_from_command_history="n"
   >
   <send>config_secondary_menu("%1")</send>
   </alias>
@@ -274,7 +270,6 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
    regexp="y"
    send_to="12"
    sequence="80"
-   omit_from_command_history="n"
   >
   <send>config_reset()</send>
   </alias>
@@ -286,7 +281,6 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
    regexp="y"
    send_to="12"
    sequence="90"
-   omit_from_command_history="n"
   >
   <send>config_option_direct("%1", "%2")</send>
   </alias>
@@ -298,7 +292,6 @@ notify("important", "A new version of Miriani-Next is available: version %1. Pre
    regexp="y"
    send_to="12"
    sequence="90"
-   omit_from_command_history="n"
   >
   <send>config_option_direct("%1", "%2")</send>
   </alias>
@@ -1475,6 +1468,16 @@ function GetAudioVolume(group_name)
   end
   return ""
 end -- GetAudioVolume
+
+function GetTextEditor()
+  if config and config.get_option then
+    local editor_opt = config:get_option("text_editor")
+    if editor_opt and editor_opt.value and editor_opt.value ~= "" then
+      return editor_opt.value
+    end
+  end
+  return "notepad.exe"
+end -- GetTextEditor
 
 function playstep(name, line, wildcards)
   local check_line = line or name

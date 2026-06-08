@@ -159,15 +159,8 @@ function MCP:get_temp_dir()
   return tmp_dir
 end
 
--- Get the configured text editor
 function MCP:get_text_editor()
-  if config and config.get_option then
-    local editor_opt = config:get_option("text_editor")
-    if editor_opt and editor_opt.value and editor_opt.value ~= "" then
-      return editor_opt.value
-    end
-  end
-  return "notepad.exe"
+  return GetTextEditor()
 end
 
 -- Open editor with the edit content

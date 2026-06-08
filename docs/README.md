@@ -19,7 +19,7 @@
   - [Automatic Updates](#automatic-updates)
   - [Update Channels](#update-channels)
   - [Switching Channels](#switching-channels)
-  - [Troubleshooting Update Issues](#troubleshooting-update-issues)
+  - [Troubleshooting](#troubleshooting)
 - [Configuration](#configuration)
   - [Configuration Options Reference](#configuration-options-reference)
   - [Alternate Sounds](#alternate-sounds)
@@ -52,9 +52,9 @@ If you're confused about anything, join metafrequency channel 7.07 in-game and s
 2. Run `miriani.exe`
 3. The launcher will guide you through initial installation and updates
 
-The launcher handles everything automatically - installation, updates, channel selection (stable/dev), and migration from older versions. It will install Miriani-Next to your Documents folder by default.
+The launcher handles everything automatically - installation, updates, channel selection (stable/dev), and migration from older versions. It will install Miriani-Next to your Documents folder by default. Connections use SSL/TLS on port 1443 by default.
 
-**Proxiani Users**: The launcher automatically detects Proxiani and updates world files accordingly. If you're using Proxiani, make sure it's running before launching Miriani-Next. See the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for Proxiani setup.
+**Proxiani Users**: The launcher automatically detects Proxiani and updates world files accordingly. If you're using Proxiani, make sure it's running before launching Miriani-Next -- the proxy already handles TLS on its end. See the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for Proxiani setup.
 
 ### Online vs Offline Installers
 
@@ -73,7 +73,9 @@ Miriani-Next contains numerous configuration options that Toastush doesn't. In a
 
 ### Post-Installation Steps
 
-Unlike the Miriani Soundpack for VIP Mud, no configuration is needed after installation beyond the settings you'd like to change via the `conf` command. We assume safe defaults for everyone.
+A setup wizard runs automatically on first launch, walking you through auto-login, socials, themes, volume, ambiance, screen reader settings, keybindings, and updates. Run it again anytime with `setup` or `next:wizard`.
+
+Beyond that, no configuration is needed -- just change what you want via `conf`. We assume safe defaults for everyone.
 
 **Required: Type `INFO` after your first login.** Miriani-Next needs to detect your organization and courier company to play the correct sounds for those channels. Just type `INFO` once after connecting - it reads your organization from the output and saves it automatically. If you skip this, organization and courier channel sounds won't work.
 
@@ -190,7 +192,7 @@ The easiest way to switch channels is using the batch files in your Miriani-Next
 
 You can also switch channels from within the client by typing `update switch` for an interactive menu, or `update switch stable` or `update switch dev` to switch directly.
 
-### Troubleshooting Update Issues
+### Troubleshooting
 
 If you encounter problems updating from within MUSHclient, you can run the updater directly:
 
@@ -198,9 +200,9 @@ If you encounter problems updating from within MUSHclient, you can run the updat
 2. Navigate to your Miriani-Next folder (usually in Documents\Miriani-Next)
 3. Double-click **update.exe** to run the updater outside of MUSHclient
 
-This is particularly helpful for users running MUSHclient in a virtual machine that shares folders with the host computer, as permission issues can sometimes prevent inline updates from completing properly.
+This is particularly helpful for users running MUSHclient in a virtual machine that shares folders with the host computer, as permission issues can sometimes prevent inline updates from completing properly. For a full list of update commands, see the [Commands Reference](#commands-reference) section.
 
-For a full list of update commands, see the [Commands Reference](#commands-reference) section.
+If MUSHclient won't start at all and you're getting errors like 0xc000007b, 0xc0000135, 0xc0000142, a missing MSVCP140.dll or VCRUNTIME140.dll, or a side-by-side configuration error, you're probably missing the Visual C++ Redistributable. Install the x86 version from [aka.ms/vcredist](https://aka.ms/vcredist) -- it needs to be x86 even on a 64-bit machine since MUSHclient is 32-bit.
 
 ## Configuration
 
@@ -214,17 +216,19 @@ Miriani-Next uses an interactive, menu-based configuration system. Access it by 
 **Main Configuration Categories**:
 - **general** - General Settings (roundtime, escape behavior, DND mode, wake on red, foreground sounds, updates)
 - **auto login** - Auto Login credentials and settings (shortcut: `conf auto`)
-- **ship** - Starship Options (scan formatting, drive frequency, secondary lock sounds)
+- **ship** - Starship Options (scan formatting, drive frequency, artifact hunting mode, repair notifications)
 - **room** - Room and Environment (ambiance, digsite detector, praelor counter)
 - **helpers** - Helpers and Extras (archaeology helper, counters, point calculations)
-- **screen reader** - Screen Reader Integration (interrupt settings for different events)
-- **gags** - Spam and Gag Filters (spam reduction, combat messages, camera feeds)
+- **gags** - Gags and Substitutions (spam reduction, communication shortening, camera feeds)
 - **socials** - Social Sounds (master toggle and subcategories for different social types)
 - **scan formats** - Configure Scan Templates (customizable output for different object types)
 - **buffers** - Output Buffers (25+ toggle options for communication channels)
-- **colors** - Color Customization (14 color picker options for UI elements)
 - **audio groups** - Toggle Sound Categories (dynamic list of discovered sound groups)
 - **sound variants** - Sound Variants (select alternate versions of specific sounds)
+- **themes** - Sound Themes (browse and toggle installed themes)
+- **mutes** - Muted Sounds (mute individual sounds by browsing the sound directory)
+- **colors** - Color Customization (14 color picker options for UI elements)
+- **screen reader** - Screen Reader Integration (interrupt settings for different events)
 - **developer** - Developer Options (debug mode, sound buffer, hooks buffer)
 
 **File Storage**:
@@ -249,15 +253,20 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 - **Automatically apply updates while idle**: Allows the launcher to apply updates while you're idle in-game. Updates won't interrupt active gameplay.
 - **Play a sound for pending updates**: Plays an alert sound when updates are available. Alerts you to pending updates without watching console output.
 - **Play beep sound on keep-alive messages**: Plays a beep when the server sends keepalive messages (the periodic "pings" to keep your connection alive). Most users leave this off.
+- **Play theme music at startup**: Plays a random theme song when MUSHclient starts.
 - **Play a sound when roundtime is up**: Plays a sound when your roundtime expires (after actions that prevent immediate movement/combat). Know when you can act again without checking prompts.
 - **Use Escape key to send @abort command**: Pressing Escape sends the `@abort` command to cancel ongoing actions. If disabled, Escape only clears your command input or closes dialogs.
+- **Remove trailing spaces from commands before sending**: "sc art " becomes "sc art" before it hits the game.
+- **Commands to bypass Proxiani (comma-separated, e.g. 'atsm,pc')**: These commands get sent with a "px pass" prefix automatically when Proxiani is detected, so they go straight to the game server.
+- **Text editor for local editing (MCP)**: Editor used for MCP local edit (building, programming). Defaults to notepad.exe.
 - **Use Tab to activate output window instead of tab completion**: Changes Tab key behavior - when enabled, Tab switches to the output window instead of doing tab completion. Screen reader users benefit from frequent scrollback access.
 - **Alt+Space shows exits instead of current history item**: When enabled, Alt+Space displays room exits. When disabled, it reads the current history buffer message instead.
 - **Do Not Disturb mode (stops all sounds and TTS)**: Do Not Disturb mode silences all sounds and TTS output. Stay quiet while remaining connected.
-- **Disable DND mode when ship goes to red alert (Wake on Red)**: Automatically disables DND when your ship goes to red alert (combat). Combat sounds break through even in quiet mode.
+- **Disable DND mode on red, blue, purple, or orange alerts**: Automatically turns off DND when your ship goes to alert. Combat sounds break through even in quiet mode.
 - **Restrict sounds to only when window has focus**: Sounds only play when MUSHclient has focus. Prevents sounds from playing while you're working in other applications.
 - **Link Recipients (Auction Service, combat mission notification service, etc) bypass foreground sounds**: Link recipient messages (Auction Service, combat mission notifications, etc.) ignore the foreground sounds setting and always play. Never miss important announcements.
 - **Play direction sounds when following or being dragged**: Plays directional audio cues when you're following someone or being dragged. Track movement direction without reading every line.
+- **Sync random sounds using time-based seed (everyone hears the same sounds)**: Everyone hears the same random variant at the same time. A novelty -- you probably don't want this on.
 
 **Auto Login** (`conf auto_login`)
 - **Enable automatic login when connecting to the game**: Automatically sends your username and password when connecting to the game. The client package's login system ensures Miriani receives proper initialization before credentials are sent.
@@ -266,13 +275,18 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 
 **Starship Options** (`conf ship`)
 - **Print formatted single-line scan output instead of raw multi-line output**: Reformats scan output into single lines using customizable templates (see Scan Templates below). Makes scans much easier to read and parse, especially with screen readers. Compare raw multi-line output vs. formatted: "The Artemis (Interceptor) is 523 units away, at 12, 15, 7."
+- **Format coordinates as space-separated (3 3 3 instead of 3, 3, 3)**: Spaces instead of commas in coordinates. On by default.
 - **Relativity drive frequency**: Audio frequency for the relativity drive sound effect (default: 44100 Hz). Adjust if the sound is too high/low pitched for your preference.
 - **Play a different sound for unfocus locks**: Plays a different sound for secondary (unfocused) weapons locks versus primary locks. Distinguish which weapons system is targeting.
+- **Vary hit sound volume based on Praelor ship class**: Smaller ships = quieter hits. Off by default.
+- **Notify when repairs complete while outside engineering**: Get notified when repairs finish even if you're not in engineering. Press Ctrl+E to check the timer.
+- **Artifact Hunting Mode (gag engine sounds when not actively piloting or gunning)**: Gags engine sounds (acceleration, deceleration, subwarp, slip, wavewarp, bias drive) after a period of inactivity. Moving, targeting, firing, or going to red alert resets the timer. Type `hush` to silence engines immediately without waiting.
+- **Autosilence engines when window loses focus in Artifact Hunting Mode**: Silences engines when you tab away from MUSHclient while artifact hunting.
+- **Print a message when the airlock chime sound plays**: Show or hide the airlock chime text (the sound still plays either way).
 - **Print 'unchanged' before coordinates if the target has not moved since its last scan**: Adds "unchanged" before coordinates if the target hasn't moved since last scan. Track whether targets are stationary or moving.
-- **Print remaining cannon shots (use WEAPON command in weapon room to initialize)**: Displays remaining cannon ammunition after each shot. Use the WEAPON command in a weapon room first to initialize the counter.
 
 **Room and Environment** (`conf room`)
-- **Play background ambiances**: Plays ambient environmental sounds based on your location (space station hum, planet atmosphere, etc.). Adds immersion but can be distracting during intense gameplay.
+- **Play background ambiances**: Ambient sounds based on your location (space station hum, planet atmosphere, etc.). Three modes: "Off", "Focused" (default -- plays only when MUSHclient has focus), or "Always" (keeps playing when the window is in the background).
 - **Print the number of insectoids detected in a room**: Displays the total number of insectoids (praelor) detected in the current room. Quickly assess threat level.
 - **Play a sound when detecting a digsite**: Plays an alert sound when you enter a room with an archaeology digsite. Locate dig sites while exploring.
 - **Play a sound when detecting stores**: Plays an alert sound when entering rooms with stores. Find shops while exploring unfamiliar stations.
@@ -284,6 +298,7 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 - **Reset activity counters at startup**: Resets all activity counters (artifacts, missions, debris, etc.) when the client package loads. Leave disabled if you want cumulative long-term tracking.
 - **Show sector numbers instead of names in flight control messages**: Flight control messages show sector numbers (Sector 15) instead of sector names (Sol Sector). Better if you memorize sectors by number.
 - **Show point difference calculations when using your portable point unit**: When checking your portable point unit, displays the difference in points since last check ("+5 combat points"). Tracks point gains easily.
+- **Print remaining cannon shots (use WEAPON command in weapon room to initialize)**: Displays remaining cannon ammunition after each shot. Use the WEAPON command in a weapon room first to initialize the counter.
 
 **Screen Reader Integration** (`conf screen reader`)
 - **Interrupt speech for public address (PA) messages**: Public address announcements interrupt screen reader speech immediately. Never miss important station-wide announcements.
@@ -291,11 +306,15 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 - **Interrupt speech for scan coordinates**: Controls speech interruption for scan results. Options: "starships" (interrupt only for ship scans), "everything" (interrupt for all scans), "off" (never interrupt).
 - **Interrupt speech when following**: Movement messages interrupt speech when following someone or being dragged. Know immediately when you're moving.
 
-**Spam and Gag Filters** (`conf gags`)
+**Gags and Substitutions** (`conf gags`)
 - **Reduce spam by gagging flavored text**: Gags repetitive "flavor text" messages that don't affect gameplay. Reduces clutter without hiding important information.
+- **Shorten repetitive computer announcements**: "Scans reveal the debris to be X." becomes "Salvaged X.", repair estimates get simplified, locking onto empty space becomes "Nothing targeted." That kind of thing.
+- **Shorten communication by removing verbs (e.g. 'Player says' becomes 'Player:')**: Strips verbs from communication. Also applies to buffer history.
+- **Gag holographic avatar names in computer announcements**: Hides custom holographic avatar names from computer messages. Off by default, so you'll see them unless you turn this on.
 - **Gag external camera output**: Hides external camera feed output. Reduce spam if you don't use cameras.
 - **Gag internal camera output**: Hides internal camera (turret/droid) feed output.
 - **Gag friendly (non-praelor) sector combat messages**: Gags combat messages for non-praelor enemies in space. Reduces spam during sector combat while keeping praelor alerts visible.
+- **Gag messages when others pilot in the room**: Hides "Person inputs a series of commands into a navigation console" and similar. Separate from Artifact Hunting Mode.
 
 **Social Sounds** (`conf socials`)
 - **Enable all social sounds (master toggle)**: Master toggle for all social sounds. When disabled, no social sounds will play regardless of category settings. Disable if you find social sounds distracting.
@@ -304,7 +323,9 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 - **Reflex (cough, sneeze, yawn, etc)**: Sounds for cough, sneeze, yawn, hiccup, gasp, etc. Involuntary bodily reactions.
 - **Bodily (fart, burp, belch, etc)**: Sounds for fart, burp, belch, etc. Crude humor socials (toggle if you prefer less silly sounds).
 - **Physical (punch, kick, clap, etc)**: Sounds for punch, kick, clap, snap, stomp, etc. Physical action socials.
+- **Reaction (approvals, disapprovals, confusion)**: Applaud, boggle, boo, clap, cower, golfclap, headdesk, headshake, hi5, mock, oic, oicic, ponder, twitch, worship, etc.
 - **Novelty (animals, musical, memes, etc)**: Sounds for animals (meow, bark, moo), musical (hum, sing), and memes (insane television references, mostly). Fun but potentially annoying - disable if you prefer serious gameplay.
+- **Songs (bears, cake, fire, horses, pirate)**: Song-based social sounds. Disabled by default.
 - **Uncategorized**: Miscellaneous social sounds that don't fit other categories. Each individual social can be toggled within these categories.
 
 **Scan Templates** (`conf scan_formats`)
@@ -314,6 +335,7 @@ Customize the output format for different scan object types (starships, planets,
 Channel history separates different message types into dedicated buffers that you can browse independently using Alt+Left/Right. Toggle which buffers you want:
 - **Communication (all channels)**: All channels combined (usually want this on)
 - **Private communication**: Private messages, pages, tells
+- **Short-range communication**: Short-range communication messages
 - **Combat**: Combat messages and alerts
 - **General communication**: General communication channel
 - **URLs (http, mailto, gofer, etc)**: All URLs (http, mailto, gofer links, etc.) in one place
@@ -338,6 +360,8 @@ Channel history separates different message types into dedicated buffers that yo
 - **Newbie Channel**: Newbie help channel
 - **Starship Scans**: Starship scans (separate from other output)
 - **Roleplay**: Roleplay channel
+- **Direct say messages**: Things said directly to you ("Player says to you").
+- **Keep channel history indefinitely (persists across restarts)**: Saves history to a database so it survives restarts. Up to 10,000 messages per buffer are loaded at startup; disable for memory-only mode.
 - **Separate metafrequency buffers by frequency/label**: Creates individual buffers for each metafrequency channel/label instead of one combined buffer. Monitor multiple frequencies separately (e.g., buffer for 7.07, buffer for 10.5, etc.).
 
 **Color Customization** (`conf colors`)
@@ -348,14 +372,20 @@ Miriani-Next discovers audio categories dynamically as sounds play (Starship, Ve
 
 **Sound Variants** (`conf sound variants`)
 Some sounds have multiple versions you can choose from:
-- **Ship acceleration/deceleration**: Different engine sound variants
-- **Vehicle acceleration/deceleration**: Ground vehicle engine variants
-- **Archaeology artifact**: Different "discovery" sound effects
-- **Jingle bells**: Holiday sound variants
-Select your preferred version for each. Adds variety and personalization without requiring custom sound files.
+- **Ship Accelerate / Ship Decelerate**: Different engine sound variants
+- **Weapons Locked**: Weapon lock-on sound variants
+- **Vehicle Accelerate / Vehicle Decelerate**: Ground vehicle (salvagers and ACVs) engine variants
+- **Archaeology Artifact Detected**: Different "discovery" sound effects
+- **Jingle Bells**: Holiday sound variants
+- **Airlock Chime**: Airlock chime sound variants
+- **Radio Receiver Transmission Detected**: Radio detection sound variants
+Select your preferred version for each.
 
 **Sound Themes** (`conf theme`)
-Browse and toggle sound themes. Each theme shows its status (On/Off). Selecting one shows its details and lets you toggle it. See [Sound Themes](#sound-themes) for more.
+Browse and toggle sound themes. Selecting a theme opens a detail panel with author, description, mode, file count and size, and last updated date. From there you can toggle it or view its changelog (if it has one). See [Sound Themes](#sound-themes) for more.
+
+**Muted Sounds** (`conf mutes`)
+Mute individual sounds. "Mute a sound..." opens a file browser to navigate and pick a sound; muting it silences all its numbered variants. Select a muted sound to unmute it.
 
 **Developer Options** (`conf developer`)
 - **Debug notifications (missing audio files, etc)**: Shows debug notifications for missing audio files, trigger errors, and other development issues. Enable if you're developing scripts or troubleshooting problems. Creates extra noise for normal users.
@@ -438,11 +468,13 @@ This section documents all major commands available in Miriani-Next.
 - `conf <category> <option>` - Directly edit an option (e.g., `conf general roundtime`)
 - `conf theme` - Browse and toggle sound themes
 - `conf theme <number/name>` - Jump to a specific theme
+- `conf mutes` - Browse and mute/unmute individual sounds
 
 **Log Management**
 - `lg view` - Open today's log
 - `lg view <days>` - Open log from N days ago (e.g., `lg view 3`)
 - `lg find <text>` - Search all logs for text
+- `lg import` - Import and rename log files from other clients to match the Miriani-Next naming convention
 - `lg stats` - Show log statistics
 - `lg toggle` - Enable/disable logging
 - `lg help` - Show log command help
@@ -455,9 +487,11 @@ This section documents all major commands available in Miriani-Next.
 - `contribs clear` - Clear contribution history
 
 **Scan Commands**
-- `sc<letter>` - Filter by attribute (e.g., `sca` for atmosphere, `scn` for natural resources)
+- `sc<letter>` - Filter by attribute (e.g., `sca` for average component damage, `scc` for coordinates, `scp` for identifiable power sources, `scs` for cargo, `scn` for natural resources)
 - `scu` - Force single-line scan output
+- `smd` - Show starships with relative direction (e.g., 3E 2S 1D)
 - `smc <class>` - Show closest ship of specified class (e.g., `smc interceptor`)
+- `sm.count` - Show starmap object count
 - `sc.help` - View scan filter options
 - `sc.reset` - Reset scan state
 - `sm.help` - View starmap filter options
@@ -472,9 +506,12 @@ This section documents all major commands available in Miriani-Next.
 - `dnd` - Toggle Do Not Disturb mode (blocks all sounds and speech)
 - `dnd on` / `dnd off` - Explicitly enable/disable DND mode
 - `fsounds` - Toggle foreground sounds (sounds only when window has focus)
+- `hush` - Immediately enter engine silence mode while in Artifact Hunting Mode
+- `vol next` / `vol prev` - Cycle forward/backward through volume categories (master, sounds, environment, socials)
 - `next:minimal` or `next:min` - Toggle minimal mode (disables most triggers)
 
-**Information**
+**Setup & Information**
+- `setup` or `next:wizard` - Run the getting started wizard (auto-login, socials, themes, volume, ambiance, screen reader, keybindings, updates)
 - `whatsnew` or `next:changes` - View changelog
 - `next:help` - Display help information
 - `next:info` - Show version and information
@@ -501,10 +538,10 @@ This is a mostly complete reference of keyboard shortcuts. For the most up-to-da
 |----------|--------|
 | F9 | Toggle global mute |
 | Ctrl+F9 | Toggle foreground sounds |
-| F10 / Shift+F10 | Cycle audio groups forward/backward |
+| F10 / Shift+F10 | Cycle volume categories forward/backward (master, sounds, environment, socials) |
 | F11 / F12 | Decrease/increase current group volume |
 | Ctrl+L | Reinitialize audio (useful when switching soundcards) |
-| Ctrl+D | Toggle Do Not Disturb mode |
+| Ctrl+Shift+D | Toggle Do Not Disturb mode |
 
 **Configuration & Help**
 | Shortcut | Action |
@@ -553,11 +590,19 @@ This is a mostly complete reference of keyboard shortcuts. For the most up-to-da
 | Ctrl+Shift+Alt+Space | Select with spaces between lines |
 | Ctrl+Shift+Alt+S | Snapshot current output |
 
+**Starship & Scan**
+| Shortcut | Action |
+|----------|--------|
+| Ctrl+H | Repeat last scanned hull damage via TTS |
+| Ctrl+D | Repeat last scanned component damage via TTS |
+| Ctrl+E | Check repair timer |
+
 **General**
 | Shortcut | Action |
 |----------|--------|
 | Alt+Shift+U | Open last URL |
 | Alt+Shift+I | Read info bar |
+| Ctrl+Shift+V | Paste clipboard contents with linebreaks converted to spaces |
 | Escape | Close dialog / clear command text / send @abort (configurable) |
 | Shift+Escape | Reset sounds and trigger groups |
 | Tab/Shift+Tab | Activate accessible output (when enabled) |
@@ -594,8 +639,9 @@ See the [changelog](/docs/changelog.md) for a comprehensive list of changes sinc
 
 **MUSHclient Platform**
 - Upgraded to MUSHclient 5.07
-- **TLS/SSL encryption (alpha)**: OpenSSL 3.x integration for secure connections
+- **TLS/SSL encryption**: OpenSSL 3.x integration for secure connections on port 1443 (enabled by default)
 - Accessible output window for screen readers
+- MCCP4 (Zstandard) compression support
 - Modern SQLite3 and Zlib libraries
 
 ## Why Move Away from VIP Mud?

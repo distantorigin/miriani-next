@@ -5,6 +5,9 @@
 ### Removed
 - Removed a few duplicate social sounds.
 
+### New
+- Added a sound for the squeal social.
+
 
 ## Version 4.2.00
 

@@ -160,6 +160,7 @@ wink    = {genders = {"neuter"}, category = "physical"},
   oic       = {genders = {"neuter"}, category = "reaction"},
   oicic     = {genders = {"neuter"}, category = "reaction"},
   ponder    = {genders = {"male", "female"}, category = "reaction"},
+  squeal    = {genders = {"neuter"}, category = "reaction"},
   twitch    = {genders = {"neuter"}, category = "reaction"},
   worship   = {genders = {"neuter"}, category = "reaction"},
 

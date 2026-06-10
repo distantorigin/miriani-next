@@ -792,6 +792,22 @@ function slide_group(group, attr, value, time_ms)
   end
 end -- slide_group
 
+function fade_group(group, target_volume, time_ms)
+  if not streamtable[group] then
+    return
+  end
+  time_ms = time_ms or 2000
+  local master_vol = config:get_master_volume() or 100
+  local offset = config:get_offset(group)
+  local adjusted_vol = math.max(0, math.min(100, target_volume + offset))
+  local final_volume = (master_vol / 100.0) * (adjusted_vol / 100.0)
+  for _, sound_data in ipairs(streamtable[group]) do
+    if sound_data.stream then
+      sound_data.stream:SlideAttribute(Audio.CONST.attribute.volume, final_volume, time_ms)
+    end
+  end
+end -- fade_group
+
 -- Focus handling functions
 
 function pause_all_sounds()

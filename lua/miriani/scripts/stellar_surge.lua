@@ -621,7 +621,7 @@ local function normalize_input(input)
   input = string.gsub(input, "%s+$", "")
 
   if input == " " or input == "space" or input == "sp" then return "Space" end
-  if input == "esc" or input == "escape" then return "Escape" end
+  if input == "esc" or input == "escape" or input == "quit" then return "Escape" end
   if input == "shield" then return "s" end
   if input == "dodge" then return "d" end
   if input == "fire" then return "f" end
@@ -771,13 +771,13 @@ function stellar_surge_game_over()
   if progress.earned > 0 then
     Note(string.format("XP earned: %d", progress.earned))
     if progress.gained > 0 then
-      Note(string.format("Level: %d -> %d (%s)",
+      Note(string.format("Leveled up from %d to %d. You are now %s.",
         progress.old_level, progress.level, get_progress_title(progress.level)))
     elseif progress.next_xp then
-      Note(string.format("Level: %d (%d/%d XP)",
+      Note(string.format("Still level %d (%d / %d XP toward next).",
         progress.level, progress.xp, progress.next_xp))
     else
-      Note(string.format("Level: %d (%s, max)",
+      Note(string.format("Level %d (%s, max level reached).",
         progress.level, get_progress_title(progress.level)))
     end
   end
@@ -951,14 +951,6 @@ function stellar_surge_toggle()
   end
 end
 
-function stellar_surge_quit_or_pass()
-  if game_active then
-    stellar_surge_game_over()
-  else
-    Send("quit")
-  end
-end
-
 function stellar_surge_show_progress()
   local level, xp = get_saved_progress()
   local next_xp = xp_to_next_level(level)
@@ -1044,7 +1036,7 @@ function stellar_surge_start()
   if high > 0 then
     Note(string.format("High score: %d", high))
   end
-  Note("Press Escape or type 'quit' to stop.")
+  Note("Press Escape to stop, or 'ssurge' again.")
   Note("")
 
   gsound(random_pick({"ship/computer/announce1", "ship/computer/announce3",
@@ -1069,7 +1061,7 @@ function stellar_surge_show_help()
   Note("S = Shield | D = Dodge | F = Fire")
   Note("Space = Nuke (unlocks round 8)")
   Note("R = Repair (unlocks round 20)")
-  Note("Escape or 'quit' = end the game")
+  Note("Press Escape (or run 'ssurge' again) to end the game")
   Note("")
   Note("Scoring and survival:")
   Note(string.format("Wrong key or timeout: +%d%% hull. 100%% = dead.", HIT_DAMAGE))
@@ -1113,20 +1105,9 @@ ImportXML([=[
   </alias>
 
   <alias
-    enabled="y"
-    match="^quit$"
-    ignore_case="y"
-    regexp="y"
-    send_to="12"
-    sequence="8"
-  >
-  <send>stellar_surge_quit_or_pass()</send>
-  </alias>
-
-  <alias
     name="stellar_surge_input_handler"
     enabled="n"
-    match="^(s|d|f|r|space|sp|shield|dodge|fire|nuke|repair|esc|escape)$"
+    match="^(s|d|f|r|space|sp|shield|dodge|fire|nuke|repair|esc|escape|quit)$"
     ignore_case="y"
     regexp="y"
     send_to="12"

@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.01 (In Progress)
+## Version 4.2.01
 
 ### New
 - Added a sound for the squeal social.

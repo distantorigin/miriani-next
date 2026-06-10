@@ -1,12 +1,12 @@
 -- @module stellar_surge
 -- Stellar Surge game
 
-local START_SPEED = 2.85
+local START_SPEED = 2.3
 local MIN_SPEED = 0.62
 local SPEED_DECAY = 0.04
 local BASE_POINTS = 10
 local COMBO_BONUS = 5
-local BASE_ROUND_DELAY = 0.55
+local BASE_ROUND_DELAY = 0.4
 local FRENZY_THRESHOLD = 12
 local HIT_DAMAGE = 20
 local MAX_ABLATIVE = 4
@@ -348,11 +348,12 @@ local function get_speed_level()
 end
 
 local function show_status()
-  local parts = {"Hull: " .. hull .. "%"}
+  local parts = {}
+  if hull > 0 then table.insert(parts, "Hull: " .. hull .. "%") end
   if ablative > 0 then table.insert(parts, "Ablative: " .. ablative) end
   if combo > 1 then table.insert(parts, "Combo: x" .. combo) end
   if frenzy_active then table.insert(parts, "FRENZY") end
-  Note(table.concat(parts, " | "))
+  if #parts > 0 then Note(table.concat(parts, " | ")) end
 end
 
 local function repair_hull(amount)
@@ -431,8 +432,7 @@ local function apply_event_rewards()
 
   local messages = {}
   if active_event.repair_bonus then
-    local repaired = repair_hull(active_event.repair_bonus)
-    if repaired > 0 then table.insert(messages, "Hull " .. hull .. " percent") end
+    repair_hull(active_event.repair_bonus)
   end
 
   if active_event.armor_bonus and ablative < MAX_ABLATIVE then
@@ -535,8 +535,7 @@ local function handle_correct()
 
   local reward_messages = {}
   if current_action.repairs_hull then
-    local repaired = repair_hull(REPAIR_ACTION_AMOUNT)
-    if repaired > 0 then table.insert(reward_messages, "Hull repaired to " .. hull .. " percent.") end
+    repair_hull(REPAIR_ACTION_AMOUNT)
   end
 
   local event_message = apply_event_rewards()
@@ -583,7 +582,6 @@ local function handle_wrong()
     stellar_surge_game_over()
   else
     show_status()
-    say("Hull " .. hull .. " percent.")
     schedule_token(0.95, "stellar_surge_next_round()")
   end
 end
@@ -744,20 +742,20 @@ function stellar_surge_game_over()
   if progress.earned > 0 then
     Note(string.format("XP earned: %d", progress.earned))
     if progress.gained > 0 then
-      Note(string.format("Pilot level: %d -> %d (%s)",
+      Note(string.format("Level: %d -> %d (%s)",
         progress.old_level, progress.level, get_progress_title(progress.level)))
     elseif progress.next_xp then
-      Note(string.format("Pilot level: %d (%d/%d XP)",
+      Note(string.format("Level: %d (%d/%d XP)",
         progress.level, progress.xp, progress.next_xp))
     else
-      Note(string.format("Pilot level: %d (%s, max)",
+      Note(string.format("Level: %d (%s, max)",
         progress.level, get_progress_title(progress.level)))
     end
   end
   Note("")
 
   if progress.gained > 0 then
-    say("Game over. " .. score .. " points. Pilot level " .. progress.level .. ".")
+    say("Game over. " .. score .. " points. Level " .. progress.level .. ".")
     gsound_layer("ship/computer/success")
   else
     say("Game over. " .. score .. " points." .. (is_record and " New record." or ""))
@@ -787,7 +785,7 @@ function stellar_surge_timeout(expected_id)
     stellar_surge_game_over()
   else
     show_status()
-    say("Too slow. Hull " .. hull .. " percent.")
+    say("Too slow.")
     schedule_token(0.95, "stellar_surge_next_round()")
   end
 end
@@ -939,7 +937,7 @@ function stellar_surge_show_progress()
 
   Note("")
   Note("STELLAR SURGE PROGRESS")
-  Note(string.format("Pilot level: %d - %s", level, get_progress_title(level)))
+  Note(string.format("Level: %d - %s", level, get_progress_title(level)))
   if next_xp then
     Note(string.format("XP: %d/%d", xp, next_xp))
   else
@@ -992,7 +990,7 @@ function stellar_surge_start()
   Note("S = Shield | D = Dodge | F = Fire")
   Note("Space = Nuke (unlocks round 12)")
   Note("R = Repair (unlocks round 28)")
-  Note(string.format("Pilot level: %d - %s", pilot_level, get_progress_title(pilot_level)))
+  Note(string.format("Level: %d - %s", pilot_level, get_progress_title(pilot_level)))
   local next_xp = xp_to_next_level(pilot_level)
   if next_xp then
     Note(string.format("XP: %d/%d", pilot_xp, next_xp))
@@ -1027,6 +1025,21 @@ function stellar_surge_is_active()
   return game_active
 end
 
+function stellar_surge_show_help()
+  Note("")
+  Note("STELLAR SURGE")
+  Note("ssurge - start or stop the game")
+  Note("ssurge progress - show level, XP, and high score")
+  Note("ssurge help - show this help")
+  Note("")
+  Note("Controls during a game:")
+  Note("S = Shield | D = Dodge | F = Fire")
+  Note("Space = Nuke (unlocks round 12)")
+  Note("R = Repair (unlocks round 28)")
+  Note("Escape or 'quit' = end the game")
+  Note("")
+end
+
 function stellar_surge_command(arg)
   arg = string.lower(arg or "")
   arg = arg:gsub("^%s+", ""):gsub("%s+$", "")
@@ -1034,8 +1047,10 @@ function stellar_surge_command(arg)
     stellar_surge_toggle()
   elseif arg == "progress" or arg == "stats" then
     stellar_surge_show_progress()
+  elseif arg == "help" or arg == "?" then
+    stellar_surge_show_help()
   else
-    Note("Unknown ssurge command: " .. arg .. ". Try: ssurge, ssurge progress")
+    Note("Unknown ssurge command: " .. arg .. ". Try: ssurge help")
   end
 end
 

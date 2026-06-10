@@ -57,7 +57,10 @@ function mplay(file, group)
 end
 
 function OpenInEditor(filepath)
-  local editor = CallPlugin(MAIN_PLUGIN_ID, "GetTextEditor") or "notepad.exe"
+  local result, editor = CallPlugin(MAIN_PLUGIN_ID, "GetTextEditor")
+  if result ~= 0 or not editor or editor == "" then
+    editor = "notepad.exe"
+  end
   utils.shellexecute(editor, '"' .. filepath .. '"', "", "open", 1)
 end
 

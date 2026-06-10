@@ -8,6 +8,8 @@
 ### New
 - Added a sound for the squeal social.
 
+### Fixed
+- Made it so that any nonfunctional drive due to sensor interference should now play a sound.
 
 ## Version 4.2.00
 

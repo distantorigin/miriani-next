@@ -842,7 +842,7 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   <trigger
    enabled="y"
    group="ship"
-   match="^The subwarp drive is nonfunctional due to high levels of sensor interference\.$"
+   match="^The (.+) drive is nonfunctional due to high levels of sensor interference\.$"
    regexp="y"
    send_to="12"
    sequence="100"

@@ -1663,11 +1663,11 @@ function originating_from_camera(line)
 end
 
 function originating_from_emote()
-  return os.clock() - (last_emote_time or 0) < 0.1
+  return os.clock() - (last_emote_time or 0) < 0.3
 end
 
 function originating_from_social()
-  return os.clock() - (last_social_time or 0) < 0.1
+  return os.clock() - (last_social_time or 0) < 0.3
 end
 
 function handle_alt_space()

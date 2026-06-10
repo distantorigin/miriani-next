@@ -9,7 +9,7 @@ local COMBO_BONUS = 5
 local BASE_ROUND_DELAY = 0.4
 local FRENZY_THRESHOLD = 8
 local FRENZY_SLOW_REACTION = 0.6
-local HIT_DAMAGE = 20
+local HIT_DAMAGE = 25
 local MAX_ABLATIVE = 4
 local REPAIR_ACTION_AMOUNT = 14
 local SCORE_VARIABLE = "stellar_surge_high_score"
@@ -352,9 +352,9 @@ local function get_speed_level()
 end
 
 local function show_status()
+  -- Combo and frenzy only. Hull is announced explicitly when damage is taken;
+  -- ablative is announced when gained/spent. Neither needs round-by-round TTS.
   local parts = {}
-  if hull > 0 then table.insert(parts, "Hull: " .. hull .. "%") end
-  if ablative > 0 then table.insert(parts, "Ablative: " .. ablative) end
   if combo > 1 then table.insert(parts, "Combo: x" .. combo) end
   if frenzy_active then table.insert(parts, "FRENZY") end
   if #parts > 0 then Note(table.concat(parts, " | ")) end
@@ -403,7 +403,7 @@ local function unbind_game_keys()
   hooked_keys = {}
 end
 
-local ablative_combos = {[6] = true, [14] = true, [26] = true, [42] = true}
+local ablative_combos = {[18] = true, [30] = true, [45] = true, [60] = true}
 
 local function maybe_award_ablative()
   if ablative >= MAX_ABLATIVE then return nil end
@@ -412,7 +412,7 @@ local function maybe_award_ablative()
     gsound_layer("ship/misc/repair5")
     return "Ablative armor. " .. ablative .. " layer" .. (ablative > 1 and "s" or "") .. "."
   end
-  if round > 12 and math.random(18) == 1 then
+  if round > 35 and math.random(25) == 1 then
     ablative = ablative + 1
     gsound_layer("ship/misc/repair3")
     return "Ablative pickup."
@@ -610,8 +610,8 @@ local function handle_wrong()
     stellar_surge_game_over()
   else
     show_status()
-    if not absorbed then say("Miss.") end
-    schedule_token(0.95, "stellar_surge_next_round()")
+    if not absorbed then say(string.format("Miss. Hull %d percent.", hull)) end
+    schedule_token(0.55, "stellar_surge_next_round()")
   end
 end
 
@@ -657,7 +657,7 @@ local function get_progress_title(level)
 end
 
 local function get_starting_ablative(level)
-  return math.min(3, math.floor(level / 5))
+  return 0
 end
 
 local function get_xp_bonus_percent(level)
@@ -800,7 +800,7 @@ function stellar_surge_timeout(expected_id)
   frenzy_active = false
   active_event = nil
 
-  local dead, _ = take_damage()
+  local dead, absorbed = take_damage()
 
   if not dead then
     play_combo(random_pick(timeout_sounds))
@@ -814,8 +814,8 @@ function stellar_surge_timeout(expected_id)
     stellar_surge_game_over()
   else
     show_status()
-    say("Too slow.")
-    schedule_token(0.95, "stellar_surge_next_round()")
+    if not absorbed then say(string.format("Too slow. Hull %d percent.", hull)) end
+    schedule_token(0.55, "stellar_surge_next_round()")
   end
 end
 
@@ -1023,7 +1023,7 @@ function stellar_surge_start()
   Note("S = Shield | D = Dodge | F = Fire")
   Note("Space = Nuke (unlocks round 8) | R = Repair (unlocks round 20)")
   Note(string.format("Wrong key or timeout: +%d%% hull. 100%% = dead.", HIT_DAMAGE))
-  Note(string.format("Hit 6, 14, 26, or 42 in a row to gain ablative armor (max %d layers, each absorbs one hit).", MAX_ABLATIVE))
+  Note(string.format("Hit 18, 30, 45, or 60 in a row to earn ablative armor (max %d layers, each absorbs one hit).", MAX_ABLATIVE))
   Note(string.format("Reach a %d-hit combo for Frenzy: faster pacing, 1.5x points. Breaks if you slow down.", FRENZY_THRESHOLD))
   Note("Surge events shift scoring and timing - some grant repairs or armor, others change the rules.")
   Note("'ssurge help' explains each event.")
@@ -1073,7 +1073,7 @@ function stellar_surge_show_help()
   Note("")
   Note("Scoring and survival:")
   Note(string.format("Wrong key or timeout: +%d%% hull. 100%% = dead.", HIT_DAMAGE))
-  Note(string.format("Combo at 6, 14, 26, 42 gains ablative armor (max %d, each soaks one hit).", MAX_ABLATIVE))
+  Note(string.format("Combo at 18, 30, 45, 60 earns ablative armor (max %d, each soaks one hit).", MAX_ABLATIVE))
   Note(string.format("Hit %d in a row for Frenzy: 1.5x points, faster pacing. Breaks if you slow down.", FRENZY_THRESHOLD))
   Note("")
   Note("Surge events:")

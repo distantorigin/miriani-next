@@ -1,5 +1,5 @@
 -- @module stellar_surge
--- Stellar Surge reflex game
+-- Stellar Surge game
 
 local START_SPEED = 2.85
 local MIN_SPEED = 0.62

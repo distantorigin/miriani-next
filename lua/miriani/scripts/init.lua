@@ -54,7 +54,7 @@ local namespace = {
 "mcp", -- MCP protocol
 "npc_voices", -- AI generated NPC voices
 "games", -- Arcade and miscellaneous style games.
-"stellar_surge", -- Stellar Surge reflex training game
+"stellar_surge", -- Stellar Surge game
 "sound_browser", -- Sound file browser for directory navigation
 "wizard", -- Getting Started Wizard for new users
 } -- namespace

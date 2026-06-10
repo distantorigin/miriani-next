@@ -1,5 +1,16 @@
 # Miriani-Next Changelog
 
+## Version 4.2.02 (In Progress)
+
+### Fixed
+- Cleaned up a few sound files to remove silence from the front end.
+
+### Changed
+- Renumbered a few sounds.
+
+### Removed
+- Removed another duplicate sound.
+
 ## Version 4.2.01
 
 ### New

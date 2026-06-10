@@ -2,14 +2,18 @@
 
 ## Version 4.2.01 (In Progress)
 
-### Removed
-- Removed a few duplicate social sounds.
-
 ### New
 - Added a sound for the squeal social.
+- Added more meme sounds for the Memescape theme.
+- Added Stellar Surge, a small reflex minigame to kill time. Run 'ssurge' to play, and use 'ssurge help' for help. You can see overall progress with 'ssurge progress'. Warning: The majority of this was written by AI with minimal testing.
 
 ### Fixed
+- Baby sounds no longer play when a player social (squeal, mainly) produces a visible line that matches a baby trigger.
 - Made it so that any nonfunctional drive due to sensor interference should now play a sound.
+- Fixed log manager not launching your text editor in certain cases.
+
+### Removed
+- Removed a few duplicate social sounds.
 
 ## Version 4.2.00
 

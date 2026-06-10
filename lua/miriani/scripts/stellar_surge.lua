@@ -7,7 +7,8 @@ local SPEED_DECAY = 0.04
 local BASE_POINTS = 10
 local COMBO_BONUS = 5
 local BASE_ROUND_DELAY = 0.4
-local FRENZY_THRESHOLD = 12
+local FRENZY_THRESHOLD = 8
+local FRENZY_SLOW_REACTION = 0.6
 local HIT_DAMAGE = 20
 local MAX_ABLATIVE = 4
 local REPAIR_ACTION_AMOUNT = 14
@@ -46,8 +47,8 @@ local actions = {
     role = "defense",
     command_sounds = {
       "ship/alarm/redStart1", "ship/alarm/redStart2",
-      "ship/combat/hit/youHit1", "ship/combat/hit/youHit3",
-      "ship/combat/hit/youHit5", "ship/combat/internal",
+      "ship/combat/reflector1", "ship/combat/reflector2",
+      "ship/combat/reflector3", "ship/combat/deflected",
     },
     hit_sounds = {
       {"ship/combat/deflected", "ship/combat/reflector1"},
@@ -123,7 +124,7 @@ local actions = {
       {"ship/misc/repair1", "ship/misc/repair4"},
       {"ship/misc/repair2", "ship/misc/repair5"},
       {"ship/misc/repair3", "ship/misc/repair6"},
-      {"ship/misc/repair8", "ship/computer/success"},
+      {"ship/misc/repair8", "ship/misc/repair7"},
     },
   },
 }
@@ -207,6 +208,7 @@ local surge_events = {
     favored_keys = {"s", "d"},
     action_bias = 70,
     chaos = true,
+    silent_command = true,
   },
   {
     name = "Target lock",
@@ -216,6 +218,7 @@ local surge_events = {
     score_multiplier = 1.20,
     favored_keys = {"f", "Space"},
     action_bias = 72,
+    miss_costs_armor = true,
   },
   {
     name = "Missile swarm",
@@ -226,6 +229,7 @@ local surge_events = {
     favored_keys = {"d", "s"},
     action_bias = 75,
     chaos = true,
+    double_prompt = true,
   },
   {
     name = "Coolant leak",
@@ -281,7 +285,7 @@ function stellar_surge_run_if_token(expected_token, code)
 end
 
 local function music_start()
-  mplay("misc/games/stellar_surge/music", MUSIC_GROUP, true, 0, true, nil, nil, nil, nil, -100)
+  mplay("misc/Games/stellar_surge/music", MUSIC_GROUP, true, 0, true, nil, nil, nil, nil, -100)
   fade_group(MUSIC_GROUP, 20, 3000)
 end
 
@@ -334,8 +338,8 @@ local function get_round_delay()
 end
 
 local function get_action_count()
-  if round < 12 then return 3 end
-  if round < 28 then return 4 end
+  if round < 8 then return 3 end
+  if round < 20 then return 4 end
   return 5
 end
 
@@ -368,9 +372,9 @@ local function fire_chaos_sound()
 end
 
 local function check_frenzy()
-  local was = frenzy_active
-  frenzy_active = combo >= FRENZY_THRESHOLD
-  if frenzy_active and not was then
+  -- Gain-only: combo-drop / slow-reaction / miss handlers explicitly clear frenzy_active.
+  if not frenzy_active and combo >= FRENZY_THRESHOLD then
+    frenzy_active = true
     say("Frenzy!")
     gsound_layer("ship/alarm/redStart1")
     schedule_token(0.2, "mplay('ship/alarm/redStart2', 'games', false)")
@@ -504,10 +508,10 @@ local function take_damage()
     gsound("ship/combat/deflected")
     schedule_token(0.15, "mplay('ship/combat/reflector1', 'games', false)")
     say("Ablative hit.")
-    return false
+    return false, true
   end
   hull = math.min(100, hull + HIT_DAMAGE)
-  return hull >= 100
+  return hull >= 100, false
 end
 
 local function handle_correct()
@@ -515,9 +519,9 @@ local function handle_correct()
   combo = combo + 1
   if combo > best_combo then best_combo = combo end
 
+  local reaction = round_start_time and (now() - round_start_time) or nil
   local speed_bonus = 0
-  if round_start_time then
-    local reaction = now() - round_start_time
+  if reaction then
     if reaction < 0.25 then speed_bonus = 30
     elseif reaction < 0.5 then speed_bonus = 15
     elseif reaction < 0.8 then speed_bonus = 5
@@ -540,13 +544,22 @@ local function handle_correct()
 
   local event_message = apply_event_rewards()
   if event_message then table.insert(reward_messages, event_message) end
+  local was_double_prompt = active_event and active_event.double_prompt
   active_event = nil
 
   if frenzy_active and math.random(2) == 1 then
     schedule_token(0.3, "stellar_surge_chaos_layer()")
   end
 
-  check_frenzy()
+  -- Frenzy is easy to enter but harder to maintain: a slow reaction breaks it.
+  -- Skip check_frenzy on that round so we don't say "Frenzy!" right after "Frenzy broken."
+  local frenzy_broken = frenzy_active and reaction and reaction > FRENZY_SLOW_REACTION
+  if frenzy_broken then
+    frenzy_active = false
+    table.insert(reward_messages, "Frenzy broken.")
+  else
+    check_frenzy()
+  end
   local armor_message = maybe_award_ablative()
   if armor_message then table.insert(reward_messages, armor_message) end
 
@@ -558,17 +571,32 @@ local function handle_correct()
   elseif speed_bonus >= 25 then say("Fast. Plus " .. speed_bonus .. ".")
   end
 
-  schedule_token(get_round_delay(), "stellar_surge_next_round()")
+  -- Missile swarm chains a second prompt with almost no gap
+  local next_delay = was_double_prompt and 0.25 or get_round_delay()
+  schedule_token(next_delay, "stellar_surge_next_round()")
 end
 
 local function handle_wrong()
   awaiting_input = false
+
+  -- Target Lock event: a miss costs one ablative layer instead of breaking the combo
+  if active_event and active_event.miss_costs_armor and ablative > 0 then
+    ablative = ablative - 1
+    gsound("ship/combat/deflected")
+    schedule_token(0.15, "mplay('ship/combat/reflector1', 'games', false)")
+    active_event = nil
+    show_status()
+    say("Lock broken. Combo held.")
+    schedule_token(0.7, "stellar_surge_next_round()")
+    return
+  end
+
   local had_frenzy = frenzy_active
   combo = 0
   frenzy_active = false
   active_event = nil
 
-  local dead = take_damage()
+  local dead, absorbed = take_damage()
 
   if not dead then
     play_combo(random_pick(wrong_sounds))
@@ -582,6 +610,7 @@ local function handle_wrong()
     stellar_surge_game_over()
   else
     show_status()
+    if not absorbed then say("Miss.") end
     schedule_token(0.95, "stellar_surge_next_round()")
   end
 end
@@ -639,8 +668,8 @@ local function calculate_run_xp(level)
   if score <= 0 or round <= 1 then return 0 end
 
   local xp = math.floor(score / 30 + round * 5 + best_combo * 8)
-  if round >= 12 then xp = xp + 40 end
-  if round >= 28 then xp = xp + 90 end
+  if round >= 8 then xp = xp + 40 end
+  if round >= 20 then xp = xp + 90 end
   if best_combo >= FRENZY_THRESHOLD then xp = xp + 35 end
 
   local bonus = get_xp_bonus_percent(level)
@@ -756,7 +785,7 @@ function stellar_surge_game_over()
 
   if progress.gained > 0 then
     say("Game over. " .. score .. " points. Level " .. progress.level .. ".")
-    gsound_layer("ship/computer/success")
+    gsound_layer("ship/misc/chime1")
   else
     say("Game over. " .. score .. " points." .. (is_record and " New record." or ""))
   end
@@ -771,7 +800,7 @@ function stellar_surge_timeout(expected_id)
   frenzy_active = false
   active_event = nil
 
-  local dead = take_damage()
+  local dead, _ = take_damage()
 
   if not dead then
     play_combo(random_pick(timeout_sounds))
@@ -814,7 +843,7 @@ end
 function stellar_surge_next_round_continue()
   if not game_active then return end
 
-  local unlocks = {[12] = 4, [28] = 5}
+  local unlocks = {[8] = 4, [20] = 5}
   if unlocks[round] then
     local a = actions[unlocks[round]]
     Note(string.format(">> %s unlocked [%s] <<", a.name, a.label))
@@ -846,7 +875,10 @@ function stellar_surge_issue_command()
     schedule_token(0.1, string.format("mplay('%s', 'games', false)",
       random_pick(current_action.command_sounds)))
   end
-  say(current_action.name)
+  -- Solar flare: sound only, no TTS callout (forces sound-only recognition)
+  if not (active_event and active_event.silent_command) then
+    say(current_action.name)
+  end
 
   if frenzy_active and math.random(3) == 1 then
     schedule_token(0.15, "stellar_surge_chaos_layer()")
@@ -987,9 +1019,14 @@ function stellar_surge_start()
 
   Note("")
   Note("STELLAR SURGE")
+  Note("Each round the game shouts an action; hit its key before the prompt times out.")
   Note("S = Shield | D = Dodge | F = Fire")
-  Note("Space = Nuke (unlocks round 12)")
-  Note("R = Repair (unlocks round 28)")
+  Note("Space = Nuke (unlocks round 8) | R = Repair (unlocks round 20)")
+  Note(string.format("Wrong key or timeout: +%d%% hull. 100%% = dead.", HIT_DAMAGE))
+  Note(string.format("Hit 6, 14, 26, or 42 in a row to gain ablative armor (max %d layers, each absorbs one hit).", MAX_ABLATIVE))
+  Note(string.format("Reach a %d-hit combo for Frenzy: faster pacing, 1.5x points. Breaks if you slow down.", FRENZY_THRESHOLD))
+  Note("Surge events shift scoring and timing - some grant repairs or armor, others change the rules.")
+  Note("'ssurge help' explains each event.")
   Note(string.format("Level: %d - %s", pilot_level, get_progress_title(pilot_level)))
   local next_xp = xp_to_next_level(pilot_level)
   if next_xp then
@@ -1004,20 +1041,16 @@ function stellar_surge_start()
   if xp_bonus > 0 then
     Note("XP bonus: +" .. xp_bonus .. "%")
   end
-  Note("Each miss adds " .. HIT_DAMAGE .. "% hull damage.")
-  Note("100% hull = dead.")
-  Note("Combo streaks earn ablative armor.")
-  Note("Surge events can alter timing or grant recovery.")
   if high > 0 then
     Note(string.format("High score: %d", high))
   end
-  Note("Press Escape or type 'quit' to stop Stellar Surge.")
+  Note("Press Escape or type 'quit' to stop.")
   Note("")
 
   gsound(random_pick({"ship/computer/announce1", "ship/computer/announce3",
     "ship/computer/announce5", "ship/computer/announce7"}))
   music_start()
-  say("S shield, D dodge, F fire.")
+  say("Hit the key for whatever action gets called. S shield, D dodge, F fire. Good luck.")
   schedule_token(3.5, "stellar_surge_countdown_3()")
 end
 
@@ -1034,9 +1067,21 @@ function stellar_surge_show_help()
   Note("")
   Note("Controls during a game:")
   Note("S = Shield | D = Dodge | F = Fire")
-  Note("Space = Nuke (unlocks round 12)")
-  Note("R = Repair (unlocks round 28)")
+  Note("Space = Nuke (unlocks round 8)")
+  Note("R = Repair (unlocks round 20)")
   Note("Escape or 'quit' = end the game")
+  Note("")
+  Note("Scoring and survival:")
+  Note(string.format("Wrong key or timeout: +%d%% hull. 100%% = dead.", HIT_DAMAGE))
+  Note(string.format("Combo at 6, 14, 26, 42 gains ablative armor (max %d, each soaks one hit).", MAX_ABLATIVE))
+  Note(string.format("Hit %d in a row for Frenzy: 1.5x points, faster pacing. Breaks if you slow down.", FRENZY_THRESHOLD))
+  Note("")
+  Note("Surge events:")
+  Note("Clear vector / Engineering window / Coolant leak - more time, repairs or armor.")
+  Note("Shield harmonic - free armor for hitting Shield.")
+  Note("Target lock - a miss costs armor instead of breaking your combo.")
+  Note("Solar flare - command sound only, no TTS callout. Listen, don't wait.")
+  Note("Missile swarm - two prompts back to back, both must hit.")
   Note("")
 end
 

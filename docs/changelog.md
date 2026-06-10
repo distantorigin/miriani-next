@@ -4,6 +4,7 @@
 
 ### Fixed
 - Cleaned up a few sound files to remove silence from the front end.
+- Properly exit the menu when choosing View Changelog in a theme after navigating to it via the menu.
 
 ### Changed
 - Renumbered a few sounds.

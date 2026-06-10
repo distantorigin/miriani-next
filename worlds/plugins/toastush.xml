@@ -1417,9 +1417,19 @@ function mplay(file, group, interrupt, pan, loop, slide, sec, bypass_foreground,
     return
   end
 
-  if group == "babies" and (originating_from_emote()
-    or (originating_from_social and originating_from_social())) then
-    return
+  if group == "babies" then
+    if originating_from_emote() or (originating_from_social and originating_from_social()) then
+      return
+    end
+    if not baby_defer_in_progress then
+      -- Visible "Name squeals." text arrives before the #$#soundpack social/emote
+      -- metadata, so defer briefly to let last_social_time/last_emote_time catch up.
+      DoAfterSpecial(0.1, string.format(
+        "baby_defer_in_progress = true; mplay(%q, 'babies'); baby_defer_in_progress = false",
+        file
+      ), sendto.script)
+      return
+    end
   end
 
   -- Miriani only play:

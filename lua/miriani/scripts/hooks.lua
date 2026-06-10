@@ -333,10 +333,12 @@ ImportXML([=[
 function playsocial(name, line, wildcards)
   local action = wildcards[1]
   local gender = wildcards[2]
+  last_social_time = os.clock()
   play_social(action, gender)
 end
 
 last_emote_time = 0
+last_social_time = 0
 
 function handle_emote_hook(name, line, wildcards)
   last_emote_time = os.clock()
@@ -370,4 +372,3 @@ function handle_coordinates(name, line, wildcards)
   -- Channel to hooks buffer if enabled
   channel("hooks", string.format("Coordinates: %d, %d, %d", x, y, z), {"hooks"})
 end
-

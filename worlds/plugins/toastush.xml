@@ -1415,7 +1415,8 @@ function mplay(file, group, interrupt, pan, loop, slide, sec, bypass_foreground,
     return
   end
 
-  if group == "babies" and originating_from_emote() then
+  if group == "babies" and (originating_from_emote()
+    or (originating_from_social and originating_from_social())) then
     return
   end
 
@@ -1651,6 +1652,10 @@ end
 
 function originating_from_emote()
   return os.clock() - (last_emote_time or 0) < 0.1
+end
+
+function originating_from_social()
+  return os.clock() - (last_social_time or 0) < 0.1
 end
 
 function handle_alt_space()

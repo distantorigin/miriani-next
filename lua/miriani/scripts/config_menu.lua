@@ -594,6 +594,9 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
               NotepadSaveMethod(notepad_title, 2)
               ActivateNotepad(notepad_title)
             end
+            -- Changelog opens in an external notepad; re-displaying the menu here
+            -- would intercept the user's next input when they return from the notepad.
+            return
           end
           if not skip_menu then config_menu.show_group(group_name) end
         end

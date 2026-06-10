@@ -529,7 +529,9 @@ AcceleratorTo("F12", 'increase_attribute("volume")', script)
 AcceleratorTo("ALT+SHIFT+U", 'open_url()', script)
 AcceleratorTo ("CTRL+SHIFT+A", 'Execute("tts_interrupt The AutoSay keyboard shortcut has been disabled. You can enable AutoSay from the game menu.")', script)
 AcceleratorTo("Esc", [[
-  if dialog and dialog.is_active() then
+  if stellar_surge_is_active and stellar_surge_is_active() then
+    stellar_surge_game_over()
+  elseif dialog and dialog.is_active() then
     -- In a dialog: go back with "0"
     dialog.handle_input("0")
   elseif config:get_option("escape_abort").value == "yes" then

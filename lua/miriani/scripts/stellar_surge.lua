@@ -389,10 +389,6 @@ local function bind_game_keys()
       hooked_keys[a.key] = true
     end
   end
-  if not hooked_keys.Escape then
-    AcceleratorTo("Escape", "stellar_surge_game_over()", sendto.script)
-    hooked_keys.Escape = true
-  end
 end
 
 local function unbind_game_keys()
@@ -537,14 +533,14 @@ local function handle_correct()
 
   play_combo(random_pick(current_action.hit_sounds))
 
-  local reward_message = nil
+  local reward_messages = {}
   if current_action.repairs_hull then
     local repaired = repair_hull(REPAIR_ACTION_AMOUNT)
-    if repaired > 0 then reward_message = "Hull repaired to " .. hull .. " percent." end
+    if repaired > 0 then table.insert(reward_messages, "Hull repaired to " .. hull .. " percent.") end
   end
 
   local event_message = apply_event_rewards()
-  if event_message then reward_message = event_message end
+  if event_message then table.insert(reward_messages, event_message) end
   active_event = nil
 
   if frenzy_active and math.random(2) == 1 then
@@ -553,16 +549,16 @@ local function handle_correct()
 
   check_frenzy()
   local armor_message = maybe_award_ablative()
-  if armor_message then reward_message = armor_message end
+  if armor_message then table.insert(reward_messages, armor_message) end
 
-  if reward_message then say(reward_message)
+  show_status()
+  if #reward_messages > 0 then say(table.concat(reward_messages, " "))
   elseif combo == 5 then say("Nice streak.")
   elseif combo == 20 then say("Unstoppable.")
   elseif combo == 30 then say("Inhuman.")
   elseif speed_bonus >= 25 then say("Fast. Plus " .. speed_bonus .. ".")
   end
 
-  show_status()
   schedule_token(get_round_delay(), "stellar_surge_next_round()")
 end
 
@@ -586,8 +582,8 @@ local function handle_wrong()
   if dead then
     stellar_surge_game_over()
   else
-    say("Hull " .. hull .. " percent.")
     show_status()
+    say("Hull " .. hull .. " percent.")
     schedule_token(0.95, "stellar_surge_next_round()")
   end
 end
@@ -742,25 +738,22 @@ function stellar_surge_game_over()
   end
 
   Note("")
-  Note("========================================")
-  Note("  STELLAR SURGE OVER")
-  Note("========================================")
-  Note(string.format("  Score: %d | Rounds: %d | Best combo: x%d", score, round, best_combo))
-  Note(string.format("  High score: %d%s", math.max(high, score), is_record and " (new!)" or ""))
+  Note("STELLAR SURGE OVER")
+  Note(string.format("Score: %d | Rounds: %d | Best combo: x%d", score, round, best_combo))
+  Note(string.format("High score: %d%s", math.max(high, score), is_record and " (new!)" or ""))
   if progress.earned > 0 then
-    Note(string.format("  XP earned: %d", progress.earned))
+    Note(string.format("XP earned: %d", progress.earned))
     if progress.gained > 0 then
-      Note(string.format("  Pilot level: %d -> %d (%s)",
+      Note(string.format("Pilot level: %d -> %d (%s)",
         progress.old_level, progress.level, get_progress_title(progress.level)))
     elseif progress.next_xp then
-      Note(string.format("  Pilot level: %d (%d/%d XP)",
+      Note(string.format("Pilot level: %d (%d/%d XP)",
         progress.level, progress.xp, progress.next_xp))
     else
-      Note(string.format("  Pilot level: %d (%s, max)",
+      Note(string.format("Pilot level: %d (%s, max)",
         progress.level, get_progress_title(progress.level)))
     end
   end
-  Note("========================================")
   Note("")
 
   if progress.gained > 0 then
@@ -793,8 +786,8 @@ function stellar_surge_timeout(expected_id)
   if dead then
     stellar_surge_game_over()
   else
-    say("Too slow. Hull " .. hull .. " percent.")
     show_status()
+    say("Too slow. Hull " .. hull .. " percent.")
     schedule_token(0.95, "stellar_surge_next_round()")
   end
 end
@@ -945,20 +938,17 @@ function stellar_surge_show_progress()
   local xp_bonus = get_xp_bonus_percent(level)
 
   Note("")
-  Note("========================================")
-  Note("  STELLAR SURGE PROGRESS")
-  Note("========================================")
-  Note(string.format("  Pilot level: %d - %s", level, get_progress_title(level)))
+  Note("STELLAR SURGE PROGRESS")
+  Note(string.format("Pilot level: %d - %s", level, get_progress_title(level)))
   if next_xp then
-    Note(string.format("  XP: %d/%d", xp, next_xp))
+    Note(string.format("XP: %d/%d", xp, next_xp))
   else
-    Note("  XP: max level")
+    Note("XP: max level")
   end
-  Note("  Runs: " .. runs)
-  Note("  High score: " .. high)
-  Note("  Starting ablative: " .. starting_ablative)
-  Note("  XP bonus: +" .. xp_bonus .. "%")
-  Note("========================================")
+  Note("Runs: " .. runs)
+  Note("High score: " .. high)
+  Note("Starting ablative: " .. starting_ablative)
+  Note("XP bonus: +" .. xp_bonus .. "%")
   Note("")
 end
 
@@ -998,45 +988,38 @@ function stellar_surge_start()
   local high = tonumber(GetVariable(SCORE_VARIABLE)) or 0
 
   Note("")
-  Note("========================================")
-  Note("  STELLAR SURGE")
-  Note("========================================")
-  Note("")
-  Note("  S = Shield | D = Dodge | F = Fire")
-  Note("  Space = Nuke (unlocks round 12)")
-  Note("  R = Repair (unlocks round 28)")
-  Note("")
-  Note(string.format("  Pilot level: %d - %s", pilot_level, get_progress_title(pilot_level)))
+  Note("STELLAR SURGE")
+  Note("S = Shield | D = Dodge | F = Fire")
+  Note("Space = Nuke (unlocks round 12)")
+  Note("R = Repair (unlocks round 28)")
+  Note(string.format("Pilot level: %d - %s", pilot_level, get_progress_title(pilot_level)))
   local next_xp = xp_to_next_level(pilot_level)
   if next_xp then
-    Note(string.format("  XP: %d/%d", pilot_xp, next_xp))
+    Note(string.format("XP: %d/%d", pilot_xp, next_xp))
   else
-    Note("  XP: max level")
+    Note("XP: max level")
   end
   if starting_ablative > 0 then
-    Note("  Starting ablative: " .. starting_ablative)
+    Note("Starting ablative: " .. starting_ablative)
   end
   local xp_bonus = get_xp_bonus_percent(pilot_level)
   if xp_bonus > 0 then
-    Note("  XP bonus: +" .. xp_bonus .. "%")
+    Note("XP bonus: +" .. xp_bonus .. "%")
   end
-  Note("")
-  Note("  Each miss adds " .. HIT_DAMAGE .. "% hull damage.")
-  Note("  100% hull = dead.")
-  Note("  Combo streaks earn ablative armor.")
-  Note("  Surge events can alter timing or grant recovery.")
+  Note("Each miss adds " .. HIT_DAMAGE .. "% hull damage.")
+  Note("100% hull = dead.")
+  Note("Combo streaks earn ablative armor.")
+  Note("Surge events can alter timing or grant recovery.")
   if high > 0 then
-    Note(string.format("  High score: %d", high))
+    Note(string.format("High score: %d", high))
   end
-  Note("  Press Escape or type 'quit' to stop Stellar Surge.")
-  Note("")
-  Note("========================================")
+  Note("Press Escape or type 'quit' to stop Stellar Surge.")
   Note("")
 
   gsound(random_pick({"ship/computer/announce1", "ship/computer/announce3",
     "ship/computer/announce5", "ship/computer/announce7"}))
   music_start()
-  say("S shield, D dodge, F fire. Space and R unlock later.")
+  say("S shield, D dodge, F fire.")
   schedule_token(3.5, "stellar_surge_countdown_3()")
 end
 
@@ -1044,17 +1027,29 @@ function stellar_surge_is_active()
   return game_active
 end
 
+function stellar_surge_command(arg)
+  arg = string.lower(arg or "")
+  arg = arg:gsub("^%s+", ""):gsub("%s+$", "")
+  if arg == "" then
+    stellar_surge_toggle()
+  elseif arg == "progress" or arg == "stats" then
+    stellar_surge_show_progress()
+  else
+    Note("Unknown ssurge command: " .. arg .. ". Try: ssurge, ssurge progress")
+  end
+end
+
 ImportXML([=[
 <aliases>
   <alias
     enabled="y"
-    match="^ssurge(?:\s+(progress|stats))?$"
+    match="^ssurge(?:\s+(.+))?$"
     ignore_case="y"
     regexp="y"
     send_to="12"
     sequence="100"
   >
-  <send>if "%1" == "" then stellar_surge_toggle() else stellar_surge_show_progress() end</send>
+  <send>stellar_surge_command("%1")</send>
   </alias>
 
   <alias
@@ -1071,7 +1066,8 @@ ImportXML([=[
   <alias
     name="stellar_surge_input_handler"
     enabled="n"
-    match="^(?!(?:quit(?:\s|$)|ssurge(?:\s|$)|vol(?:\s|$)|history_|tts(?:\s|$)|#\$#|Line_Get(?:\s|$)|clearoutput(?:\s|$)|prevline(?:\s|$)|toggleoutput(?:\s|$)|toggleinterrupt(?:\s|$)|curline(?:\s|$)|select(?:\s|$)|nextline(?:\s|$)|whichline(?:\s|$)|topline(?:\s|$)|snap_shot(?:\s|$)|endline(?:\s|$)))(.*)$"
+    match="^(s|d|f|r|space|sp|shield|dodge|fire|nuke|repair|esc|escape)$"
+    ignore_case="y"
     regexp="y"
     send_to="12"
     sequence="9"

@@ -1,6 +1,12 @@
 # Memescape Theme Changelog
 
-## Version 4.2.01 (In Progress)
+## Version 4.2.02 (In Progress)
+
+### New
+- Added a sound for the headscratch social.
+
+
+## Version 4.2.01
 
 ### New
 - Added a few new wake up and disconnect sounds.

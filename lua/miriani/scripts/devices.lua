@@ -384,7 +384,7 @@ SetVariable("last_camera_line", "%2")
   >
   <send>
    mplay ("device/camera")
-   SetVariable("last_camera_line", "%2")
+   SetVariable("last_camera_line", "%1")
 if config:get_option("external_camera").value == "no" then
     replicate_line("%1")
    end -- if

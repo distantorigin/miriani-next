@@ -205,7 +205,7 @@ end
 
 function Config:apply_extra_data(data)
   if data.master_volume then
-    self.master_volume = tonumber(data.master_volume) or 100
+    self.master_volume = tonumber(data.master_volume) or 50
   end
   if data.master_mute ~= nil then
     self.master_mute = data.master_mute
@@ -534,7 +534,7 @@ function Config:set_attribute(group, attr, val)
 end -- set_attribute
 
 function Config:get_master_volume()
-  return self.master_volume or 100
+  return self.master_volume or 50
 end -- get_master_volume
 
 function Config:set_master_volume(val)

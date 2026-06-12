@@ -479,16 +479,20 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
         callback = function(result, reason)
           if result then
             local menu_index = tonumber(result.key)
-            local selected_variant = variants[menu_index]
-            set_variant_preference(sound_path, selected_variant)
+            local selected_variant = menu_index and variants[menu_index]
+            if not selected_variant then
+              notify("critical", "Invalid variant selection; preference unchanged.")
+            else
+              set_variant_preference(sound_path, selected_variant)
 
-            -- Play preview of the selected sound
-            -- Remove .ogg extension, add variant number, then add .ogg back
-            local path_without_ext = sound_path:gsub("%.ogg$", "")
-            local preview_file = path_without_ext .. tostring(selected_variant) .. ".ogg"
-            play(preview_file)
+              -- Play preview of the selected sound
+              -- Remove .ogg extension, add variant number, then add .ogg back
+              local path_without_ext = sound_path:gsub("%.ogg$", "")
+              local preview_file = path_without_ext .. tostring(selected_variant) .. ".ogg"
+              play(preview_file)
 
-            notify("info", string.format("%s set to Variant %d", display_name, selected_variant))
+              notify("info", string.format("%s set to Variant %d", display_name, selected_variant))
+            end
           end
           -- Return to sound variants menu
           if not skip_menu then config_menu.show_group(group_name) end

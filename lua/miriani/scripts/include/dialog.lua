@@ -4,6 +4,12 @@
 
 local class = require("pl.class")
 
+-- Escape Lua pattern metacharacters so user-typed strings can be safely
+-- interpolated into match() patterns for progressive menu narrowing.
+local function escape_pattern(s)
+  return (s:gsub("[%%%^%$%(%)%.%[%]%*%+%-%?]", "%%%1"))
+end
+
 -- Dialog state management
 local dialog_state = {
   active = false,
@@ -110,14 +116,15 @@ function Menu:handle_input(input)
   -- Progressive matching
   local matches = {}
   local match_count = 0
+  local pat = escape_pattern(trimmed)
   for key, choice in pairs(items) do
     local text = type(choice) == "table" and (choice.label or choice[1] or "") or tostring(choice)
     local lower_text = text:lower()
     local lower_key = key:lower()
 
     -- Match at start or after space
-    if lower_text:match("^" .. trimmed) or
-       lower_text:match("%s" .. trimmed) or
+    if lower_text:match("^" .. pat) or
+       lower_text:match("%s" .. pat) or
        lower_key == trimmed then
       matches[key] = choice
       match_count = match_count + 1

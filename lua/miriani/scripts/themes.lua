@@ -232,7 +232,13 @@ end
 
 -- Check replace-mode themes for a matching sound.
 -- sound_file: path relative to SOUND_DIRECTORY (e.g., "miriani/combat/hit.ogg")
--- Returns: theme-relative path (e.g., "themes/spooky/combat/hit.ogg") or nil
+-- Returns: theme-relative path (e.g., "themes/spooky/combat/hit.ogg") or nil.
+--
+-- Contract: the returned path is a *stem* that find_sound_file() will resolve.
+-- If the theme provides numbered variants (e.g. hit1.ogg, hit2.ogg) but no
+-- bare hit.ogg, the bare path is still returned — find_sound_file globs out
+-- the variants and randomises. Callers must always route the returned path
+-- through play()/find_sound_file(), never path.isfile() it directly.
 function resolve_theme_sound(sound_file)
   local sound_dir = config:get("SOUND_DIRECTORY")
   local stripped = strip_soundpath(sound_file)

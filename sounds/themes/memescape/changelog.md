@@ -5,6 +5,7 @@
 ### New
 - Added a sound for the headscratch social.
 - Added a why sound for female and moved original why into male.
+- Added a new scream.
 
 ## Version 4.2.01
 

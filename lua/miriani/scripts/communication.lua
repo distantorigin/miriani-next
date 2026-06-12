@@ -871,7 +871,7 @@ ImportXML([=[
     if theme_disconnect then
       play(theme_disconnect, "communication")
     else
-      local yawn_sounds = {"social/male/yawn", "social/female/yawn1", "social/female/yawn2", "social/female/YAWN3"}
+      local yawn_sounds = {"social/male/yawn", "social/female/yawn"}
       mplay(yawn_sounds[math.random(#yawn_sounds)], "communication")
       mplay("social/neuter/collapse" .. math.random(1,3), "communication")
     end

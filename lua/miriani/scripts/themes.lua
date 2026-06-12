@@ -66,17 +66,22 @@ function discover_themes()
   return theme_cache
 end
 
+function invalidate_theme_cache()
+  theme_cache = {}
+end
+
 function get_theme_info(theme_id)
-  if not theme_cache[theme_id] then
-    discover_themes()
+  local cached = theme_cache[theme_id]
+  if cached and path.isdir(cached.path) then
+    return cached
   end
+  -- Cache miss, or cached entry points at a directory that no longer exists.
+  discover_themes()
   return theme_cache[theme_id]
 end
 
 function get_all_themes()
-  if not next(theme_cache) then
-    discover_themes()
-  end
+  discover_themes()
 
   local themes = {}
   for _, theme in pairs(theme_cache) do

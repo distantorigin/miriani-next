@@ -41,7 +41,7 @@ ImportXML([=[
    omit_from_output="y"
    send_to="14"
  >
-  <send>mplay("SHIP/MOVE/HAUL")</send>
+  <send>mplay("ship/move/haul")</send>
   </trigger>
 
   <trigger

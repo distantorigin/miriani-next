@@ -657,23 +657,23 @@ ImportXML([=[
      -- Formatting mode: gag all fields, output formatted line at end
      if fieldName == "Distance" then
        if fieldValue == "1" then
-        mplay("ship/computer/oneUnit", "notification")
+         mplay("ship/computer/oneUnit", "notification")
        end
      end
-  	 if fieldName == "Starships" then
-          mplay("ship/computer/starship", "notification")
-end          
-     else
+     if fieldName == "Starships" then
+       mplay("ship/computer/starship", "notification")
+     end
+   else
      -- Normal mode: show all fields
      print(fieldName .. ": " .. fieldValue)
      if fieldName == "Distance" then
        if fieldValue == "1" then
          mplay("ship/computer/oneUnit", "notification")
        end
-      end
-	  	     	 if fieldName == "Starships" then
-          mplay("ship/computer/starship", "notification")
-end          
+     end
+     if fieldName == "Starships" then
+       mplay("ship/computer/starship", "notification")
+     end
    end
   </send>
   </trigger>

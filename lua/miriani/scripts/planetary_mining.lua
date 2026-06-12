@@ -88,10 +88,9 @@ ImportXML([=[
   >
   <send>mplay("activity/PlanetaryMining/PlatformHover", "other")</send>
   </trigger>
-<trigger
+  <trigger
    enabled="y"
    group="planetary mining"
-   
    match="^You receive ([0-9,.]+) credits for the minerals you mined\.$"
    regexp="y"
    sequence="100"

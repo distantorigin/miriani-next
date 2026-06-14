@@ -12,6 +12,9 @@
 ### Removed
 - Removed another duplicate sound.
 
+### New
+- Added new bulge, yess and noo sounds to the main pack.
+- Added a new ground Praelor explosion sound.
 ## Version 4.2.01
 
 ### New

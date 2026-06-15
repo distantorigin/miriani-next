@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.02 (In Progress)
+## Version 4.2.02
 
 ### New
 - Added new bulge, yess and noo sounds.

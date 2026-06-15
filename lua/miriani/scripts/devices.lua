@@ -563,5 +563,29 @@ if config:get_option("external_camera").value == "no" then
   <send>mplay("comm/linkConfirmed")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   name="LampOn"
+   group="devices"
+   match="^(?:You flick|[A-Z][A-Za-z]+(?:\s[A-Z][A-Za-z]+)* flicks) a switch on .+, which begins to emanate .+ throughout the room\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("device/switch")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   name="LampOff"
+   group="devices"
+   match="^(?:You flick a|[A-Z][A-Za-z]+(?:\s[A-Z][A-Za-z]+)* flicks the) switch on .+, causing .+ emanating from it to suddenly vanish\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("device/switch")</send>
+  </trigger>
+
   </triggers>
 ]=])

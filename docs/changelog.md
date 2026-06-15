@@ -2,6 +2,11 @@
 
 ## Version 4.2.02 (In Progress)
 
+### New
+- Added new bulge, yess and noo sounds.
+- Added a new ground Praelor explosion sound.
+- Added sounds for turning on lamps/lights/flashlights/etc.
+
 ### Fixed
 - Cleaned up a few sound files to remove silence from the front end.
 - Properly exit the menu when choosing View Changelog in a theme after navigating to it via the menu.
@@ -12,9 +17,6 @@
 ### Removed
 - Removed another duplicate sound.
 
-### New
-- Added new bulge, yess and noo sounds to the main pack.
-- Added a new ground Praelor explosion sound.
 ## Version 4.2.01
 
 ### New

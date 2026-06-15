@@ -24,6 +24,7 @@
   <alias
    match="^spreload$"
   regexp="y"
+   ignore_case="y"
    enabled="y"
 script="reload"
    send_to="12"

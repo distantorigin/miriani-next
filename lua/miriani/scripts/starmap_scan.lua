@@ -1011,6 +1011,7 @@ return 0
    enabled="y"
    group="computer"
    match="^scu$|^scu\s+(.+)$"
+   ignore_case="y"
    regexp="y"
    send_to="12"
    sequence="50"
@@ -1026,6 +1027,7 @@ return 0
    enabled="y"
    group="starmap"
    match="^smc\s+(?:(\d+)\.)?(\w+)$"
+   ignore_case="y"
    regexp="y"
    send_to="12"
    sequence="50"
@@ -1055,6 +1057,7 @@ return 0
    enabled="y"
    group="starmap"
    match="^smd$"
+   ignore_case="y"
    regexp="y"
    send_to="12"
    sequence="50"
@@ -1071,13 +1074,21 @@ return 0
    enabled="y"
    group="starmap"
    match="^sm([AabCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
+   ignore_case="y"
    regexp="y"
    send_to="12"
    sequence="100"
   >
   <send>
 
-   if ("%1" == ".help") then
+   local switch = "%1"
+   local arg = "%2"
+   -- If user typed entirely in caps (caps lock), treat the switch as lowercase
+   if not string.match("%0", "[a-z]") then
+    switch = string.lower(switch)
+   end
+
+   if (switch == ".help") then
     local tprint = require ("tprint")
     print("Valid switches:")
     tprint(starmaptable)
@@ -1086,10 +1097,10 @@ return 0
     print("- smc [class name] to show only the nearest ship matching that class.")
     print("- smc [N].[class name] to show the Nth nearest ship matching that class.")
     return 0
-   elseif ("%1" == ".count") then
+   elseif (switch == ".count") then
     countingStarmap = true
     starmapCounts = {}
-   elseif ("%1" == "c" and "%2" == "") then
+   elseif (switch == "c" and arg == "") then
     -- smc without arguments should be sent to the game
     return Send("smc")
    end -- if help
@@ -1098,14 +1109,14 @@ return 0
    scan = ""
 
    if (not countingStarmap) then
-    scan = string.gsub("%1", "%a+",
+    scan = string.gsub(switch, "%a+",
      function (letter)
       return starmaptable[letter]
      end -- function
     ) -- replacement
 
-    if "%2" ~= "" then
-     classFilter = string.lower(Trim("%2"))
+    if arg ~= "" then
+     classFilter = string.lower(Trim(arg))
     end -- if
    end -- if
 
@@ -1118,6 +1129,7 @@ return 0
    enabled="y"
    group="computer"
    match="^sc\.reset$"
+   ignore_case="y"
    regexp="y"
    send_to="12"
    sequence="100"

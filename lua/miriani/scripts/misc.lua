@@ -1167,7 +1167,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   </trigger>
   <trigger
    enabled="y"
-   match="^(Announcement.+\:|Multi-line Announce).+$"
+   match="^(Announcement|Multi-line Announce).+$"
    regexp="y"
    send_to="12"
   >

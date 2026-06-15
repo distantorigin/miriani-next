@@ -442,11 +442,20 @@ ImportXML([=[
    match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*|You) (?:hear )?(shout|yell|holler)s?, &quot;(.+?)&quot;$"
    regexp="y"
    omit_from_output="y"
-   send_to="14"
+   send_to="12"
    sequence="100"
   >
   <send>
-   mplay ("comm/shout", "communication")
+   -- If the speaker's name is colored red, treat it as an announcement.
+   local line = GetLinesInBufferCount()
+   if GetLineInfo(line, 2) == 0 then line = line - 1 end
+   local first_style = GetStyleInfo(line, 1)
+   local name_colour = first_style and first_style.textcolour
+   if name_colour == ColourNameToRGB("red") or name_colour == ColourNameToRGB("maroon") then
+     mplay("comm/announcement", "communication")
+   else
+     mplay("comm/shout", "communication")
+   end
    local speaker = "%1"
    local verb = "%2"
    local message = "%3"

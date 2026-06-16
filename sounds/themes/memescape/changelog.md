@@ -1,6 +1,11 @@
 # Memescape Theme Changelog
 
-## Version 4.2.02 (In Progress)
+## Version 4.2.03 (In Progress)
+
+### New
+- Added new whistle yowl social sounds.
+
+## Version 4.2.02
 
 ### New
 - Added a sound for the headscratch social.

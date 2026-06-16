@@ -3,7 +3,10 @@
 ## Version 4.2.03 (In Progress)
 
 ### New
-- Added new whistle yowl social sounds.
+- Added new whistle and yowl social sounds.
+
+### Fixed
+- Boosted volume on a couple new yowls.
 
 ## Version 4.2.02
 

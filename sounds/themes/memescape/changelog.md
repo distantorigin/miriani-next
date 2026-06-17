@@ -4,6 +4,7 @@
 
 ### New
 - Added new whistle and yowl social sounds.
+- Added a new insult social sound.
 
 ### Fixed
 - Boosted volume on a couple new yowls.
@@ -19,7 +20,6 @@
 
 ### New
 - Added a few new wake up and disconnect sounds.
-
 
 ## Version 4.2
 

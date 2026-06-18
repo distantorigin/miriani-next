@@ -9,6 +9,9 @@
 ### Fixed
 - Boosted volume on a couple new yowls.
 
+### Removed
+- Pulled the new whistle sounds along with various others and moved them to the new theme pack.
+
 ## Version 4.2.02
 
 ### New

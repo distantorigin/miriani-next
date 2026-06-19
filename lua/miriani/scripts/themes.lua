@@ -118,6 +118,36 @@ function count_theme_files(theme_id)
   return count, total_size
 end
 
+-- List the sound files a theme provides (replaces or adds), as paths relative
+-- to the theme root (e.g. "comm/Channels/guild.ogg"). Root-level files such as
+-- the theme's own enable/disable feedback sounds, theme.json, changelog.md and
+-- README.txt are excluded — only files inside category subdirectories count as
+-- sounds the theme will change or add.
+function list_theme_sounds(theme_id)
+  local info = get_theme_info(theme_id)
+  if not info then return {} end
+
+  local results = {}
+  local function scan_dir(dir, rel)
+    local entries = utils.readdir(dir .. "/*")
+    if not entries then return end
+    for name, metadata in pairs(entries) do
+      if name ~= "." and name ~= ".." then
+        local sub_rel = rel == "" and name or rel .. "/" .. name
+        if metadata.directory then
+          scan_dir(dir .. "/" .. name, sub_rel)
+        elseif rel ~= "" and name:match("%.ogg$") then
+          table.insert(results, sub_rel)
+        end
+      end
+    end
+  end
+
+  scan_dir(info.path, "")
+  table.sort(results, function(a, b) return a:lower() < b:lower() end)
+  return results
+end
+
 function get_theme_last_updated(theme_id)
   local info = get_theme_info(theme_id)
   if not info then return nil end

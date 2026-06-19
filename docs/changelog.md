@@ -5,6 +5,8 @@
 ### New
 - Shouts from speakers whose name is colored red now play the announcement sound instead of the usual shout sound. In theory, this should help pick out host shouts from regular ones.
 - Added a brand new theme, Music. It is a replacement-style theme and has a variety of different music cues to augment social and other sounds.
+- Added a "View sounds" option to each theme's detail panel that shows every sound file the theme provides in a notepad window.
+- Added an "Open folder" option to each theme's detail panel that opens the theme's directory in Windows Explorer.
 
 ## Version 4.2.02
 

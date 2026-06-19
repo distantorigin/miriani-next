@@ -564,15 +564,18 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       end
       table.insert(detail_lines, "")
 
+      local pl_path = require("pl.path")
       local toggle_label = current_state and "Disable theme" or "Enable theme"
       local changelog_path = theme_info.path .. "/changelog.md"
-      local has_changelog = require("pl.path").isfile(changelog_path)
+      local has_changelog = pl_path.isfile(changelog_path)
 
       local choices = {
         ["1"] = toggle_label,
+        ["2"] = "View sounds",
+        ["3"] = "Open folder",
       }
       if has_changelog then
-        choices["2"] = "View changelog"
+        choices["4"] = "View changelog"
       end
       if not skip_menu then
         choices["0"] = "Go back"
@@ -587,7 +590,32 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
             set_theme_enabled(theme_id, new_state)
             local status = new_state and "on" or "off"
             notify("info", string.format("Theme \"%s\" set to %s", theme_info.name, status))
-          elseif result and result.key == "2" and has_changelog then
+          elseif result and result.key == "2" then
+            local sounds = list_theme_sounds(theme_id)
+            local mode_verb = theme_info.mode == "replace" and "replace" or "add"
+            local lines = {
+              string.format("%s - sounds this theme will %s (%d files)",
+                theme_info.name, mode_verb, #sounds),
+              "",
+            }
+            if #sounds == 0 then
+              table.insert(lines, "This theme has no sound files in its category folders yet.")
+            else
+              for _, rel in ipairs(sounds) do
+                table.insert(lines, rel)
+              end
+            end
+            local notepad_title = theme_info.name .. " Sounds"
+            SendToNotepad(notepad_title, table.concat(lines, "\r\n"))
+            NotepadReadOnly(notepad_title, true)
+            NotepadSaveMethod(notepad_title, 2)
+            ActivateNotepad(notepad_title)
+            return
+          elseif result and result.key == "3" then
+            local abs = pl_path.abspath(theme_info.path):gsub("/", "\\")
+            os.execute('start "" "' .. abs .. '"')
+            return
+          elseif result and result.key == "4" and has_changelog then
             local f = io.open(changelog_path, "r")
             if f then
               local text = f:read("*all")

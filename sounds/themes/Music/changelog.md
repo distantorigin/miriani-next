@@ -7,6 +7,8 @@
 - Added a new male cry sound.
 - Added new bonk, frog, enable and disable sounds.
 - Added new sounds for receiving cash.
+- Added new orgasm sounds.
+- Added a new sound for the fall social.
 
 ## Version 4.2.03
 

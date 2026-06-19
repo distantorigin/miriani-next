@@ -9,6 +9,7 @@
 - Added new sounds for receiving cash.
 - Added new orgasm sounds.
 - Added a new sound for the fall social.
+- Added new screech sounds.
 
 ## Version 4.2.03
 

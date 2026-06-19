@@ -1,6 +1,6 @@
 # Memescape Theme Changelog
 
-## Version 4.2.03 (In Progress)
+## Version 4.2.03
 
 ### New
 - Added new whistle and yowl social sounds.

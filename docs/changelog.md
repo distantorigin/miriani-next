@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.03 (In Progress)
+## Version 4.2.03
 
 ### New
 - Shouts from speakers whose name is colored red now play the announcement sound instead of the usual shout sound. In theory, this should help pick out host shouts from regular ones.

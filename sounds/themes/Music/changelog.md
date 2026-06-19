@@ -5,6 +5,8 @@
 ### New
 - Added gendered variants for the noo social and a cough sound.
 - Added a new male cry sound.
+- Added new bonk, frog, enable and disable sounds.
+- Added new sounds for receiving cash.
 
 ## Version 4.2.03
 

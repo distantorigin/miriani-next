@@ -8,3 +8,6 @@
 
 ### Fixed
 - Boosted volume on some of the sounds that were a bit lacking.
+
+### Changed
+- Moved cry sounds out of the neuter category into male with female versions coming soon.

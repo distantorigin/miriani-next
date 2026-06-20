@@ -11,6 +11,7 @@
 - Added a new sound for the fall social.
 - Added new screech sounds.
 - Added a sound for the ship relay channel.
+- Added sounds for announcements and changelog updates.
 
 ## Version 4.2.03
 

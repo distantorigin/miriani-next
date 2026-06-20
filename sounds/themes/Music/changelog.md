@@ -10,6 +10,7 @@
 - Added new orgasm sounds.
 - Added a new sound for the fall social.
 - Added new screech sounds.
+- Added a sound for the ship relay channel.
 
 ## Version 4.2.03
 

@@ -18,6 +18,7 @@
 - Added sounds for Santa boxes.
 - Added sounds for the lean social.
 - Added a new ship broadcast sound.
+- Added a new what and shrug sound.
 
 ## Version 4.2.03
 

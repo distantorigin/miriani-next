@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.04 (In Progress)
+
+### New
+- Added a sound for doorbells.
+
 ## Version 4.2.03
 
 ### New

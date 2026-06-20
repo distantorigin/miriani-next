@@ -13,6 +13,7 @@
 - Added a sound for the ship relay channel.
 - Added sounds for announcements and changelog updates.
 - Added new flirt, insult, devil, what, fall, flex, twirl and shout sounds.
+- Added a sound for doorbells.
 
 ## Version 4.2.03
 

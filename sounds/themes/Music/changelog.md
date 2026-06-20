@@ -12,6 +12,7 @@
 - Added new screech sounds.
 - Added a sound for the ship relay channel.
 - Added sounds for announcements and changelog updates.
+- Added new flirt, insult, devil, what, fall, flex, twirl and shout sounds.
 
 ## Version 4.2.03
 

@@ -16,6 +16,8 @@
 - Added a sound for doorbells.
 - Added a sound for spamming commands.
 - Added sounds for Santa boxes.
+- Added sounds for the lean social.
+- Added a new ship broadcast sound.
 
 ## Version 4.2.03
 

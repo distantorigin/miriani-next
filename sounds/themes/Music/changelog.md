@@ -15,6 +15,7 @@
 - Added new flirt, insult, devil, what, fall, flex, twirl and shout sounds.
 - Added a sound for doorbells.
 - Added a sound for spamming commands.
+- Added sounds for Santa boxes.
 
 ## Version 4.2.03
 

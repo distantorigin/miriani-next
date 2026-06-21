@@ -20,7 +20,8 @@
 - Added a new ship broadcast sound.
 - Added a new what and shrug sound.
 - Added new flirt, insult, shake and whistle sounds.
-- Added new pilot lounge ambiances, a pose sound and a new female cry.
+- Added new pilot lounge ambiances, a pose sound, a tub draining sound and a new female cry.
+- Added a new devil and male why sound.
 
 ### Changed
 - Replaced the second jingle bell box sound.

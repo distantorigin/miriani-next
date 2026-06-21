@@ -23,6 +23,7 @@
 - Added new pilot lounge ambiances, a pose sound, a tub draining sound and a new female cry.
 - Added a new devil and male why sound.
 - Added sounds for radio receivers.
+- Added a female why sound.
 
 ### Changed
 - Replaced the second jingle bell box sound.

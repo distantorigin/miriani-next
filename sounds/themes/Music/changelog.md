@@ -19,6 +19,7 @@
 - Added sounds for the lean social.
 - Added a new ship broadcast sound.
 - Added a new what and shrug sound.
+- Added new flirt, insult, shake and whistle sounds.
 
 ## Version 4.2.03
 

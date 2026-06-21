@@ -1447,15 +1447,10 @@ function mplay(file, group, interrupt, pan, loop, slide, sec, bypass_foreground,
 
   if (not filepath) then
     local sound_file = SOUNDPATH .. file .. EXTENSION
-    -- Skip replace-mode themes if the user has a variant preference for this sound
-    local has_variant = get_variant_preference and get_variant_preference(sound_file)
-    if not has_variant or has_variant == 0 then
-      local theme_filepath = resolve_theme_sound and resolve_theme_sound(sound_file)
-      if theme_filepath then
-        filepath = theme_filepath
-      end
-    end
-    if not filepath then
+    local theme_filepath = resolve_theme_sound and resolve_theme_sound(sound_file)
+    if theme_filepath then
+      filepath = theme_filepath
+    else
       filepath = sound_file
     end
   end -- if

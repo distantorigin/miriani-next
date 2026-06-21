@@ -270,6 +270,15 @@ end
 -- the variants and randomises. Callers must always route the returned path
 -- through play()/find_sound_file(), never path.isfile() it directly.
 function resolve_theme_sound(sound_file)
+  local _, theme_file = find_overriding_replace_theme(sound_file)
+  return theme_file
+end
+
+-- Returns the first enabled replace-mode theme that provides this sound,
+-- along with the theme-relative path it would resolve to.
+-- sound_file: path relative to SOUND_DIRECTORY (e.g., "miriani/combat/hit.ogg")
+-- Returns: theme info table, theme-relative path  — or nil, nil.
+function find_overriding_replace_theme(sound_file)
   local sound_dir = config:get("SOUND_DIRECTORY")
   local stripped = strip_soundpath(sound_file)
   local replace_themes = get_enabled_themes_by_mode("replace")
@@ -279,16 +288,16 @@ function resolve_theme_sound(sound_file)
     local theme_file = THEMES_PATH .. theme.id .. "/" .. stripped
     local full_path = sound_dir .. theme_file
     if path.isfile(full_path) then
-      return theme_file
+      return theme, theme_file
     end
     local base, ext = path.splitext(theme_file)
     local search = utils.readdir(sound_dir .. base .. "*" .. ext)
     if search and next(search) then
-      return theme_file
+      return theme, theme_file
     end
   end
 
-  return nil
+  return nil, nil
 end
 
 -- Collect sound files from additive-mode themes to merge into the random pool.

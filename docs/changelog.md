@@ -4,6 +4,10 @@
 
 ### New
 - Added a sound for doorbells.
+- The sound variants menu now indicates when a sound is being replaced by an enabled replace-mode theme, both in the variant list and on the per-sound selection dialog.
+
+### Fixed
+- Replace-mode themes now always take precedence over variant preferences. Previously, sounds with a built-in default variant (such as the Santa box jingle bell) skipped the theme and played the base sound instead.
 
 ## Version 4.2.03
 

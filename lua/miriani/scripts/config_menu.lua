@@ -271,6 +271,10 @@ function config_menu.show_group(group_name)
       end
 
       local status = "Variant " .. preference
+      local overriding_theme = find_overriding_replace_theme and find_overriding_replace_theme(sound.path)
+      if overriding_theme then
+        status = status .. ", replaced by " .. overriding_theme.name .. " theme"
+      end
 
       secondary_menu[sound_key] = string.format("%s [%s]", sound.name, status)
     end
@@ -472,9 +476,18 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
         end
       end
 
+      local message = string.format("%d variants available. Select one:", #variants)
+      local overriding_theme = find_overriding_replace_theme and find_overriding_replace_theme(sound_path)
+      if overriding_theme then
+        message = message .. string.format(
+          "\n\nThe %s theme is replacing this sound. Disable it to hear your variant selection.",
+          overriding_theme.name
+        )
+      end
+
       dialog.menu({
         title = string.format("Select variant for %s", display_name),
-        message = string.format("%d variants available. Select one:", #variants),
+        message = message,
         choices = choices,
         callback = function(result, reason)
           if result then

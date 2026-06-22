@@ -27,6 +27,7 @@
 
 ### Changed
 - Replaced the second jingle bell box sound.
+- Shortened the shrug and twirl3 sounds.
 
 ## Version 4.2.03
 

@@ -1,7 +1,6 @@
 -- @module devices
 -- Device sounds and notifications
-
--- Sector name to number mapping table (from VIP Mud soundpack)
+surveyComplete-- Sector name to number mapping table (from VIP Mud soundpack)
 sector_numbers = {
   ["Central Jumpgate Hub"] = 0,
   ["Satus"] = 1,
@@ -508,6 +507,21 @@ if config:get_option("external_camera").value == "no" then
   </send>
   </trigger>
 
+    <trigger
+   enabled="y"
+   name="PlanetarySurveyor"
+   group="devices"
+   script="gagline"
+   match="^(A|An) .+? handheld planetary surveyor indicates that the scan failed\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+  >
+  <send>
+   mplay("device/scanFailed")
+  </send>
+  </trigger>
+  
   <trigger
    enabled="y"
    name="DestinationFinder"

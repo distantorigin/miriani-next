@@ -194,7 +194,7 @@ ImportXML([=[
   </trigger>
 
   <trigger
-   enabled="y"failed
+   enabled="y"
       name="LoreIncomingFile"
    group="devices"
    match="^Your (.+?) suddenly beeps quietly, indicating a new incoming file\.$"

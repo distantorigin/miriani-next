@@ -1,6 +1,6 @@
 -- @module devices
 -- Device sounds and notifications
-surveyComplete-- Sector name to number mapping table (from VIP Mud soundpack)
+-- Sector name to number mapping table (from VIP Mud soundpack)
 sector_numbers = {
   ["Central Jumpgate Hub"] = 0,
   ["Satus"] = 1,
@@ -194,8 +194,8 @@ ImportXML([=[
   </trigger>
 
   <trigger
-   enabled="y"
-   name="LoreIncomingFile"
+   enabled="y"failed
+      name="LoreIncomingFile"
    group="devices"
    match="^Your (.+?) suddenly beeps quietly, indicating a new incoming file\.$"
    regexp="y"

@@ -482,13 +482,13 @@ if config:get_option("external_camera").value == "no" then
    name="PlanetarySurveyor"
    group="devices"
    script="gagline"
-   match="^You activate .+? planetary surveyor and begin scanning the area\.$"
+   match="^You activate (a|an) .+? planetary surveyor and begin scanning the area\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"
   >
   <send>
-   mplay("device/surveyStart")
+   mplay("device/surveyBegin")
   </send>
   </trigger>
 
@@ -497,7 +497,7 @@ if config:get_option("external_camera").value == "no" then
    name="PlanetarySurveyor"
    group="devices"
    script="gagline"
-   match="^(A|An) .+? planetary surveyor indicates that the scan was successful\.$"
+   match="^(A|An) .+? handheld planetary surveyor indicates that the scan was successful\.$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

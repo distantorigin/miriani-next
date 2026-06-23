@@ -30,6 +30,7 @@ local social_aliases = {
 ["shiver"] = "cower",
 ["q"] = "quack",
 ["scratch"] = "headscratch",
+["nosescratch"] = "headscratch",
 }
 
 -- Socials database

@@ -479,7 +479,7 @@ if config:get_option("external_camera").value == "no" then
 
   <trigger
    enabled="y"
-   name="PlanetarySurveyor"
+   name="PlanetarySurveyorBegin"
    group="devices"
    script="gagline"
    match="^You activate (a|an) .+? planetary surveyor and begin scanning the area\.$"
@@ -494,7 +494,7 @@ if config:get_option("external_camera").value == "no" then
 
   <trigger
    enabled="y"
-   name="PlanetarySurveyor"
+   name="PlanetarySurveyorSuccess"
    group="devices"
    script="gagline"
    match="^(A|An) .+? handheld planetary surveyor indicates that the scan was successful\.$"
@@ -509,7 +509,7 @@ if config:get_option("external_camera").value == "no" then
 
     <trigger
    enabled="y"
-   name="PlanetarySurveyor"
+   name="PlanetarySurveyorFail"
    group="devices"
    script="gagline"
    match="^(A|An) .+? handheld planetary surveyor indicates that the scan failed\.$"

@@ -31,6 +31,16 @@ local social_aliases = {
 ["q"] = "quack",
 ["scratch"] = "headscratch",
 ["nosescratch"] = "headscratch",
+-- Dance aliases
+["boogiewoogie"] = "boogie",
+["chwing"] = "chickenwing",
+["fish"] = "fishdance",
+["hootc"] = "hootchykootchy",
+["lam"] = "lambada",
+["lamb"] = "lambada",
+["mashedpotato"] = "potato",
+["square"] = "squaredance",
+["timew"] = "timewarp",
 }
 
 -- Socials database
@@ -52,8 +62,11 @@ local social_aliases = {
 --   -- Override sound filename (when different from social name):
 --   lmao = {genders = {"neuter"}, category = "laughter", sound = "rofl"},
 --
--- Categories: laughter, distress, reflex, bodily, physical, reaction, novelty, songs
+-- Categories: laughter, distress, reflex, bodily, physical, reaction, novelty, songs, dances
 -- (socials without a category will appear under "uncategorized")
+--
+-- Dances are a special category: they play from sounds/miriani/dances/<name>.ogg
+-- with no gender variants. Omit the genders field for dance entries.
 --
 local socials = {
   -- Laughter sounds
@@ -226,6 +239,39 @@ hum    = {genders = {"male", "female"}, category = "novelty"},
     why       = {genders = {"male", "female"}, category = "novelty"},
     yess      = {genders = {"neuter"}, category = "novelty"},
 yodel      = {genders = {"neuter"}, category = "novelty"},
+
+  -- Dances (no gender variants; sounds live in sounds/miriani/dances/)
+  boogaloo       = {category = "dances"},
+  boogie         = {category = "dances"},
+  breakdance     = {category = "dances"},
+  bunny          = {category = "dances"},
+  chacha         = {category = "dances"},
+  charleston     = {category = "dances"},
+  chickenwing    = {category = "dances"},
+  dip            = {category = "dances"},
+  disco          = {category = "dances"},
+  eslide         = {category = "dances"},
+  fandango       = {category = "dances"},
+  fishdance      = {category = "dances"},
+  grind          = {category = "dances"},
+  hootchykootchy = {category = "dances"},
+  jitterbug      = {category = "dances"},
+  lambada        = {category = "dances"},
+  lindy          = {category = "dances"},
+  macarena       = {category = "dances"},
+  mambo          = {category = "dances"},
+  monkey         = {category = "dances"},
+  polka          = {category = "dances"},
+  potato         = {category = "dances"},
+  rhumba         = {category = "dances"},
+  robot          = {category = "dances"},
+  salsa          = {category = "dances"},
+  squaredance    = {category = "dances"},
+  tango          = {category = "dances"},
+  timewarp       = {category = "dances"},
+  twist          = {category = "dances"},
+  waltz          = {category = "dances"},
+  worm           = {category = "dances"},
 }
 
 --- Check if social sounds are globally enabled in config
@@ -443,6 +489,11 @@ function find_social_sound_file(social_name, gender)
 
   -- Derive sound filename: use explicit sound or fall back to social_name
   local sound_file = social_data.sound or social_name
+
+  -- Dances play from sounds/miriani/dances/ with no gender variants
+  if social_data.category == "dances" then
+    return "dances/" .. sound_file
+  end
 
   -- Check if the specified gender is supported
   if gender_supported(social_name, social_data, gender) then

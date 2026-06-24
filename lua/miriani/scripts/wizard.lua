@@ -37,6 +37,7 @@ local social_categories = {
   {key = "social_cat_physical", label = "Physical (punch, kick, clap)"},
   {key = "social_cat_novelty", label = "Novelty (animals, musical, memes)"},
   {key = "social_cat_songs", label = "Songs"},
+  {key = "social_cat_dances", label = "Dances (tango, waltz, macarena)"},
   {key = "social_cat_uncategorized", label = "Uncategorized"},
 }
 

@@ -38,7 +38,7 @@ local known_groups = {
   "general", "auto_login", "ship", "room", "helpers", "screen reader",
   "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
   "socials_bodily", "socials_physical", "socials_reaction", "socials_novelty",
-  "socials_songs", "socials_uncategorized", "scan_formats", "buffers", "colors", "developer",
+  "socials_songs", "socials_dances", "socials_uncategorized", "scan_formats", "buffers", "colors", "developer",
   "themes", "mutes"
 }
 
@@ -934,7 +934,7 @@ function config_menu.find_and_edit(group_name, search_term)
   -- Special handling for socials - navigate to subcategory menus or toggle individual socials
   if actual_group_key == "socials" then
     -- First try matching a category name
-    local subcategory_names = {"laughter", "distress", "reflex", "bodily", "physical", "reaction", "novelty", "songs", "all"}
+    local subcategory_names = {"laughter", "distress", "reflex", "bodily", "physical", "reaction", "novelty", "songs", "dances", "all"}
     for _, cat in ipairs(subcategory_names) do
       if string.find(string.lower(cat), string.lower(search_term)) then
         config_menu.show_group("socials_" .. cat)

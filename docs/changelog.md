@@ -6,6 +6,7 @@
 - Added a sound for doorbells.
 - The sound variants menu now indicates when a sound is being replaced by an enabled replace-mode theme, both in the variant list and on the per-sound selection dialog.
 - Added a sound for failed handheld planetary survey scans.
+- Added a Dances social category for the various in-game dance socials. Sound files will live under sounds/miriani/dances/.
 
 ### Fixed
 - Replace-mode themes now always take precedence over variant preferences. Previously, sounds with a built-in default variant (such as the Santa box jingle bell) skipped the theme and played the base sound instead.

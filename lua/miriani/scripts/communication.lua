@@ -876,9 +876,8 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-    local theme_disconnect = find_theme_override("misc/Connections/disconnected")
-    if theme_disconnect then
-      play(theme_disconnect, "communication")
+    if find_theme_override("misc/Connections/disconnected") then
+      mplay("misc/Connections/disconnected", "communication")
     else
       local yawn_sounds = {"social/male/yawn", "social/female/yawn"}
       mplay(yawn_sounds[math.random(#yawn_sounds)], "communication")

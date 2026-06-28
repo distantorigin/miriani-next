@@ -442,7 +442,7 @@ ImportXML([=[
    match="^([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*|You) (?:hear )?(shout|yell|holler)s?, &quot;(.+?)&quot;$"
    regexp="y"
    omit_from_output="y"
-   send_to="12"
+   send_to="14"
    sequence="100"
   >
   <send>

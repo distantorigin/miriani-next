@@ -1,6 +1,6 @@
 # Music Theme Changelog
 
-## Version 4.2.04 (In Progress)
+## Version 4.2.04
 
 ### New
 - Added gendered variants for the noo social and a cough sound.

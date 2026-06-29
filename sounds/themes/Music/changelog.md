@@ -1,5 +1,10 @@
 # Music Theme Changelog
 
+## Version 4.2.05 (In Progress)
+
+### New
+- Added sounds for the clap and roll socials.
+
 ## Version 4.2.04
 
 ### New

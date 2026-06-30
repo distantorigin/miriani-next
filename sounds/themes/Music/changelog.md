@@ -6,6 +6,10 @@
 - Added sounds for the clap and roll socials.
 - Added a second roll sound as well as a mash one.
 - Added sounds for handshake and a new screech.
+- Added a new female cry and neuter screech sound.
+
+### Removed
+- Pulled the cough sound out of neuter as well as the screech1 sound.
 
 ## Version 4.2.04
 

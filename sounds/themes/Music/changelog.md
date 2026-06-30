@@ -7,6 +7,7 @@
 - Added a second roll sound as well as a mash one.
 - Added sounds for handshake and a new screech.
 - Added a new female cry and neuter screech sound.
+- Added gendered hum sounds and a new bongo sound.
 
 ### Removed
 - Pulled the cough sound out of neuter as well as the screech1 sound.

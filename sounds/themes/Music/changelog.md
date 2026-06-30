@@ -5,6 +5,7 @@
 ### New
 - Added sounds for the clap and roll socials.
 - Added a second roll sound as well as a mash one.
+- Added sounds for handshake and a new screech.
 
 ## Version 4.2.04
 

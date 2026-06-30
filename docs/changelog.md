@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.05 (In Progress)
+
+### New
+- Added sounds for the boogaloo and waltz dances.
+
 ## Version 4.2.04
 
 ### New

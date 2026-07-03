@@ -4,6 +4,7 @@
 
 ### New
 - Added sounds for the boogaloo, breakdance, grind and waltz dances.
+- Added sound support for apartment buzzers. At the moment it uses the house doorbell sound but it can be changed if desired.
 
 ## Version 4.2.04
 

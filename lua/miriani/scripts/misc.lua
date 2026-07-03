@@ -1274,6 +1274,19 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <send>mplay ("misc/houses/doorbell")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="misc"
+   script="gagline"
+   match="^You hear a loud buzzing sound, indicating somebody is at the door\.$"
+   regexp="y"
+   omit_from_output="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>mplay ("misc/houses/doorbell")</send>
+  </trigger>
+  
   </triggers>
 ]=])
 

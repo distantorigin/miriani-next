@@ -5,6 +5,9 @@
 ### Fixed
 - Trimmed silence from the whistle sound.
 
+### New
+- Added a new message board alert sound.
+
 ## Version 4.2.03
 
 ### New

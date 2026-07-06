@@ -33,6 +33,13 @@ When found, processes update results and reloads plugins as needed.
 <![CDATA[
 
 require("reload_all")
+
+-- Delayed-deletion window so concurrent sessions all see .update-result
+-- before it's removed. Any session's next 1s poll within this window
+-- processes the file; races on os.remove are harmless.
+local DELETE_DELAY = 5
+local processed = false
+
 function OnPluginInstall()
   -- Check immediately on startup
 --  check_update_result()
@@ -43,9 +50,18 @@ function check_update_result()
   local homedir = GetInfo(66)  -- MUSHclient directory
   local update_result_file = path.join(homedir, ".update-result")
 
-  if path.isfile(update_result_file) then
-    process_update_result(update_result_file)
+  if not path.isfile(update_result_file) then
+    processed = false
+    return
   end
+
+  if processed then
+    return
+  end
+
+  processed = true
+  process_update_result(update_result_file)
+  DoAfterSpecial(DELETE_DELAY, string.format("os.remove(%q)", update_result_file), sendto.script)
 end
 
 function process_update_result(filepath)
@@ -53,7 +69,6 @@ function process_update_result(filepath)
   local file = io.open(filepath, "r")
   if not file then
     Note("Error: Could not read .update-result file")
-    os.remove(filepath)
     return
   end
 
@@ -66,7 +81,6 @@ function process_update_result(filepath)
 
   if not ok or not data then
     Note("Error: Malformed .update-result file")
-    os.remove(filepath)
     return
   end
 
@@ -78,9 +92,6 @@ function process_update_result(filepath)
   else
     Note("Error: Unknown result in .update-result: " .. tostring(data.result))
   end
-
-  -- Delete the file after processing
-  os.remove(filepath)
 end
 
 function handle_success(data)

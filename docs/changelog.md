@@ -8,6 +8,7 @@
 
 ### Fixed
 - Boosted the volume of the sound that plays when entering a nebula.
+- The post-update plugin reload no longer fails to trigger in secondary sessions when multiple clients are running.
 
 ## Version 4.2.04
 

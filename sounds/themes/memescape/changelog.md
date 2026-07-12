@@ -7,6 +7,7 @@
 
 ### New
 - Added a new message board alert sound.
+- Added the original long applaud sound by request.
 
 ## Version 4.2.03
 

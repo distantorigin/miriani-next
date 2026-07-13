@@ -781,6 +781,9 @@ end -- OnPluginSave
 function OnPluginConnect()
   --register()
 SetVariable("logged_in", 0)
+  -- A fresh connection means the client has (re)started, so any pending
+  -- "restart needed" marker from a prior session is already resolved.
+  os.remove(GetInfo(66) .. ".update-restart-pending")
 end -- OnPluginConnect
 
 function OnPluginDisconnect()
@@ -1048,6 +1051,16 @@ end -- OnPluginBroadcast
 function OnPluginCommandEntered(text)
   last_command_time = os.time()
 
+  -- If an update installed silently while idle and needs a client restart,
+  -- tell the player once now that they've returned, then clear the marker.
+  local restart_marker = GetInfo(66) .. ".update-restart-pending"
+  local rf = io.open(restart_marker, "r")
+  if rf then
+    rf:close()
+    os.remove(restart_marker)
+    notify("important", "An update was installed and needs a client restart to finish applying. Please restart your client when convenient.")
+  end
+
   -- Handle blank lines for dialog system (aliases don't catch them)
   if dialog and dialog.is_active() and text == "" then
     dialog.handle_input("")
@@ -1161,7 +1174,9 @@ function detect_update_when_idle()
   and IsPluginInstalled(UPDATE_ID)
   and last_command_time ~= nil
   and (os.time() - last_command_time) >= IDLE_CUTOFF then
-    Execute("update quietly")
+    local action_opt = config:get_option("update_restart_action")
+    local action = action_opt and action_opt.value or "notify"
+    Execute("update quietly " .. action)
 end -- if
 
 end -- detect_update_when_idle

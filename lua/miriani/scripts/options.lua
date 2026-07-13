@@ -101,6 +101,7 @@ local options = {
 
   update_idle = {descr="Automatically apply updates while idle.", value="no", group="general", type="bool"},
   update_sound = {descr="Play a sound for pending updates.", value="yes", group="general", type="bool"},
+  update_restart_action = {descr="For quiet updates that need a client restart: notify you on return, or restart automatically.", value="notify", group="general", type="enum", options={"notify", "auto"}},
 
   -- Synced randomness
   synced_random = {descr="Sync random sounds using time-based seed (everyone hears the same sounds).", value="no", group="general", type="bool"},

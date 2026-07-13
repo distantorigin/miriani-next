@@ -191,7 +191,9 @@ ImportXML([=[
     notify("info", "** Updater detected: You may type update to apply pending updates. **")
  
      if config:get_option("automatic_updates").value == "yes" then
-        Execute("update quietly")
+        local action_opt = config:get_option("update_restart_action")
+        local action = action_opt and action_opt.value or "notify"
+        Execute("update quietly " .. action)
      end -- if
    else
      notify("important", "Missing updater.xml plugin. Unable to fetch updates.")

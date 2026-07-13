@@ -211,9 +211,13 @@ function update_dispatcher(name, line, wildcards)
   end
 
   -- Parse the command
-  if not args or args == "" or args == "quietly" then
-    -- No arguments or ran with quietly--run update
-    update_run(args == "quietly")
+  if not args or args == "" or args:match("^quietly") then
+    -- No arguments or ran with quietly--run update.
+    -- Callers may append a restart action ("quietly auto" / "quietly notify")
+    -- to control how a restart-required update is handled while unattended.
+    local quiet = args ~= nil and args:match("^quietly") ~= nil
+    local restart_action = args and args:match("^quietly%s+(%S+)") or nil
+    update_run(quiet, restart_action)
   else
     -- Split args into command and parameters
     local cmd, params = args:match("^(%S+)%s*(.-)$")
@@ -293,8 +297,20 @@ run_updater_visible("-generate-manifest")
   end
 end
 
+-- Writes a marker file so the soundpack can tell the player, on their return,
+-- that a silently-installed update still needs a client restart to finish.
+function write_restart_pending(version)
+  local homedir = GetInfo(66)
+  local file = io.open(homedir .. ".update-restart-pending", "w")
+  if file then
+    file:write(version or "")
+    file:close()
+  end
+end
+
 -- Main update function (with restart check)
-function update_run(quiet)
+function update_run(quiet, restart_action)
+  restart_action = restart_action or "notify"
   if not quiet then
     Note("Checking for updates...")
   end
@@ -346,15 +362,36 @@ function update_run(quiet)
     end
 
     if response == "yes" then
-      if not quiet then
-        Note("Starting update...")
-      end
-
-      -- Run the update
-      if info.restart_required then
-        run_updater_visible("-allow-restart -non-interactive")
+      if quiet then
+        -- Unattended update: never pop a window that steals focus.
+        if info.restart_required then
+          if restart_action == "auto" then
+            -- Auto-restart: uses the proven detached path. A restart changes
+            -- focus by its nature, so there's nothing to steal from an idle player.
+            run_updater_visible("-allow-restart -non-interactive")
+          else
+            -- Apply silently without restarting, then leave a marker so the
+            -- player is told to restart when they come back to the keyboard.
+            local pending_version = info.version
+            run_updater_hidden("-non-interactive", function(success)
+              if success then
+                write_restart_pending(pending_version)
+              end
+            end)
+          end
+        else
+          -- Routine silent update: install hidden so focus stays put.
+          run_updater_hidden("-non-interactive")
+        end
       else
-        run_updater_visible("-non-interactive")
+        Note("Starting update...")
+
+        -- Run the update
+        if info.restart_required then
+          run_updater_visible("-allow-restart -non-interactive")
+        else
+          run_updater_visible("-non-interactive")
+        end
       end
     else
       if not quiet then

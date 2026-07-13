@@ -1,4 +1,30 @@
 
+local version = require("miriani.scripts.version")
+local last_connect_update_check = 0
+local CONNECT_UPDATE_CHECK_DEBOUNCE = 5 * 60
+
+-- Dev users get a client-driven check on connect (the OOB "soundpack status
+-- outdated" tag from the game is authoritative for stable but lags for dev
+-- pushes). Stable falls back to the OOB tag handler in hooks.lua.
+function maybe_check_updates_on_connect()
+  if version.update_channel() ~= "dev" then
+    return
+  end
+
+  local now = os.time()
+  if (now - last_connect_update_check) < CONNECT_UPDATE_CHECK_DEBOUNCE then
+    return
+  end
+  last_connect_update_check = now
+
+  if not IsPluginInstalled(UPDATE_ID) then
+    notify("important", "Missing updater.xml plugin. Unable to fetch updates.")
+    return
+  end
+
+  CallPlugin(UPDATE_ID, "check_updates_and_broadcast")
+end
+
 ImportXML([=[
 <triggers>
 
@@ -58,7 +84,8 @@ end
   >
   <send>SetVariable("logged_in", 1)
   register()
-endScan()</send>
+endScan()
+maybe_check_updates_on_connect()</send>
   </trigger>
 
   <trigger

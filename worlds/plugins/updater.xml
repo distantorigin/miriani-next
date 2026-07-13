@@ -300,6 +300,26 @@ run_updater_visible("-generate-manifest")
   end
 end
 
+-- Client-side connect-time update check. Runs the hidden check and broadcasts
+-- the result so the soundpack can play a sound, notify, and (if configured)
+-- fire "update quietly" -- without waiting on the OOB "outdated" tag.
+-- msg 555 payload: "yes:<version>" if an update is available, "no" otherwise.
+function check_updates_and_broadcast()
+  run_updater_hidden("check", function(success, output, exit_code)
+    if not success or not output or #output == 0 then
+      BroadcastPlugin(555, "no")
+      return
+    end
+
+    local info = parse_check_output(output)
+    if info.update_available then
+      BroadcastPlugin(555, "yes:" .. (info.version or ""))
+    else
+      BroadcastPlugin(555, "no")
+    end
+  end)
+end
+
 -- Writes a marker file so the soundpack can tell the player, on their return,
 -- that a silently-installed update still needs a client restart to finish.
 function write_restart_pending(version)

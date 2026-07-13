@@ -1,4 +1,35 @@
 
+local version = require("miriani.scripts.version")
+
+-- Shared "an update is waiting" flow used by both the client-side check
+-- (misc.lua, dev channel) and the OOB tag handler below (stable).
+function announce_pending_update()
+  if config:get_option("update_sound").value == "yes" then
+    mplay("misc/Soundpack/update", "notification", 1)
+  end
+
+  if IsPluginInstalled(UPDATE_ID) then
+    notify("info", "** Updater detected: You may type update to apply pending updates. **")
+
+    if config:get_option("automatic_updates").value == "yes" then
+      local action_opt = config:get_option("update_restart_action")
+      local action = action_opt and action_opt.value or "notify"
+      Execute("update quietly " .. action)
+    end
+  else
+    notify("important", "Missing updater.xml plugin. Unable to fetch updates.")
+  end
+end
+
+-- OOB "soundpack status outdated" tag from the game. Stable-only; dev users
+-- are driven by the client-side check in misc.lua (maybe_check_updates_on_connect).
+function handle_oob_update_tag()
+  if version.update_channel() == "dev" then
+    return
+  end
+  announce_pending_update()
+end
+
 ImportXML([=[
 
 <triggers>
@@ -181,25 +212,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>
-
-   if config:get_option("update_sound").value == "yes" then
-     mplay("misc/Soundpack/update", "notification", 1)
-   end -- if
-
-   if IsPluginInstalled(UPDATE_ID) then
-    notify("info", "** Updater detected: You may type update to apply pending updates. **")
- 
-     if config:get_option("automatic_updates").value == "yes" then
-        local action_opt = config:get_option("update_restart_action")
-        local action = action_opt and action_opt.value or "notify"
-        Execute("update quietly " .. action)
-     end -- if
-   else
-     notify("important", "Missing updater.xml plugin. Unable to fetch updates.")
-   end -- if
-
-  </send>
+  <send>handle_oob_update_tag()</send>
   </trigger>
 
   <trigger

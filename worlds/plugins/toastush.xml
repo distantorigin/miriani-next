@@ -958,6 +958,10 @@ function OnPluginBroadcast(msg, id, name, text)
       mplay("misc/Soundpack/updateAvailable")
     elseif msg == 999 then
       mplay("misc/Soundpack/alreadyUpToDate")
+    elseif msg == 555 then
+      if text and text:match("^yes") then
+        announce_pending_update()
+      end
 end
   elseif id == "843d2f53cb3685465bda7d4c" then
     local message_type, data = text:match("([^|]+)|?(.*)")

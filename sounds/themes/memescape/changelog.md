@@ -1,6 +1,6 @@
 # Memescape Theme Changelog
 
-## Version 4.2.05 (In Progress)
+## Version 4.2.05
 
 ### Fixed
 - Trimmed silence from the whistle sound.

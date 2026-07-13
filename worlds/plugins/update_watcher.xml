@@ -49,8 +49,27 @@ function check_update_result()
   local path = require("pl.path")
   local homedir = GetInfo(66)  -- MUSHclient directory
   local update_result_file = path.join(homedir, ".update-result")
+  local processing_file = path.join(homedir, ".update-result.processing")
 
-  if not path.isfile(update_result_file) then
+  local target = nil
+  local is_leader = false
+
+  if path.isfile(update_result_file) then
+    -- Race to become leader by atomically renaming .update-result.
+    -- On Windows, rename fails if the destination exists, so only one
+    -- session wins. Non-leaders fall back to reading the renamed file.
+    local ok = os.rename(update_result_file, processing_file)
+    if ok then
+      is_leader = true
+      target = processing_file
+    elseif path.isfile(processing_file) then
+      target = processing_file
+    end
+  elseif path.isfile(processing_file) then
+    target = processing_file
+  end
+
+  if not target then
     processed = false
     return
   end
@@ -60,11 +79,13 @@ function check_update_result()
   end
 
   processed = true
-  process_update_result(update_result_file)
-  DoAfterSpecial(DELETE_DELAY, string.format("os.remove(%q)", update_result_file), sendto.script)
+  process_update_result(target, is_leader)
+  if is_leader then
+    DoAfterSpecial(DELETE_DELAY, string.format("os.remove(%q)", target), sendto.script)
+  end
 end
 
-function process_update_result(filepath)
+function process_update_result(filepath, is_leader)
   -- Read the file
   local file = io.open(filepath, "r")
   if not file then
@@ -86,7 +107,7 @@ function process_update_result(filepath)
 
   -- Handle based on result
   if data.result == "success" then
-    handle_success(data)
+    handle_success(data, is_leader)
   elseif data.result == "Failure" then
     handle_failure(data)
   else
@@ -94,7 +115,7 @@ function process_update_result(filepath)
   end
 end
 
-function handle_success(data)
+function handle_success(data, is_leader)
   local restarted = data.restarted == "true" or data.restarted == true
 
   if restarted then
@@ -158,7 +179,9 @@ function handle_success(data)
         channel = channel:match("^%s*(.-)%s*$") or "stable"
       end
 
-      -- Broadcast success with file list and channel as JSON
+      -- Broadcast success with file list and channel as JSON.
+      -- 777 fires per-session (sound / local reload signal); 778 fires
+      -- only from the leader session so the changelog opens exactly once.
       local json_encode = require("json.encode")
       local broadcast_data = json_encode.encode({
         result = "success",
@@ -166,9 +189,15 @@ function handle_success(data)
         channel = channel
       })
       BroadcastPlugin(777, broadcast_data)
+      if is_leader then
+        BroadcastPlugin(778, broadcast_data)
+      end
     else
       Note("Update complete with no file changes.")
       BroadcastPlugin(777, "success")
+      if is_leader then
+        BroadcastPlugin(778, "success")
+      end
     end
   end
 end

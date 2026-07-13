@@ -26,7 +26,8 @@ Commands:
   update help                - Shows this help
   update                     - With no arguments, checks for and performs an update with restart confirmation if needed
   update quietly             - Checks for and applies an update silently, with no prompts or focus stealing (used by automatic updates)
-  update quietly <auto|notify> - As above, but choose how a restart-required update is handled: auto restarts the client, notify tells you to restart when you return
+  update quietly auto        - Silent update; if a restart is required, restart the client automatically
+  update quietly notify      - Silent update; if a restart is required, notify you to restart when you return
 </description>
 
 </plugin>

@@ -5,6 +5,7 @@
 ### New
 - Added sounds for the boogaloo, breakdance, grind and waltz dances.
 - Added sound support for apartment buzzers. At the moment it uses the house doorbell sound but it can be changed if desired.
+- Possibly made autoupdater not steal focus when it updates the soundpack when idle. This is lightly tested and might break things. There is also a new config option in General for those who want the client to auto restart or get nagged to restart when you return from being idle.
 
 ### Fixed
 - Boosted the volume of the sound that plays when entering a nebula.

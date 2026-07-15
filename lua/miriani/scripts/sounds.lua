@@ -694,7 +694,10 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
 
   -- Log to sounds buffer if enabled
   if config:get_option("sounds_buffer").value == "yes" then
-    local buffer_entry = original_file
+    local sound_dir = config:get("SOUND_DIRECTORY")
+    local buffer_entry = sfile:sub(1, #sound_dir) == sound_dir
+      and sfile:sub(#sound_dir + 1)
+      or sfile
     local details = {}
     if group then
       table.insert(details, "group=" .. group)

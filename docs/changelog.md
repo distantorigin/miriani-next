@@ -8,6 +8,7 @@
 - Possibly made autoupdater not steal focus when it updates the soundpack when idle. This is lightly tested and might break things. There is also a new config option in General for those who want the client to auto restart or get nagged to restart when you return from being idle.
 - On the dev channel, the soundpack now checks for updates via the updater binary on connect (debounced to once every 5 minutes) instead of waiting for the out-of-band "outdated" tag from the game, so fresh dev pushes are picked up right away. Stable users still rely on the OOB tag.
 - Documented the 'update quietly' and 'update quietly <notify|auto>' in the update help commands list so people can call them at will. It should be noted that by using the commands, you forgo a yes/no prompt so make sure you truly want to update before typing them. We take no responsibility for what happens to you if you update in a bad area.
+- Successful updates on the dev branch now have a shorter dedicated sound instead of theme music.
 
 ### Fixed
 - Boosted the volume of the sound that plays when entering a nebula.

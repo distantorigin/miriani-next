@@ -38,10 +38,10 @@ jobs:
         id: counts
         run: |
           TOTAL_SOUNDS=$(find sounds -name "*.ogg" | wc -l)
-          SOCIALS=$(grep -cE '^\s+\w+\s*=\s*\{genders' lua/miriani/scripts/socials.lua 2>/dev/null || echo 0)
+          SOCIALS=$(grep -cE '^\s+\w+\s*=\s*\{category' lua/miriani/scripts/socials.lua 2>/dev/null | head -1); SOCIALS=${SOCIALS:-0}
           AMBIANCE_SOUNDS=$(find sounds/miriani/ambiance -name "*.ogg" 2>/dev/null | wc -l || echo 0)
           SHIP_SOUNDS=$(find sounds/miriani/ship -name "*.ogg" 2>/dev/null | wc -l || echo 0)
-          CONFIG_OPTIONS=$(grep -cE 'descr\s*=' lua/miriani/scripts/options.lua 2>/dev/null || echo 0)
+          CONFIG_OPTIONS=$(grep -cE 'descr\s*=' lua/miriani/scripts/options.lua 2>/dev/null | head -1); CONFIG_OPTIONS=${CONFIG_OPTIONS:-0}
           echo "TOTAL_SOUNDS=$TOTAL_SOUNDS" >> $GITHUB_OUTPUT
           echo "SOCIALS=$SOCIALS" >> $GITHUB_OUTPUT
           echo "AMBIANCE_SOUNDS=$AMBIANCE_SOUNDS" >> $GITHUB_OUTPUT

@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.05 (In Progress)
+## Version 4.2.05
 
 ### New
 - Added sounds for the boogaloo, breakdance, grind and waltz dances.

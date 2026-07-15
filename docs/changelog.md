@@ -9,6 +9,7 @@
 ### Fixed
 - Restored the noo social from the main sound pack for male and female characters. Its declared genders didn't match the files on disk, so gender-specific lookups missed the only file, which lives in the neuter folder. Gender-specific social sounds now fall back to neuter when no matching file exists in the main pack or any enabled theme.
 - Cleaned up the same declaration mismatch on chuckle, eep, boggle, hi5, orgasm, and why. Those remain silent from the main pack because no default audio was ever shipped for them, but they play as expected when the memescape or Music theme is enabled.
+- Fixed a bug where the "Automatically open changelog after updates" conf option would unreliably open the changelog.
 
 ## Version 4.2.05
 

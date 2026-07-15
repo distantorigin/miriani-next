@@ -6,6 +6,7 @@
 - Themes can declare their own socials in theme.json via a "socials" block, with optional "social_aliases" for shorthand action names. A theme can now register a categorized, toggleable social the base pack doesn't ship, without needing a Lua edit.
 - Updated the sample theme with an example of the new socials block.
 - Socials.lua no longer requires manual definition of genders; the scripts will automatically match to the correct gender if it's available in the corresponding socials/<gender> folder.
+- Added a pair of new boogie dance sounds at Gage's request.
 
 ### Changed
 - Moved socials with no audio files in the main sound set out of the base registry and into whichever theme actually provides the sound:

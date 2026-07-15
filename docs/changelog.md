@@ -1,5 +1,15 @@
 # Miriani-Next Changelog
 
+## Version 4.2.06 (In Progress)
+
+### New
+- Themes can declare their own socials in theme.json via a "socials" block, with optional "social_aliases" for shorthand action names. A theme can now register a categorized, toggleable social the base pack doesn't ship, without needing a Lua edit.
+- Updated the sample theme with an example of the new socials block.
+
+### Fixed
+- Restored the noo social from the main sound pack for male and female characters. Its declared genders didn't match the files on disk, so gender-specific lookups missed the only file, which lives in the neuter folder. Gender-specific social sounds now fall back to neuter when no matching file exists in the main pack or any enabled theme.
+- Cleaned up the same declaration mismatch on chuckle, eep, boggle, hi5, orgasm, and why. Those remain silent from the main pack because no default audio was ever shipped for them, but they play as expected when the memescape or Music theme is enabled.
+
 ## Version 4.2.05
 
 ### New

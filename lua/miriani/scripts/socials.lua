@@ -1,7 +1,17 @@
--- Social sound playback with gender-based sound selection.
-
--- Cache for O(1) gender lookup
-local gender_sets_cache = {}
+-- Social sound playback.
+--
+-- Resolution is filesystem-driven: for a given social + gender, we try
+-- "social/<gender>/<name>" first, then fall back to "social/neuter/<name>".
+-- A candidate stem "wins" only if it resolves to an actual file (main pack,
+-- replace theme, or additive theme) via sound_stem_resolves. This means a
+-- theme can add male/female variants for a social the main pack only had
+-- neuter for, and a neuter-only social plays for every gender.
+--
+-- Themes may also extend the socials registry via their theme.json:
+--   { "socials": { "slurp": { "category": "novelty" } },
+--     "social_aliases": { "sip": "slurp" } }
+-- The merged view (base + enabled themes) is cached and invalidated whenever
+-- a theme is enabled/disabled.
 
 -- Social aliases - map action names to canonical sound file names
 local social_aliases = {
@@ -46,201 +56,201 @@ local social_aliases = {
 -- Socials database
 --
 -- To add a new social:
---   1. Place sound file(s) in sounds/miriani/social/<gender>/<name>.ogg
+--   1. Drop sound file(s) into sounds/miriani/social/<gender>/<name>.ogg
+--      (gender folder is "male", "female", or "neuter"; pick whichever
+--      variants you actually have)
 --   2. Add entry below in the appropriate category section (alphabetically)
 --
 -- Entry format:
---   name = {genders = {"male", "female", "neuter"}, category = "category_name"},
+--   name = {category = "category_name"},
 --
--- Examples:
---   -- Neuter only (no gendered variants):
---   clap = {genders = {"neuter"}, category = "physical"},
---
---   -- Male and female variants:
---   laugh = {genders = {"male", "female"}, category = "laughter"},
---
---   -- Override sound filename (when different from social name):
---   lmao = {genders = {"neuter"}, category = "laughter", sound = "rofl"},
+-- Optional fields:
+--   sound = "filename"  -- use a different sound-file base than the social name
+--                          (e.g. lmao plays rofl.ogg)
 --
 -- Categories: laughter, distress, reflex, bodily, physical, reaction, novelty, songs, dances
 -- (socials without a category will appear under "uncategorized")
 --
 -- Dances are a special category: they play from sounds/miriani/dances/<name>.ogg
--- with no gender variants. Omit the genders field for dance entries.
+-- with no gender variants.
+--
+-- Gender is inferred from folder placement, not declared here. A social will
+-- play if any of its gender-specific or neuter files exist in the main pack
+-- OR any enabled theme.
 --
 local socials = {
   -- Laughter sounds
-  cackle    = {genders = {"neuter"}, category = "laughter"},
-  chortle   = {genders = {"male", "female"}, category = "laughter"},
-  chuckle   = {genders = {"male", "female"}, category = "laughter"},
-  giggle    = {genders = {"male", "female"}, category = "laughter"},
-  laugh     = {genders = {"male", "female"}, category = "laughter"},
-  lol       = {genders = {"male", "female"}, category = "laughter"},
-  mlaugh    = {genders = {"neuter"}, category = "laughter"},
-  rofl      = {genders = {"male", "female"}, category = "laughter"},
-  snicker   = {genders = {"male", "female"}, category = "laughter"},
+  cackle    = {category = "laughter"},
+  chortle   = {category = "laughter"},
+  chuckle   = {category = "laughter"},
+  giggle    = {category = "laughter"},
+  laugh     = {category = "laughter"},
+  lol       = {category = "laughter"},
+  mlaugh    = {category = "laughter"},
+  rofl      = {category = "laughter"},
+  snicker   = {category = "laughter"},
 
   -- Distress sounds
-  bawl   = {genders = {"neuter"}, category = "distress"},  
-  blubber   = {genders = {"neuter"}, category = "distress"},  
-  cry       = {genders = {"male", "female", "neuter"}, category = "distress"},
-  gasp      = {genders = {"male", "female"}, category = "distress"},
-  grunt      = {genders = {"male", "female"}, category = "distress"},
-  moan      = {genders = {"male", "female"}, category = "distress"},
-  panic   = {genders = {"neuter"}, category = "distress"},
-  screech   = {genders = {"neuter"}, category = "distress"},
-  shriek    = {genders = {"male", "female"}, category = "distress"},
-  sniffle   = {genders = {"neuter"}, category = "distress"},
-  sob       = {genders = {"male", "female"}, category = "distress"},
-wail      = {genders = {"neuter"}, category = "distress"},
-weep      = {genders = {"neuter"}, category = "distress"},
-whimper      = {genders = {"neuter"}, category = "distress"},  
-whine      = {genders = {"neuter"}, category = "distress"},  
-yelp      = {genders = {"neuter"}, category = "distress"},
-  yowl      = {genders = {"neuter"}, category = "distress"},
+  bawl   = {category = "distress"},  
+  blubber   = {category = "distress"},  
+  cry       = {category = "distress"},
+  gasp      = {category = "distress"},
+  grunt      = {category = "distress"},
+  moan      = {category = "distress"},
+  panic   = {category = "distress"},
+  screech   = {category = "distress"},
+  shriek    = {category = "distress"},
+  sniffle   = {category = "distress"},
+  sob       = {category = "distress"},
+wail      = {category = "distress"},
+weep      = {category = "distress"},
+whimper      = {category = "distress"},  
+whine      = {category = "distress"},  
+yelp      = {category = "distress"},
+  yowl      = {category = "distress"},
 
   -- Reflex sounds (involuntary body reflexes)
-  blink     = {genders = {"neuter"}, category = "reflex"},
-  choke     = {genders = {"neuter"}, category = "reflex"},
-  cough     = {genders = {"neuter", "male", "female"}, category = "reflex"},
-  eep     = {genders = {"male", "female"}, category = "reflex"},
-  gulp      = {genders = {"neuter"}, category = "reflex"},
-  sigh      = {genders = {"male", "female"}, category = "reflex"},
-    pant      = {genders = {"neuter"}, category = "reflex"},
-  sneeze    = {genders = {"male", "female"}, category = "reflex"},
-  snore     = {genders = {"neuter"}, category = "reflex"},
-  snort     = {genders = {"neuter"}, category = "reflex"},
-  swallow   = {genders = {"neuter"}, category = "reflex"},
-  throatfix = {genders = {"male"}, category = "reflex"},
-  yawn      = {genders = {"male", "female"}, category = "reflex"},
+  blink     = {category = "reflex"},
+  choke     = {category = "reflex"},
+  cough     = {category = "reflex"},
+  eep     = {category = "reflex"},
+  gulp      = {category = "reflex"},
+  sigh      = {category = "reflex"},
+    pant      = {category = "reflex"},
+  sneeze    = {category = "reflex"},
+  snore     = {category = "reflex"},
+  snort     = {category = "reflex"},
+  swallow   = {category = "reflex"},
+  throatfix = {category = "reflex"},
+  yawn      = {category = "reflex"},
 
   -- Bodily sounds (gross/bodily functions)
-  belch     = {genders = {"neuter"}, category = "bodily"},
-  bubble    = {genders = {"neuter"}, category = "bodily"},
-  burp      = {genders = {"neuter"}, category = "bodily"},
-  drool      = {genders = {"neuter"}, category = "bodily"},
-  fart      = {genders = {"neuter"}, category = "bodily"},
-  gag       = {genders = {"neuter"}, category = "bodily"},
-  spit      = {genders = {"neuter"}, category = "bodily"},
-  squish    = {genders = {"neuter"}, category = "bodily"},
-  vomit     = {genders = {"neuter"}, category = "bodily"},
+  belch     = {category = "bodily"},
+  bubble    = {category = "bodily"},
+  burp      = {category = "bodily"},
+  drool      = {category = "bodily"},
+  fart      = {category = "bodily"},
+  gag       = {category = "bodily"},
+  spit      = {category = "bodily"},
+  squish    = {category = "bodily"},
+  vomit     = {category = "bodily"},
 
   -- Physical sounds (movement/contact)
-  bap       = {genders = {"neuter"}, category = "physical"},
-  bite      = {genders = {"neuter"}, category = "physical"},
-  bop       = {genders = {"neuter"}, category = "physical"},
-  bounce    = {genders = {"neuter"}, category = "physical"},
-  collapse  = {genders = {"neuter"}, category = "physical"},
-dust      = {genders = {"neuter"}, category = "physical"},
-  fall      = {genders = {"neuter"}, category = "physical"},
-  flap      = {genders = {"neuter"}, category = "physical"},
-  french = {genders = {"neuter"}, category = "physical", sound = "kiss"},
-handshake = {genders = {"neuter"}, category = "physical"},  
-  headscratch = {genders = {"neuter"}, category = "physical"},  
-hop       = {genders = {"male", "female"}, category = "physical"},
-jazzhands    = {genders = {"neuter"}, category = "physical"},  
-jig    = {genders = {"neuter"}, category = "physical"},
-  kick      = {genders = {"neuter"}, category = "physical"},
-  kiss      = {genders = {"neuter"}, category = "physical"},
-  knucklecrack = {genders = {"neuter"}, category = "physical"},
-  lean      = {genders = {"neuter"}, category = "physical"},
-  lick      = {genders = {"neuter"}, category = "physical"},
-   makeout = {genders = {"neuter"}, category = "physical", sound = "kiss"},
-  noogie     = {genders = {"neuter"}, category = "physical"},
-   nudge     = {genders = {"neuter"}, category = "physical"},
-  poke      = {genders = {"neuter"}, category = "physical"},
-  pose      = {genders = {"neuter"}, category = "physical"},
-  punch     = {genders = {"neuter"}, category = "physical"},
-  slap      = {genders = {"neuter"}, category = "physical"},
-  smooch = {genders = {"neuter"}, category = "physical", sound = "kiss"},
-  snap      = {genders = {"neuter"}, category = "physical"},
-  snog = {genders = {"neuter"}, category = "physical", sound = "kiss"},
-  smack     = {genders = {"neuter"}, category = "physical"},
-  spank     = {genders = {"neuter"}, category = "physical"},
-  strangle     = {genders = {"neuter"}, category = "physical"},
-  stroke     = {genders = {"neuter"}, category = "physical"},
-  stomp     = {genders = {"neuter"}, category = "physical"},
-  tackle    = {genders = {"neuter"}, category = "physical"},
-  tap  = {genders = {"neuter"}, category = "physical"},
-  tapdance    = {genders = {"neuter"}, category = "physical"},
-  thump     = {genders = {"neuter"}, category = "physical"},
-  twirl    = {genders = {"neuter"}, category = "physical"},
-wink    = {genders = {"neuter"}, category = "physical"},
+  bap       = {category = "physical"},
+  bite      = {category = "physical"},
+  bop       = {category = "physical"},
+  bounce    = {category = "physical"},
+  collapse  = {category = "physical"},
+dust      = {category = "physical"},
+  fall      = {category = "physical"},
+  flap      = {category = "physical"},
+  french = {category = "physical", sound = "kiss"},
+handshake = {category = "physical"},  
+  headscratch = {category = "physical"},  
+hop       = {category = "physical"},
+jazzhands    = {category = "physical"},  
+jig    = {category = "physical"},
+  kick      = {category = "physical"},
+  kiss      = {category = "physical"},
+  knucklecrack = {category = "physical"},
+  lean      = {category = "physical"},
+  lick      = {category = "physical"},
+   makeout = {category = "physical", sound = "kiss"},
+  noogie     = {category = "physical"},
+   nudge     = {category = "physical"},
+  poke      = {category = "physical"},
+  pose      = {category = "physical"},
+  punch     = {category = "physical"},
+  slap      = {category = "physical"},
+  smooch = {category = "physical", sound = "kiss"},
+  snap      = {category = "physical"},
+  snog = {category = "physical", sound = "kiss"},
+  smack     = {category = "physical"},
+  spank     = {category = "physical"},
+  strangle     = {category = "physical"},
+  stroke     = {category = "physical"},
+  stomp     = {category = "physical"},
+  tackle    = {category = "physical"},
+  tap  = {category = "physical"},
+  tapdance    = {category = "physical"},
+  thump     = {category = "physical"},
+  twirl    = {category = "physical"},
+wink    = {category = "physical"},
 
   -- Reaction sounds (approval, disapproval, confusion)
-  applaud   = {genders = {"neuter"}, category = "reaction"},
-  boggle    = {genders = {"male", "female"}, category = "reaction"},
-  boo       = {genders = {"neuter"}, category = "reaction"},
-  bulge       = {genders = {"neuter"}, category = "reaction"},
-  clap      = {genders = {"neuter"}, category = "reaction"},
-  cower     = {genders = {"neuter"}, category = "reaction"},
-  golfclap  = {genders = {"neuter"}, category = "reaction"},
-  headdesk  = {genders = {"neuter"}, category = "reaction"},
-  headshake = {genders = {"neuter"}, category = "reaction"},
-  hi5       = {genders = {"male", "female"}, category = "reaction"},
-  mock      = {genders = {"neuter"}, category = "reaction"},
-  oic       = {genders = {"neuter"}, category = "reaction"},
-  oicic     = {genders = {"neuter"}, category = "reaction"},
-  ponder    = {genders = {"male", "female"}, category = "reaction"},
-  shrug    = {genders = {"neuter"}, category = "reaction"},
-  squeal    = {genders = {"neuter"}, category = "reaction"},
-  twitch    = {genders = {"neuter"}, category = "reaction"},
-  worship   = {genders = {"neuter"}, category = "reaction"},
+  applaud   = {category = "reaction"},
+  boggle    = {category = "reaction"},
+  boo       = {category = "reaction"},
+  bulge       = {category = "reaction"},
+  clap      = {category = "reaction"},
+  cower     = {category = "reaction"},
+  golfclap  = {category = "reaction"},
+  headdesk  = {category = "reaction"},
+  headshake = {category = "reaction"},
+  hi5       = {category = "reaction"},
+  mock      = {category = "reaction"},
+  oic       = {category = "reaction"},
+  oicic     = {category = "reaction"},
+  ponder    = {category = "reaction"},
+  shrug    = {category = "reaction"},
+  squeal    = {category = "reaction"},
+  twitch    = {category = "reaction"},
+  worship   = {category = "reaction"},
 
   -- Novelty sounds (animals, musical, memes, misc expressions)
-  airguitar = {genders = {"neuter"}, category = "novelty"},
-  bears       = {genders = {"neuter"}, category = "songs"},
-  beep      = {genders = {"neuter"}, category = "novelty"},
-  bongo     = {genders = {"neuter"}, category = "novelty"},
-  bonk      = {genders = {"neuter"}, category = "novelty"},
-  bustamove       = {genders = {"neuter"}, category = "novelty"},
-  cake      = {genders = {"neuter"}, category = "songs"},
-  cheer     = {genders = {"male", "female"}, category = "novelty"},
-  devil      = {genders = {"neuter"}, category = "novelty"},
-  duck      = {genders = {"neuter"}, category = "novelty"},
-  fire       = {genders = {"neuter"}, category = "songs"},
-flex  = {genders = {"neuter"}, category = "novelty"},
-flip  = {genders = {"neuter"}, category = "novelty"},  
-flirt  = {genders = {"neuter"}, category = "novelty"},
-  frog      = {genders = {"neuter"}, category = "novelty"},
-  goose      = {genders = {"neuter"}, category = "novelty"},
-  grabfriendandshrieklikegirls      = {genders = {"neuter"}, category = "novelty"},
-  growl     = {genders = {"male", "female"}, category = "novelty"},
-  hiss      = {genders = {"neuter"}, category = "novelty"},
-  hoot      = {genders = {"neuter"}, category = "novelty"},
-  horses       = {genders = {"neuter"}, category = "songs"},
-  howl      = {genders = {"neuter"}, category = "novelty"},
-hum    = {genders = {"male", "female"}, category = "novelty"},
-  insult  = {genders = {"neuter"}, category = "novelty"},
-  itsatrap  = {genders = {"neuter"}, category = "novelty"},
-  jiggle  = {genders = {"neuter"}, category = "novelty"},
-  khan      = {genders = {"neuter"}, category = "novelty"},
-  mash      = {genders = {"neuter"}, category = "novelty"},
-  moo       = {genders = {"neuter"}, category = "novelty"},
-  noo       = {genders = {"male", "female"}, category = "novelty"},
-  oink      = {genders = {"neuter"}, category = "novelty"},
-  orgasm     = {genders = {"male", "female"}, category = "novelty"},
-  pimp      = {genders = {"neuter"}, category = "novelty"},
-  pirate    = {genders = {"neuter"}, category = "songs"},
-  pizza       = {genders = {"neuter"}, category = "songs"},
-  please    = {genders = {"neuter"}, category = "novelty"},
-  prance       = {genders = {"neuter"}, category = "novelty"},
-  purr      = {genders = {"neuter"}, category = "novelty"},
-  q         = {genders = {"neuter"}, category = "novelty"},
-  quack     = {genders = {"neuter"}, category = "novelty"},
-  roar      = {genders = {"neuter"}, category = "novelty"},
-  roll      = {genders = {"neuter"}, category = "novelty"},
-  scream    = {genders = {"neuter"}, category = "novelty"},
-  shake      = {genders = {"neuter"}, category = "novelty"},
-  slowclap  = {genders = {"neuter"}, category = "novelty"},
-  snarl     = {genders = {"neuter"}, category = "novelty"},
-  spoon     = {genders = {"neuter"}, category = "novelty"},
-  squeak    = {genders = {"neuter"}, category = "novelty"},
-  whistle   = {genders = {"neuter"}, category = "novelty"},
-  what  = {genders = {"neuter"}, category = "novelty"},
-    why       = {genders = {"male", "female"}, category = "novelty"},
-    yess      = {genders = {"neuter"}, category = "novelty"},
-yodel      = {genders = {"neuter"}, category = "novelty"},
+  airguitar = {category = "novelty"},
+  bears       = {category = "songs"},
+  beep      = {category = "novelty"},
+  bongo     = {category = "novelty"},
+  bonk      = {category = "novelty"},
+  bustamove       = {category = "novelty"},
+  cake      = {category = "songs"},
+  cheer     = {category = "novelty"},
+  devil      = {category = "novelty"},
+  duck      = {category = "novelty"},
+  fire       = {category = "songs"},
+flex  = {category = "novelty"},
+flip  = {category = "novelty"},  
+flirt  = {category = "novelty"},
+  frog      = {category = "novelty"},
+  goose      = {category = "novelty"},
+  grabfriendandshrieklikegirls      = {category = "novelty"},
+  growl     = {category = "novelty"},
+  hiss      = {category = "novelty"},
+  hoot      = {category = "novelty"},
+  horses       = {category = "songs"},
+  howl      = {category = "novelty"},
+hum    = {category = "novelty"},
+  insult  = {category = "novelty"},
+  itsatrap  = {category = "novelty"},
+  jiggle  = {category = "novelty"},
+  khan      = {category = "novelty"},
+  mash      = {category = "novelty"},
+  moo       = {category = "novelty"},
+  noo       = {category = "novelty"},
+  oink      = {category = "novelty"},
+  orgasm     = {category = "novelty"},
+  pimp      = {category = "novelty"},
+  pirate    = {category = "songs"},
+  pizza       = {category = "songs"},
+  please    = {category = "novelty"},
+  prance       = {category = "novelty"},
+  purr      = {category = "novelty"},
+  q         = {category = "novelty"},
+  quack     = {category = "novelty"},
+  roar      = {category = "novelty"},
+  roll      = {category = "novelty"},
+  scream    = {category = "novelty"},
+  shake      = {category = "novelty"},
+  slowclap  = {category = "novelty"},
+  snarl     = {category = "novelty"},
+  spoon     = {category = "novelty"},
+  squeak    = {category = "novelty"},
+  whistle   = {category = "novelty"},
+  what  = {category = "novelty"},
+    why       = {category = "novelty"},
+    yess      = {category = "novelty"},
+yodel      = {category = "novelty"},
 
   -- Dances (no gender variants; sounds live in sounds/miriani/dances/)
   boogaloo       = {category = "dances"},
@@ -275,6 +285,44 @@ yodel      = {genders = {"neuter"}, category = "novelty"},
   waltz          = {category = "dances"},
   worm           = {category = "dances"},
 }
+
+-- Merged view over base + enabled themes. Rebuilt lazily on first read,
+-- invalidated by refresh_social_registry() (called from themes.lua on
+-- enable/disable).
+local merged_socials_cache = nil
+local merged_aliases_cache = nil
+
+local function build_merged()
+  local ms, ma = {}, {}
+  for k, v in pairs(socials) do ms[k] = v end
+  for k, v in pairs(social_aliases) do ma[k] = v end
+  if get_enabled_theme_socials then
+    local theme_socials, theme_aliases = get_enabled_theme_socials()
+    for k, v in pairs(theme_socials) do ms[k] = v end
+    for k, v in pairs(theme_aliases) do ma[k] = v end
+  end
+  merged_socials_cache = ms
+  merged_aliases_cache = ma
+end
+
+local function all_socials()
+  if not merged_socials_cache then build_merged() end
+  return merged_socials_cache
+end
+
+local function all_aliases()
+  if not merged_aliases_cache then build_merged() end
+  return merged_aliases_cache
+end
+
+--- Invalidate the merged socials cache and re-sync dynamic config options.
+-- Called by themes.lua whenever a theme is enabled or disabled, and once
+-- at startup from init.lua after all modules are loaded.
+function refresh_social_registry()
+  merged_socials_cache = nil
+  merged_aliases_cache = nil
+  resync_social_options()
+end
 
 --- Check if social sounds are globally enabled in config
 -- @return boolean
@@ -331,7 +379,7 @@ function should_play_social(social_name)
   end
 
   -- Get social data to find its category
-  local social_data = socials[social_name]
+  local social_data = all_socials()[social_name]
   if not social_data then
     return false
   end
@@ -356,38 +404,40 @@ end
 function resolve_social_alias(action)
   if not action then return nil end
   local lower_action = string.lower(action)
+  local aliases = all_aliases()
+  local socials_map = all_socials()
 
   -- Check explicit aliases first
-  if social_aliases[lower_action] then
-    return social_aliases[lower_action]
+  if aliases[lower_action] then
+    return aliases[lower_action]
   end
 
   -- Check if action exists directly in socials
-  if socials[lower_action] then
+  if socials_map[lower_action] then
     return lower_action
   end
 
   -- Try converting trailing 'ies' to 'y' for irregular plurals (e.g., "cries" -> "cry")
   if string.sub(lower_action, -3) == "ies" then
     local singular = string.sub(lower_action, 1, -4) .. "y"
-    if socials[singular] or social_aliases[singular] then
-      return social_aliases[singular] or singular
+    if socials_map[singular] or aliases[singular] then
+      return aliases[singular] or singular
     end
   end
 
   -- Try stripping trailing 'es' for pluralized forms (e.g., "belches" -> "belch")
   if string.sub(lower_action, -2) == "es" then
     local singular = string.sub(lower_action, 1, -3)
-    if socials[singular] or social_aliases[singular] then
-      return social_aliases[singular] or singular
+    if socials_map[singular] or aliases[singular] then
+      return aliases[singular] or singular
     end
   end
 
   -- Try stripping trailing 's' for pluralized forms (e.g., "screams" -> "scream")
   if string.sub(lower_action, -1) == "s" then
     local singular = string.sub(lower_action, 1, -2)
-    if socials[singular] or social_aliases[singular] then
-      return social_aliases[singular] or singular
+    if socials_map[singular] or aliases[singular] then
+      return aliases[singular] or singular
     end
   end
 
@@ -401,7 +451,7 @@ end
 function social_exists(action)
   if not action then return false end
   local canonical = resolve_social_alias(action)
-  return socials[canonical] ~= nil
+  return all_socials()[canonical] ~= nil
 end
 
 --- Get social metadata
@@ -410,7 +460,7 @@ end
 function get_social_info(action)
   if not action then return nil end
   local canonical = resolve_social_alias(action)
-  return socials[canonical]
+  return all_socials()[canonical]
 end
 
 --- Get all socials in a category
@@ -418,7 +468,7 @@ end
 -- @return table Array of social action names
 function get_socials_by_category(category)
   local result = {}
-  for action, data in pairs(socials) do
+  for action, data in pairs(all_socials()) do
     local social_category = data.category or "uncategorized"
     if social_category == category then
       table.insert(result, action)
@@ -431,7 +481,7 @@ end
 -- @return table Array of social action names
 function get_all_socials()
   local result = {}
-  for action, _ in pairs(socials) do
+  for action, _ in pairs(all_socials()) do
     table.insert(result, action)
   end
   table.sort(result)
@@ -443,7 +493,7 @@ end
 function get_all_social_categories()
   local category_set = {}
   local has_uncategorized = false
-  for _, data in pairs(socials) do
+  for _, data in pairs(all_socials()) do
     if data.category then
       category_set[data.category] = true
     else
@@ -461,35 +511,20 @@ function get_all_social_categories()
   return result
 end
 
---- Build a gender set for O(1) lookup (cached per social)
-local function get_gender_set(social_name, genders)
-  if not gender_sets_cache[social_name] then
-    local set = {}
-    for _, g in ipairs(genders) do
-      set[g] = true
-    end
-    gender_sets_cache[social_name] = set
-  end
-  return gender_sets_cache[social_name]
-end
-
---- Check if a gender is supported for a social (O(1) lookup)
-local function gender_supported(social_name, social_data, gender)
-  local gender_set = get_gender_set(social_name, social_data.genders)
-  return gender_set[gender] == true
-end
-
---- Find the appropriate sound file path for a social and gender
+--- Find the appropriate sound file path for a social and gender.
+-- Tries the gender-specific stem first, then falls back to neuter. A stem
+-- only wins if sound_stem_resolves reports actual files (main pack or any
+-- enabled theme), so a theme's male/female variant plays for the matching
+-- gender, and a neuter-only main-pack sound plays for everyone else.
 -- @param social_name string The canonical social name
 -- @param gender string The gender (male, female, neuter)
 -- @return string|nil The sound file path (without extension)
 function find_social_sound_file(social_name, gender)
-  local social_data = socials[social_name]
+  local social_data = all_socials()[social_name]
   if not social_data then
     return nil
   end
 
-  -- Derive sound filename: use explicit sound or fall back to social_name
   local sound_file = social_data.sound or social_name
 
   -- Dances play from sounds/miriani/dances/ with no gender variants
@@ -497,17 +532,18 @@ function find_social_sound_file(social_name, gender)
     return "dances/" .. sound_file
   end
 
-  -- Check if the specified gender is supported
-  if gender_supported(social_name, social_data, gender) then
-    return "social/" .. gender .. "/" .. sound_file
+  local candidates = {}
+  if gender and gender ~= "neuter" then
+    table.insert(candidates, "social/" .. gender .. "/" .. sound_file)
+  end
+  table.insert(candidates, "social/neuter/" .. sound_file)
+
+  for _, candidate in ipairs(candidates) do
+    if sound_stem_resolves and sound_stem_resolves(candidate) then
+      return candidate
+    end
   end
 
-  -- Fall back to neuter if gender not supported (neuter is gender-neutral)
-  if gender ~= "neuter" and gender_supported(social_name, social_data, "neuter") then
-    return "social/neuter/" .. sound_file
-  end
-
-  -- Don't fall back to opposite gender - return nil if no match
   return nil
 end
 
@@ -518,7 +554,7 @@ end
 function play_social(action, gender)
   -- Resolve any aliases
   local canonical = resolve_social_alias(action)
-  local social_data = socials[canonical]
+  local social_data = all_socials()[canonical]
 
   if not social_data then
     -- Unknown social, nothing to play
@@ -549,4 +585,26 @@ function play_social(action, gender)
   end
 
   return false
+end
+
+--- Ensure config has an individual on/off toggle option for every currently
+-- known social, including those contributed by themes after startup. Only
+-- adds missing options; never removes (leftover options are harmless and
+-- default to "yes" if their social later disappears). Idempotent.
+function resync_social_options()
+  if not config or not config.options then return end
+  for _, social_name in ipairs(get_all_socials()) do
+    local info = get_social_info(social_name)
+    if info then
+      local key = "social_" .. social_name
+      if not config.options[key] then
+        config.options[key] = {
+          descr = social_name:gsub("^%l", string.upper),
+          value = "yes",
+          group = "socials_" .. (info.category or "uncategorized"),
+          type = "bool",
+        }
+      end
+    end
+  end
 end

@@ -59,6 +59,8 @@ function discover_themes()
         mode = json_data.mode or "additive",
         hidden = json_data.hidden == true,
         path = theme_dir,
+        socials = type(json_data.socials) == "table" and json_data.socials or nil,
+        social_aliases = type(json_data.social_aliases) == "table" and json_data.social_aliases or nil,
       }
     end
   end
@@ -68,6 +70,7 @@ end
 
 function invalidate_theme_cache()
   theme_cache = {}
+  if refresh_social_registry then refresh_social_registry() end
 end
 
 function get_theme_info(theme_id)
@@ -185,6 +188,8 @@ function set_theme_enabled(theme_id, enabled)
   enabled_themes[theme_id] = enabled or nil
   save_enabled_themes()
 
+  if refresh_social_registry then refresh_social_registry() end
+
   local sound_name = enabled and "enable" or "disable"
   play(THEMES_PATH .. theme_id .. "/" .. sound_name .. EXTENSION, "notification")
 end
@@ -234,6 +239,8 @@ function load_enabled_themes()
       save_enabled_themes()
     end
   end
+
+  if refresh_social_registry then refresh_social_registry() end
 end
 
 function save_enabled_themes()
@@ -362,6 +369,32 @@ function find_theme_override(sound_key)
   end
 
   return nil
+end
+
+-- Collect socials + aliases contributed by every currently-enabled theme.
+-- Iteration order is themes sorted by name (from get_all_enabled_themes),
+-- so later-loaded themes deterministically overwrite earlier ones on key
+-- collision. Returned tables are fresh; callers may mutate freely.
+function get_enabled_theme_socials()
+  local socials_merged = {}
+  local aliases_merged = {}
+  for _, theme in ipairs(get_all_enabled_themes()) do
+    if theme.socials then
+      for k, v in pairs(theme.socials) do
+        if type(v) == "table" then
+          socials_merged[k] = v
+        end
+      end
+    end
+    if theme.social_aliases then
+      for k, v in pairs(theme.social_aliases) do
+        if type(v) == "string" then
+          aliases_merged[k] = v
+        end
+      end
+    end
+  end
+  return socials_merged, aliases_merged
 end
 
 load_enabled_themes()

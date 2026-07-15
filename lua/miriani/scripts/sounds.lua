@@ -479,6 +479,38 @@ function find_sound_file(file)
   return nil
 end
 
+-- Returns true if `stem` (path relative to SOUNDPATH, no extension; e.g.
+-- "social/male/noo") has any resolvable source: exact main-pack file, numbered
+-- main-pack variant, replace-theme override, or additive-theme file. Used by
+-- the socials layer to decide gender fallback without duplicating
+-- find_sound_file's search logic.
+function sound_stem_resolves(stem)
+  local path = require("pl.path")
+  local sound_dir = config:get("SOUND_DIRECTORY")
+  local rel_file = SOUNDPATH .. stem .. EXTENSION
+  local rel_base = SOUNDPATH .. stem
+
+  if path.isfile(sound_dir .. rel_file) then return true end
+
+  local hits = utils.readdir(sound_dir .. rel_base .. "*" .. EXTENSION)
+  if hits and type(hits) == "table" then
+    for _, meta in pairs(hits) do
+      if not meta.directory then return true end
+    end
+  end
+
+  if resolve_theme_sound and resolve_theme_sound(rel_file) then
+    return true
+  end
+
+  if collect_additive_theme_files then
+    local extras = collect_additive_theme_files(rel_file)
+    if extras and #extras > 0 then return true end
+  end
+
+  return false
+end
+
 function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset, frequency)
   local path = require("pl.path")
   group = group or "other"

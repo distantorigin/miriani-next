@@ -931,14 +931,19 @@ function OnPluginBroadcast(msg, id, name, text)
           end
   elseif id == "706cd88f4d441a81439bd421" or id == "79772f9b67c1e42f22a3eb95" then
     if msg == 777 then
-      -- successful update (broadcast per-session). Dev-channel updates play a
-      -- lighter cue so the full theme stays reserved for stable updates and
-      -- normal connect-time reloads.
+      -- successful update. Dev-channel updates play a lighter cue so the full
+      -- theme stays reserved for stable updates and normal connect-time reloads.
+      local files = nil
       local channel = nil
       if text and text ~= "success" then
         local ok, data = pcall(json.decode.decode, text)
-        if ok and data and data.channel then
-          channel = data.channel
+        if ok and data then
+          if data.files then
+            files = data.files
+          end
+          if data.channel then
+            channel = data.channel
+          end
         end
       end
       if channel == "dev" then
@@ -946,24 +951,7 @@ function OnPluginBroadcast(msg, id, name, text)
       else
         mplay("music/theme")
       end
-    elseif msg == 778 then
-      -- open changelog (broadcast only by the leader session so multiple
-      -- open worlds don't each spawn their own Changelog notepad)
       if config:get_option("automatic_changelog").value == "yes" then
-        local files = nil
-        local channel = nil
-        if text and text ~= "success" then
-          local ok, data = pcall(json.decode.decode, text)
-          if ok and data then
-            if data.files then
-              files = data.files
-            end
-            if data.channel then
-              channel = data.channel
-            end
-          end
-        end
-
         notepad_changelog(nil, nil, nil, files, channel)
       end
     elseif msg == 888 then
@@ -1039,8 +1027,8 @@ end
       end -- if
     end -- for
 
-    -- Note: automatic_changelog is now handled by update_watcher.xml (msg 778,
-    -- leader-only) to include the list of updated files
+    -- Note: automatic_changelog is now handled by update_watcher.xml (msg 777)
+    -- to include the list of updated files
   else
     -- Other generic plugin communication handlers
     if msg == "register_audio_group" then

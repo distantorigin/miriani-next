@@ -16,4 +16,21 @@ Theme modes (set in theme.json):
   "replace"   - Theme sounds fully replace matching default sounds.
                 Defaults are used for anything the theme doesn't cover.
 
+Declaring your own socials
+--------------------------
+If your theme adds a social the base pack doesn't already know about,
+declare it in theme.json under a "socials" block. Each entry needs a
+category (used for the on/off toggle grouping), and can optionally
+set "sound" to a different filename stem than the social name.
+
+Gender variants are picked up from folder placement, so drop the
+audio into whichever of social/male, social/female, or social/neuter
+you actually have files for. Neuter files play for every character
+when no gender-specific variant exists.
+
+You can also add shorthand action names under "social_aliases".
+
+See the "socials" and "social_aliases" blocks in this folder's
+theme.json for a working example.
+
 Enable this theme in-game: conf theme

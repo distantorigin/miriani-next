@@ -3,5 +3,16 @@
   "author": "Miriani-Next",
   "description": "A sample theme demonstrating the theme folder structure. Add .ogg files mirroring the sounds/miriani/ layout to replace or supplement the default sounds.",
   "mode": "additive",
-  "hidden": true
+  "hidden": true,
+
+  "_comment_socials": "The 'socials' block below is optional. Use it only when your theme introduces a social the base pack doesn't already define. Each entry needs a category so the social lands in the right on/off group; optionally, 'sound' overrides the filename stem when the audio file has a different name.",
+  "socials": {
+    "slurp":  { "category": "novelty" },
+    "gronk":  { "category": "novelty", "sound": "gronking" }
+  },
+
+  "_comment_social_aliases": "Optional. Maps shorthand action names to canonical social names, same as the base pack's alias table.",
+  "social_aliases": {
+    "sip": "slurp"
+  }
 }

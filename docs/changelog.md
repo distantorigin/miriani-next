@@ -5,6 +5,15 @@
 ### New
 - Themes can declare their own socials in theme.json via a "socials" block, with optional "social_aliases" for shorthand action names. A theme can now register a categorized, toggleable social the base pack doesn't ship, without needing a Lua edit.
 - Updated the sample theme with an example of the new socials block.
+- Socials.lua no longer requires manual definition of genders; the scripts will automatically match to the correct gender if it's available in the corresponding socials/<gender> folder.
+
+### Changed
+- Moved socials with no audio files in the main sound set out of the base registry and into whichever theme actually provides the sound:
+  - Music-only: bustamove, dust, handshake, jazzhands, lean, mash, shrug, smack, stroke.
+  - Memescape-only: bawl, blubber, boggle, chuckle, drool, eep, flap, flip, grabfriendandshrieklikegirls, headscratch, hi5, itsatrap, jiggle, khan, mlaugh, mock, noogie, please, roar, spoon, twitch, weep, worship, yodel.
+  - Declared in both themes: devil, flex, insult, jig, orgasm, what, why.
+  - Aliases moved to memescape: gfas, gfaslg, gfs, gfslg, scratch, nosescratch.
+
 ### Fixed
 - Restored the noo social from the main sound pack for male and female characters. Its declared genders didn't match the files on disk, so gender-specific lookups missed the only file, which lives in the neuter folder.
 - Gender-specific social sounds now fall back to neuter when no matching file exists in the main pack or any enabled theme.

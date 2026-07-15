@@ -2,5 +2,24 @@
   "name": "Music",
   "author": "Jason Harkness.",
   "description": "A collection of various music clips to augment the gameplay experience. Or to annoy people. Dealer's choice.",
-  "mode": "replace"
+  "mode": "replace",
+
+  "socials": {
+    "bustamove":  { "category": "novelty" },
+    "devil":      { "category": "novelty" },
+    "dust":       { "category": "physical" },
+    "flex":       { "category": "novelty" },
+    "handshake":  { "category": "physical" },
+    "insult":     { "category": "novelty" },
+    "jazzhands":  { "category": "physical" },
+    "jig":        { "category": "physical" },
+    "lean":       { "category": "physical" },
+    "mash":       { "category": "novelty" },
+    "orgasm":     { "category": "novelty" },
+    "shrug":      { "category": "reaction" },
+    "smack":      { "category": "physical" },
+    "stroke":     { "category": "physical" },
+    "what":       { "category": "novelty" },
+    "why":        { "category": "novelty" }
+  }
 }

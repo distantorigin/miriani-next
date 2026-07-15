@@ -2,5 +2,48 @@
   "name": "Memescape",
   "author": "Jason Harkness et al.",
   "description": "A collection of meme-inspired and over-the-top social sounds, connection jingles, and invalid command effects.",
-  "mode": "additive"
+  "mode": "additive",
+
+  "socials": {
+    "bawl":                          { "category": "distress" },
+    "blubber":                       { "category": "distress" },
+    "boggle":                        { "category": "reaction" },
+    "chuckle":                       { "category": "laughter" },
+    "devil":                         { "category": "novelty" },
+    "drool":                         { "category": "bodily" },
+    "eep":                           { "category": "reflex" },
+    "flap":                          { "category": "physical" },
+    "flex":                          { "category": "novelty" },
+    "flip":                          { "category": "novelty" },
+    "grabfriendandshrieklikegirls":  { "category": "novelty" },
+    "headscratch":                   { "category": "physical" },
+    "hi5":                           { "category": "reaction" },
+    "insult":                        { "category": "novelty" },
+    "itsatrap":                      { "category": "novelty" },
+    "jig":                           { "category": "physical" },
+    "jiggle":                        { "category": "novelty" },
+    "khan":                          { "category": "novelty" },
+    "mlaugh":                        { "category": "laughter" },
+    "mock":                          { "category": "reaction" },
+    "noogie":                        { "category": "physical" },
+    "orgasm":                        { "category": "novelty" },
+    "please":                        { "category": "novelty" },
+    "roar":                          { "category": "novelty" },
+    "spoon":                         { "category": "novelty" },
+    "twitch":                        { "category": "reaction" },
+    "weep":                          { "category": "distress" },
+    "what":                          { "category": "novelty" },
+    "why":                           { "category": "novelty" },
+    "worship":                       { "category": "reaction" },
+    "yodel":                         { "category": "novelty" }
+  },
+
+  "social_aliases": {
+    "gfas":         "grabfriendandshrieklikegirls",
+    "gfaslg":       "grabfriendandshrieklikegirls",
+    "gfs":          "grabfriendandshrieklikegirls",
+    "gfslg":        "grabfriendandshrieklikegirls",
+    "scratch":      "headscratch",
+    "nosescratch":  "headscratch"
+  }
 }

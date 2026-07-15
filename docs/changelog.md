@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.06 (In Progress)
+## Version 4.2.06
 
 ### New
 - Themes can declare their own socials in theme.json via a "socials" block, with optional "social_aliases" for shorthand action names. A theme can now register a categorized, toggleable social the base pack doesn't ship, without needing a Lua edit.

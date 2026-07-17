@@ -231,6 +231,7 @@ local socials = {
   rhumba         = {category = "dances"},
   robot          = {category = "dances"},
   salsa          = {category = "dances"},
+    slowdance    = {category = "dances"},
   squaredance    = {category = "dances"},
   tango          = {category = "dances"},
   timewarp       = {category = "dances"},

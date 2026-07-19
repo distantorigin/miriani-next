@@ -16,6 +16,7 @@
   - Aliases moved to memescape: gfas, gfaslg, gfs, gfslg, scratch, nosescratch.
 
 ### Fixed
+-In some possibilities where you had airlock cycle music, you were able to not get the end trigger and the music would go on indeffinitly. I added a timer to this music so that way if the trigger didn't appear after 20 seconds, the song would end.
 - Restored the noo social from the main sound pack for male and female characters. Its declared genders didn't match the files on disk, so gender-specific lookups missed the only file, which lives in the neuter folder.
 - Gender-specific social sounds now fall back to neuter when no matching file exists in the main pack or any enabled theme.
 - Cleaned up the same declaration mismatch on chuckle, eep, boggle, hi5, orgasm, and why.

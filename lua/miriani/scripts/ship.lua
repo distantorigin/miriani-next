@@ -6,6 +6,35 @@ function check_alert_autowake(alert_color)
   end
 end
 
+-- Airlock cycling music failsafe.
+-- The elevator music loops until the server sends the "ceases cycling" line.
+-- If the player leaves the room (or the cycle is otherwise interrupted) that
+-- line never arrives, so the loop would play forever. We arm a timeout when the
+-- music starts that stops it if the normal stop trigger hasn't already fired.
+-- Bump this if a normal airlock cycle can legitimately run longer than this.
+local ELEVATOR_MUSIC_MAX_SECONDS = 20
+-- Incremented every time the music starts or stops; a scheduled failsafe carries
+-- the token it was armed with and only fires if that token is still current, so a
+-- stale timeout can never cut off a newer cycle's music.
+local elevator_music_token = 0
+
+function start_elevator_music()
+  elevator_music_token = elevator_music_token + 1
+  mplay("music/theme", "elevator_music", true, nil, true)
+  DoAfterSpecial(ELEVATOR_MUSIC_MAX_SECONDS,
+    "stop_elevator_music(" .. elevator_music_token .. ")", sendto.script)
+end
+
+function stop_elevator_music(token)
+  -- A stale failsafe (token no longer current) must not stop a newer cycle.
+  if token ~= nil and token ~= elevator_music_token then
+    return
+  end
+  -- Invalidate any pending failsafe so it can't stop a future cycle.
+  elevator_music_token = elevator_music_token + 1
+  stop("elevator_music")
+end
+
 ImportXML([=[
 <triggers>
   <trigger
@@ -1082,7 +1111,7 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    send_to="12"
    sequence="100"
   >
-  <send>mplay("music/theme", "elevator_music", true, nil, true)</send>
+  <send>start_elevator_music()</send>
   </trigger>
 
   <trigger
@@ -1093,7 +1122,7 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    send_to="12"
    sequence="100"
   >
-  <send>stop("elevator_music")</send>
+  <send>stop_elevator_music()</send>
   </trigger>
 
   <trigger

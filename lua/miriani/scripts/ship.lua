@@ -8,11 +8,17 @@ end
 
 -- Airlock cycling music failsafe.
 -- The elevator music loops until the server sends the "ceases cycling" line.
--- If the player leaves the room (or the cycle is otherwise interrupted) that
--- line never arrives, so the loop would play forever. We arm a timeout when the
--- music starts that stops it if the normal stop trigger hasn't already fired.
+-- That line can fail to arrive for many reasons -- the listener walked out of
+-- the airlock, or was watching via a droid/ship camera and cut the feed -- and
+-- the loop would then play forever. Two layers stop it:
+--   1. A room-change stop (see the room_title trigger in rooms.lua): if the
+--      listener leaves the room they were in when the music started, stop at
+--      once. This covers walking out.
+--   2. A timeout failsafe armed here: if nothing has stopped the music within
+--      this many seconds, stop it. This is cause-agnostic and covers the feed-
+--      loss cases (camera off/switched, disconnect) that a room change can't.
 -- Bump this if a normal airlock cycle can legitimately run longer than this.
-local ELEVATOR_MUSIC_MAX_SECONDS = 20
+local ELEVATOR_MUSIC_MAX_SECONDS = 15
 -- Incremented every time the music starts or stops; a scheduled failsafe carries
 -- the token it was armed with and only fires if that token is still current, so a
 -- stale timeout can never cut off a newer cycle's music.
@@ -20,6 +26,9 @@ local elevator_music_token = 0
 
 function start_elevator_music()
   elevator_music_token = elevator_music_token + 1
+  -- Stamp the room we were in when the cycle started (our own room, even when
+  -- watching via camera) so the room_title trigger can stop on leaving it.
+  airlock_music_room = room
   mplay("music/theme", "elevator_music", true, nil, true)
   DoAfterSpecial(ELEVATOR_MUSIC_MAX_SECONDS,
     "stop_elevator_music(" .. elevator_music_token .. ")", sendto.script)
@@ -32,6 +41,7 @@ function stop_elevator_music(token)
   end
   -- Invalidate any pending failsafe so it can't stop a future cycle.
   elevator_music_token = elevator_music_token + 1
+  airlock_music_room = nil
   stop("elevator_music")
 end
 

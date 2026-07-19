@@ -695,6 +695,12 @@ ImportXML([=[
      stop("loop")
    end -- if
 
+   -- Left the room where an airlock cycle's elevator music started -> stop it
+   -- immediately (the timeout failsafe in ship.lua covers non-movement cases).
+   if airlock_music_room and airlock_music_room ~= room then
+     stop_elevator_music()
+   end -- if
+
    -- Re-evaluate ambiance now that roomName is set
    -- This allows room name matching to work (set_environment runs before room title)
    if environment and environment.roomtype then

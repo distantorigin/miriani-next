@@ -359,8 +359,8 @@ function config_menu.show_group(group_name)
     -- it after the "NN_theme_" entries. A separator is inserted just above
     -- it via the numbered-choices step below.
     secondary_menu["zz_all_themes_mode"] = all_mode
-      and "All themes mode [On] (auto-includes new themes)"
-      or  "All themes mode [Off] (pick individual themes above)"
+      and "All themes mode [On]"
+      or  "All themes mode [Off]"
     menu_separator_before = "zz_all_themes_mode"
 
   elseif actual_group_key == "mutes" then

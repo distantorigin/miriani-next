@@ -219,6 +219,9 @@ function Config:apply_extra_data(data)
   if data.all_themes_mode ~= nil then
     self.all_themes_mode = data.all_themes_mode
   end
+  if data.force_additive_mode ~= nil then
+    self.force_additive_mode = data.force_additive_mode
+  end
   if data.sound_groups then
     self.sound_groups = data.sound_groups
   end
@@ -282,6 +285,7 @@ function Config:save()
     sound_variants = self.sound_variants or nil,
     enabled_themes = self.enabled_themes or nil,
     all_themes_mode = self.all_themes_mode or nil,
+    force_additive_mode = self.force_additive_mode or nil,
     sound_groups = next(self.sound_groups) and self.sound_groups or nil,
     ignored_sounds = next(self.ignored_sounds) and self.ignored_sounds or nil,
   }

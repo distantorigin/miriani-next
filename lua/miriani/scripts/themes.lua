@@ -6,6 +6,7 @@ local path = require("pl.path")
 
 local enabled_themes = {}
 local all_themes_mode = false
+local force_additive_mode = false
 local theme_cache = {}
 
 local function get_themes_dir()
@@ -199,6 +200,24 @@ function set_all_themes_mode(enabled)
   return true
 end
 
+-- When force_additive_mode is on, every enabled theme contributes its
+-- sounds to the random pool regardless of the theme's declared mode. Replace
+-- themes no longer override the base pack; instead their files are treated
+-- as additive alongside it.
+function is_force_additive_mode()
+  return force_additive_mode
+end
+
+function set_force_additive_mode(enabled)
+  local new_value = enabled and true or false
+  if new_value == force_additive_mode then
+    return false
+  end
+  force_additive_mode = new_value
+  save_enabled_themes()
+  return true
+end
+
 function is_theme_enabled(theme_id)
   if all_themes_mode then
     return get_theme_info(theme_id) ~= nil
@@ -265,6 +284,7 @@ function load_enabled_themes()
   local saved_data = config:load()
   if saved_data then
     all_themes_mode = saved_data.all_themes_mode == true
+    force_additive_mode = saved_data.force_additive_mode == true
     if saved_data.enabled_themes then
       enabled_themes = {}
       local pruned = false
@@ -298,6 +318,7 @@ function save_enabled_themes()
 
   config.enabled_themes = theme_list
   config.all_themes_mode = all_themes_mode or nil
+  config.force_additive_mode = force_additive_mode or nil
   config:save()
 end
 
@@ -329,6 +350,12 @@ end
 -- sound_file: path relative to SOUND_DIRECTORY (e.g., "miriani/combat/hit.ogg")
 -- Returns: theme info table, theme-relative path  — or nil, nil.
 function find_overriding_replace_theme(sound_file)
+  -- Force-additive mode disables replacement: every theme's sounds pool with
+  -- the base pack via collect_additive_theme_files instead.
+  if force_additive_mode then
+    return nil, nil
+  end
+
   local sound_dir = config:get("SOUND_DIRECTORY")
   local stripped = strip_soundpath(sound_file)
   local replace_themes = get_enabled_themes_by_mode("replace")
@@ -356,10 +383,17 @@ end
 function collect_additive_theme_files(file)
   local sound_dir = config:get("SOUND_DIRECTORY")
   local stripped = strip_soundpath(file)
-  local additive_themes = get_enabled_themes_by_mode("additive")
+  -- In force-additive mode every enabled theme (regardless of declared mode)
+  -- contributes to the additive pool.
+  local themes_to_use
+  if force_additive_mode then
+    themes_to_use = get_all_enabled_themes()
+  else
+    themes_to_use = get_enabled_themes_by_mode("additive")
+  end
   local extra_files = {}
 
-  for _, theme in ipairs(additive_themes) do
+  for _, theme in ipairs(themes_to_use) do
     local file_base, ext = path.splitext(stripped)
     local theme_prefix = THEMES_PATH .. theme.id .. "/"
     local theme_file = sound_dir .. theme_prefix .. stripped

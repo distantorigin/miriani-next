@@ -5,6 +5,7 @@ require("json")
 local path = require("pl.path")
 
 local enabled_themes = {}
+local all_themes_mode = false
 local theme_cache = {}
 
 local function get_themes_dir()
@@ -180,7 +181,34 @@ function get_theme_last_updated(theme_id)
   return nil
 end
 
+-- When all_themes_mode is on, every discovered (non-hidden) theme is
+-- treated as enabled, and newly-added theme folders are picked up
+-- automatically without touching the per-theme preference list.
+function is_all_themes_mode()
+  return all_themes_mode
+end
+
+function set_all_themes_mode(enabled)
+  local new_value = enabled and true or false
+  if new_value == all_themes_mode then
+    return false
+  end
+  all_themes_mode = new_value
+  save_enabled_themes()
+  if refresh_social_registry then refresh_social_registry() end
+  return true
+end
+
 function is_theme_enabled(theme_id)
+  if all_themes_mode then
+    return get_theme_info(theme_id) ~= nil
+  end
+  return enabled_themes[theme_id] == true
+end
+
+-- Returns the per-theme preference, ignoring all-themes mode. Callers that
+-- want the "effective" state should use is_theme_enabled().
+function is_theme_preference_enabled(theme_id)
   return enabled_themes[theme_id] == true
 end
 
@@ -196,6 +224,14 @@ end
 
 function get_enabled_themes_by_mode(mode)
   local result = {}
+  if all_themes_mode then
+    for _, info in ipairs(get_all_themes()) do
+      if info.mode == mode then
+        table.insert(result, info)
+      end
+    end
+    return result
+  end
   for theme_id, _ in pairs(enabled_themes) do
     local info = get_theme_info(theme_id)
     if info and info.mode == mode then
@@ -207,6 +243,9 @@ function get_enabled_themes_by_mode(mode)
 end
 
 function get_all_enabled_themes()
+  if all_themes_mode then
+    return get_all_themes()
+  end
   local result = {}
   for theme_id, _ in pairs(enabled_themes) do
     local info = get_theme_info(theme_id)
@@ -224,19 +263,22 @@ function load_enabled_themes()
   end
 
   local saved_data = config:load()
-  if saved_data and saved_data.enabled_themes then
-    enabled_themes = {}
-    local pruned = false
-    for _, theme_id in ipairs(saved_data.enabled_themes) do
-      local theme_dir = get_themes_dir() .. theme_id
-      if path.isdir(theme_dir) then
-        enabled_themes[theme_id] = true
-      else
-        pruned = true
+  if saved_data then
+    all_themes_mode = saved_data.all_themes_mode == true
+    if saved_data.enabled_themes then
+      enabled_themes = {}
+      local pruned = false
+      for _, theme_id in ipairs(saved_data.enabled_themes) do
+        local theme_dir = get_themes_dir() .. theme_id
+        if path.isdir(theme_dir) then
+          enabled_themes[theme_id] = true
+        else
+          pruned = true
+        end
       end
-    end
-    if pruned then
-      save_enabled_themes()
+      if pruned then
+        save_enabled_themes()
+      end
     end
   end
 
@@ -255,6 +297,7 @@ function save_enabled_themes()
   table.sort(theme_list)
 
   config.enabled_themes = theme_list
+  config.all_themes_mode = all_themes_mode or nil
   config:save()
 end
 

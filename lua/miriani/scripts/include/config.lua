@@ -216,6 +216,9 @@ function Config:apply_extra_data(data)
   if data.enabled_themes then
     self.enabled_themes = data.enabled_themes
   end
+  if data.all_themes_mode ~= nil then
+    self.all_themes_mode = data.all_themes_mode
+  end
   if data.sound_groups then
     self.sound_groups = data.sound_groups
   end
@@ -278,6 +281,7 @@ function Config:save()
     master_mute = self.master_mute or nil,
     sound_variants = self.sound_variants or nil,
     enabled_themes = self.enabled_themes or nil,
+    all_themes_mode = self.all_themes_mode or nil,
     sound_groups = next(self.sound_groups) and self.sound_groups or nil,
     ignored_sounds = next(self.ignored_sounds) and self.ignored_sounds or nil,
   }

@@ -667,7 +667,9 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       local pl_path = require("pl.path")
       local toggle_label
       if all_mode then
-        toggle_label = current_state and "Set preference to off" or "Set preference to on"
+        toggle_label = current_state
+          and "Disable theme (takes effect when all-themes mode is off)"
+          or  "Enable theme (takes effect when all-themes mode is off)"
       else
         toggle_label = current_state and "Disable theme" or "Enable theme"
       end

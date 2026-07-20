@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.08 (In Progress)
+## Version 4.2.08
 
 ### New
 - Starmap filters now accept full names with the SM command, not just letters immediately after SM. This allows for things like sm debris or sm deb to see debris.

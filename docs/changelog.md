@@ -1,12 +1,19 @@
 # Miriani-Next Changelog
 
+## Version 4.2.07 (In Progress)
+
+### New
+- Added a pair of new boogie dance sounds at Gage's request.
+
+### Fixed
+-In some possibilities where you had airlock cycle music, you were able to not get the end trigger and the music would go on indeffinitly. I added a timer to this music so that way if the trigger didn't appear after 20 seconds, the song would end.
+
 ## Version 4.2.06
 
 ### New
 - Themes can declare their own socials in theme.json via a "socials" block, with optional "social_aliases" for shorthand action names. A theme can now register a categorized, toggleable social the base pack doesn't ship, without needing a Lua edit.
 - Updated the sample theme with an example of the new socials block.
 - Socials.lua no longer requires manual definition of genders; the scripts will automatically match to the correct gender if it's available in the corresponding socials/<gender> folder.
-- Added a pair of new boogie dance sounds at Gage's request.
 
 ### Changed
 - Moved socials with no audio files in the main sound set out of the base registry and into whichever theme actually provides the sound:

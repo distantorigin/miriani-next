@@ -19,6 +19,7 @@
     "shrug":      { "category": "reaction" },
     "smack":      { "category": "physical" },
     "stroke":     { "category": "physical" },
+    "vomit":     { "category": "bodily" },
     "what":       { "category": "novelty" },
     "why":        { "category": "novelty" }
   }

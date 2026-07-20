@@ -355,13 +355,21 @@ function config_menu.show_group(group_name)
       secondary_menu[theme_key] = string.format("%s %s", theme.name, status)
     end
 
-    -- Master toggle sits at the bottom of the list; the "zz_" prefix sorts
-    -- it after the "NN_theme_" entries. A separator is inserted just above
-    -- it via the numbered-choices step below.
-    secondary_menu["zz_all_themes_mode"] = all_mode
-      and "All themes mode [On]"
-      or  "All themes mode [Off]"
-    menu_separator_before = "zz_all_themes_mode"
+    -- Advanced-options link sits at the bottom of the list; the "zz_" prefix
+    -- sorts it after the "NN_theme_" entries. A separator is inserted just
+    -- above it via the numbered-choices step below.
+    secondary_menu["zz_submenu_themes_advanced"] = "Advanced options..."
+    menu_separator_before = "zz_submenu_themes_advanced"
+
+  elseif actual_group_key == "themes_advanced" then
+    local all_mode = is_all_themes_mode()
+    local force_additive = is_force_additive_mode()
+    secondary_menu["01_all_themes_mode"] = string.format(
+      "All themes mode: keep every theme enabled, including any you add later [%s]",
+      all_mode and "On" or "Off")
+    secondary_menu["02_force_additive_mode"] = string.format(
+      "Force additive: mix replace-mode theme sounds into the shuffle instead of letting them override the default sounds [%s]",
+      force_additive and "On" or "Off")
 
   elseif actual_group_key == "mutes" then
     secondary_menu["00_ignore_new"] = "Mute a sound..."
@@ -392,7 +400,7 @@ function config_menu.show_group(group_name)
   for key in pairs(secondary_menu) do
     table.insert(sorted_keys, key)
   end
-  if actual_group_key == "socials" or actual_group_key:match("^socials_") or actual_group_key == "mutes" or actual_group_key == "themes" then
+  if actual_group_key == "socials" or actual_group_key:match("^socials_") or actual_group_key == "mutes" or actual_group_key == "themes" or actual_group_key == "themes_advanced" then
     -- Sort by key to preserve intended order (00_ prefix sorts action first)
     table.sort(sorted_keys)
   else
@@ -427,6 +435,10 @@ function config_menu.show_group(group_name)
     }
   end
 
+  if actual_group_key == "themes_advanced" then
+    group_title = "Advanced Theme Options"
+  end
+
   dialog.menu({
     title = group_title,
     choices = choices,
@@ -437,6 +449,8 @@ function config_menu.show_group(group_name)
           -- If we're in a socials subcategory, go back to socials menu
           if actual_group_key:match("^socials_") then
             config_menu.show_group("socials")
+          elseif actual_group_key == "themes_advanced" then
+            config_menu.show_group("themes")
           else
             config_menu.show_main()
           end
@@ -465,6 +479,12 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       config_menu.show_group(subgroup)
       return
     end
+  end
+
+  -- Special handling for the themes advanced-options submenu link
+  if option_key:match("_submenu_themes_advanced$") then
+    config_menu.show_group("themes_advanced")
+    return
   end
 
   -- Special handling for socials toggles (have "00_" prefix)
@@ -562,12 +582,23 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
     end
   end
 
-  -- Special handling for the "all themes" master toggle
-  if option_key == "zz_all_themes_mode" or option_key == "_all_themes_mode" then
+  -- Special handling for the advanced themes toggles. Menu keys are
+  -- `NN_all_themes_mode` / `NN_force_additive_mode` from the submenu, or
+  -- `_all_themes_mode` / `_force_additive_mode` from find_and_edit.
+  if option_key:match("^%d*_all_themes_mode$") then
     local current = is_all_themes_mode()
     set_all_themes_mode(not current)
     local status = (not current) and "on" or "off"
     notify("info", string.format("All themes mode set to %s", status))
+    if not skip_menu then config_menu.show_group(group_name) end
+    return
+  end
+
+  if option_key:match("^%d*_force_additive_mode$") then
+    local current = is_force_additive_mode()
+    set_force_additive_mode(not current)
+    local status = (not current) and "on" or "off"
+    notify("info", string.format("Force additive theme mode set to %s", status))
     if not skip_menu then config_menu.show_group(group_name) end
     return
   end
@@ -585,12 +616,20 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       end
 
       local all_mode = is_all_themes_mode and is_all_themes_mode()
+      local force_additive = is_force_additive_mode and is_force_additive_mode()
       -- Under all-themes mode the effective state is always on, but the
       -- individual toggle still edits the underlying preference so it takes
       -- effect once all-themes mode is turned back off.
       local current_state = all_mode and is_theme_preference_enabled(theme_id) or is_theme_enabled(theme_id)
       local file_count, total_size = count_theme_files(theme_id)
-      local mode_label = theme_info.mode == "replace" and "Replace (overrides default sounds)" or "Additive (pools with default sounds)"
+      local mode_label
+      if theme_info.mode == "replace" then
+        mode_label = force_additive
+          and "Replace (pooled with default sounds while force additive mode is on)"
+          or  "Replace (overrides default sounds)"
+      else
+        mode_label = "Additive (pools with default sounds)"
+      end
 
       local function format_size(bytes)
         if bytes >= 1024 * 1024 then
@@ -1082,10 +1121,18 @@ function config_menu.find_and_edit(group_name, search_term)
     discover_themes()
     local themes = get_all_themes()
 
-    -- "all" / "all themes" toggles the master all-themes-mode flag
+    -- Shortcuts for the advanced toggles.
     local search_lower = string.lower(search_term)
     if search_lower == "all" or search_lower == "all themes" then
       config_menu.edit_option("_all_themes_mode", "themes", true)
+      return
+    end
+    if search_lower == "additive" or search_lower == "force additive" then
+      config_menu.edit_option("_force_additive_mode", "themes", true)
+      return
+    end
+    if search_lower == "advanced" then
+      config_menu.show_group("themes_advanced")
       return
     end
 

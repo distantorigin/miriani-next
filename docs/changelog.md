@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.07 (In Progress)
+## Version 4.2.07
 
 ### New
 - Added a pair of new boogie dance sounds at Gage's request.
@@ -9,7 +9,7 @@
   - Force additive theme mode: replace-mode themes stop overriding the base pack and instead have their sounds pooled into the random shuffle alongside it.
 
 ### Changed
-- Update-related settings moved out of General into their own conf updates category, sitting right after Auto Login in the main menu.
+- Update-related settings have been moved out of General into their own category, sitting right after Auto Login in the main menu or via 'conf updates'.
 - Renamed General Settings to General Options so it matches the other Option categories.
 
 ### Fixed

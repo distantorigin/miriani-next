@@ -39,7 +39,7 @@ local known_groups = {
   "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
   "socials_bodily", "socials_physical", "socials_reaction", "socials_novelty",
   "socials_songs", "socials_dances", "socials_uncategorized", "scan_formats", "buffers", "colors", "developer",
-  "themes", "mutes"
+  "themes", "mutes", "updates"
 }
 
 -- Helper function to strip trailing punctuation from option descriptions

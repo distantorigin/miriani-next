@@ -214,8 +214,9 @@ Miriani-Next uses an interactive, menu-based configuration system. Access it by 
 - `conf <category> <option>` - Directly edits a specific option (e.g., `conf ship secondary` for secondary lock sounds)
 
 **Main Configuration Categories**:
-- **general** - General Settings (roundtime, escape behavior, DND mode, wake on red, foreground sounds, updates)
+- **general** - General Settings (roundtime, escape behavior, DND mode, wake on red, foreground sounds)
 - **auto login** - Auto Login credentials and settings (shortcut: `conf auto`)
+- **updates** - Update Options (automatic updates, changelog, idle updates, sound, restart behavior)
 - **ship** - Starship Options (scan formatting, drive frequency, artifact hunting mode, repair notifications)
 - **room** - Room and Environment (ambiance, digsite detector, praelor counter)
 - **helpers** - Helpers and Extras (archaeology helper, counters, point calculations)
@@ -246,10 +247,6 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 ### Configuration Options Reference
 
 **General Settings** (`conf general`)
-- **Automatically open changelog after updates**: Opens the changelog in a notepad window automatically after updates are applied. Know what changed without manually checking.
-- **Automatically apply updates quietly at login**: The launcher will check for and install updates silently when you log in, without prompting. If disabled, you'll be notified but need to manually confirm updates.
-- **Automatically apply updates while idle**: Allows the launcher to apply updates while you're idle in-game. Updates won't interrupt active gameplay.
-- **Play a sound for pending updates**: Plays an alert sound when updates are available. Alerts you to pending updates without watching console output.
 - **Play beep sound on keep-alive messages**: Plays a beep when the server sends keepalive messages (the periodic "pings" to keep your connection alive). Most users leave this off.
 - **Play theme music at startup**: Plays a random theme song when MUSHclient starts.
 - **Play a sound when roundtime is up**: Plays a sound when your roundtime expires (after actions that prevent immediate movement/combat). Know when you can act again without checking prompts.
@@ -270,6 +267,13 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 - **Enable automatic login when connecting to the game**: Automatically sends your username and password when connecting to the game. The client package's login system ensures Miriani receives proper initialization before credentials are sent.
 - **Username for auto login (use underscores for spaces)**: Your character name. Use underscores (_) instead of spaces (e.g., `John_Smith` for "John Smith").
 - **Password for auto login**: Your password. Stored in per-world config - keep your Miriani-Next folder secure on shared machines.
+
+**Update Options** (`conf updates`)
+- **Automatically open changelog after updates**: Opens the changelog in a notepad window automatically after updates are applied. Know what changed without manually checking.
+- **Automatically apply updates quietly at login**: The launcher will check for and install updates silently when you log in, without prompting. If disabled, you'll be notified but need to manually confirm updates.
+- **Automatically apply updates while idle**: Allows the launcher to apply updates while you're idle in-game. Updates won't interrupt active gameplay.
+- **Play a sound for pending updates**: Plays an alert sound when updates are available. Alerts you to pending updates without watching console output.
+- **For quiet updates that need a client restart: notify you on return, or restart automatically**: When a quiet update needs a restart, choose between "notify" (tell you next time you focus the window) or "auto" (restart the client automatically).
 
 **Starship Options** (`conf ship`)
 - **Print formatted single-line scan output instead of raw multi-line output**: Reformats scan output into single lines using customizable templates (see Scan Templates below). Makes scans much easier to read and parse, especially with screen readers. Compare raw multi-line output vs. formatted: "The Artemis (Interceptor) is 523 units away, at 12, 15, 7."

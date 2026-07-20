@@ -1,5 +1,14 @@
 # Miriani-Next Changelog
 
+## Version 4.2.08 (In Progress)
+
+### New
+- Starmap filters now accept full names with the SM command, not just letters immediately after SM. This allows for things like sm debris or sm deb to see debris.
+- Starmap filters now allow you to provide an optional filter after the type of object that will be applied to the category. For example, 'sm ships praelor' will filter starships down to ships with Praelor in the name.
+
+### Fixed
+- Sm.help no longer lists d = Debris as a shortcut. 'smd' has been the direction command for a while and never actually filtered debris.
+
 ## Version 4.2.07
 
 ### New

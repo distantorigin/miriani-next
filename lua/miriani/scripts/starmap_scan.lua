@@ -20,12 +20,13 @@ scantable = {
 } -- scantable
 
 -- Starmap table:
+-- 'd' (Debris) is intentionally omitted: 'smd' in every form belongs to the
+-- direction command. Debris filtering goes through smAbbreviations ('sm debris', 'sm d', ...).
 starmaptable = {
   a = "Asteroid",
   A = "Accelerator",
   b = "Blockade",
   C = "Control Beacon",
-  d = "Debris",
   e = "Relic",
   E = "Pellets",
   f = "Artifact",
@@ -48,6 +49,86 @@ starmaptable = {
   y = "Dry Dock",
   Y = "Buoys"
  } -- starmaptable
+
+-- Word-form abbreviations for `sm <word> [filter]`.
+-- `smd` (no space) is reserved for the direction command, so debris filtering lives here.
+smAbbreviations = {
+  -- Asteroid
+  as = "Asteroid", ast = "Asteroid", aster = "Asteroid",
+  asteroid = "Asteroid", asteroids = "Asteroid",
+  roid = "Asteroid", roids = "Asteroid",
+  -- Accelerator
+  ac = "Accelerator", acc = "Accelerator",
+  accelerator = "Accelerator", accelerators = "Accelerator",
+  -- Artifact
+  ar = "Artifact", art = "Artifact", arti = "Artifact",
+  artifact = "Artifact", artifacts = "Artifact",
+  -- Blockade
+  bl = "Blockade", blo = "Blockade", block = "Blockade",
+  blockade = "Blockade", blockades = "Blockade",
+  -- Buoys
+  buoy = "Buoys", buoys = "Buoys",
+  -- Control Beacon
+  beacon = "Control Beacon", beacons = "Control Beacon",
+  -- Debris
+  d = "Debris", de = "Debris", deb = "Debris", debr = "Debris",
+  debris = "Debris",
+  -- Dry Dock
+  dry = "Dry Dock", drydock = "Dry Dock", drydocks = "Dry Dock",
+  -- Interdictor
+  ["in"] = "Interdictor", int = "Interdictor", inter = "Interdictor",
+  interdictor = "Interdictor", interdictors = "Interdictor",
+  -- Jumpgate
+  ju = "Jumpgate", jum = "Jumpgate", jump = "Jumpgate",
+  jumpgate = "Jumpgate", jumpgates = "Jumpgate",
+  gate = "Jumpgate", gates = "Jumpgate",
+  -- Missile
+  mis = "Missile", miss = "Missile",
+  missile = "Missile", missiles = "Missile",
+  -- Mobile Platform
+  mob = "Mobile Platform", mobile = "Mobile Platform",
+  platform = "Mobile Platform", platforms = "Mobile Platform",
+  -- Moon
+  mo = "Moon", moo = "Moon", moon = "Moon", moons = "Moon",
+  -- Pellets
+  pe = "Pellets", pel = "Pellets",
+  pellet = "Pellets", pellets = "Pellets",
+  -- Planet
+  pl = "Planet", plan = "Planet",
+  planet = "Planet", planets = "Planet",
+  -- Private Moon
+  privmoon = "Private Moon", pmoon = "Private Moon",
+  -- Private Planet
+  privplanet = "Private Planet", pplanet = "Private Planet",
+  -- Private Space Station
+  pri = "Private Space Station", priv = "Private Space Station",
+  private = "Private Space Station", privstation = "Private Space Station",
+  -- Proximity Weapon
+  pr = "Proximity Weapon", pro = "Proximity Weapon",
+  prox = "Proximity Weapon", proximity = "Proximity Weapon",
+  weapon = "Proximity Weapon", weapons = "Proximity Weapon",
+  -- Relic
+  rel = "Relic", relic = "Relic", relics = "Relic",
+  -- Satellite
+  sat = "Satellite",
+  satellite = "Satellite", satellites = "Satellite",
+  prob = "Satellite", probe = "Satellite", probes = "Satellite",
+  vid = "Satellite", video = "Satellite",
+  -- Space Station
+  sp = "Space Station", space = "Space Station",
+  stat = "Space Station",
+  station = "Space Station", stations = "Space Station",
+  -- Star
+  star = "Star", stars = "Star",
+  -- Starship
+  sh = "Starship", ship = "Starship", ships = "Starship",
+  starship = "Starship", starships = "Starship",
+  -- Unknown
+  un = "Unknown", unk = "Unknown", unknown = "Unknown",
+  -- Wormhole
+  wo = "Wormhole", worm = "Wormhole",
+  wormhole = "Wormhole", wormholes = "Wormhole",
+} -- smAbbreviations
 
 -- Starmap count state
 countingStarmap = false
@@ -1022,6 +1103,39 @@ return 0
   </send>
   </alias>
 
+  <!-- Word-form filter (e.g. sm debris, sm deb, sm ships praelor) -->
+  <alias
+   enabled="y"
+   group="starmap"
+   match="^sm\s+(\S+)(?:\s+(.+))?$"
+   ignore_case="y"
+   regexp="y"
+   send_to="12"
+   sequence="40"
+  >
+  <send>
+   local word = string.lower(Trim("%1"))
+   local extra = Trim("%2")
+   local category = smAbbreviations[word]
+
+   if not category then
+    -- Not one of ours; hand the raw command back to the game.
+    local raw = "sm " .. word
+    if extra ~= "" then
+     raw = raw .. " " .. extra
+    end
+    return Send(raw)
+   end
+
+   searchingScan = true
+   scan = category
+   if extra ~= "" then
+    classFilter = string.lower(extra)
+   end
+   Execute("starmap")
+  </send>
+  </alias>
+
   <!-- Nearest ship by class filter - must come before general starmap alias -->
   <alias
    enabled="y"
@@ -1073,7 +1187,7 @@ return 0
   <alias
    enabled="y"
    group="starmap"
-   match="^sm([AabCdDeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
+   match="^sm([AabCeEfijlLmMopPrstTuwxyY]|\.help|\.count)(\s\w+)?$"
    ignore_case="y"
    regexp="y"
    send_to="12"
@@ -1090,8 +1204,27 @@ return 0
 
    if (switch == ".help") then
     local tprint = require ("tprint")
-    print("Valid switches:")
+    print("Letter shortcuts (sm<letter>):")
     tprint(starmaptable)
+
+    print("")
+    print("Filters (sm <name>) — type any of these to show only that kind of object.")
+    print("Tack on another word to search by name, like 'sm ships praelor'.")
+    local grouped = {}
+    for word, category in pairs(smAbbreviations) do
+     grouped[category] = grouped[category] or {}
+     table.insert(grouped[category], word)
+    end
+    local names = {}
+    for name in pairs(grouped) do table.insert(names, name) end
+    table.sort(names)
+    for _, name in ipairs(names) do
+     table.sort(grouped[name])
+     print(string.format("  %s: %s", name, table.concat(grouped[name], ", ")))
+    end
+
+    print("")
+    print("Other commands:")
     print("- smd to show starships with direction.")
     print("- sm.count to generate starmap breakdown summary.")
     print("- smc [class name] to show only the nearest ship matching that class.")
@@ -1101,7 +1234,8 @@ return 0
     countingStarmap = true
     starmapCounts = {}
    elseif (switch == "c" and arg == "") then
-    -- smc without arguments should be sent to the game
+    -- 'c' is only in the char class via ignore_case matching against 'C'.
+    -- Bare 'smc' has no starmaptable entry; forward it to the game.
     return Send("smc")
    end -- if help
 

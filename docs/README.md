@@ -493,6 +493,7 @@ This section documents all major commands available in Miriani-Next.
 - `scu` - Force single-line scan output
 - `smd` - Show starships with relative direction (e.g., 3E 2S 1D)
 - `smc <class>` - Show closest ship of specified class (e.g., `smc interceptor`)
+- `sm <word> [name]` - Filter by category using a word (e.g., `sm debris`, `sm deb`). Optional trailing name narrows to entries containing that substring (e.g., `sm ships praelor` shows only starships with "praelor" in the name). See `sm.help` for the full list of supported words.
 - `sm.count` - Show starmap object count
 - `sc.help` - View scan filter options
 - `sc.reset` - Reset scan state

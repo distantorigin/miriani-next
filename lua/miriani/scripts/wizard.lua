@@ -460,7 +460,8 @@ function wizard.step_updates()
     "When enabled, the scripts will quietly check for and apply " ..
     "updates when you log in, so you're always running the latest version.\n\n" ..
     "The changelog will also be shown automatically after each update " ..
-    "so you can see what changed.",
+    "so you can see what changed.\n\n" ..
+    "You can fine-tune these and other update settings anytime in 'conf updates'.",
     "Updates - Automatic Updates"
   ) then
     config:set_option("automatic_updates", "yes")

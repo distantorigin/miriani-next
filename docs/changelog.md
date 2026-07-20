@@ -4,7 +4,9 @@
 
 ### New
 - Added a pair of new boogie dance sounds at Gage's request.
-- Added an "All themes mode" toggle at the bottom of the themes menu. When on, every discovered theme is treated as enabled, and any new theme folders you drop in are picked up automatically without needing to toggle them individually.
+- Added an Advanced options submenu at the bottom of the themes menu with two power-user toggles:
+  - All themes mode: every discovered theme is treated as enabled, and any new theme folders you drop in are picked up automatically without needing to toggle them individually.
+  - Force additive theme mode: replace-mode themes stop overriding the base pack and instead have their sounds pooled into the random shuffle alongside it.
 
 ### Fixed
 -In some possibilities where you had airlock cycle music, you were able to not get the end trigger and the music would go on indeffinitly. I added a timer to this music so that way if the trigger didn't appear after 20 seconds, the song would end.

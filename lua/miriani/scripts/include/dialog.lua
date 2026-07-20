@@ -28,6 +28,12 @@ function Menu:_init(options)
   self.prompt_text = options.prompt or "Enter your selection.\n\n[Type a line of input or '@abort' to abort the command.]"
   self.matches = nil -- For progressive narrowing
 
+  -- Optional bare-text lines rendered between choice rows. Each entry:
+  --   {after = "<choice key>", label = "<text>"}
+  -- Separators are display-only: they don't participate in matching or
+  -- selection, and don't get a numbered [N] prefix.
+  self.separators = options.separators or nil
+
   -- Convert array to map if needed
   if #self.choices > 0 and not self.choices[1].key then
     local numbered = {}
@@ -65,12 +71,31 @@ function Menu:display()
     end
   end)
 
+  -- Build a lookup of separators to render after each choice key. Only
+  -- honoured when showing the full choice list, not the narrowed matches
+  -- view (where inserting separators between filtered rows would be
+  -- confusing).
+  local after_seps = {}
+  if self.separators and not self.matches then
+    for _, sep in ipairs(self.separators) do
+      if sep.after then
+        after_seps[sep.after] = after_seps[sep.after] or {}
+        table.insert(after_seps[sep.after], sep.label or "")
+      end
+    end
+  end
+
   for _, key in ipairs(keys) do
     local choice = items[key]
     if type(choice) == "table" then
       Note(string.format("[%s] %s", key, choice.label or choice[1] or ""))
     else
       Note(string.format("[%s] %s", key, choice))
+    end
+    if after_seps[key] then
+      for _, label in ipairs(after_seps[key]) do
+        Note(label)
+      end
     end
   end
 

@@ -8,6 +8,10 @@
   - All themes mode: every discovered theme is treated as enabled, and any new theme folders you drop in are picked up automatically without needing to toggle them individually.
   - Force additive theme mode: replace-mode themes stop overriding the base pack and instead have their sounds pooled into the random shuffle alongside it.
 
+### Changed
+- Update-related settings moved out of General into their own conf updates category, sitting right after Auto Login in the main menu.
+- Renamed General Settings to General Options so it matches the other Option categories.
+
 ### Fixed
 -In some possibilities where you had airlock cycle music, you were able to not get the end trigger and the music would go on indeffinitly. I added a timer to this music so that way if the trigger didn't appear after 20 seconds, the song would end.
 

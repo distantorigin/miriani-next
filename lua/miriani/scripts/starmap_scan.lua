@@ -1204,11 +1204,11 @@ return 0
 
    if (switch == ".help") then
     local tprint = require ("tprint")
-    print("Letter shortcuts (sm<letter>):")
+    print("Letter shortcuts (sm&lt;letter&gt;):")
     tprint(starmaptable)
 
     print("")
-    print("Filters (sm <name>) — type any of these to show only that kind of object.")
+    print("Filters (sm &lt;name&gt;) - type any of these to show only that kind of object.")
     print("Tack on another word to search by name, like 'sm ships praelor'.")
     local grouped = {}
     for word, category in pairs(smAbbreviations) do

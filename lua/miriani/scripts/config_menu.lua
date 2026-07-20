@@ -166,6 +166,9 @@ function config_menu.show_group(group_name)
 
   -- Special handling for audio groups submenu - it has no regular options
   local secondary_menu = {}
+  -- Optional secondary_menu key. When set, a divider row is drawn just
+  -- before this entry in the rendered choice list.
+  local menu_separator_before = nil
 
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
@@ -339,12 +342,26 @@ function config_menu.show_group(group_name)
       return
     end
 
-    for _, theme in ipairs(themes) do
-      local theme_key = "_theme_" .. theme.id
-      local enabled = is_theme_enabled(theme.id)
-      local status = enabled and "[On]" or "[Off]"
+    local all_mode = is_all_themes_mode()
+
+    for i, theme in ipairs(themes) do
+      local theme_key = string.format("%02d_theme_", i) .. theme.id
+      local status
+      if all_mode then
+        status = "[On, via all themes mode]"
+      else
+        status = is_theme_enabled(theme.id) and "[On]" or "[Off]"
+      end
       secondary_menu[theme_key] = string.format("%s %s", theme.name, status)
     end
+
+    -- Master toggle sits at the bottom of the list; the "zz_" prefix sorts
+    -- it after the "NN_theme_" entries. A separator is inserted just above
+    -- it via the numbered-choices step below.
+    secondary_menu["zz_all_themes_mode"] = all_mode
+      and "All themes mode [On] (auto-includes new themes)"
+      or  "All themes mode [Off] (pick individual themes above)"
+    menu_separator_before = "zz_all_themes_mode"
 
   elseif actual_group_key == "mutes" then
     secondary_menu["00_ignore_new"] = "Mute a sound..."
@@ -375,7 +392,7 @@ function config_menu.show_group(group_name)
   for key in pairs(secondary_menu) do
     table.insert(sorted_keys, key)
   end
-  if actual_group_key == "socials" or actual_group_key:match("^socials_") or actual_group_key == "mutes" then
+  if actual_group_key == "socials" or actual_group_key:match("^socials_") or actual_group_key == "mutes" or actual_group_key == "themes" then
     -- Sort by key to preserve intended order (00_ prefix sorts action first)
     table.sort(sorted_keys)
   else
@@ -393,15 +410,27 @@ function config_menu.show_group(group_name)
 
   -- Create numbered menu
   choices["0"] = "Go back"
+  local separator_target_num = nil
   for i, key in ipairs(sorted_keys) do
     local num = tostring(i)
     choices[num] = secondary_menu[key]  -- Just the description, no key name
     key_map[num] = key  -- Remember which option this number refers to
+    if key == menu_separator_before and i > 1 then
+      separator_target_num = tostring(i - 1)
+    end
+  end
+
+  local separators = nil
+  if separator_target_num then
+    separators = {
+      {after = separator_target_num, label = string.rep("-", 40)},
+    }
   end
 
   dialog.menu({
     title = group_title,
     choices = choices,
+    separators = separators,
     callback = function(result, reason)
       if result then
         if result.key == "0" then
@@ -533,9 +562,20 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
     end
   end
 
-  -- Special handling for themes
-  if option_key:match("^_theme_") then
-    local theme_id = option_key:match("^_theme_(.+)$")
+  -- Special handling for the "all themes" master toggle
+  if option_key == "zz_all_themes_mode" or option_key == "_all_themes_mode" then
+    local current = is_all_themes_mode()
+    set_all_themes_mode(not current)
+    local status = (not current) and "on" or "off"
+    notify("info", string.format("All themes mode set to %s", status))
+    if not skip_menu then config_menu.show_group(group_name) end
+    return
+  end
+
+  -- Special handling for themes (menu keys are `_theme_<id>` from find_and_edit
+  -- or `NN_theme_<id>` from the numbered submenu).
+  if option_key:match("^%d*_theme_") then
+    local theme_id = option_key:match("^%d*_theme_(.+)$")
     if theme_id then
       local theme_info = get_theme_info(theme_id)
       if not theme_info then
@@ -544,7 +584,11 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
         return
       end
 
-      local current_state = is_theme_enabled(theme_id)
+      local all_mode = is_all_themes_mode and is_all_themes_mode()
+      -- Under all-themes mode the effective state is always on, but the
+      -- individual toggle still edits the underlying preference so it takes
+      -- effect once all-themes mode is turned back off.
+      local current_state = all_mode and is_theme_preference_enabled(theme_id) or is_theme_enabled(theme_id)
       local file_count, total_size = count_theme_files(theme_id)
       local mode_label = theme_info.mode == "replace" and "Replace (overrides default sounds)" or "Additive (pools with default sounds)"
 
@@ -575,10 +619,19 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       if last_updated then
         table.insert(detail_lines, "Last updated: " .. os.date("%b %d, %Y at %I:%M %p", last_updated))
       end
+      if all_mode then
+        table.insert(detail_lines, "")
+        table.insert(detail_lines, "All themes mode is on: this theme is active regardless of the toggle below. The toggle sets what will apply once all-themes mode is turned off.")
+      end
       table.insert(detail_lines, "")
 
       local pl_path = require("pl.path")
-      local toggle_label = current_state and "Disable theme" or "Enable theme"
+      local toggle_label
+      if all_mode then
+        toggle_label = current_state and "Set preference to off" or "Set preference to on"
+      else
+        toggle_label = current_state and "Disable theme" or "Enable theme"
+      end
       local changelog_path = theme_info.path .. "/changelog.md"
       local has_changelog = pl_path.isfile(changelog_path)
 
@@ -1028,6 +1081,13 @@ function config_menu.find_and_edit(group_name, search_term)
   if actual_group_key == "themes" then
     discover_themes()
     local themes = get_all_themes()
+
+    -- "all" / "all themes" toggles the master all-themes-mode flag
+    local search_lower = string.lower(search_term)
+    if search_lower == "all" or search_lower == "all themes" then
+      config_menu.edit_option("_all_themes_mode", "themes", true)
+      return
+    end
 
     -- Try numeric index first
     local index = tonumber(search_term)

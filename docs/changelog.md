@@ -8,6 +8,7 @@
 
 ### Fixed
 - Sm.help no longer lists d = Debris as a shortcut. 'smd' has been the direction command for a while and never actually filtered debris.
+- Ship enter/exit text is only gagged for your own actions now; other people's enter/exit lines are always shown regardless of the reduce flavor text setting (broken on June 5, 2026 in 04c01a8, when the reduce flavor text option was added to ship exit). Thanks to Mark for reporting this.
 
 ## Version 4.2.07
 

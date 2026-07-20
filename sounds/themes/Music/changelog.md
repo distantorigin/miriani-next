@@ -4,6 +4,7 @@
 
 ### New
 - Added a short range communication sound.
+- Added a puke sound.
 
 ## Version 4.2.05
 

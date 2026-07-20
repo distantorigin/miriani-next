@@ -214,7 +214,7 @@ Miriani-Next uses an interactive, menu-based configuration system. Access it by 
 - `conf <category> <option>` - Directly edits a specific option (e.g., `conf ship secondary` for secondary lock sounds)
 
 **Main Configuration Categories**:
-- **general** - General Settings (roundtime, escape behavior, DND mode, wake on red, foreground sounds)
+- **general** - General Options (roundtime, escape behavior, DND mode, wake on red, foreground sounds)
 - **auto login** - Auto Login credentials and settings (shortcut: `conf auto`)
 - **updates** - Update Options (automatic updates, changelog, idle updates, sound, restart behavior)
 - **ship** - Starship Options (scan formatting, drive frequency, artifact hunting mode, repair notifications)
@@ -246,7 +246,7 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 
 ### Configuration Options Reference
 
-**General Settings** (`conf general`)
+**General Options** (`conf general`)
 - **Play beep sound on keep-alive messages**: Plays a beep when the server sends keepalive messages (the periodic "pings" to keep your connection alive). Most users leave this off.
 - **Play theme music at startup**: Plays a random theme song when MUSHclient starts.
 - **Play a sound when roundtime is up**: Plays a sound when your roundtime expires (after actions that prevent immediate movement/combat). Know when you can act again without checking prompts.

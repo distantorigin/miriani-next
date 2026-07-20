@@ -168,7 +168,7 @@ local options = {
 -- Group metadata: defines display titles and sort order for option groups
 -- Groups not listed here will appear at the bottom in alphabetical order
 local group_metadata = {
-  {key = "general", title = "General Settings", order = 1},
+  {key = "general", title = "General Options", order = 1},
   {key = "auto_login", title = "Auto Login", order = 2},
   {key = "updates", title = "Update Options", order = 3},
   {key = "ship", title = "Starship Options", order = 4},

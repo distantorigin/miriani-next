@@ -165,7 +165,7 @@ When updates are found, you'll be prompted to install them. Some updates may req
 
 ### Automatic Updates
 
-Miriani-Next can update automatically based on your preferences in `conf general`:
+Miriani-Next can update automatically based on your preferences in `conf updates`:
 
 - **Automatically apply updates quietly at login**: Updates install silently when you connect to the game
 - **Automatically apply updates while idle**: Updates install when you're idle

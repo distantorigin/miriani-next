@@ -1,5 +1,10 @@
 # Music Theme Changelog
 
+## Version 4.2.08 (In Progress)
+
+### New
+- Added a short range communication sound.
+
 ## Version 4.2.05
 
 ### New

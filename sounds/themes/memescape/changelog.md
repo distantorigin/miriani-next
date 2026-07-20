@@ -1,5 +1,10 @@
 # Memescape Theme Changelog
 
+## Version 4.2.08 (In Progress)
+
+### Fixed
+- Trimmed silence from the beginning of male eep sound.
+
 ## Version 4.2.05
 
 ### Fixed

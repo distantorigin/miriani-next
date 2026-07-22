@@ -1052,6 +1052,16 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <trigger
    enabled="y"
    group="misc"
+   match="^.+ (?:go|goes) crashing to the floor, shattering on impact\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/Dishes and More/shatter")</send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="misc"
    match="^You receive [0-9,.]+ credits?, [0-9,.]+ points?, and [0-9,.]+ combat points? for the defense of .+?\.$"
   regexp="y"
    send_to="12"

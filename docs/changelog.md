@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.09 (In Progress)
+
+### New
+- Added a sound for glasses shattering when flipped off of a table.
+
 ## Version 4.2.08
 
 ### New

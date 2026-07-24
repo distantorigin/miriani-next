@@ -4,6 +4,7 @@
 
 ### New
 - Added a sound for glasses shattering when flipped off of a table.
+- Added 'update reset', which deletes the local manifest and re-runs the updater to rebuild it.
 
 ## Version 4.2.08
 

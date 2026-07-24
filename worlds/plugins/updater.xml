@@ -28,6 +28,7 @@ Commands:
   update quietly             - Checks for and applies an update silently, with no prompts or focus stealing (used by automatic updates)
   update quietly auto        - Silent update; if a restart is required, restart the client automatically
   update quietly notify      - Silent update; if a restart is required, notify you to restart when you return
+  update reset               - Deletes the local manifest and runs an update to rebuild it (may cause files to be reindexed or redownloaded)
 </description>
 
 </plugin>
@@ -290,6 +291,30 @@ run_updater_visible("-generate-manifest")
           Note("Error: Failed to get updater version")
         end
       end)
+
+    elseif cmd == "reset" then
+      local message = "This will delete the local manifest and re-run the update process to rebuild it.\n\n" ..
+                      "Depending on the state of your install, this may cause files to be reindexed or redownloaded.\n\n" ..
+                      "Continue?"
+      local response = utils.msgbox(message, "Reset Manifest", "yesno", "?", 2)
+      if response == "yes" then
+        local homedir = GetInfo(66)
+        local manifest_path = homedir .. ".manifest"
+        local ok, err = os.remove(manifest_path)
+        if not ok then
+          -- Missing file is fine -- the goal is that it isn't there afterwards.
+          local check = io.open(manifest_path, "r")
+          if check then
+            check:close()
+            Note("Error: Failed to delete .manifest: " .. (err or "unknown error"))
+            return
+          end
+        end
+        Note("Manifest deleted. Running update to rebuild...")
+        update_run()
+      else
+        Note("Reset cancelled.")
+      end
 
     elseif cmd == "help" or cmd == "-h" or cmd == "--help" then
       Note(GetPluginInfo(GetPluginID(), 3))

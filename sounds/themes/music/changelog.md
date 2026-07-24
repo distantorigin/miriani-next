@@ -1,6 +1,6 @@
 # Music Theme Changelog
 
-## Version 4.2.09 (In Progress)
+## Version 4.2.09
 
 ### New
 - Added some new yowl sounds.

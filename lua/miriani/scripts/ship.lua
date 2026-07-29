@@ -1134,10 +1134,16 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    group="ship"
    match="^Some lovely elevator music begins playing as the airlock cycles\.$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
-  <send>start_elevator_music()</send>
+  <send>
+   start_elevator_music()
+   if config:get_option("spam").value ~= "yes" then
+    print("%0")
+   end -- if
+  </send>
   </trigger>
 
   <trigger
@@ -1145,10 +1151,16 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    group="ship"
    match="^Some lovely elevator music abruptly stops playing as the airlock ceases cycling\.$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
-  <send>stop_elevator_music()</send>
+  <send>
+   stop_elevator_music()
+   if config:get_option("spam").value ~= "yes" then
+    print("%0")
+   end -- if
+  </send>
   </trigger>
 
   <trigger

@@ -1046,7 +1046,7 @@ return 0
   <trigger
    enabled="y"
    group="starmap"
-   match="^\d+ \d+ \d+, Ship \d+, .+\.$"
+   match="^\d+ \d+ \d+, ship \d+, .+\.$"
    regexp="y"
    send_to="14"
    sequence="100"

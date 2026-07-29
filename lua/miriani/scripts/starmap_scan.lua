@@ -1043,6 +1043,32 @@ return 0
   </send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="starmap"
+   match="^\d+ \d+ \d+, Ship \d+, .+$"
+   regexp="y"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   mplay("ship/computer/starmap", "other")
+  </send>
+  </trigger>
+
+  <trigger
+   enabled="y"
+   group="starmap"
+   match="No ships."
+   regexp="n"
+   send_to="14"
+   sequence="100"
+  >
+  <send>
+   mplay("ship/computer/starmap", "other")
+  </send>
+  </trigger>
+
 
 </triggers>
 <aliases>

@@ -838,6 +838,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
+   mplay("ship/computer/starmap", "other")
    if (not searchingScan) then
     return print("%0")
   end -- if

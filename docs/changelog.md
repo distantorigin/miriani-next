@@ -1,5 +1,11 @@
 # Miriani-Next Changelog
 
+## Version 4.2.10 (In Progress)
+
+### New
+- Added sounds for viewing the starmap.
+- Airlock elevator music lines are now gagged when the reduce flavor text option is on.
+
 ## Version 4.2.09
 
 ### New

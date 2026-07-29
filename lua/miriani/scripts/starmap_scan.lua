@@ -1046,7 +1046,8 @@ return 0
   <trigger
    enabled="y"
    group="starmap"
-   match="^\d+ \d+ \d+, [Ss]hip \d+, .+$"
+   match="\d+ \d+ \d+, ship \d+, "
+   ignore_case="y"
    regexp="y"
    send_to="14"
    sequence="100"

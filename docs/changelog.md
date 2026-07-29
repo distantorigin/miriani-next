@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.10 (In Progress)
+## Version 4.2.10
 
 ### New
 - Added sounds for viewing the starmap.

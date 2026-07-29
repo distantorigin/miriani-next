@@ -6,6 +6,9 @@
 - Added sounds for viewing the starmap.
 - Airlock elevator music lines are now gagged when the reduce flavor text option is on.
 
+### Changed
+- Airlock cycle start/complete messages are now treated like regular computer announcements.
+
 ## Version 4.2.09
 
 ### New

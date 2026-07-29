@@ -1106,15 +1106,20 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    group="ship"
    match="^The computer flashes a message next to the airlock cycle button saying, &quot;(Beginning cycling|Cycling complete)\.&quot;$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
   <send>
+   local str = "%1."
+   mplay("ship/computer/announce", "computer")
    if "%1" == "Beginning cycling" then
-    return mplay("ship/misc/airlock/close", "ship")
+    mplay("ship/misc/airlock/close", "ship")
    else
-    return mplay("ship/misc/airlock/open", "ship")
+    mplay("ship/misc/airlock/open", "ship")
    end -- if
+   channel("computer", str, {"computer"})
+   print_color({str, "computer"})
   </send>
   </trigger>
 

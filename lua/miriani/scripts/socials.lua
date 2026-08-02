@@ -172,6 +172,7 @@ local socials = {
   airguitar = {category = "novelty"},
   bears     = {category = "songs"},
   beep      = {category = "novelty"},
+  begawk      = {category = "novelty"},
   bongo     = {category = "novelty"},
   bonk      = {category = "novelty"},
   cake      = {category = "songs"},

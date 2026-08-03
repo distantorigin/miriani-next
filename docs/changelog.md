@@ -6,6 +6,9 @@
 - Added a begawk sound.
 - Added some new dance sounds.
 
+### Changed
+- Silent updates (idle detection, auto-login) no longer pop open the changelog when "Automatically open changelog after updates" is enabled.
+
 ### Removed
 - Pulled newPost8 as it was meant to be in the memescape, which it already was. No need for duplicate sounds around here. No sir. Not us.
 - Removed ship/combat/hullCritical and ship/combat/componentCritical sounds as they were identical to alarm/criticalHull and alarm/criticalComp.

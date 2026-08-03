@@ -935,6 +935,7 @@ function OnPluginBroadcast(msg, id, name, text)
       -- theme stays reserved for stable updates and normal connect-time reloads.
       local files = nil
       local channel = nil
+      local quiet = false
       if text and text ~= "success" then
         local ok, data = pcall(json.decode.decode, text)
         if ok and data then
@@ -944,6 +945,7 @@ function OnPluginBroadcast(msg, id, name, text)
           if data.channel then
             channel = data.channel
           end
+          quiet = data.quiet == true
         end
       end
       if channel == "dev" then
@@ -951,7 +953,9 @@ function OnPluginBroadcast(msg, id, name, text)
       else
         mplay("music/theme")
       end
-      if config:get_option("automatic_changelog").value == "yes" then
+      -- Suppress the changelog popup for silent updates (idle detection,
+      -- auto-login updates) so we don't steal focus from an unattended user.
+      if not quiet and config:get_option("automatic_changelog").value == "yes" then
         notepad_changelog(nil, nil, nil, files, channel)
       end
     elseif msg == 888 then

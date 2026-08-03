@@ -49,6 +49,7 @@ function check_update_result()
   local path = require("pl.path")
   local homedir = GetInfo(66)  -- MUSHclient directory
   local update_result_file = path.join(homedir, ".update-result")
+  local quiet_marker = path.join(homedir, ".update-quiet")
 
   if not path.isfile(update_result_file) then
     processed = false
@@ -61,7 +62,10 @@ function check_update_result()
 
   processed = true
   process_update_result(update_result_file)
-  DoAfterSpecial(DELETE_DELAY, string.format("os.remove(%q)", update_result_file), sendto.script)
+  DoAfterSpecial(DELETE_DELAY, string.format(
+    "os.remove(%q); os.remove(%q)",
+    update_result_file, quiet_marker
+  ), sendto.script)
 end
 
 function process_update_result(filepath)
@@ -158,12 +162,21 @@ function handle_success(data)
         channel = channel:match("^%s*(.-)%s*$") or "stable"
       end
 
+      -- Silent-update marker set by updater.xml for idle/auto-login runs.
+      local quiet = false
+      local qm = io.open(homedir .. ".update-quiet", "r")
+      if qm then
+        qm:close()
+        quiet = true
+      end
+
       -- Broadcast success with file list and channel as JSON
       local json_encode = require("json.encode")
       local broadcast_data = json_encode.encode({
         result = "success",
         files = all_changed_files,
-        channel = channel
+        channel = channel,
+        quiet = quiet
       })
       BroadcastPlugin(777, broadcast_data)
     else

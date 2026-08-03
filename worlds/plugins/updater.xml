@@ -361,6 +361,8 @@ function update_run(quiet, restart_action)
   restart_action = restart_action or "notify"
   if not quiet then
     Note("Checking for updates...")
+    -- Clear any stale quiet marker so a manual update isn't mistaken for silent.
+    os.remove(GetInfo(66) .. ".update-quiet")
   end
 
   -- First, check if updates are available (hidden, no console flash!)
@@ -411,6 +413,11 @@ function update_run(quiet, restart_action)
 
     if response == "yes" then
       if quiet then
+        -- Marker so post-update handlers know this run was silent and can
+        -- suppress noisy UI (e.g. the changelog popup).
+        local marker = GetInfo(66) .. ".update-quiet"
+        local mf = io.open(marker, "w")
+        if mf then mf:close() end
         -- Unattended update: never pop a window that steals focus.
         if info.restart_required then
           if restart_action == "auto" then

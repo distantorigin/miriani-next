@@ -543,9 +543,9 @@ function checkDamageLine(line)
     if damage and damage >= 80 and damage < 100 then
       local name = component:match("^%s*(.-)%s*$"):upper()
       if name == "HULL" then
-        mplay("ship/combat/hullCritical", "ship", nil, nil, nil, nil, nil, nil, nil, -20)
+        mplay("ship/alarm/criticalHull", "ship", nil, nil, nil, nil, nil, nil, nil, -20)
       else
-        mplay("ship/combat/componentCritical", "ship", nil, nil, nil, nil, nil, nil, nil, -15)
+        mplay("ship/alarm/criticalComp", "ship", nil, nil, nil, nil, nil, nil, nil, -15)
       end
       EnableTrigger("damage_reader", false)
       return

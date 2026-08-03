@@ -6,6 +6,9 @@
 - Added a begawk sound.
 - Added some new dance sounds.
 
+### Removed
+- Pulled newPost8 as it was meant to be in the memescape, which it already was. No need for duplicate sounds around here. No sir. Not us.
+
 ## Version 4.2.10
 
 ### New

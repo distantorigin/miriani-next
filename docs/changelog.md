@@ -1,13 +1,13 @@
 # Miriani-Next Changelog
 
-## Version 4.2.11 (In Progress)
+## Version 4.2.11
 
 ### New
 - Added a begawk sound.
 - Added some new dance sounds.
 
 ### Changed
-- Silent updates (idle detection, auto-login) no longer pop open the changelog when "Automatically open changelog after updates" is enabled.
+- Quiet updates (via idle detection and upon login) no longer pop open the changelog when "Automatically open changelog after updates" is enabled.
 
 ### Removed
 - Pulled newPost8 as it was meant to be in the memescape, which it already was. No need for duplicate sounds around here. No sir. Not us.

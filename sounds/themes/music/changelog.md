@@ -1,5 +1,10 @@
 # Music Theme Changelog
 
+## Version 4.2.12 (In Progress)
+
+### New
+- Added a sound for the push social.
+
 ## Version 4.2.09
 
 ### New

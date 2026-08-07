@@ -3,6 +3,7 @@
 ## Version 4.2.12 (In Progress)
 ### New
 - Play a sound when a target ship moves from locked coordinates. (Thanks Emily!)
+- Added sound support for the push (and by extention the shove) social.
 
 ## Version 4.2.11
 

@@ -1,5 +1,13 @@
 # Memescape Theme Changelog
 
+## Version 4.2.12 (In Progress)
+
+### New
+- Added two new whistle sounds.
+
+### Removed
+- yodel3 was removed because it was a duplicate of yodel1.
+
 ## Version 4.2.08
 
 ### Fixed

@@ -78,6 +78,10 @@ computer_actions = {
     sound = "ship/combat/noTarget",
     group = "ship"
   },
+  ["The target has moved from the locked coordinates."] = {
+    sound = "ship/combat/noLock",
+    group = "ship"
+  },
   ["There is no target at those coordinates. Aborting."] = {
     sound = "misc/Uncategorized/cancel",
     group = "ship"

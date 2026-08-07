@@ -1,5 +1,9 @@
 # Miriani-Next Changelog
 
+## Version 4.2.12 (In Progress)
+### New
+- Play a sound when a target ship moves from locked coordinates. (Thanks Emily!)
+
 ## Version 4.2.11
 
 ### New

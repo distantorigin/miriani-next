@@ -5,6 +5,9 @@
 - Play a sound when a target ship moves from locked coordinates. (Thanks Emily!)
 - Added sound support for the push (and by extention the shove) social.
 
+### Changed
+- Trimmed silence from socials/neuter/pimp2.
+
 ## Version 4.2.11
 
 ### New

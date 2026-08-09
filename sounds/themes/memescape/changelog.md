@@ -1,6 +1,6 @@
 # Memescape Theme Changelog
 
-## Version 4.2.12 (In Progress)
+## Version 4.2.12
 
 ### New
 - Added two new whistle sounds.

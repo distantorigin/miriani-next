@@ -6,7 +6,10 @@
 - Trimmed silence from the pimp sound in neuter.
 
 ### New
-- Added new wake up, disconnect, private comm and scream sounds.
+- Added new private comm and scream sounds.
+
+### Removed
+- Moved the newly added wake up and disconnect sounds to the main pack, which is where they should have gone in the first place.
 
 ## Version 4.2.12
 

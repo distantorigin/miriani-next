@@ -4,6 +4,7 @@
 
 ### New
 - Added two new escalator ambiances.
+- Moved the new wake up and disconnected sounds out of memescape to the main pack.
 
 ## Version 4.2.12
 ### New

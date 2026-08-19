@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.13 (In Progress)
+
+### New
+- Added two new escalator ambiances.
+
 ## Version 4.2.12
 ### New
 - Play a sound when a target ship moves from locked coordinates. (Thanks Emily!)

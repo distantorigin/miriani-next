@@ -282,12 +282,14 @@ function config_menu.show_group(group_name)
       secondary_menu[sound_key] = string.format("%s [%s]", sound.name, status)
     end
   elseif actual_group_key == "socials_all" then
-    -- Special handling for "All sounds" - show all individual social toggles from all categories
+    -- Special handling for "All sounds" - show all individual social toggles except dances.
     for _, group_key in ipairs(get_social_categories()) do
-      local category_options = config:render_menu_list(group_key)
-      if type(category_options) == 'table' then
-        for key, value in pairs(category_options) do
-          secondary_menu[key] = value
+      if group_key ~= "socials_dances" then
+        local category_options = config:render_menu_list(group_key)
+        if type(category_options) == 'table' then
+          for key, value in pairs(category_options) do
+            secondary_menu[key] = value
+          end
         end
       end
     end

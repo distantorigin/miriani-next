@@ -4,6 +4,7 @@
 
 ### Changed
 - Trimmed silence from the pimp sound in neuter.
+- Replaced wake_up4 with a sound of higher quality.
 
 ### New
 - Added new private comm and scream sounds.

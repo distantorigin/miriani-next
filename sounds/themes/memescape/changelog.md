@@ -9,7 +9,7 @@
 - Added new private comm and scream sounds.
 - Added another new scream sound. Muahahaha.
 - Added another wake up sound, as well as ooc, announcement and changelog ones.
-
+- Added a new oops sound and invasion incoming sound.
 ### Removed
 - Moved the newly added wake up and disconnect sounds to the main pack, which is where they should have gone in the first place.
 

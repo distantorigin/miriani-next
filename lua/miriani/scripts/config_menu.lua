@@ -104,18 +104,34 @@ local function show_player_text_tone(player_name)
 
   local title = string.format("%s Text Tones", entry.name)
 
-  local function browse_for_tone(tone_type)
+  local function browse_for_tone(tone_type, start_dir)
     local sound_browser = require("lua/miriani/scripts/sound_browser")
     sound_browser.browse({
       title = string.format("Choose %s tone for %s",
         tone_type == "comms" and "communicator" or "say", entry.name),
+      start_dir = start_dir,
       callback = function(selected_path)
         if selected_path then
-          player_text_tones.set(entry.name, tone_type, selected_path)
-          config:save()
           play(selected_path, "communication")
-          notify("info", string.format("%s tone set for %s.",
-            tone_type == "comms" and "Communicator" or "Say", entry.name))
+          local tone_label = tone_type == "comms" and "communicator" or "say"
+          dialog.confirm({
+            title = string.format("Use %s as the %s tone for %s?",
+              display_tone_path(selected_path), tone_label, entry.name),
+            callback = function(confirm_result, confirm_reason)
+              if confirm_result and confirm_result.confirmed then
+                player_text_tones.set(entry.name, tone_type, selected_path)
+                config:save()
+                notify("info", string.format("%s tone set for %s.",
+                  tone_type == "comms" and "Communicator" or "Say", entry.name))
+                show_player_text_tone(entry.name)
+              elseif confirm_result then
+                browse_for_tone(tone_type, selected_path:match("^(.*/)") or "")
+              else
+                show_player_text_tone(entry.name)
+              end
+            end
+          })
+          return
         end
         show_player_text_tone(entry.name)
       end

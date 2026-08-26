@@ -89,8 +89,10 @@ local function show_player_text_tone(player_name)
 
   local choices = {["0"] = "Go back"}
   local actions = {}
+  local next_choice = 1
   local function add_choice(label, action)
-    local key = tostring(#actions + 1)
+    local key = tostring(next_choice)
+    next_choice = next_choice + 1
     choices[key] = label
     actions[key] = action
   end

@@ -96,18 +96,55 @@ local function show_player_text_tone(player_name)
     choices[key] = label
     actions[key] = action
   end
-  add_choice("Choose comms tone...", "choose_comms")
-  add_choice("Choose say tone...", "choose_say")
-  if entry.comms then add_choice("Clear comms tone", "clear_comms") end
-  if entry.say then add_choice("Clear say tone", "clear_say") end
+  add_choice(string.format("Communicator Tone (%s)",
+    entry.comms and display_tone_path(entry.comms) or "Unset"), "choose_comms")
+  add_choice(string.format("Say Tone (%s)",
+    entry.say and display_tone_path(entry.say) or "Unset"), "choose_say")
   add_choice("Remove player", "remove")
 
-  local title = string.format(
-    "%s Text Tones\nComms: %s\nSay: %s",
-    entry.name,
-    display_tone_path(entry.comms),
-    display_tone_path(entry.say)
-  )
+  local title = string.format("%s Text Tones", entry.name)
+
+  local function browse_for_tone(tone_type)
+    local sound_browser = require("lua/miriani/scripts/sound_browser")
+    sound_browser.browse({
+      title = string.format("Choose %s tone for %s",
+        tone_type == "comms" and "communicator" or "say", entry.name),
+      callback = function(selected_path)
+        if selected_path then
+          player_text_tones.set(entry.name, tone_type, selected_path)
+          config:save()
+          notify("info", string.format("%s tone set for %s.",
+            tone_type == "comms" and "Communicator" or "Say", entry.name))
+        end
+        show_player_text_tone(entry.name)
+      end
+    })
+  end
+
+  local function show_set_tone_menu(tone_type)
+    local tone_label = tone_type == "comms" and "Communicator" or "Say"
+    dialog.menu({
+      title = string.format("%s Tone for %s\nCurrently: %s",
+        tone_label, entry.name, display_tone_path(entry[tone_type])),
+      choices = {
+        ["0"] = "Go back",
+        ["1"] = "Choose New Tone...",
+        ["2"] = "Clear Tone",
+      },
+      callback = function(tone_result, tone_reason)
+        if not tone_result or tone_result.key == "0" then
+          show_player_text_tone(entry.name)
+        elseif tone_result.key == "1" then
+          browse_for_tone(tone_type)
+        elseif tone_result.key == "2" then
+          player_text_tones.set(entry.name, tone_type, nil)
+          config:save()
+          notify("info", string.format("%s tone cleared for %s.", tone_label, entry.name))
+          show_player_text_tone(entry.name)
+        end
+      end
+    })
+  end
 
   dialog.menu({
     title = title,
@@ -121,26 +158,11 @@ local function show_player_text_tone(player_name)
       local action = actions[result.key]
       if action == "choose_comms" or action == "choose_say" then
         local tone_type = action == "choose_comms" and "comms" or "say"
-        local sound_browser = require("lua/miriani/scripts/sound_browser")
-        sound_browser.browse({
-          title = string.format("Choose %s tone for %s", tone_type, entry.name),
-          callback = function(selected_path)
-            if selected_path then
-              player_text_tones.set(entry.name, tone_type, selected_path)
-              config:save()
-              notify("info", string.format("%s tone set for %s.",
-                tone_type == "comms" and "Comms" or "Say", entry.name))
-            end
-            show_player_text_tone(entry.name)
-          end
-        })
-      elseif action == "clear_comms" or action == "clear_say" then
-        local tone_type = action == "clear_comms" and "comms" or "say"
-        player_text_tones.set(entry.name, tone_type, nil)
-        config:save()
-        notify("info", string.format("%s tone cleared for %s.",
-          tone_type == "comms" and "Comms" or "Say", entry.name))
-        show_player_text_tone(entry.name)
+        if entry[tone_type] then
+          show_set_tone_menu(tone_type)
+        else
+          browse_for_tone(tone_type)
+        end
       elseif action == "remove" then
         dialog.confirm({
           title = string.format("Remove all text tones for %s?", entry.name),
@@ -494,7 +516,7 @@ function config_menu.show_group(group_name)
       local comms_status = entry.comms and "Set" or "Not set"
       local say_status = entry.say and "Set" or "Not set"
       secondary_menu[string.format("%03d_player_text_tone", i)] = string.format(
-        "%s [Comms: %s, Say: %s]", entry.name, comms_status, say_status)
+        "%s [Communicator: %s, Say: %s]", entry.name, comms_status, say_status)
     end
 
   else

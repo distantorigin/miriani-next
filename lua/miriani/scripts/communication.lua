@@ -117,7 +117,7 @@ function player_text_tones.play(player, tone_type, fallback, group,
     config:save()
     notify("critical", string.format(
       "%s tone for %s was turned off because the sound file could not be found: %s",
-      tone_type == "comms" and "Comms" or "Say", player, custom_tone))
+      tone_type == "comms" and "Communicator" or "Say", player, custom_tone))
   end
 
   mplay(fallback, group, interrupt, pan, loop, slide, sec,

@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.14 (In Progress)
+## Version 4.2.14
 
 ### New
 - Added a system for per-player text tones. Text tones allow you to set a custom sound that replaces the sound used for speech or private comms on an individual basis for each player. If you wish to add new sounds, create an "alternate" folder inside sounds/ and add them there; the in-client browser will see them. They must be formatted as Ogg Vorbis (.ogg). Type 'conf tones' to begin.

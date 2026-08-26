@@ -132,8 +132,29 @@ function player_text_tones.play_from_message(message, tone_type, fallback, group
     interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
 end
 
+-- Plays a player's tone on top of the regular sound instead of replacing it.
+function player_text_tones.play_over(player, tone_type, sound, group,
+    interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
+  if player_text_tones.play(player, tone_type, sound, group,
+      interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset) then
+    mplay(sound, group, interrupt, pan, loop, slide, sec,
+      bypass_foreground, frequency, volume_offset)
+    return true
+  end
+  return false
+end
+
+function player_text_tones.play_over_from_message(message, tone_type, sound, group,
+    interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
+  local player = player_text_tones.find_player(message)
+  return player_text_tones.play_over(player, tone_type, sound, group,
+    interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
+end
+
 play_player_text_tone = player_text_tones.play
 play_player_text_tone_from_message = player_text_tones.play_from_message
+play_player_text_tone_over = player_text_tones.play_over
+play_player_text_tone_over_from_message = player_text_tones.play_over_from_message
 
 ImportXML([=[
 <triggers>
@@ -347,7 +368,12 @@ ImportXML([=[
 
    local display_text = "[" .. display_name .. "] " .. display_message
 
-   mplay("comm/"..sound_name, "communication")
+   if channel_name == "OOC" then
+     play_player_text_tone_over_from_message(message, "comms", "comm/"..sound_name,
+       "communication")
+   else
+     mplay("comm/"..sound_name, "communication")
+   end
    channel(display_name, "[" .. display_name .. "] " .. display_message, {"communication", sound_name})
    print(display_text)
   </send>
@@ -491,11 +517,11 @@ ImportXML([=[
    if "%2" == "ship-wide" or "%2" == "structure-wide" then
     print_color({"[SOOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
     channel("sooc", "[SOOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
-    mplay ("comm/sooc", "communication")
+    play_player_text_tone_over(speaker, "comms", "comm/sooc", "communication")
    else
     print_color({"[ROOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
    channel(name, "[ROOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
-   mplay ("comm/rooc", "communication")
+   play_player_text_tone_over(speaker, "comms", "comm/rooc", "communication")
    end -- if ship wide
   </send>
   </trigger>

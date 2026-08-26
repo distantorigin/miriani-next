@@ -168,8 +168,7 @@ ImportXML([=[
      end
    end
 
-   play_player_text_tone_from_message(speaker_part .. " " .. message,
-     "comms", "comm/"..sound_file, "communication")
+   mplay ("comm/"..sound_file, "communication")
 
    -- Format output based on shorten_communication setting
    local display_output
@@ -348,7 +347,7 @@ ImportXML([=[
 
    local display_text = "[" .. display_name .. "] " .. display_message
 
-   play_player_text_tone_from_message(message, "comms", "comm/"..sound_name, "communication")
+   mplay("comm/"..sound_name, "communication")
    channel(display_name, "[" .. display_name .. "] " .. display_message, {"communication", sound_name})
    print(display_text)
   </send>
@@ -492,11 +491,11 @@ ImportXML([=[
    if "%2" == "ship-wide" or "%2" == "structure-wide" then
     print_color({"[SOOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
     channel("sooc", "[SOOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
-    play_player_text_tone(speaker, "comms", "comm/sooc", "communication")
+    mplay ("comm/sooc", "communication")
    else
     print_color({"[ROOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
    channel(name, "[ROOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
-   play_player_text_tone(speaker, "comms", "comm/rooc", "communication")
+   mplay ("comm/rooc", "communication")
    end -- if ship wide
   </send>
   </trigger>
@@ -743,7 +742,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   play_player_text_tone_from_message("%1", "comms", "comm/sector", "communication")
+   mplay ("comm/sector", "communication")
    print_color({"[Gen] ", "default"}, {"%1", "pub_comm"})
    channel(name, "[Gen] %1", {"ship", "communication"})
   </send>
@@ -759,7 +758,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   play_player_text_tone("%1", "comms", "comm/broadcast", "communication")
+   mplay ("comm/broadcast", "communication")
    print_color({"%1 broadcasts: ", "default"}, {"%2", "pub_comm"})
    channel(name, "%1 broadcasts: %2", {"ship", "communication"})
   </send>
@@ -774,7 +773,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   play_player_text_tone_from_message("%0", "comms", "comm/alliance", "communication")
+   mplay ("comm/alliance", "communication")
    channel("alliance", "%0", {"alliance", "communication"})
   </send>
   </trigger>
@@ -791,7 +790,7 @@ ImportXML([=[
   <send>
    local ship_name = "%2"
    local message = "%3"
-   play_player_text_tone_from_message(message, "comms", "comm/relay", "communication")
+   mplay ("comm/relay", "communication")
 
    -- Apply shortening: remove comma and quotes, keep non-communication verbs
    local display_message = message
@@ -854,7 +853,7 @@ ImportXML([=[
    local speaker = "%1"
    local message = "%2"
 
-   play_player_text_tone(speaker, "comms", "comm/transmit", "communication")
+   mplay ("comm/transmit", "communication")
 
    -- Format output based on shorten_communication setting
    local output
@@ -936,7 +935,7 @@ ImportXML([=[
      -- This is our organization
      local file = require("pl.path").isfile(
      config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/"..channel_name..EXTENSION) and channel_name or "organization"
-     play_player_text_tone_from_message(message, "comms", "comm/"..file, "communication")
+     mplay("comm/"..file, "communication")
 
      -- Apply shortening
      local display_message = message
@@ -958,7 +957,7 @@ ImportXML([=[
 
    elseif detected_courier and channel_name == detected_courier then
      -- This is our courier company
-     play_player_text_tone_from_message(message, "comms", "comm/courier", "communication")
+     mplay("comm/courier", "communication")
 
      -- Apply shortening
      local display_message = message

@@ -1,6 +1,6 @@
 # Memescape Theme Changelog
 
-## Version 4.2.13 (In Progress)
+## Version 4.2.13
 
 ### Changed
 - Trimmed silence from the pimp sound in neuter.

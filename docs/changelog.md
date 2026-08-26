@@ -1,10 +1,13 @@
 # Miriani-Next Changelog
 
-## Version 4.2.13 (In Progress)
+## Version 4.2.13
 
 ### New
 - Added two new escalator ambiances.
 - Moved the new wake up and disconnected sounds out of memescape to the main pack.
+
+### Changed
+- Exclude dances from the all socials menu in 'conf socials'.
 
 ## Version 4.2.12
 ### New

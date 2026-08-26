@@ -60,6 +60,7 @@ function Config:init(options, audio)
     self.audio = {}
     self.sound_groups = {}
     self.ignored_sounds = {}
+    self.player_text_tones = {}
     return self.consts.error.OK
   end
 
@@ -80,6 +81,7 @@ function Config:init(options, audio)
   -- Start with defaults
   self.options = deep_copy(vars.options)
   self.audio = deep_copy(vars.audio)
+  self.player_text_tones = {}
 
   -- Dynamically inject social options from socials database
   if get_all_socials and get_social_info then
@@ -228,6 +230,9 @@ function Config:apply_extra_data(data)
   if data.ignored_sounds then
     self.ignored_sounds = data.ignored_sounds
   end
+  if type(data.player_text_tones) == "table" then
+    self.player_text_tones = data.player_text_tones
+  end
 end
 
 function Config:load()
@@ -288,6 +293,7 @@ function Config:save()
     force_additive_mode = self.force_additive_mode or nil,
     sound_groups = next(self.sound_groups) and self.sound_groups or nil,
     ignored_sounds = next(self.ignored_sounds) and self.ignored_sounds or nil,
+    player_text_tones = next(self.player_text_tones) and self.player_text_tones or nil,
   }
 
   local serialize = require("serialize")

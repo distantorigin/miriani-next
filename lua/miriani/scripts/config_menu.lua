@@ -17,7 +17,7 @@ local variant_sounds = {
 }
 
 -- Special groups that have no regular options
-local special_groups = {"audio groups", "sound variants", "themes", "mutes"}
+local special_groups = {"audio groups", "sound variants", "themes", "text tones", "mutes"}
 
 -- Get social categories dynamically from socials module
 local function get_social_categories()
@@ -39,7 +39,7 @@ local known_groups = {
   "gags", "socials", "socials_laughter", "socials_distress", "socials_reflex",
   "socials_bodily", "socials_physical", "socials_reaction", "socials_novelty",
   "socials_songs", "socials_dances", "socials_uncategorized", "scan_formats", "buffers", "colors", "developer",
-  "themes", "mutes", "updates"
+  "themes", "text tones", "mutes", "updates"
 }
 
 -- Helper function to strip trailing punctuation from option descriptions
@@ -72,6 +72,110 @@ local function validate_option_value(option, value)
     return nil, "Passwords cannot be set inline."
   end
   return value, nil
+end
+
+local function display_tone_path(sound_path)
+  if not sound_path or sound_path == "" then return "Not set" end
+  return sound_path:gsub("%.ogg$", ""):gsub("%.wav$", "")
+end
+
+local function show_player_text_tone(player_name)
+  local entry = player_text_tones.get_entry(player_name)
+  if not entry then
+    notify("critical", string.format("No text tones are configured for %s.", player_name))
+    config_menu.show_group("text tones")
+    return
+  end
+
+  local choices = {["0"] = "Go back"}
+  local actions = {}
+  local function add_choice(label, action)
+    local key = tostring(#actions + 1)
+    choices[key] = label
+    actions[key] = action
+  end
+  add_choice("Choose comms tone...", "choose_comms")
+  add_choice("Choose say tone...", "choose_say")
+  if entry.comms then add_choice("Clear comms tone", "clear_comms") end
+  if entry.say then add_choice("Clear say tone", "clear_say") end
+  add_choice("Remove player", "remove")
+
+  local title = string.format(
+    "%s Text Tones\nComms: %s\nSay: %s",
+    entry.name,
+    display_tone_path(entry.comms),
+    display_tone_path(entry.say)
+  )
+
+  dialog.menu({
+    title = title,
+    choices = choices,
+    callback = function(result, reason)
+      if not result or result.key == "0" then
+        config_menu.show_group("text tones")
+        return
+      end
+
+      local action = actions[result.key]
+      if action == "choose_comms" or action == "choose_say" then
+        local tone_type = action == "choose_comms" and "comms" or "say"
+        local sound_browser = require("lua/miriani/scripts/sound_browser")
+        sound_browser.browse({
+          title = string.format("Choose %s tone for %s", tone_type, entry.name),
+          callback = function(selected_path)
+            if selected_path then
+              player_text_tones.set(entry.name, tone_type, selected_path)
+              config:save()
+              notify("info", string.format("%s tone set for %s.",
+                tone_type == "comms" and "Comms" or "Say", entry.name))
+            end
+            show_player_text_tone(entry.name)
+          end
+        })
+      elseif action == "clear_comms" or action == "clear_say" then
+        local tone_type = action == "clear_comms" and "comms" or "say"
+        player_text_tones.set(entry.name, tone_type, nil)
+        config:save()
+        notify("info", string.format("%s tone cleared for %s.",
+          tone_type == "comms" and "Comms" or "Say", entry.name))
+        show_player_text_tone(entry.name)
+      elseif action == "remove" then
+        dialog.confirm({
+          title = string.format("Remove all text tones for %s?", entry.name),
+          callback = function(confirm_result, confirm_reason)
+            if confirm_result and confirm_result.confirmed then
+              player_text_tones.remove(entry.name)
+              config:save()
+              notify("info", string.format("Removed text tones for %s.", entry.name))
+              config_menu.show_group("text tones")
+            else
+              show_player_text_tone(entry.name)
+            end
+          end
+        })
+      end
+    end
+  })
+end
+
+local function prompt_for_player_text_tone()
+  dialog.prompt({
+    title = "Add Player to Text Tones",
+    message = "Enter the player's name. Matching is exact and case-insensitive.",
+    allow_blank = false,
+    callback = function(result, reason)
+      if result and result.value then
+        local entry, err = player_text_tones.add(result.value)
+        if entry then
+          config:save()
+          show_player_text_tone(entry.name)
+          return
+        end
+        notify("critical", err)
+      end
+      config_menu.show_group("text tones")
+    end
+  })
 end
 
 -- Main configuration menu
@@ -382,6 +486,15 @@ function config_menu.show_group(group_name)
       secondary_menu["_ignored_" .. tostring(i)] = display
     end
 
+  elseif actual_group_key == "text tones" then
+    secondary_menu["00_add_player_text_tone"] = "Add player..."
+    for i, entry in ipairs(player_text_tones.list()) do
+      local comms_status = entry.comms and "Set" or "Not set"
+      local say_status = entry.say and "Set" or "Not set"
+      secondary_menu[string.format("%03d_player_text_tone", i)] = string.format(
+        "%s [Comms: %s, Say: %s]", entry.name, comms_status, say_status)
+    end
+
   else
     -- Normal menu rendering for other groups
     secondary_menu = config:render_menu_list(actual_group_key)
@@ -402,7 +515,7 @@ function config_menu.show_group(group_name)
   for key in pairs(secondary_menu) do
     table.insert(sorted_keys, key)
   end
-  if actual_group_key == "socials" or actual_group_key:match("^socials_") or actual_group_key == "mutes" or actual_group_key == "themes" or actual_group_key == "themes_advanced" then
+  if actual_group_key == "socials" or actual_group_key:match("^socials_") or actual_group_key == "mutes" or actual_group_key == "text tones" or actual_group_key == "themes" or actual_group_key == "themes_advanced" then
     -- Sort by key to preserve intended order (00_ prefix sorts action first)
     table.sort(sorted_keys)
   else
@@ -474,6 +587,23 @@ end
 -- Edit a specific option
 -- If skip_menu is true, don't show the group menu after editing (for direct command access)
 function config_menu.edit_option(option_key, group_name, skip_menu)
+  if option_key == "00_add_player_text_tone" then
+    prompt_for_player_text_tone()
+    return
+  end
+
+  local player_tone_index = tonumber(option_key:match("^(%d+)_player_text_tone$"))
+  if player_tone_index then
+    local entry = player_text_tones.list()[player_tone_index]
+    if entry then
+      show_player_text_tone(entry.name)
+    else
+      notify("critical", "That player text tone entry no longer exists.")
+      if not skip_menu then config_menu.show_group(group_name) end
+    end
+    return
+  end
+
   -- Special handling for socials submenu navigation
   if option_key:match("_submenu_socials_") then
     local subgroup = option_key:match("_submenu_(socials_.+)$")
@@ -971,6 +1101,35 @@ end
 
 -- Find and edit option by partial name or numeric index
 function config_menu.find_and_edit(group_name, search_term)
+  -- The command alias splits on the first word, so a multi-word category such
+  -- as `conf text tones` arrives as group="text", option="tones". Recombine
+  -- category names before treating the remaining text as an option search.
+  local combined_input = group_name .. " " .. search_term
+  local combined_lower = string.lower(combined_input)
+  local exact_group = nil
+  local prefix_group = nil
+  local function consider_multiword_groups(groups)
+    for _, candidate in ipairs(groups) do
+      local candidate_lower = string.lower(candidate)
+      if candidate_lower == combined_lower then
+        exact_group = candidate
+      elseif combined_lower:sub(1, #candidate_lower + 1) == candidate_lower .. " " and
+          (not prefix_group or #candidate > #prefix_group) then
+        prefix_group = candidate
+      end
+    end
+  end
+  consider_multiword_groups(known_groups)
+  consider_multiword_groups(special_groups)
+
+  if exact_group then
+    config_menu.show_group(exact_group)
+    return
+  elseif prefix_group then
+    group_name = prefix_group
+    search_term = combined_input:sub(#prefix_group + 2):match("^%s*(.-)%s*$")
+  end
+
   -- If group_name is partial, try to find the actual group key
   local actual_group_key = group_name
 
@@ -1183,6 +1342,32 @@ function config_menu.find_and_edit(group_name, search_term)
 
     mplay("misc/Uncategorized/cancel")
     notify("critical", string.format("Could not find muted sound matching '%s'.", search_term))
+    return
+  end
+
+  if actual_group_key == "text tones" then
+    local search_lower = string.lower(search_term)
+    if search_lower == "add" or search_lower == "new" then
+      prompt_for_player_text_tone()
+      return
+    end
+
+    local entries = player_text_tones.list()
+    local index = tonumber(search_term)
+    if index and entries[index] then
+      show_player_text_tone(entries[index].name)
+      return
+    end
+
+    for _, entry in ipairs(entries) do
+      if string.find(string.lower(entry.name), search_lower, 1, true) then
+        show_player_text_tone(entry.name)
+        return
+      end
+    end
+
+    mplay("misc/Uncategorized/cancel")
+    notify("critical", string.format("Could not find a Text Tones player matching '%s'.", search_term))
     return
   end
 

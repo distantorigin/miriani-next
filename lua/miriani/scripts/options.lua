@@ -191,10 +191,11 @@ local group_metadata = {
   {key = "audio groups", title = "Toggle Sound Categories", order = 21},
   {key = "sound variants", title = "Sound Variants", order = 22},
   {key = "themes", title = "Sound Themes", order = 23},
-  {key = "mutes", title = "Muted Sounds", order = 24},
-  {key = "colors", title = "Color Customization", order = 25},
-  {key = "screen reader", title = "Screen Reader Integration", order = 26},
-  {key = "developer", title = "Developer Options", order = 27},
+  {key = "text tones", title = "Text Tones", order = 24},
+  {key = "mutes", title = "Muted Sounds", order = 25},
+  {key = "colors", title = "Color Customization", order = 26},
+  {key = "screen reader", title = "Screen Reader Integration", order = 27},
+  {key = "developer", title = "Developer Options", order = 28},
 } -- group_metadata
 
 return {

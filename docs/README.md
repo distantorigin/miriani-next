@@ -227,6 +227,7 @@ Miriani-Next uses an interactive, menu-based configuration system. Access it by 
 - **audio groups** - Toggle Sound Categories (dynamic list of discovered sound groups)
 - **sound variants** - Sound Variants (select alternate versions of specific sounds)
 - **themes** - Sound Themes (browse and toggle installed themes)
+- **text tones** - Text Tones (choose distinct communication and say sounds for individual players)
 - **mutes** - Muted Sounds (mute individual sounds by browsing the sound directory)
 - **colors** - Color Customization (14 color picker options for UI elements)
 - **screen reader** - Screen Reader Integration (interrupt settings for different events)
@@ -382,6 +383,9 @@ Some sounds have multiple versions you can choose from:
 - **Airlock Chime**: Airlock chime sound variants
 - **Radio Receiver Transmission Detected**: Radio detection sound variants
 Select your preferred version for each.
+
+**Text Tones** (`conf text tones`)
+Add a player by name, then use the sound browser to choose separate sounds for their channel communication messages and standard or directed in-room says. Specialized alerts for PA/intercom speech, shouts, and whispers keep their dedicated sounds. Player names match exactly without regard to capitalization. A configured tone replaces the normal channel or say sound; messages from other players continue using the usual sounds. Each tone can be cleared independently, or the player can be removed from the list entirely. If a selected sound file can no longer be found, that tone is automatically cleared, a critical notification explains what was turned off, and the normal sound resumes.
 
 **Sound Themes** (`conf theme`)
 Browse and toggle sound themes. Selecting a theme opens a detail panel with author, description, mode, file count and size, and last updated date. From there you can toggle it or view its changelog (if it has one). See [Sound Themes](#sound-themes) for more.

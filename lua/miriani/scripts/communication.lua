@@ -1,4 +1,140 @@
 
+-- Per-player replacement sounds for communication and in-room speech.
+player_text_tones = player_text_tones or {}
+
+local function trim_text_tone_value(value)
+  return tostring(value or ""):match("^%s*(.-)%s*$")
+end
+
+local function normalize_text_tone_name(name)
+  return string.lower(trim_text_tone_value(name))
+end
+
+local function text_tone_table()
+  config.player_text_tones = config.player_text_tones or {}
+  return config.player_text_tones
+end
+
+local function valid_text_tone_type(tone_type)
+  return tone_type == "comms" or tone_type == "say"
+end
+
+local function text_tone_sound_exists(relative_path)
+  if not relative_path or relative_path == "" then return false end
+  local path = require("pl.path")
+  return path.isfile(config:get("SOUND_DIRECTORY") .. relative_path)
+end
+
+function player_text_tones.add(name)
+  local display_name = trim_text_tone_value(name)
+  local key = normalize_text_tone_name(display_name)
+  if key == "" then
+    return nil, "Player name cannot be blank."
+  end
+
+  local tones = text_tone_table()
+  if tones[key] then
+    return tones[key], nil
+  end
+
+  tones[key] = {name = display_name}
+  return tones[key], nil
+end
+
+function player_text_tones.get_entry(name)
+  return text_tone_table()[normalize_text_tone_name(name)]
+end
+
+function player_text_tones.get(name, tone_type)
+  if not valid_text_tone_type(tone_type) then return nil end
+  local entry = player_text_tones.get_entry(name)
+  return entry and entry[tone_type] or nil
+end
+
+function player_text_tones.set(name, tone_type, relative_path)
+  if not valid_text_tone_type(tone_type) then
+    return nil, "Invalid text tone type."
+  end
+
+  local entry, err = player_text_tones.add(name)
+  if not entry then return nil, err end
+
+  if relative_path and relative_path ~= "" then
+    entry[tone_type] = relative_path:gsub("\\", "/"):gsub("^/+", "")
+  else
+    entry[tone_type] = nil
+  end
+  return entry, nil
+end
+
+function player_text_tones.remove(name)
+  local key = normalize_text_tone_name(name)
+  if key == "" or not text_tone_table()[key] then return false end
+  text_tone_table()[key] = nil
+  return true
+end
+
+function player_text_tones.list()
+  local entries = {}
+  for _, entry in pairs(text_tone_table()) do
+    if type(entry) == "table" and entry.name then
+      table.insert(entries, entry)
+    end
+  end
+  table.sort(entries, function(a, b)
+    return string.lower(a.name) < string.lower(b.name)
+  end)
+  return entries
+end
+
+-- Extracts the complete speaker from a communication message, then performs
+-- the same exact normalized lookup used by direct speaker captures. Channel
+-- prefixes such as "[General]" are ignored when present.
+function player_text_tones.find_player(message)
+  local text = trim_text_tone_value(message)
+  text = trim_text_tone_value(text:gsub("^%b[]%s*", "", 1))
+  local speaker = text:match("^(.-)%s+transmits?%s+in%s+") or
+    text:match("^(.-)%s+transmits?[,]?%s+") or
+    text:match("^(.-)%s+%a+,%s*") or
+    text:match("^(.-):%s*")
+  local entry = speaker and player_text_tones.get_entry(speaker)
+  return type(entry) == "table" and entry.name or nil
+end
+
+function player_text_tones.play(player, tone_type, fallback, group,
+    interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
+  local custom_tone = player_text_tones.get(player, tone_type)
+  if custom_tone and text_tone_sound_exists(custom_tone) then
+    if not (config and config:is_dnd()) then
+      play(custom_tone, group, interrupt, pan, loop, slide, sec,
+        bypass_foreground, volume_offset, frequency)
+    end
+    return true
+  elseif custom_tone then
+    -- A sound may disappear after an update or a manual file move. Disable
+    -- only the broken tone so the regular sound resumes immediately.
+    player_text_tones.set(player, tone_type, nil)
+    config:save()
+    notify("critical", string.format(
+      "%s tone for %s was turned off because the sound file could not be found: %s",
+      tone_type == "comms" and "Comms" or "Say", player, custom_tone))
+  end
+
+  mplay(fallback, group, interrupt, pan, loop, slide, sec,
+    bypass_foreground, frequency, volume_offset)
+  return false
+end
+
+function player_text_tones.play_from_message(message, tone_type, fallback, group,
+    interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
+  local player = player_text_tones.find_player(message)
+  return player_text_tones.play(player, tone_type, fallback, group,
+    interrupt, pan, loop, slide, sec, bypass_foreground, frequency, volume_offset)
+end
+
+play_player_text_tone = player_text_tones.play
+play_player_text_tone_from_message = player_text_tones.play_from_message
+
 ImportXML([=[
 <triggers>
   <trigger
@@ -32,7 +168,8 @@ ImportXML([=[
      end
    end
 
-   mplay ("comm/"..sound_file, "communication")
+   play_player_text_tone_from_message(speaker_part .. " " .. message,
+     "comms", "comm/"..sound_file, "communication")
 
    -- Format output based on shorten_communication setting
    local display_output
@@ -155,7 +292,8 @@ ImportXML([=[
      end
    end
 
-   mplay ("comm/"..sound_file, "communication", nil, nil, nil, nil, nil, bypass_foreground)
+   play_player_text_tone_from_message(message, "comms", "comm/"..sound_file,
+     "communication", nil, nil, nil, nil, nil, bypass_foreground)
    channel("private", "[%2] " .. display_message, {"private %2", "private", "communication"})
    print_color({"[%2] ", "default"}, {display_message, "priv_comm"})
   </send>
@@ -210,7 +348,7 @@ ImportXML([=[
 
    local display_text = "[" .. display_name .. "] " .. display_message
 
-   mplay("comm/"..sound_name, "communication")
+   play_player_text_tone_from_message(message, "comms", "comm/"..sound_name, "communication")
    channel(display_name, "[" .. display_name .. "] " .. display_message, {"communication", sound_name})
    print(display_text)
   </send>
@@ -238,13 +376,14 @@ ImportXML([=[
 
    if is_direct_to_you then
      -- Direct say TO YOU - use directsay sound and bypass foreground sounds
-     mplay("comm/directsay", "sounds", nil, nil, nil, nil, nil, true)
+     play_player_text_tone(speaker, "say", "comm/directsay", "sounds",
+       nil, nil, nil, nil, nil, true)
    elseif target and target ~= "" then
      -- Direct say to someone else - use normal say sound
-     mplay("comm/say", "communication")
+     play_player_text_tone(speaker, "say", "comm/say", "communication")
    else
      -- General say - use normal say sound
-     mplay("comm/say", "communication")
+     play_player_text_tone(speaker, "say", "comm/say", "communication")
    end
 
    -- Format output based on shorten_communication setting
@@ -302,11 +441,12 @@ ImportXML([=[
 
    if is_direct_to_you then
      -- Direct say TO YOU - use directsay sound and bypass foreground sounds
-     mplay("comm/directsay", "communication", nil, nil, nil, nil, nil, true)
+     play_player_text_tone(speaker, "say", "comm/directsay", "communication",
+       nil, nil, nil, nil, nil, true)
      print_color({speaker .. " [to " .. target .. "]: ", "default"}, {message, "priv_comm"})
    else
      -- Direct say to someone else - use normal say sound
-     mplay("comm/say", "communication")
+     play_player_text_tone(speaker, "say", "comm/say", "communication")
      print_color({speaker .. " [to " .. target .. "]: ", "default"}, {message, "pub_comm"})
    end
 
@@ -352,11 +492,11 @@ ImportXML([=[
    if "%2" == "ship-wide" or "%2" == "structure-wide" then
     print_color({"[SOOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
     channel("sooc", "[SOOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
-    mplay ("comm/sooc", "communication")
+    play_player_text_tone(speaker, "comms", "comm/sooc", "communication")
    else
     print_color({"[ROOC] " .. speaker .. sep, "default"}, {display_msg, "pub_comm"})
    channel(name, "[ROOC] " .. speaker .. sep .. display_msg, {"ooc", "communication"})
-   mplay ("comm/rooc", "communication")
+   play_player_text_tone(speaker, "comms", "comm/rooc", "communication")
    end -- if ship wide
   </send>
   </trigger>
@@ -603,7 +743,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("comm/sector", "communication")
+   play_player_text_tone_from_message("%1", "comms", "comm/sector", "communication")
    print_color({"[Gen] ", "default"}, {"%1", "pub_comm"})
    channel(name, "[Gen] %1", {"ship", "communication"})
   </send>
@@ -619,7 +759,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("comm/broadcast", "communication")
+   play_player_text_tone("%1", "comms", "comm/broadcast", "communication")
    print_color({"%1 broadcasts: ", "default"}, {"%2", "pub_comm"})
    channel(name, "%1 broadcasts: %2", {"ship", "communication"})
   </send>
@@ -634,7 +774,7 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("comm/alliance", "communication")
+   play_player_text_tone_from_message("%0", "comms", "comm/alliance", "communication")
    channel("alliance", "%0", {"alliance", "communication"})
   </send>
   </trigger>
@@ -649,9 +789,9 @@ ImportXML([=[
    sequence="100"
   >
   <send>
-   mplay ("comm/relay", "communication")
    local ship_name = "%2"
    local message = "%3"
+   play_player_text_tone_from_message(message, "comms", "comm/relay", "communication")
 
    -- Apply shortening: remove comma and quotes, keep non-communication verbs
    local display_message = message
@@ -714,7 +854,7 @@ ImportXML([=[
    local speaker = "%1"
    local message = "%2"
 
-   mplay ("comm/transmit", "communication")
+   play_player_text_tone(speaker, "comms", "comm/transmit", "communication")
 
    -- Format output based on shorten_communication setting
    local output
@@ -796,7 +936,7 @@ ImportXML([=[
      -- This is our organization
      local file = require("pl.path").isfile(
      config:get("SOUND_DIRECTORY")..SOUNDPATH.."comm/"..channel_name..EXTENSION) and channel_name or "organization"
-     mplay("comm/"..file, "communication")
+     play_player_text_tone_from_message(message, "comms", "comm/"..file, "communication")
 
      -- Apply shortening
      local display_message = message
@@ -818,7 +958,7 @@ ImportXML([=[
 
    elseif detected_courier and channel_name == detected_courier then
      -- This is our courier company
-     mplay("comm/courier", "communication")
+     play_player_text_tone_from_message(message, "comms", "comm/courier", "communication")
 
      -- Apply shortening
      local display_message = message

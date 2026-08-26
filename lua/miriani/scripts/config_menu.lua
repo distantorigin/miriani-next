@@ -96,9 +96,9 @@ local function show_player_text_tone(player_name)
     choices[key] = label
     actions[key] = action
   end
-  add_choice(string.format("Communicator Tone (%s)",
+  add_choice(string.format("Communicator Tone [%s]",
     entry.comms and display_tone_path(entry.comms) or "Unset"), "choose_comms")
-  add_choice(string.format("Say Tone (%s)",
+  add_choice(string.format("Say Tone [%s]",
     entry.say and display_tone_path(entry.say) or "Unset"), "choose_say")
   add_choice("Remove player", "remove")
 

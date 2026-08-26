@@ -113,6 +113,7 @@ local function show_player_text_tone(player_name)
         if selected_path then
           player_text_tones.set(entry.name, tone_type, selected_path)
           config:save()
+          play(selected_path, "communication")
           notify("info", string.format("%s tone set for %s.",
             tone_type == "comms" and "Communicator" or "Say", entry.name))
         end

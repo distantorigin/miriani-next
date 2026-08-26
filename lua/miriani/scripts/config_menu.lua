@@ -925,9 +925,8 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
       start_dir = "miriani/",
       callback = function(selected_path)
         if selected_path then
-          local normalized = selected_path:gsub("(%d+)(%.%w+)$", "%2")
-          ignore_sound(normalized)
-          local display = normalized:gsub("^miriani/", ""):gsub("%.ogg$", ""):gsub("%.wav$", "")
+          ignore_sound(selected_path)
+          local display = selected_path:gsub("^miriani/", ""):gsub("%.ogg$", ""):gsub("%.wav$", "")
           notify("info", string.format("Muted: %s", display))
         end
         if not skip_menu then config_menu.show_group(group_name) end

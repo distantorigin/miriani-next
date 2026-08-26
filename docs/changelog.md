@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.15 (In Progress)
+
+### Fixed
+- Numbered sounds selected in `conf mutes` are now saved and muted individually instead of being combined under the unnumbered sound name.
+
 ## Version 4.2.14
 
 ### New

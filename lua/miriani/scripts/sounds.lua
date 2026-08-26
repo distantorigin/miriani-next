@@ -339,9 +339,17 @@ load_variant_preferences()
 -- Ignored sounds functions (data stored in config.ignored_sounds)
 
 function is_sound_ignored(file)
-  if config.ignored_sounds[file] then return true end
-  local base = file:gsub("(%d+)(%.%w+)$", "%2")
-  if base ~= file and config.ignored_sounds[base] then return true end
+  local sound_dir = config:get("SOUND_DIRECTORY")
+  local relative_file = file
+  if relative_file:sub(1, #sound_dir) == sound_dir then
+    relative_file = relative_file:sub(#sound_dir + 1)
+  end
+
+  if config.ignored_sounds[relative_file] then return true end
+
+  -- Keep supporting existing family-wide mutes saved without a variant number.
+  local base = relative_file:gsub("(%d+)(%.%w+)$", "%2")
+  if base ~= relative_file and config.ignored_sounds[base] then return true end
   return false
 end
 
@@ -561,6 +569,10 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
     if config:get_option("debug_mode").value == "yes" then
       notify("important", string.format("Unable to find audio file: %s", original_file))
     end
+    return
+  end
+
+  if is_sound_ignored(sfile) then
     return
   end
 
@@ -1179,4 +1191,3 @@ function resume_group(group)
     end
   end
 end
-

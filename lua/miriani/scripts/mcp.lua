@@ -252,6 +252,10 @@ end
 function mcp_dispatch_clear(watcher_id)
   if mcp then
     local watcher = mcp.watcher_registry[watcher_id]
+    if watcher and not watcher.active then
+      mcp.watcher_registry[watcher_id] = nil
+      return
+    end
     if watcher then
       if watcher.pending_change then
         watcher.pending_change = false

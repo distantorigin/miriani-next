@@ -586,6 +586,12 @@ function OnPluginInstall()
  idle_save_delay = tonumber(GetVariable("idle_save_delay")) or 600  -- 10 minutes
  memory_only_mode = GetVariable("channel_history_memory_mode") == "yes"
 
+ -- Initialize tracking before database loading
+ dirty_messages = {}
+ last_saved_id = {}
+ oldest_loaded_id = {}
+ last_message_time = utils.timer()
+
  -- Initialize database (unless memory-only mode)
  local db_initialized = false
  if not memory_only_mode then
@@ -607,12 +613,6 @@ function OnPluginInstall()
      Note(string.format("[Channel History] Idle auto-save enabled: %d seconds", idle_save_delay))
    end
  end
-
- -- Initialize tracking
- dirty_messages = {}
- last_saved_id = {}
- oldest_loaded_id = {}
- last_message_time = utils.timer()
 
  -- Load quick buffers
  load_quick_buffers()

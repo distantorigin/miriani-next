@@ -212,6 +212,7 @@ end
 
 local SEARCH_LINES_PER_CHUNK = 1000
 local active_log_search = nil
+local log_search_continuation_pending = false
 
 local function CloseLogSearchReader(state)
   if not state or not state.reader then return end
@@ -242,7 +243,14 @@ local function OpenLogSearchReader(state)
   return false
 end
 
+local function ScheduleLogSearchContinuation()
+  if log_search_continuation_pending then return end
+  log_search_continuation_pending = true
+  DoAfterSpecial(0.01, "ContinueLogSearch()", sendto.script)
+end
+
 function ContinueLogSearch()
+  log_search_continuation_pending = false
   local state = active_log_search
   if not state then return end
 
@@ -281,7 +289,7 @@ function ContinueLogSearch()
     active_log_search = nil
     DisplaySearchResults(state.results)
   else
-    DoAfterSpecial(0.01, "ContinueLogSearch()", sendto.script)
+    ScheduleLogSearchContinuation()
   end
 end
 
@@ -296,7 +304,9 @@ function StartLogSearch(term, files)
     term_lower = term:lower(),
     results = {},
   }
-  ContinueLogSearch()
+  if not log_search_continuation_pending then
+    ContinueLogSearch()
+  end
 end
 
 function GetDaysAgoFromPath(file_path)

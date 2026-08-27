@@ -920,7 +920,6 @@ function cleanup_all_streams()
   for group, sounds in pairs(streamtable) do
     for _, sound_data in ipairs(sounds) do
       if sound_data.stream then
-        sound_data.stream:Stop()
         sound_data.stream:Free()
       end
     end

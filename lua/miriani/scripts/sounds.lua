@@ -43,6 +43,12 @@ local last_device_check = 0
 local device_check_interval = 5 -- Check every 5 seconds
 local last_position_check = {}
 
+local function forget_stream_position(sound_data)
+  if sound_data.stream then
+    last_position_check[tostring(sound_data.stream.id)] = nil
+  end
+end
+
 -- Helper function to cleanup finished sounds from a group
 local function cleanup_group(group)
   if not streamtable[group] then
@@ -56,6 +62,7 @@ local function cleanup_group(group)
       -- Remove streams that are stopped (0) - keep playing (1), stalled (2), paused (3)
       if status == 0 then
         -- Properly free the BASS stream resource
+        forget_stream_position(sound_data)
         sound_data.stream:Free()
         table.remove(streamtable[group], i)
       elseif status == 1 then
@@ -774,6 +781,7 @@ function stop(group, option, slide, sec)
         sound_data.stream:Stop()
       end
       -- Properly free the BASS stream resource
+      forget_stream_position(sound_data)
       sound_data.stream:Free()
     end
   end
@@ -797,6 +805,7 @@ function add_stream(group, stream, file, volume)
     if old_sound.stream then
       old_sound.stream:Stop()
       -- Properly free the BASS stream resource
+      forget_stream_position(old_sound)
       old_sound.stream:Free()
     end
   end
@@ -889,6 +898,7 @@ function pause_all_sounds()
           if sound_data.stream then
             sound_data.stream:Stop()
             -- Properly free the BASS stream resource
+            forget_stream_position(sound_data)
             sound_data.stream:Free()
           end
         end
@@ -920,11 +930,13 @@ function cleanup_all_streams()
   for group, sounds in pairs(streamtable) do
     for _, sound_data in ipairs(sounds) do
       if sound_data.stream then
+        forget_stream_position(sound_data)
         sound_data.stream:Free()
       end
     end
   end
   streamtable = {}
+  last_position_check = {}
 end
 
 -- Audio group management for volume controls

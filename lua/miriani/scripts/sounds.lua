@@ -98,6 +98,39 @@ local function cleanup_group(group)
   end
 end
 
+local function recover_audio_device()
+  local streams_to_recover = {}
+  for group, sounds in pairs(streamtable) do
+    for _, sound_data in ipairs(sounds) do
+      if sound_data.stream and sound_data.stream:IsActive() == 1 then
+        table.insert(streams_to_recover, {
+          file = sound_data.file,
+          group = group,
+          position = sound_data.stream:GetPosition()
+        })
+      end
+    end
+  end
+
+  cleanup_all_streams()
+
+  local success, message = BASS:RecoverFromDeviceFailure()
+  if not success then
+    return false, message
+  end
+
+  for _, stream_info in ipairs(streams_to_recover) do
+    if stream_info.group ~= "ambiance" then
+      play(stream_info.file, stream_info.group, false, nil, false, nil, nil, true)
+    end
+  end
+
+  clearAmbiance()
+  updateAmbiance()
+
+  return true, message
+end
+
 -- Function to check device health and attempt recovery
 function check_and_recover_device()
   if not BASS then
@@ -105,54 +138,24 @@ function check_and_recover_device()
   end
 
   local health = BASS:CheckDeviceHealth()
-  if health ~= Audio.CONST.error.ok then
-    if config:get_option("debug_mode").value == "yes" then
-      notify("important", string.format("Audio device issue detected (error %d), attempting recovery...", health))
-    end
-
-    -- Store info about currently playing streams for recovery
-    local streams_to_recover = {}
-    for group, sounds in pairs(streamtable) do
-      for _, sound_data in ipairs(sounds) do
-        if sound_data.stream and sound_data.stream:IsActive() == 1 then
-          table.insert(streams_to_recover, {
-            file = sound_data.file,
-            group = group,
-            position = sound_data.stream:GetPosition()
-          })
-        end
-      end
-    end
-
-    -- Stop all current streams before recovery
-    cleanup_all_streams()
-
-    local success, message = BASS:RecoverFromDeviceFailure()
-    if success then
-      if config:get_option("debug_mode").value == "yes" then
-        notify("info", "Audio device recovery successful: " .. message)
-      end
-
-      -- Attempt to restore streams that were playing
-      for _, stream_info in ipairs(streams_to_recover) do
-        if stream_info.group ~= "ambiance" then -- Don't restore ambiance as it may be inappropriate
-          -- Try to restart the sound from where it left off
-          play(stream_info.file, stream_info.group, false, nil, false, nil, nil, true)
-        end
-      end
-
-      clearAmbiance()
-      updateAmbiance()
-
-      return true
-    else
-      if config:get_option("debug_mode").value == "yes" then
-        notify("important", "Audio device recovery failed: " .. message)
-      end
-      return false
-    end
+  if health == Audio.CONST.error.ok then
+    return true
   end
-  return true
+
+  if config:get_option("debug_mode").value == "yes" then
+    notify("important", string.format("Audio device issue detected (error %d), attempting recovery...", health))
+  end
+
+  local success, message = recover_audio_device()
+  if success then
+    if config:get_option("debug_mode").value == "yes" then
+      notify("info", "Audio device recovery successful: " .. message)
+    end
+  elseif config:get_option("debug_mode").value == "yes" then
+    notify("important", "Audio device recovery failed: " .. message)
+  end
+
+  return success
 end
 
 -- Periodic device health check
@@ -663,11 +666,14 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
         notify("important", string.format("Audio device error (code %d), attempting recovery...", stream))
       end
 
-      -- Use the improved recovery mechanism
-      local recovery_success, recovery_message = BASS:RecoverFromDeviceFailure()
+      local recovery_success, recovery_message = recover_audio_device()
       if recovery_success then
         if config:get_option("debug_mode").value == "yes" then
           notify("info", "Device recovery successful: " .. recovery_message)
+        end
+
+        if group == "ambiance" then
+          return
         end
 
         -- Retry playing the sound

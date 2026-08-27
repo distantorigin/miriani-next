@@ -40,7 +40,7 @@ end
 
 -- Device health monitoring variables
 local last_device_check = 0
-local device_check_interval = 5000 -- Check every 5 seconds
+local device_check_interval = 5 -- Check every 5 seconds
 local last_position_check = {}
 
 -- Helper function to cleanup finished sounds from a group
@@ -150,8 +150,8 @@ end
 
 -- Periodic device health check
 local function periodic_device_check()
-  local current_time = GetInfo(304) -- GetInfo(304) returns current time in milliseconds
-  if current_time - last_device_check > device_check_interval then
+  local current_time = utils.timer()
+  if current_time - last_device_check >= device_check_interval then
     check_and_recover_device()
     last_device_check = current_time
   end

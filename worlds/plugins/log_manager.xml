@@ -210,35 +210,93 @@ function GetAllLogFiles()
   return files
 end
 
-function SearchLogFile(file_path, term, max_hits)
-  max_hits = max_hits or 3
-  local results = {}
-  local f = io.open(file_path, "r")
-  if not f then return results end
+local SEARCH_LINES_PER_CHUNK = 1000
+local active_log_search = nil
 
-  local line_num = 0
-  local term_lower = term:lower()
+local function CloseLogSearchReader(state)
+  if not state or not state.reader then return end
 
-  for line in f:lines() do
-    line_num = line_num + 1
-    if line:lower():find(term_lower, 1, true) then
-      table.insert(results, { file = file_path, line_num = line_num, text = line })
-      if #results >= max_hits then break end
-    end
-  end
-
-  f:close()
-  return results
+  local reader = state.reader
+  state.reader = nil
+  pcall(reader.close, reader)
 end
 
-function SearchAllLogs(term)
-  local all_results = {}
-  for _, file_info in ipairs(GetAllLogFiles()) do
-    for _, result in ipairs(SearchLogFile(file_info.path, term, 3)) do
-      table.insert(all_results, result)
+local function AdvanceLogSearchFile(state)
+  CloseLogSearchReader(state)
+  state.file_index = state.file_index + 1
+  state.line_num = 0
+  state.hits = 0
+end
+
+local function OpenLogSearchReader(state)
+  local file_info = state.files[state.file_index]
+  if not file_info then return false end
+
+  local ok, reader = pcall(io.open, file_info.path, "r")
+  if ok and reader then
+    state.reader = reader
+    return true
+  end
+
+  AdvanceLogSearchFile(state)
+  return false
+end
+
+function ContinueLogSearch()
+  local state = active_log_search
+  if not state then return end
+
+  local reads = 0
+  while active_log_search == state and
+      state.file_index <= #state.files and
+      reads < SEARCH_LINES_PER_CHUNK do
+    if not state.reader then
+      OpenLogSearchReader(state)
+    else
+      reads = reads + 1
+      local ok, line = pcall(state.reader.read, state.reader, "*l")
+      if not ok or line == nil then
+        AdvanceLogSearchFile(state)
+      else
+        state.line_num = state.line_num + 1
+        if line:lower():find(state.term_lower, 1, true) then
+          table.insert(state.results, {
+            file = state.files[state.file_index].path,
+            line_num = state.line_num,
+            text = line,
+          })
+          state.hits = state.hits + 1
+          if state.hits >= 3 then
+            AdvanceLogSearchFile(state)
+          end
+        end
+      end
     end
   end
-  return all_results
+
+  if active_log_search ~= state then return end
+
+  if state.file_index > #state.files then
+    CloseLogSearchReader(state)
+    active_log_search = nil
+    DisplaySearchResults(state.results)
+  else
+    DoAfterSpecial(0.01, "ContinueLogSearch()", sendto.script)
+  end
+end
+
+function StartLogSearch(term, files)
+  CloseLogSearchReader(active_log_search)
+  active_log_search = {
+    files = files,
+    file_index = 1,
+    reader = nil,
+    line_num = 0,
+    hits = 0,
+    term_lower = term:lower(),
+    results = {},
+  }
+  ContinueLogSearch()
 end
 
 function GetDaysAgoFromPath(file_path)
@@ -339,7 +397,7 @@ function PerformLogSearch(term)
   local files = GetAllLogFiles()
   Note(string.format("Searching %d log files for: %s", #files, term))
 
-  DisplaySearchResults(SearchAllLogs(term))
+  StartLogSearch(term, files)
 end
 
 function ParseArgs(input)

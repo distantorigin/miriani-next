@@ -134,6 +134,9 @@ function check_and_recover_device()
         end
       end
 
+      clearAmbiance()
+      updateAmbiance()
+
       return true
     else
       if config:get_option("debug_mode").value == "yes" then

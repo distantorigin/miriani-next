@@ -321,6 +321,7 @@ function MCP:do_debounce(watcher_id)
     return
   end
 
+  watcher.pending_change = false
   self:send_edit_back(watcher.filepath)
 
   -- Clear debounce after 2 seconds

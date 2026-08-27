@@ -94,7 +94,11 @@ function is_valid_pe(path)
 
   local b1, b2, b3, b4 = string.byte(offset_bytes, 1, 4)
   local pe_offset = b1 + b2 * 256 + b3 * 65536 + b4 * 16777216
-  file:seek("set", pe_offset)
+  local seek_result = file:seek("set", pe_offset)
+  if seek_result ~= pe_offset then
+    file:close()
+    return false
+  end
   local pe_signature = file:read(4)
   file:close()
   return pe_signature == "PE\0\0"

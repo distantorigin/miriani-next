@@ -367,7 +367,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="babies"
-   match="^.+ struggle against the bonds of (?:a|an) .+ before, with a last burst of energy, falling to the ground and sobbing mightily in pain and panic\.$"
+      match="^.+ struggles? against the bonds of (?:a|an) .+ before, with a last burst of energy, falling to the ground and sobbing mightily in pain and panic\.$"
    regexp="y"
    send_to="12"
    sequence="100"

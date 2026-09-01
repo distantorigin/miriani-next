@@ -7,6 +7,7 @@
 
 ### New
 - Added a sound for when babies are trapped in a container that is not a sling or other conveyance.
+- Added sounds for when babies manage to escape confinement.
 
 ## Version 4.2.14
 

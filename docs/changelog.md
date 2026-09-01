@@ -5,6 +5,9 @@
 ### Fixed
 - Numbered sounds selected in `conf mutes` are now saved and muted individually instead of being combined under the unnumbered sound name.
 
+### New
+- Added a sound for when babies are trapped in a container that is not a sling or other conveyance.
+
 ## Version 4.2.14
 
 ### New

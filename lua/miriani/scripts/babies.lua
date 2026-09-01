@@ -353,5 +353,16 @@ ImportXML([=[
   <send>mplay("misc/baby/babywhine", "babies")</send>
   </trigger>
 
-</triggers>
+<trigger
+   enabled="y"
+   group="babies"
+   match="^You hear muffled, panicked sobbing\. When you look for the source, you see [a-zA-Z]+ tiny bulges appearing and disappearing in (?:a|an) .+, as if something were struggling inside\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/baby/babyMuffled", "babies")</send>
+  </trigger>
+
+  </triggers>
 ]=])

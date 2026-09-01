@@ -9,6 +9,9 @@
 - Added a sound for when babies are trapped in a container that is not a sling or other conveyance.
 - Added sounds for when babies manage to escape confinement.
 
+### Changed
+- Used some creative sound design to enhance sounds/misc/baby/babyMuffled to its full potential.
+
 ## Version 4.2.14
 
 ### New

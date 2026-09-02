@@ -372,6 +372,32 @@ function get_ignored_sounds()
   return list
 end
 
+-- Pick one file out of a candidate pool (main-pack variants plus additive
+-- theme sounds). Muted candidates are excluded from the draw so a muted sound
+-- never consumes a selection while unmuted candidates exist. If every candidate
+-- is muted, one is still returned and play()'s own mute check drops it.
+-- file: the requested path, used to seed synced random.
+local function choose_from_pool(file, files)
+  if not files or #files == 0 then return nil end
+
+  table.sort(files)
+
+  local unmuted = {}
+  for _, candidate in ipairs(files) do
+    if not is_sound_ignored(candidate) then
+      table.insert(unmuted, candidate)
+    end
+  end
+
+  local pool = #unmuted > 0 and unmuted or files
+  if #pool == 1 then return pool[1] end
+
+  if config:get_option("synced_random").value == "yes" then
+    -- Deterministic within a time window so players hear the same variant.
+    return pool[synced_random(file, #pool)]
+  end
+  return pool[math.random(#pool)]
+end
 
 function find_sound_file(file)
   local path = require("pl.path")
@@ -380,24 +406,14 @@ function find_sound_file(file)
 
   -- Check if the file already exists as-is
   if path.isfile(sound_dir .. file) then
+    local files = { sound_dir .. file }
     -- Even if exact file exists, check for additive theme sounds to pool with
     if collect_additive_theme_files then
-      local theme_files = collect_additive_theme_files(file)
-      if #theme_files > 0 then
-        local files = { sound_dir .. file }
-        for _, tf in ipairs(theme_files) do
-          table.insert(files, tf)
-        end
-        table.sort(files)
-        local use_synced = config:get_option("synced_random").value == "yes"
-        if use_synced then
-          return files[synced_random(file, #files)]
-        else
-          return files[math.random(#files)]
-        end
+      for _, tf in ipairs(collect_additive_theme_files(file)) do
+        table.insert(files, tf)
       end
     end
-    return sound_dir .. file
+    return choose_from_pool(file, files)
   end
 
   -- Check if the base filename already ends with a number (e.g. laugh3).
@@ -457,29 +473,14 @@ function find_sound_file(file)
     end
 
     if #files > 0 then
-      table.sort(files)
-      -- Check if synced random is enabled
-      local use_synced = config:get_option("synced_random").value == "yes"
-      if use_synced then
-        -- Pick a synced "random" file - deterministic within 5-minute windows
-        return files[synced_random(file, #files)]
-      else
-        -- Pick a truly random file
-        return files[math.random(#files)]
-      end
+      return choose_from_pool(file, files)
     end
   else
     -- No main sound files found — check additive themes as fallback
     if collect_additive_theme_files then
       local theme_files = collect_additive_theme_files(file)
       if #theme_files > 0 then
-        table.sort(theme_files)
-        local use_synced = config:get_option("synced_random").value == "yes"
-        if use_synced then
-          return theme_files[synced_random(file, #theme_files)]
-        else
-          return theme_files[math.random(#theme_files)]
-        end
+        return choose_from_pool(file, theme_files)
       end
     end
   end

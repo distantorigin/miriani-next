@@ -2,12 +2,13 @@
 
 ## Version 4.2.15 (In Progress)
 
-### Fixed
-- Numbered sounds selected in `conf mutes` are now saved and muted individually instead of being combined under the unnumbered sound name.
-
 ### New
 - Added a sound for when babies are trapped in a container that is not a sling or other conveyance.
 - Added sounds for when babies manage to escape confinement.
+
+### Fixed
+- Numbered sounds selected in `conf mutes` are now saved and muted individually instead of being combined under the unnumbered sound name.
+- Sounds added by themes now respect mutes like any other sound.
 
 ### Changed
 - Used some creative sound design to enhance sounds/misc/baby/babyMuffled to its full potential.

@@ -548,6 +548,8 @@ AcceleratorTo("Esc", [[
 AcceleratorTo("ctrl+l", [[
   notify("info", "Reloading audio settings...")
   initialize_audio()
+  clearAmbiance()
+  updateAmbiance()
   notify("info", "Audio settings initialized.")]], script)
 
 AcceleratorTo("ALT+SHIFT+I", [[
@@ -1217,6 +1219,10 @@ function toggle_minimal_groups(minimal_mode)
   end -- toggle_minimal_groups
 
 function initialize_audio()
+
+  if cleanup_all_streams then
+    cleanup_all_streams()
+  end
 
   -- Clean up existing BASS instance if it exists
   if BASS and BASS.IsInitialized and BASS:IsInitialized() then

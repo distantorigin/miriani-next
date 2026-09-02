@@ -73,40 +73,124 @@ function check_updater_exists()
   return false
 end
 
+function is_valid_pe(path)
+  local file = io.open(path, "rb")
+  if not file then
+    return false
+  end
+
+  local signature = file:read(2)
+  if signature ~= "MZ" then
+    file:close()
+    return false
+  end
+
+  file:seek("set", 60)
+  local offset_bytes = file:read(4)
+  if not offset_bytes or #offset_bytes ~= 4 then
+    file:close()
+    return false
+  end
+
+  local b1, b2, b3, b4 = string.byte(offset_bytes, 1, 4)
+  local pe_offset = b1 + b2 * 256 + b3 * 65536 + b4 * 16777216
+  local seek_result = file:seek("set", pe_offset)
+  if seek_result ~= pe_offset then
+    file:close()
+    return false
+  end
+  local pe_signature = file:read(4)
+  file:close()
+  return pe_signature == "PE\0\0"
+end
+
 function download_updater(callback)
   local homedir = GetInfo(66)
   local download_url = "https://github.com/distantorigin/next-launcher/releases/latest/download/miriani.exe"
   local updater_path = homedir .. "update.exe"
+  local staged_path = updater_path .. ".download"
+  local backup_path = updater_path .. ".backup"
 
   Note("Downloading updater...")
+  os.remove(staged_path)
 
   -- Use curl to download (handles SNI, redirects, everything properly -- sigh). Windows 10 1803 required.
-  local cmd = 'curl -sL -o "' .. updater_path .. '" "' .. download_url .. '"'
+  local cmd = 'curl --fail --show-error --location --max-time 120 -o "' .. staged_path .. '" "' .. download_url .. '"'
 
   execute.doAsyncExecute(cmd, function(success, output, exit_code, err)
     if success and exit_code == 0 then
-      -- Verify file exists and has content
-      local file = io.open(updater_path, "rb")
-      if file then
-        local size = file:seek("end")
-        file:close()
-        if size > 0 then
-          Note("Successfully downloaded update.exe (" .. size .. " bytes) to " .. homedir)
-          if callback then callback(true) end
+      if not is_valid_pe(staged_path) then
+        os.remove(staged_path)
+        Note("Error: Downloaded updater is not a valid PE executable")
+        if callback then callback(false) end
+        return
+      end
+
+      local existing = io.open(updater_path, "rb")
+      local has_existing_updater = existing ~= nil
+      if existing then
+        existing:close()
+      end
+
+      local old_backup = io.open(backup_path, "rb")
+      if old_backup then
+        old_backup:close()
+        local removed, remove_err = os.remove(backup_path)
+        if not removed then
+          os.remove(staged_path)
+          Note("Error: Could not remove stale updater backup: " .. tostring(remove_err))
+          if callback then callback(false) end
           return
         end
       end
-      Note("Error: Download appeared to succeed but file is empty or missing")
-      if callback then callback(false) end
-    else
-      Note("Error: Failed to download update.exe (curl exit code: " .. tostring(exit_code) .. ")")
-      if output and #output > 0 then
-        for _, line in ipairs(output) do
-          Note("  " .. line)
+
+      if has_existing_updater then
+        local backed_up, backup_err = os.rename(updater_path, backup_path)
+        if not backed_up then
+          os.remove(staged_path)
+          Note("Error: Could not back up existing update.exe: " .. tostring(backup_err))
+          if callback then callback(false) end
+          return
         end
       end
-      if callback then callback(false) end
+
+      local replaced, replace_err = os.rename(staged_path, updater_path)
+      if not replaced then
+        os.remove(staged_path)
+        Note("Error: Could not replace update.exe: " .. tostring(replace_err))
+        if has_existing_updater then
+          local restored, restore_err = os.rename(backup_path, updater_path)
+          if not restored then
+            Note("Error: Could not restore previous update.exe: " .. tostring(restore_err))
+          end
+        end
+        if callback then callback(false) end
+        return
+      end
+
+      if has_existing_updater then
+        local removed, remove_err = os.remove(backup_path)
+        if not removed then
+          Note("Warning: Could not remove updater backup: " .. tostring(remove_err))
+        end
+      end
+
+      local file = io.open(updater_path, "rb")
+      local size = file and file:seek("end") or 0
+      if file then file:close() end
+      Note("Successfully downloaded update.exe (" .. size .. " bytes) to " .. homedir)
+      if callback then callback(true) end
+      return
     end
+
+    os.remove(staged_path)
+    Note("Error: Failed to download update.exe (curl exit code: " .. tostring(exit_code) .. ")")
+    if output and #output > 0 then
+      for _, line in ipairs(output) do
+        Note("  " .. line)
+      end
+    end
+    if callback then callback(false) end
   end, {
     hide_window = true,
     working_dir = homedir,

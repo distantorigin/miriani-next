@@ -40,8 +40,14 @@ end
 
 -- Device health monitoring variables
 local last_device_check = 0
-local device_check_interval = 5000 -- Check every 5 seconds
+local device_check_interval = 5 -- Check every 5 seconds
 local last_position_check = {}
+
+local function forget_stream_position(sound_data)
+  if sound_data.stream then
+    last_position_check[tostring(sound_data.stream.id)] = nil
+  end
+end
 
 -- Helper function to cleanup finished sounds from a group
 local function cleanup_group(group)
@@ -56,6 +62,7 @@ local function cleanup_group(group)
       -- Remove streams that are stopped (0) - keep playing (1), stalled (2), paused (3)
       if status == 0 then
         -- Properly free the BASS stream resource
+        forget_stream_position(sound_data)
         sound_data.stream:Free()
         table.remove(streamtable[group], i)
       elseif status == 1 then
@@ -91,6 +98,39 @@ local function cleanup_group(group)
   end
 end
 
+local function recover_audio_device()
+  local streams_to_recover = {}
+  for group, sounds in pairs(streamtable) do
+    for _, sound_data in ipairs(sounds) do
+      if sound_data.stream and sound_data.stream:IsActive() == 1 then
+        table.insert(streams_to_recover, {
+          file = sound_data.file,
+          group = group,
+          position = sound_data.stream:GetPosition()
+        })
+      end
+    end
+  end
+
+  cleanup_all_streams()
+
+  local success, message = BASS:RecoverFromDeviceFailure()
+  if not success then
+    return false, message
+  end
+
+  for _, stream_info in ipairs(streams_to_recover) do
+    if stream_info.group ~= "ambiance" then
+      play(stream_info.file, stream_info.group, false, nil, false, nil, nil, true)
+    end
+  end
+
+  clearAmbiance()
+  updateAmbiance()
+
+  return true, message
+end
+
 -- Function to check device health and attempt recovery
 function check_and_recover_device()
   if not BASS then
@@ -98,57 +138,30 @@ function check_and_recover_device()
   end
 
   local health = BASS:CheckDeviceHealth()
-  if health ~= Audio.CONST.error.ok then
-    if config:get_option("debug_mode").value == "yes" then
-      notify("important", string.format("Audio device issue detected (error %d), attempting recovery...", health))
-    end
-
-    -- Store info about currently playing streams for recovery
-    local streams_to_recover = {}
-    for group, sounds in pairs(streamtable) do
-      for _, sound_data in ipairs(sounds) do
-        if sound_data.stream and sound_data.stream:IsActive() == 1 then
-          table.insert(streams_to_recover, {
-            file = sound_data.file,
-            group = group,
-            position = sound_data.stream:GetPosition()
-          })
-        end
-      end
-    end
-
-    -- Stop all current streams before recovery
-    cleanup_all_streams()
-
-    local success, message = BASS:RecoverFromDeviceFailure()
-    if success then
-      if config:get_option("debug_mode").value == "yes" then
-        notify("info", "Audio device recovery successful: " .. message)
-      end
-
-      -- Attempt to restore streams that were playing
-      for _, stream_info in ipairs(streams_to_recover) do
-        if stream_info.group ~= "ambiance" then -- Don't restore ambiance as it may be inappropriate
-          -- Try to restart the sound from where it left off
-          play(stream_info.file, stream_info.group, false, nil, false, nil, nil, true)
-        end
-      end
-
-      return true
-    else
-      if config:get_option("debug_mode").value == "yes" then
-        notify("important", "Audio device recovery failed: " .. message)
-      end
-      return false
-    end
+  if health == Audio.CONST.error.ok then
+    return true
   end
-  return true
+
+  if config:get_option("debug_mode").value == "yes" then
+    notify("important", string.format("Audio device issue detected (error %d), attempting recovery...", health))
+  end
+
+  local success, message = recover_audio_device()
+  if success then
+    if config:get_option("debug_mode").value == "yes" then
+      notify("info", "Audio device recovery successful: " .. message)
+    end
+  elseif config:get_option("debug_mode").value == "yes" then
+    notify("important", "Audio device recovery failed: " .. message)
+  end
+
+  return success
 end
 
 -- Periodic device health check
 local function periodic_device_check()
-  local current_time = GetInfo(304) -- GetInfo(304) returns current time in milliseconds
-  if current_time - last_device_check > device_check_interval then
+  local current_time = utils.timer()
+  if current_time - last_device_check >= device_check_interval then
     check_and_recover_device()
     last_device_check = current_time
   end
@@ -654,11 +667,14 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
         notify("important", string.format("Audio device error (code %d), attempting recovery...", stream))
       end
 
-      -- Use the improved recovery mechanism
-      local recovery_success, recovery_message = BASS:RecoverFromDeviceFailure()
+      local recovery_success, recovery_message = recover_audio_device()
       if recovery_success then
         if config:get_option("debug_mode").value == "yes" then
           notify("info", "Device recovery successful: " .. recovery_message)
+        end
+
+        if group == "ambiance" then
+          return
         end
 
         -- Retry playing the sound
@@ -772,6 +788,7 @@ function stop(group, option, slide, sec)
         sound_data.stream:Stop()
       end
       -- Properly free the BASS stream resource
+      forget_stream_position(sound_data)
       sound_data.stream:Free()
     end
   end
@@ -795,6 +812,7 @@ function add_stream(group, stream, file, volume)
     if old_sound.stream then
       old_sound.stream:Stop()
       -- Properly free the BASS stream resource
+      forget_stream_position(old_sound)
       old_sound.stream:Free()
     end
   end
@@ -887,6 +905,7 @@ function pause_all_sounds()
           if sound_data.stream then
             sound_data.stream:Stop()
             -- Properly free the BASS stream resource
+            forget_stream_position(sound_data)
             sound_data.stream:Free()
           end
         end
@@ -918,12 +937,13 @@ function cleanup_all_streams()
   for group, sounds in pairs(streamtable) do
     for _, sound_data in ipairs(sounds) do
       if sound_data.stream then
-        sound_data.stream:Stop()
+        forget_stream_position(sound_data)
         sound_data.stream:Free()
       end
     end
   end
   streamtable = {}
+  last_position_check = {}
 end
 
 -- Audio group management for volume controls

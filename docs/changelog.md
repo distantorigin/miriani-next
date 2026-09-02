@@ -9,9 +9,17 @@
 ### Fixed
 - Numbered sounds selected in `conf mutes` are now saved and muted individually instead of being combined under the unnumbered sound name.
 - Sounds added by themes now respect mutes like any other sound.
+- Fixed a crash that could happen while freeing finished audio streams, along with position tracking that was left behind for streams that had already gone away.
+- `lg find` no longer locks up the client while it reads through old logs. It now works through them in chunks and reports results when it finishes.
+- Channel history tracks unsaved messages by message instead of by position, so messages are saved in the right order and none are dropped once the in-memory window fills up. Memory-only mode also stops queueing saves it will never make.
+- Older channel history loads again after a restart. Startup was wiping the bookkeeping that the database load had just filled in.
+- Saving repeatedly in an external editor no longer drops saves to the debounce window.
+- Closing an editor no longer leaves its file watcher running.
+- The updater now downloads to a temporary file and checks that it is a real Windows executable before it replaces update.exe. A failed or truncated download leaves the existing updater alone, and the download gives up after two minutes instead of hanging.
 
 ### Changed
 - Used some creative sound design to enhance sounds/misc/baby/babyMuffled to its full potential.
+- Turning off "Keep channel history indefinitely" in conf buffers now asks for confirmation first.
 
 ## Version 4.2.14
 

@@ -428,7 +428,7 @@ db = nil
 memory_window_size = 10000
 idle_save_delay = 300    -- seconds of idle before auto-save
 memory_only_mode = false -- when true, never use database
-dirty_messages = {}      -- per-category list of unsaved message indices
+dirty_messages = {}      -- per-category list of unsaved message objects
 last_saved_id = {}       -- per-category highest saved msg_id
 oldest_loaded_id = {}    -- per-category oldest msg_id in memory
 total_count = {}         -- per-category total message count (memory + db)
@@ -586,6 +586,12 @@ function OnPluginInstall()
  idle_save_delay = tonumber(GetVariable("idle_save_delay")) or 600  -- 10 minutes
  memory_only_mode = GetVariable("channel_history_memory_mode") == "yes"
 
+ -- Initialize tracking before database loading
+ dirty_messages = {}
+ last_saved_id = {}
+ oldest_loaded_id = {}
+ last_message_time = utils.timer()
+
  -- Initialize database (unless memory-only mode)
  local db_initialized = false
  if not memory_only_mode then
@@ -607,12 +613,6 @@ function OnPluginInstall()
      Note(string.format("[Channel History] Idle auto-save enabled: %d seconds", idle_save_delay))
    end
  end
-
- -- Initialize tracking
- dirty_messages = {}
- last_saved_id = {}
- oldest_loaded_id = {}
- last_message_time = utils.timer()
 
  -- Load quick buffers
  load_quick_buffers()
@@ -653,11 +653,13 @@ function history_add(name, line, wc)
  table.insert(messages[cat], new_msg)
  total_count[cat] = (total_count[cat] or 0) + 1
 
- -- Track as dirty
- if not dirty_messages[cat] then
-   dirty_messages[cat] = {}
+ -- Track as dirty when persistence is enabled
+ if not memory_only_mode then
+   if not dirty_messages[cat] then
+     dirty_messages[cat] = {}
+   end
+   table.insert(dirty_messages[cat], new_msg)
  end
- table.insert(dirty_messages[cat], #messages[cat])
 
  -- Enforce memory window (keep last N in RAM)
  if #messages[cat] > memory_window_size then
@@ -665,11 +667,6 @@ function history_add(name, line, wc)
 
    if indices[cat] > 1 then
      indices[cat] = indices[cat] - 1
-   end
-
-   -- Adjust dirty indices
-   for i, dirty_idx in ipairs(dirty_messages[cat]) do
-     dirty_messages[cat][i] = dirty_idx - 1
    end
 
    if #messages[cat] > 0 and messages[cat][1].msg_id then
@@ -827,15 +824,14 @@ function save_to_database()
   local success, err = pcall(function()
     db:execute("BEGIN TRANSACTION")
 
-    for cat, dirty_indices in pairs(dirty_messages) do
-      if #dirty_indices > 0 then
+    for cat, dirty_list in pairs(dirty_messages) do
+      if #dirty_list > 0 then
         local stmt = db:prepare([[
           INSERT INTO channel_messages (category, message, timestamp)
           VALUES (?, ?, ?)
         ]])
 
-        for _, idx in ipairs(dirty_indices) do
-          local msg = messages[cat][idx]
+        for _, msg in ipairs(dirty_list) do
           if msg and not msg.msg_id then
             stmt:bind_values(cat, msg.message, msg.time)
             stmt:step()
@@ -1682,8 +1678,8 @@ function disable_memory_only_mode(name, line, wc)
   -- Mark all in-memory messages as dirty so they get saved
   for cat, msgs in pairs(messages) do
     dirty_messages[cat] = dirty_messages[cat] or {}
-    for id, _ in pairs(msgs) do
-      dirty_messages[cat][id] = true
+    for _, msg in ipairs(msgs) do
+      table.insert(dirty_messages[cat], msg)
     end
   end
 

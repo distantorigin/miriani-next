@@ -973,6 +973,24 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
     local new_value = current_is_on and "no" or "yes"
     local display_value = current_is_on and "off" or "on"
 
+    -- Disabling persistence permanently deletes both saved and current
+    -- channel history, so require explicit confirmation before changing it.
+    if option_key == "channel_history_persist" and new_value == "no" then
+      dialog.confirm({
+        title = "Disable channel history persistence?\n\nSaved and current channel history will be permanently deleted.",
+        callback = function(result, reason)
+          if result and result.confirmed then
+            config:set_option(option_key, new_value)
+            notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), display_value))
+            config:save()
+            Execute("history_memory_only")
+          end
+          if not skip_menu then config_menu.show_group(group_name) end
+        end
+      })
+      return
+    end
+
     config:set_option(option_key, new_value)
     notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), display_value))
     config:save()

@@ -214,6 +214,7 @@ function MCP:start_file_watcher(filepath, edit)
     edit = edit,
     last_mtime = last_mtime,
     debounce_active = false,
+    pending_change = false,
     watcher_id = watcher_id,
     active = true,
     started_at = os.time(),
@@ -251,8 +252,18 @@ end
 function mcp_dispatch_clear(watcher_id)
   if mcp then
     local watcher = mcp.watcher_registry[watcher_id]
+    if watcher and not watcher.active then
+      mcp.watcher_registry[watcher_id] = nil
+      return
+    end
     if watcher then
-      watcher.debounce_active = false
+      if watcher.pending_change then
+        watcher.pending_change = false
+        mcp:send_edit_back(watcher.filepath)
+        DoAfterSpecial(2, "mcp_dispatch_clear(" .. watcher_id .. ")", sendto.script)
+      else
+        watcher.debounce_active = false
+      end
     end
   end
 end
@@ -295,6 +306,8 @@ function MCP:poll_file(watcher_id)
       -- Set debounce flag and send content after delay
       watcher.debounce_active = true
       DoAfterSpecial(0.5, "mcp_dispatch_debounce(" .. watcher_id .. ")", sendto.script)
+    else
+      watcher.pending_change = true
     end
   end
 
@@ -312,6 +325,7 @@ function MCP:do_debounce(watcher_id)
     return
   end
 
+  watcher.pending_change = false
   self:send_edit_back(watcher.filepath)
 
   -- Clear debounce after 2 seconds

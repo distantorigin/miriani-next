@@ -210,7 +210,7 @@ function GetAllLogFiles()
   return files
 end
 
-local SEARCH_LINES_PER_CHUNK = 1000
+local SEARCH_LINES_PER_CHUNK = 10000
 local active_log_search = nil
 local log_search_continuation_pending = false
 
@@ -246,7 +246,9 @@ end
 local function ScheduleLogSearchContinuation()
   if log_search_continuation_pending then return end
   log_search_continuation_pending = true
-  DoAfterSpecial(0.01, "ContinueLogSearch()", sendto.script)
+  -- 0.1 seconds is the minimum interval DoAfterSpecial accepts; anything
+  -- smaller is rejected outright and the continuation timer never fires.
+  DoAfterSpecial(0.1, "ContinueLogSearch()", sendto.script)
 end
 
 function ContinueLogSearch()

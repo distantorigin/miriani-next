@@ -263,7 +263,7 @@ function ReportLogSearchProgress(state)
   state.last_progress = now
 
   local matches = #state.results
-  Note(string.format("Searched %d of %d logs, %d match%s so far.",
+  Note(string.format("Searched %d of %d logs, %d match%s so far...",
     state.file_index - 1, #state.files, matches, matches == 1 and "" or "es"))
 end
 

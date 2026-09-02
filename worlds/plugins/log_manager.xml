@@ -210,7 +210,9 @@ function GetAllLogFiles()
   return files
 end
 
-local SEARCH_LINES_PER_CHUNK = 10000
+local SEARCH_LINES_PER_CHUNK = 50000
+-- Seconds between "still searching" notices for long searches.
+local SEARCH_PROGRESS_INTERVAL = 3
 local active_log_search = nil
 local log_search_continuation_pending = false
 
@@ -251,6 +253,20 @@ local function ScheduleLogSearchContinuation()
   DoAfterSpecial(0.1, "ContinueLogSearch()", sendto.script)
 end
 
+-- Long searches are otherwise silent for many seconds, so announce how far
+-- along we are every SEARCH_PROGRESS_INTERVAL seconds.
+function ReportLogSearchProgress(state)
+  if state.file_index > #state.files then return end
+
+  local now = os.time()
+  if now - state.last_progress < SEARCH_PROGRESS_INTERVAL then return end
+  state.last_progress = now
+
+  local matches = #state.results
+  Note(string.format("Searched %d of %d logs, %d match%s so far.",
+    state.file_index - 1, #state.files, matches, matches == 1 and "" or "es"))
+end
+
 function ContinueLogSearch()
   log_search_continuation_pending = false
   local state = active_log_search
@@ -286,6 +302,8 @@ function ContinueLogSearch()
 
   if active_log_search ~= state then return end
 
+  ReportLogSearchProgress(state)
+
   if state.file_index > #state.files then
     CloseLogSearchReader(state)
     active_log_search = nil
@@ -305,6 +323,7 @@ function StartLogSearch(term, files)
     hits = 0,
     term_lower = term:lower(),
     results = {},
+    last_progress = os.time(),
   }
   if not log_search_continuation_pending then
     ContinueLogSearch()

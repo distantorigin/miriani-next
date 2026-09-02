@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.15 (In Progress)
+## Version 4.2.15
 
 ### New
 - Added a sound for when babies are trapped in a container that is not a sling or other conveyance.

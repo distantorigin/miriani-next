@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.16 (In Progress)
+
+### Fixed
+- Add commas and periods to the room name regular expression so places like "Outreach; The Outside World Communications Superstore, Starship Registry" would get caught.
+
 ## Version 4.2.15
 
 ### New

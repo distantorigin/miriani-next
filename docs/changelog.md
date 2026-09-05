@@ -6,6 +6,9 @@
 - Add commas and periods to the room name regular expression so places like "Outreach; The Outside World Communications Superstore, Starship Registry" would get caught.
 - Trimmed silence from the beginning of the shake social sound.
 
+### New
+- Added a sound for when you listen to a fountain.
+
 ## Version 4.2.15
 
 ### New

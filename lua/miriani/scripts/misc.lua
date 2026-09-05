@@ -1324,6 +1324,16 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <send>mplay ("misc/houses/doorbell")</send>
   </trigger>
   
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^You hear the soft, soothing sound of water flowing down the fountain and into the rocks at the bottom\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/houses/fountain")</send>
+  </trigger>
+  
   </triggers>
 ]=])
 

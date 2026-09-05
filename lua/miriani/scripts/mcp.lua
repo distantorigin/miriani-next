@@ -711,6 +711,8 @@ end
 -- Import MCP triggers
 ImportXML([=[
 <triggers>
+  <!-- MCP framing must run before normal game-output triggers. Simpleedit
+       payloads can contain source text that looks like communication output. -->
   <trigger
    enabled="y"
    name="mcp_init"
@@ -720,7 +722,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    omit_from_log="y"
-   sequence="100"
+   sequence="1"
   >
   </trigger>
 
@@ -733,7 +735,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    omit_from_log="y"
-   sequence="100"
+   sequence="1"
   >
   </trigger>
 
@@ -746,7 +748,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    omit_from_log="y"
-   sequence="100"
+   sequence="1"
   >
   </trigger>
 
@@ -759,7 +761,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    omit_from_log="y"
-   sequence="100"
+   sequence="1"
   >
   </trigger>
 
@@ -772,7 +774,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    omit_from_log="y"
-   sequence="100"
+   sequence="1"
   >
   </trigger>
 
@@ -785,7 +787,7 @@ ImportXML([=[
    regexp="y"
    omit_from_output="y"
    omit_from_log="y"
-   sequence="100"
+   sequence="1"
   >
   </trigger>
 

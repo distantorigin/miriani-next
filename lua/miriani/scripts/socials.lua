@@ -206,6 +206,7 @@ local socials = {
   snarl     = {category = "novelty"},
   squeak    = {category = "novelty"},
   whistle   = {category = "novelty"},
+  wiggle   = {category = "novelty"},
   yess      = {category = "novelty"},
 
   -- Dances (no gender variants; sounds live in sounds/miriani/dances/)

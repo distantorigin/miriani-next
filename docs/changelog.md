@@ -1,15 +1,14 @@
 # Miriani-Next Changelog
 
-## Version 4.2.16 (In Progress)
+## Version 4.2.16
+### New
+- Added a sound for when you listen to a fountain.
+- Added two new robot dance sounds.
+- Added a new sound for the monkey dance.
 
 ### Fixed
 - Add commas and periods to the room name regular expression so places like "Outreach; The Outside World Communications Superstore, Starship Registry" would get caught.
 - Trimmed silence from the beginning of the shake social sound.
-
-### New
-- Added a sound for when you listen to a fountain.
-- Added two new robot dance sounds.
-- Added a new sound for monkey dance.
 
 ## Version 4.2.15
 

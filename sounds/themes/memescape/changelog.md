@@ -1,6 +1,6 @@
 # Memescape Theme Changelog
 
-## Version 4.2.16 (In Progress)
+## Version 4.2.16
 
 ### New
 - Added a sound for the wiggle social.

@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.17 (In Progress)
+
+### New
+- Added sounds for opening cans and bottles.
+
 ## Version 4.2.16
 ### New
 - Added a sound for when you listen to a fountain.

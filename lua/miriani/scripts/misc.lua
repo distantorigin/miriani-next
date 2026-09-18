@@ -1334,6 +1334,26 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <send>mplay("misc/houses/fountain")</send>
   </trigger>
   
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^.*? twists? (.*?) off of (.*?)\.$"
+   regexp="y"
+   send_to="12"
+  >
+    <send>mplay("misc/Uncategorized/bottleOpen")</send>
+  </trigger>
+  
+  <trigger
+   enabled="y"
+   group="misc"
+   match="^.*? pulls? the ring tab on an? (.*?) can of (.*?), which opens with a soft hiss\.$"
+   regexp="y"
+   send_to="12"
+  >
+  <send>mplay("misc/Uncategorized/canOpen")</send>
+  </trigger>
+  
   </triggers>
 ]=])
 

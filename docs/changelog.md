@@ -4,6 +4,7 @@
 
 ### New
 - Added sounds for opening cans and bottles.
+- Added a low charge alert sound.
 
 ## Version 4.2.16
 ### New

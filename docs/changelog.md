@@ -6,6 +6,9 @@
 - Added sounds for opening cans and bottles.
 - Added a low charge alert sound.
 
+### Changed
+- Replaced sounds/ship/misc/lowCharge with the low charge alert sound from atmospheric salvagers as it is a lot more attention-grabbing.
+
 ## Version 4.2.16
 ### New
 - Added a sound for when you listen to a fountain.

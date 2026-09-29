@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.18 (In Progress)
+
+### New
+- Added female throatfix social sounds.
+
 ## Version 4.2.17
 
 ### New

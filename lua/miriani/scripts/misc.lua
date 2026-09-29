@@ -1347,7 +1347,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
   <trigger
    enabled="y"
    group="misc"
-   match="^.*? pulls? the ring tab on an? (.*?) can of (.*?), which opens with a soft hiss\.$"
+   match="^.*? pulls? the ring tab (?:on|of) an? (?:(.*?) )?can of (.*?), which opens with an? soft hiss\.$"
    regexp="y"
    send_to="12"
   >

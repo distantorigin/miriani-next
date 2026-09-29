@@ -1449,6 +1449,18 @@ mplay("ship/computer/warning", "computer")</send>
   </send>
   </trigger>
 
+<trigger
+   enabled="y"
+   group="ship"
+      match="^A high\-pitched beep sounds as the computer announces &quot;(.+?) charge remaining\.&quot;$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/lowCharge", "ship")
+  </send>
+  </trigger>
+
   <trigger
    enabled="y"
    group="ship"

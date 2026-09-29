@@ -4,6 +4,10 @@
 
 ### New
 - Added sounds for opening cans and bottles.
+- Added a low charge alert sound.
+
+### Changed
+- Replaced sounds/ship/misc/lowCharge with the low charge alert sound from atmospheric salvagers as it is a lot more attention-grabbing.
 
 ### Fixed
 - Added the x86 Visual C++ runtime to prevent architecture mismatch errors at startup.

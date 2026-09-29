@@ -54,6 +54,8 @@ If you're confused about anything, join metafrequency channel 7.07 in-game and s
 
 The launcher handles everything automatically - installation, updates, channel selection (stable/dev), and migration from older versions. It will install Miriani-Next to your Documents folder by default. Connections use SSL/TLS on port 1443 by default.
 
+MUSHclient and the bundled DLLs are 32-bit (x86). Use the x86 Visual C++ runtime on Windows x86, x64, and ARM64; Windows runs the x86 application through its compatibility support on x64 and emulation on ARM64.
+
 **Proxiani Users**: The launcher automatically detects Proxiani and updates world files accordingly. If you're using Proxiani, make sure it's running before launching Miriani-Next -- the proxy already handles TLS on its end. See the [Proxiani GitHub page](https://github.com/PsudoDeSudo/proxiani) for Proxiani setup.
 
 ### Online vs Offline Installers
@@ -202,7 +204,7 @@ If you encounter problems updating from within MUSHclient, you can run the updat
 
 This is particularly helpful for users running MUSHclient in a virtual machine that shares folders with the host computer, as permission issues can sometimes prevent inline updates from completing properly. For a full list of update commands, see the [Commands Reference](#commands-reference) section.
 
-If MUSHclient won't start at all and you're getting errors like 0xc000007b, 0xc0000135, 0xc0000142, a missing MSVCP140.dll or VCRUNTIME140.dll, or a side-by-side configuration error, you're probably missing the Visual C++ Redistributable. Install the x86 version from [aka.ms/vcredist](https://aka.ms/vcredist) -- it needs to be x86 even on a 64-bit machine since MUSHclient is 32-bit.
+If MUSHclient won't start at all and you're getting errors like 0xc000007b, 0xc0000135, 0xc0000142, a missing MSVCP140.dll or VCRUNTIME140.dll, or a side-by-side configuration error, you're probably missing the Visual C++ Redistributable. Install the [x86 Visual C++ Redistributable](https://aka.ms/vc14/vc_redist.x86.exe) -- it needs to be x86 even on x64 or ARM64 Windows since MUSHclient is 32-bit. If you've installed the runtime and still get 0xc000007b, update Miriani-Next to replace any bundled runtime DLL built for the wrong architecture.
 
 ## Configuration
 

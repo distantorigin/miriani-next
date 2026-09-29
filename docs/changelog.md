@@ -5,6 +5,9 @@
 ### New
 - Added sounds for opening cans and bottles.
 
+### Fixed
+- Added the x86 Visual C++ runtime to prevent architecture mismatch errors at startup.
+
 ## Version 4.2.16
 ### New
 - Added a sound for when you listen to a fountain.

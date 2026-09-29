@@ -501,7 +501,10 @@ function update_run(quiet, restart_action)
         -- suppress noisy UI (e.g. the changelog popup).
         local marker = GetInfo(66) .. ".update-quiet"
         local mf = io.open(marker, "w")
-        if mf then mf:close() end
+        if mf then
+          mf:write(tostring(os.time()), "\n", info.version or "")
+          mf:close()
+        end
         -- Unattended update: never pop a window that steals focus.
         if info.restart_required then
           if restart_action == "auto" then

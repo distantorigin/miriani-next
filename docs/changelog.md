@@ -7,6 +7,7 @@
 
 ### Fixed
 - Added the x86 Visual C++ runtime to prevent architecture mismatch errors at startup.
+- Quiet automatic updates no longer disable Do Not Disturb or make foreground-only sounds behave as though MUSHclient were focused while it is in the background.
 
 ## Version 4.2.16
 ### New

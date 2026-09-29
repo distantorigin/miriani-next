@@ -712,8 +712,33 @@ function OnPluginInstall()
 
   initialize_audio()
 
-  -- Reset Do Not Disturb mode on plugin reload
-  config:set_dnd(false)
+  -- A fresh quiet marker paired with a successful updater result identifies
+  -- both in-place reloads and automatic restarts across every open world.
+  local quiet_update_reload = false
+  local homedir = GetInfo(66)
+  local marker = io.open(homedir .. ".update-quiet", "r")
+  if marker then
+    local update_started_at = tonumber(marker:read("*l"))
+    local expected_version = marker:read("*l") or ""
+    marker:close()
+
+    if update_started_at
+      and math.abs(os.difftime(os.time(), update_started_at)) <= 900 then
+      local result_file = io.open(homedir .. ".update-result", "r")
+      if result_file then
+        local result_content = result_file:read("*all")
+        result_file:close()
+        local decoder = require("json.decode")
+        local ok, result = pcall(decoder.decode, result_content)
+        quiet_update_reload = ok and result and result.result == "success"
+          and tostring(result.version or "") == expected_version
+      end
+    end
+  end
+
+  if not quiet_update_reload then
+    config:set_dnd(false)
+  end
 
   -- Reset mute and speech on plugin reload
   config.master_mute = false
@@ -728,7 +753,13 @@ function OnPluginInstall()
 
     if (IsConnected() and GetVariable("logged_in") == "1") then
     register()
-    OnPluginGetFocus()
+    -- ReloadPlugin only runs OnPluginInstall; it does not replay the current
+    -- focus callback. Restore the real state instead of assuming foreground.
+    if GetInfo(113) then
+      OnPluginGetFocus()
+    else
+      OnPluginLoseFocus()
+    end
     if (GetVariable("last_environment_line")) then
       replicate_line(GetVariable("last_environment_line"))
     end

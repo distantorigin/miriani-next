@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.17 (In Progress)
+## Version 4.2.17
 
 ### New
 - Added sounds for opening cans and bottles.

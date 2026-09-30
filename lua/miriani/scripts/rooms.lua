@@ -93,6 +93,7 @@ roomTypes = {
     garage = "garage",
     pool = "pool",
     hottub = "pool",
+    lounge = "pilotsLounge",
     observation = "observation",
     unknown = "planet_unknown",
     security = "security",
@@ -103,6 +104,7 @@ roomTypes = {
     garage = "garage",
     pool = "pool",
     hottub = "pool",
+    lounge = "pilotsLounge",
     observation = "observation",
     unknown = "station_unknown",
     security = "security",
@@ -112,6 +114,7 @@ roomTypes = {
   room = {
     asteroid = "asteroidSurface",
     apartment = "quarters",
+    lounge = "pilotsLounge",
   },
 }
 
@@ -154,6 +157,7 @@ roomNames = {
     ["Asteroid Rover Control Center"] = "asteroidRover",
     ["Atmospheric Combat Vehicle Control Room"] = "acv",
     ["Atmospheric Salvager Cockpit"] = "salvager",
+    ["Bar and Lounge"] = "pilotsLounge",
     ["Beach"] = "ocean",
     ["Clearing"] = "planet",
     ["Crater Rim"] = "volcano",

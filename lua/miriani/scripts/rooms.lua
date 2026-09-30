@@ -291,7 +291,8 @@ function extractRoomName(rawName)
   local zone, room = string.match(rawName, '^(.-)%s*;%s*(.+)$')
   if zone and room then
     zoneName = zone
-    return room
+    -- Nested areas (Zone; Area; RoomName): room is the last segment
+    return string.match(room, "^.*;%s*(.+)$") or room
   end
 
   -- Plain room name, no zone

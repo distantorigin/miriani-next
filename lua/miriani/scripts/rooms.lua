@@ -219,6 +219,7 @@ roomPatterns = {
     {"Cave", "cave"},
     {"^Cell", "brig"},
     {"Cockpit$", "salvager"},
+    {"Dance Floor", "club"},
     {"Docking", "landingpad"},
     {"Escape Pod$", "escapePod"},
     {"Garage", "garage"},

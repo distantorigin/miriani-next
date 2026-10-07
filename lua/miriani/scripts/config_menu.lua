@@ -524,11 +524,11 @@ function config_menu.show_group(group_name)
     local ignored = get_ignored_sounds()
     for i, sound_path in ipairs(ignored) do
       local display = sound_path:gsub("^miriani/", ""):gsub("%.ogg$", ""):gsub("%.wav$", "")
-      secondary_menu["_ignored_" .. tostring(i)] = display
+      secondary_menu[string.format("_ignored_%03d", i)] = display
     end
 
   elseif actual_group_key == "text tones" then
-    secondary_menu["00_add_player_text_tone"] = "Add player..."
+    secondary_menu["999_add_player_text_tone"] = "Add player..."
     for i, entry in ipairs(player_text_tones.list()) do
       local comms_status = entry.comms and "Set" or "Not set"
       local say_status = entry.say and "Set" or "Not set"
@@ -628,7 +628,7 @@ end
 -- Edit a specific option
 -- If skip_menu is true, don't show the group menu after editing (for direct command access)
 function config_menu.edit_option(option_key, group_name, skip_menu)
-  if option_key == "00_add_player_text_tone" then
+  if option_key == "999_add_player_text_tone" then
     prompt_for_player_text_tone()
     return
   end

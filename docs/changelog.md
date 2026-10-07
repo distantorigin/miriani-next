@@ -5,6 +5,9 @@
 ### New
 - Added female throatfix social sounds.
 
+### Fixed
+- Fixed certain option submenus like Text Tones or Sound Mutes that would begin misordering items after 10 items were available in the menu.
+
 ## Version 4.2.17
 
 ### New

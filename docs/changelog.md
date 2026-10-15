@@ -7,6 +7,7 @@
 
 ### Fixed
 - Fixed certain option submenus like Text Tones or Sound Mutes that would begin misordering items after 10 items were available in the menu.
+- Stun detection will now automatically cap stun time to 20 minutes, similarly to the game. This effects both the status bar as well as the heartbeat ambiance that plays while stunned. (Thanks Sasha for puncturing that paint can!)
 
 ## Version 4.2.17
 

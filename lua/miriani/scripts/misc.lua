@@ -1008,7 +1008,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    local fade = 0.8
 
    if ("%2" == "stun time") then
-    stuntime = stuntime + time
+    stuntime = math.min(stuntime + time, 1200)
 
     if (not stunned) then
       stunned = true

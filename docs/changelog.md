@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.19 (In Progress)
+
+### New
+- Added an "Include speech on cameras in say and communication buffers" option under conf buffers. When enabled, says you see through a camera feed are treated like normal speech and also added to the say and communication buffers, with the camera prefix removed so only the camera buffer keeps that. The option is off by default, so behavior is unchanged until you turn it on.
+
 ## Version 4.2.18
 
 ### New

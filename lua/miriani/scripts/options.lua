@@ -123,6 +123,7 @@ local options = {
   metaf_separate_buffers = {descr="Separate metafrequency buffers by frequency/label.", value="yes", group="buffers", type="bool"},
   flight_buffer = {descr="Flight control.", value="yes", group="buffers", type="bool"},
   say_buffer = {descr="Say communication.", value="yes", group="buffers", type="bool"},
+  relay_camera_says = {descr="Include speech on cameras in say and communication buffers.", value="no", group="buffers", type="bool"},
   whisper_buffer = {descr="Whispers.", value="no", group="buffers", type="bool"},
   ooc_buffer = {descr="OOC communication (ROOC, SOOC, OOC channel).", value="yes", group="buffers", type="bool"},
   ship_buffer = {descr="Ship-to-ship communication.", value="no", group="buffers", type="bool"},

@@ -1405,8 +1405,11 @@ function channel(name, line, wc)
   assert (IsPluginInstalled ("6000a4c6f0e71d31fecf523d"), "channel_history could not be found")
 
   if originating_from_camera(line) and name ~= "camera" then
-  -- Don't duplicate camera messages in other buffers.
-        return
+  -- Don't duplicate camera messages in other buffers, unless the user
+  -- wants camera says recorded in the say/comms buffers like a normal say.
+    if config:get_option("relay_camera_says").value ~= "yes" then
+      return
+    end
   end -- camera
   -- add record table of channel arguments
    for k,v in ipairs(wc) do

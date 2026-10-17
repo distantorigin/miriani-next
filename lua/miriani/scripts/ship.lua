@@ -1452,7 +1452,7 @@ mplay("ship/computer/warning", "computer")</send>
 <trigger
    enabled="y"
    group="ship"
-      match="^A shrill beep sounds as the computer announces, &quot;(.+?) charge remaining\.&quot;$"
+      match="^A (?:shrill|high\-pitched) beep sounds as the computer announces,? &quot;(.+?) charge remaining\.&quot;$"
    regexp="y"
    send_to="12"
    sequence="100"

@@ -283,6 +283,17 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="shenanigans"
+   match="^You suddenly notice the absence of .+ as the smell of .+ wafts into the room\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("ship/misc/scent")</send>
+  </trigger>
+  
+  <trigger
+   enabled="y"
+   group="shenanigans"
    match="^You carefully spray a fine mist from .+ at .+\.$"
    regexp="y"
    send_to="12"

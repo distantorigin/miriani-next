@@ -867,6 +867,13 @@ function OnPluginSend(text)
   s = s:gsub("\151", "-")   -- Em dash (U+0097)
   s = s:gsub("\133", "...")  -- Ellipsis (U+0085)
 
+  -- A paced local edit may be between fragments of an MCP line. Queue normal
+  -- commands behind it so user input cannot become part of the edited source.
+  if mcp and mcp.upload_id then
+    mcp:queue_upload(s .. "\r\n")
+    return false
+  end
+
   -- If text was modified, send the converted version instead
   if s ~= text then
     Send(s)

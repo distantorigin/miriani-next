@@ -45,8 +45,6 @@ function MCP:_init()
   self.watcher_timers = {}
   self.watcher_counter = 0
   self.watcher_registry = {}
-  self.uploads = {}
-  self.upload_id = nil
 end
 
 function MCP:generate_auth_key()
@@ -334,53 +332,6 @@ function MCP:do_debounce(watcher_id)
   DoAfterSpecial(2, "mcp_dispatch_clear(" .. watcher_id .. ")", sendto.script)
 end
 
--- Keep one paced queue for edits and commands typed during an upload. Raw
--- packets preserve MCP lines across chunks; escape Telnet IAC before splitting.
-function MCP:queue_upload(data)
-  self.uploads[#self.uploads + 1] = {
-    data = data:gsub("\255", "\255\255"),
-    pos = 1,
-  }
-  if not self.upload_id then
-    self.upload_id = GetUniqueNumber()
-    self:send_upload_chunk(self.upload_id)
-  end
-end
-
-function mcp_dispatch_upload(upload_id)
-  if mcp then mcp:send_upload_chunk(upload_id) end
-end
-
-function MCP:send_upload_chunk(upload_id)
-  -- Disconnects clear the ID; stale timers must not resume on a new connection.
-  if self.upload_id ~= upload_id then return end
-  local upload = self.uploads[1]
-  if not upload then
-    self.upload_id = nil
-    return
-  end
-
-  local chunk_size = 16 * 1024
-  local result = SendPkt(upload.data:sub(upload.pos, upload.pos + chunk_size - 1))
-  if result ~= 0 then
-    self.uploads = {}
-    self.upload_id = nil
-    return
-  end
-  if self.upload_id ~= upload_id then return end
-
-  upload.pos = upload.pos + chunk_size
-  if upload.pos > #upload.data then table.remove(self.uploads, 1) end
-
-  -- Yield to the event loop so the pending TLS write can drain. Keep the
-  -- cooldown even after the last chunk to pace any newly queued upload.
-  result = DoAfterSpecial(0.05, "mcp_dispatch_upload(" .. upload_id .. ")", sendto.script)
-  if result ~= 0 then
-    self.uploads = {}
-    self.upload_id = nil
-  end
-end
-
 -- Send edited content back to server
 function MCP:send_edit_back(filepath)
   local watcher = self.file_watchers[filepath]
@@ -399,12 +350,12 @@ function MCP:send_edit_back(filepath)
   local rawdata = file:read("*all")
   file:close()
 
-  -- Build one upload so the byte limit and delay apply across all MCP lines.
-  local messages = {string.format('#$#dns-org-mud-moo-simpleedit-set %s reference: "%s" type: %s content*: "" _data-tag: %s',
+  -- Send simpleedit-set command
+  Send(string.format('#$#dns-org-mud-moo-simpleedit-set %s reference: "%s" type: %s content*: "" _data-tag: %s',
     self.constants.auth_key,
     edit.reference,
     edit.type,
-    datatag)}
+    datatag))
 
   -- Send content line by line
   -- Handle CRLF, LF, or CR line endings
@@ -427,14 +378,14 @@ function MCP:send_edit_back(filepath)
       end
     end
 
-    -- Append each line
+    -- Send each line
     for _, line in ipairs(lines) do
-      messages[#messages + 1] = string.format("#$#* %s content: %s", datatag, line)
+      Send(string.format("#$#* %s content: %s", datatag, line))
     end
   end
 
-  messages[#messages + 1] = string.format("#$#: %s", datatag)
-  self:queue_upload(table.concat(messages, "\r\n") .. "\r\n")
+  -- Send completion marker
+  Send(string.format("#$#: %s", datatag))
 end
 
 -- Stop watching a file
@@ -455,8 +406,6 @@ end
 
 -- Clean up all file watchers (call on disconnect)
 function MCP:cleanup()
-  self.uploads = {}
-  self.upload_id = nil
   for filepath, _ in pairs(self.file_watchers) do
     self:stop_file_watcher(filepath)
   end

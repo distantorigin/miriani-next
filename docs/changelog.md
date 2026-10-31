@@ -1,12 +1,13 @@
 # Miriani-Next Changelog
 
-## Version 4.2.19 (In Progress)
+## Version 4.2.19
 
 ### New
-- Added an "Include speech on cameras in say and communication buffers" option under conf buffers. When enabled, says you see through a camera feed are treated like normal speech and also added to the say and communication buffers, with the camera prefix removed so only the camera buffer keeps that. The option is off by default, so behavior is unchanged until you turn it on.
+- Added an "Include speech on cameras in say and communication buffers" option under conf buffers. When enabled, says you see through a camera feed are treated like normal speech and also added to the say and communication buffers, with the camera prefix removed so only the camera buffer records the line. The option is off by default, so behavior is unchanged until you turn it on.
 - Added a sound trigger for shipwide air fresheners.
 
 ### Fixed
+- The say trigger will now work correctly with certain costume and NPC names starting with 'A' or 'An'. Happy Halloween!
 - Added a variable check to the low charge alert sound trigger, so now it should fire off properly, regardless if the computer is shrill or high-pitched.
 
 ## Version 4.2.18

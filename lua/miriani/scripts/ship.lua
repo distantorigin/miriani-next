@@ -1252,13 +1252,16 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    group="ship"
    match="^You feel a mighty shaking as something seemingly large impacts the hull\.$"
    regexp="y"
+   omit_from_output="y"
    send_to="14"
-   
    sequence="100"
   >
   <send>
    mplay("ship/COMBAT/hit/youHit6")
-     </send>
+   if config:get_option("print_debris_impacts").value == "yes" then
+     print("You feel a mighty shaking as something seemingly large impacts the hull.")
+   end
+  </send>
   </trigger>
 
   <trigger

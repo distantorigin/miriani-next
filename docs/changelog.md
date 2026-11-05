@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.20 (In Progress)
+
+### New
+- Added a "Print hull debris impact messages" option under conf ship. The option is enabled by default; disabling it hides the message while keeping the sound.
+
 ## Version 4.2.19
 
 ### New

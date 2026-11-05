@@ -288,6 +288,7 @@ Miriani-Next is not responsible for MUSHclient configuration (connection info, f
 - **Artifact Hunting Mode (gag engine sounds when not actively piloting or gunning)**: Gags engine sounds (acceleration, deceleration, subwarp, slip, wavewarp, bias drive) after a period of inactivity. Moving, targeting, firing, or going to red alert resets the timer. Type `hush` to silence engines immediately without waiting.
 - **Autosilence engines when window loses focus in Artifact Hunting Mode**: Silences engines when you tab away from MUSHclient while artifact hunting.
 - **Print a message when the airlock chime sound plays**: Show or hide the airlock chime text (the sound still plays either way).
+- **Print hull debris impact messages**: Show or hide "You feel a mighty shaking as something seemingly large impacts the hull." Enabled by default; the impact sound still plays either way.
 - **Print 'unchanged' before coordinates if the target has not moved since its last scan**: Adds "unchanged" before coordinates if the target hasn't moved since last scan. Track whether targets are stationary or moving.
 
 **Room and Environment** (`conf room`)

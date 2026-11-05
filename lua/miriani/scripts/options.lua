@@ -92,6 +92,7 @@ local options = {
   artifact_hunting_mode = {descr="Artifact Hunting Mode (gag engine sounds when not actively piloting or gunning).", value="no", group="ship", type="bool"},
   autosilence_on_focus_loss = {descr="Autosilence engines when window loses focus in Artifact Hunting Mode.", value="no", group="ship", type="bool"},
   print_airlock_chime = {descr="Print a message when the airlock chime sound plays.", value="no", group="ship", type="bool"},
+  print_debris_impacts = {descr="Print hull debris impact messages.", value="yes", group="ship", type="bool"},
   spam = {descr="Reduce spam by gagging flavored text.", value="yes", group="gags", type="bool"},
   shorten_computer = {descr="Shorten repetitive computer announcements.", value="no", group="gags", type="bool"},
   shorten_communication = {descr="Shorten communication by removing verbs (e.g. 'Player says' becomes 'Player:').", value="no", group="gags", type="bool"},

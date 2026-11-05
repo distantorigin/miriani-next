@@ -1,5 +1,21 @@
 -- @module devices
 -- Device sounds and notifications
+
+-- Re-run a camera line through the triggers so it gets its normal sounds.
+-- When the camera is gagged, a catch-all omit trigger is enabled for the
+-- duration so the text itself never reaches the output window, and
+-- camera_text_gagged tells gagline not to reprint it.
+function replicate_camera_line(line, gagged)
+  if gagged then
+    camera_text_gagged = true
+    EnableTrigger("CameraTextSilencer", true)
+  end
+  replicate_line(line)
+  EnableTrigger("CameraTextSilencer", false)
+  camera_text_gagged = nil
+  DeleteVariable("last_camera_line")
+end
+
 -- Sector name to number mapping table (from VIP Mud soundpack)
 sector_numbers = {
   ["Central Jumpgate Hub"] = 0,
@@ -364,11 +380,21 @@ ImportXML([=[
    end
    mplay ("device/camera")
 SetVariable("last_camera_line", "%2")
-     if config:get_option("internal_camera").value == "no" then
-    replicate_line("%2")
-   end -- if filtering camera
+   replicate_camera_line("%2", config:get_option("internal_camera").value == "yes")
    channel ("camera", "%0", {"camera"})
 </send>
+  </trigger>
+
+  <trigger
+   enabled="n"
+   name="CameraTextSilencer"
+   group="devices"
+   match="^.*$"
+   regexp="y"
+   keep_evaluating="y"
+   omit_from_output="y"
+   sequence="1"
+  >
   </trigger>
 
   <trigger
@@ -384,9 +410,7 @@ SetVariable("last_camera_line", "%2")
   <send>
    mplay ("device/camera")
    SetVariable("last_camera_line", "%1")
-if config:get_option("external_camera").value == "no" then
-    replicate_line("%1")
-   end -- if
+   replicate_camera_line("%1", config:get_option("external_camera").value == "yes")
    channel("camera", "%0", {"camera"})
      </send>
   </trigger>

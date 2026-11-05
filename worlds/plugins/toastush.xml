@@ -1637,7 +1637,7 @@ function playstep(name, line, wildcards)
 end -- playstep
 
 function gagline(name, line, wc)
-  if config:get_option("spam").value == "no" then
+  if config:get_option("spam").value == "no" and not camera_text_gagged then
     print(line)
   else
   return 1

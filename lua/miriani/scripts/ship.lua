@@ -225,16 +225,12 @@ end
   send_to="14"
   sequence="100"
   >
-  <send>if not originating_from_camera("%0") then
-  -- Gag subwarp/slip/wavewarp in artifact hunting mode (but not wormhole)
+  <send>-- Gag subwarp/slip/wavewarp in artifact hunting mode (but not wormhole)
   local drive_type = "%1"
   if drive_type ~= "wormhole" and should_gag_engine_sounds() then
     return
   end
-  mplay ("ship/move/%1", "ship")
-  else
-    print("%0")
-  end</send>
+  mplay ("ship/move/%1", "ship")</send>
   </trigger>
 
   <trigger
@@ -247,12 +243,8 @@ end
    send_to="14"
    sequence="100"
   >
-  <send>if not originating_from_camera("%0") then
-  if not should_gag_engine_sounds() then
+  <send>if not should_gag_engine_sounds() then
     mplay ("ship/move/BiasStart", "ship")
-  end
-  else
-    print("%0")
   end</send>
   </trigger>
 
@@ -296,15 +288,8 @@ end</send>
    send_to="14"
    sequence="100"
   >
-  <send>if not originating_from_camera("%0") then
-  mplay("misc/beep/beep", "ship")
-  mplay ("ship/misc/background", "ship")
-  if config:get_option("spam").value ~= "yes" then
-    print ("%0")
-  end -- if
-else
-  print("%0")
-end -- camera</send>
+  <send>mplay("misc/beep/beep", "ship")
+  mplay ("ship/misc/background", "ship")</send>
   </trigger>
 
   <trigger
@@ -453,17 +438,13 @@ end -- camera</send>
    send_to="14"
    sequence="100"
   >
-  <send>if not originating_from_camera("%0") then
-     mplay ("ship/misc/blastSettle", "ship")
+  <send>mplay ("ship/misc/blastSettle", "ship")
+   if originating_from_camera("%0") then return end
    if "%1" == "disappears" then
     print("%2 unlocked")
    else
     print("%2 locked")
    end -- if
-  else
-    DeleteVariable("last_camera_line")
-    print("%0")
-  end -- camera
   </send>
   </trigger>
 
@@ -564,12 +545,8 @@ end</send>
    send_to="14"
    sequence="100"
   >
-  <send>if not originating_from_camera("%0") then
-    if not should_gag_engine_sounds() then
-      mplay ("ship/move/orbit", "ship")
-    end
-  else
-    print("%0")
+  <send>if not should_gag_engine_sounds() then
+    mplay ("ship/move/orbit", "ship")
   end</send>
   </trigger>
 
@@ -583,11 +560,7 @@ end</send>
    send_to="14"
    sequence="100"
   >
-  <send>if not originating_from_camera("%0") then
-  mplay ("ship/misc/repair", "ship")
-  else
-    print("%0")
-  end</send>
+  <send>mplay ("ship/misc/repair", "ship")</send>
   </trigger>
   <trigger
    enabled="y"

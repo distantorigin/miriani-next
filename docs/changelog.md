@@ -4,6 +4,7 @@
 
 ### New
 - Added a sound for launching an interdictor.
+- Added a bunch of new ambiances. Inside coffin beds, as well as some for club rooms and DJ booths.
 
 ### Fixed
 - Deleting a theme folder while it's enabled no longer stops the soundpack from loading.

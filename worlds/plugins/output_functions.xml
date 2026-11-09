@@ -367,12 +367,16 @@ ClearAccessibleOutput()
  Execute("tts_interrupt output window cleared")
 end
 
-function skipblanklines(ln, dir)
+function skipblanklines(ln, dir, bounced)
  count = GetLinesInBufferCount()
+ -- Too few lines to skip anything, and the bounce below would never end.
+ if count < 2 then
+  return 1
+ end
  if ln < 1 then
-  return skipblanklines(1, 'f')
+  return skipblanklines(1, 'f', bounced)
  elseif ln > count - 1 then
-  return skipblanklines(count - 1, 'b')
+  return skipblanklines(count - 1, 'b', bounced)
  end
  i = ln
  while i > 0 and i < count and GetLineInfo(i, 1) == "" do
@@ -383,12 +387,12 @@ function skipblanklines(ln, dir)
   end
  end
  if i == 0 or i == count then
-  if GetLineInfo(ln, 1) ~= "" then
+  if GetLineInfo(ln, 1) ~= "" or bounced then
    return ln
   elseif i == 0 then
-   return skipblanklines(1, 'f')
+   return skipblanklines(1, 'f', true)
   elseif i == count then
-   return skipblanklines(count - 1, 'b')
+   return skipblanklines(count - 1, 'b', true)
   end
  else
   return i

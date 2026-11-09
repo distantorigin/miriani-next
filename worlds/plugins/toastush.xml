@@ -675,7 +675,7 @@ function update_tab_accelerators()
     -- Tab does default tab completion
     world.AcceleratorTo("Tab", "DoCommand('KeysTab')", sendto.script)
     -- Clear Shift+Tab
-    world.AcceleratorTo("Tab", "DoCommand('KeysShiftTab')", sendto.script)
+    world.Accelerator("Shift+Tab", "")
     -- Clear Ctrl+Space
     world.Accelerator("Ctrl+Space", "")
   end

@@ -1029,6 +1029,11 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
 
     -- Special handling for tab_activates_notepad option
     if option_key == "tab_activates_notepad" then
+      -- An explicit "no" replaces the first-Tab prompt, which would otherwise turn the option back on.
+      if new_value == "no" then
+        SetVariable("tab_output_first_time", "0")
+      end
+
       -- Update tab accelerators immediately
       if update_tab_accelerators then
         update_tab_accelerators()

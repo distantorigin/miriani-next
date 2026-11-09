@@ -226,6 +226,7 @@ roomPatterns = {
     {"Escape Pod$", "escapePod"},
     {"Garage", "garage"},
     {"Hangar", "garage"},
+    {"^Inside A %S+ %S+$", "coffin"},
     {"Lake", "lake"},
     {"Landing", "landingpad"},
     {"Launch Pad", "landingpad"},

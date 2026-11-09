@@ -288,7 +288,7 @@ function Config:save()
   toastush_config = {
     options = user_options,
     audio = user_audio,
-    master_volume = self.master_volume ~= 100 and self.master_volume or nil,
+    master_volume = self.master_volume ~= 50 and self.master_volume or nil,
     master_mute = self.master_mute or nil,
     sound_variants = self.sound_variants or nil,
     enabled_themes = self.enabled_themes or nil,
@@ -571,6 +571,7 @@ function Config:set_master_volume(val)
   end
 
   self.master_volume = val
+  self:save()
   return self.consts.error.OK
 end -- set_master_volume
 

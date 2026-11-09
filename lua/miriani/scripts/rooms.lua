@@ -116,6 +116,7 @@ roomTypes = {
     apartment = "quarters",
     lounge = "pilotsLounge",
     security = "quarters",
+      coffin = "coffin",
   },
 }
 

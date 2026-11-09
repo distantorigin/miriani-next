@@ -49,12 +49,14 @@ ImportXML([=[
 <triggers>
   <trigger
    enabled="y"
-   group="gags"
+   group="ship"
    match="^You feel the sudden pull of acceleration as the starship's relativity drive kicks in, hurling you through the gate's event horizon\.$"
    regexp="y"
    omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
+  <send>mplay ("ship/move/jumpgate", "ship")</send>
   </trigger>
   <trigger
    enabled="y"
@@ -358,7 +360,12 @@ end</send>
    send_to="14"
    sequence="100"
   >
-  <send>mplay ("ship/move/jumpgate", "ship")</send>
+  <send>
+  if not should_gag_engine_sounds() then
+    local frequency = tonumber(config:get_option("relativity_drive_freq").value) or 44100
+    mplay ("ship/move/accelerate", "ship", false, nil, false, false, nil, nil, frequency)
+  end
+  </send>
   </trigger>
 
   <trigger

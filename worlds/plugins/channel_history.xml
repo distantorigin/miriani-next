@@ -1515,10 +1515,11 @@ function sps_handler(name, line, wc)
         end
       end
     else
+      -- Menu returns the chosen text, or "" if it was dismissed.
       local choice = Menu(table.concat(possibles, "|"))
-      if choice then
+      if choice and choice ~= "" then
         for k, v in ipairs(categories) do
-          if v == possibles[choice] then
+          if v == choice then
             selected = k
             break
           end

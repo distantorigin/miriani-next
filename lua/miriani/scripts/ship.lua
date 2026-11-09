@@ -1344,7 +1344,7 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
   >
   <send>
    mplay("ship/misc/anomalyHit")
-   if "%1" ~= nil then mplay("misc/Injuries and Malodies/bodyImpact") end
+   if "%1" ~= "" then mplay("misc/Injuries and Malodies/bodyImpact") end
   </send>
   </trigger>
 

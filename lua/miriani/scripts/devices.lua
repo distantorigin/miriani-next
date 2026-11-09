@@ -97,7 +97,7 @@ ImportXML([=[
    enabled="y"
    name="MessageBoardToggle"
    group="devices"
-   match="^A.+message board reader will (now|no longer) notify you of new messages\.$"
+   match="^.+ will (now|no longer) notify you of new messages\.?$"
    regexp="y"
    send_to="12"
   >

@@ -94,6 +94,10 @@ computer_actions = {
     sound = "ship/computer/failFtl",
     group = "computer"
   },
+  ["The destination specified is beyond the range of the wormhole drive.  Attempting to utilize jumpgate network."] = {
+    sound = "ship/computer/jumpgateCalculate",
+    group = "computer"
+  },
   ["Precision wormhole drive is powering up. Calculating optimal path for precision entry..."] = {
     sound = "ship/move/preciseFtl",
     group = "ship",

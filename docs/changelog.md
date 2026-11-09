@@ -4,6 +4,7 @@
 
 ### New
 - Added a sound for the precision wormhole drive powering up.
+- Added a sound for when the computer falls back to the jumpgate network because a destination is out of wormhole range.
 
 ### Fixed
 - Buffer search (alt+grave) and jumping to buffers by name are no longer case sensitive.

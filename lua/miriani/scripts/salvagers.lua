@@ -199,7 +199,7 @@ gagline()</send>
    regexp="y"
    send_to="12"
   >
-  <send>mplay("activity/atmo/salvageReturn", "vehicle")</send>
+  <send>mplay("activity/atmo/salvageReturns", "vehicle")</send>
 </trigger>
 
 <trigger

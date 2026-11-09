@@ -553,7 +553,7 @@ ImportXML([=[
   >
   <send>if not originating_from_camera("%0") then
    mplay("comm/paOther", "communication")
-   if environment and config:get_option("pa_interrupt").value == "yes" and environment["parent"] == "starship" then
+   if environment and config:get_option("pa_interrupt").value == "yes" and environment.name == "starship" then
     Execute("tts_stop")
    end -- if
    local verb = string.gsub("%2", "ing", "s")

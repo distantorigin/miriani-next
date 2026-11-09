@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.2.22 (In Progress)
+## Version 4.2.22
 
 ### Changed
 - Removed the security center ambiance in favor of the default fallback, forcing living quarters on planets.

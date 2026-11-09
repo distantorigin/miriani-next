@@ -69,6 +69,7 @@ match="^A level \w+ archaeological dig site scanner (indicates|reports) (nothing
    regexp="y"
    omit_from_output="y"
    send_to="14"
+   sequence="90"
   >
   <send>
 print("%2")

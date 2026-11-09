@@ -401,6 +401,10 @@ function dialog.is_active()
   return dialog_state.active
 end
 
+function dialog.get_type()
+  return dialog_state.type
+end
+
 function dialog.cancel(silent)
   if dialog_state.active then
     if dialog_state.callback then

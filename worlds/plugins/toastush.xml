@@ -534,8 +534,12 @@ AcceleratorTo("Esc", [[
   if stellar_surge_is_active and stellar_surge_is_active() then
     stellar_surge_game_over()
   elseif dialog and dialog.is_active() then
-    -- In a dialog: go back with "0"
-    dialog.handle_input("0")
+    -- In a menu: go back with "0". A prompt or confirm has no "0" and would take it as the answer.
+    if dialog.get_type() == "menu" then
+      dialog.handle_input("0")
+    else
+      dialog.handle_input("@abort")
+    end
   elseif config:get_option("escape_abort").value == "yes" then
     -- Not in dialog: send @abort to game
     Send("@abort")

@@ -570,6 +570,7 @@ AcceleratorTo("SHIFT+Esc", [[
 
   -- Stop all playing sounds
   stop()
+  clearAmbiance()
 
   -- Reset scan state
   endScan()
@@ -826,6 +827,7 @@ function OnPluginDisconnect()
   SetVariable("logged_in", 0)
   link = {}
   stop()
+  clearAmbiance()
 end -- OnPluginDisconnect
 
 function OnPluginClose()

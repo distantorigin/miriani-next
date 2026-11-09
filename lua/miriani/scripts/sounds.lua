@@ -366,9 +366,31 @@ function is_sound_ignored(file)
   return false
 end
 
+-- Silence anything already playing that a mute covers. Without this a muted
+-- looping ambiance keeps playing until the next room change.
+local function stop_ignored_streams()
+  for group, sounds in pairs(streamtable) do
+    for i = #sounds, 1, -1 do
+      local sound_data = sounds[i]
+      if sound_data.file and is_sound_ignored(sound_data.file) then
+        if sound_data.stream then
+          sound_data.stream:Stop()
+          forget_stream_position(sound_data)
+          sound_data.stream:Free()
+        end
+        table.remove(sounds, i)
+      end
+    end
+    if #sounds == 0 then
+      streamtable[group] = nil
+    end
+  end
+end
+
 function ignore_sound(file)
   config.ignored_sounds[file] = true
   config:save()
+  stop_ignored_streams()
 end
 
 function unignore_sound(file)
@@ -533,6 +555,14 @@ function sound_stem_resolves(stem)
   return false
 end
 
+-- A muted ambiance still has to replace the previous room's loop. Dropping the
+-- request outright would leave the old ambiance playing in the new room.
+local function drop_ambiance_if_replacing(group, interrupt)
+  if group == "ambiance" and interrupt then
+    stop(group)
+  end
+end
+
 function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custom_offset, frequency)
   local path = require("pl.path")
   group = group or "other"
@@ -554,6 +584,7 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
   end
 
   if is_sound_ignored(file) then
+    drop_ambiance_if_replacing(group, interrupt)
     return
   end
 
@@ -587,6 +618,7 @@ function play(file, group, interrupt, pan, loop, slide, sec, ignore_focus, custo
   end
 
   if is_sound_ignored(sfile) then
+    drop_ambiance_if_replacing(group, interrupt)
     return
   end
 

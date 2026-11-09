@@ -96,7 +96,7 @@ roomTypes = {
     lounge = "pilotsLounge",
     observation = "observation",
     unknown = "planet_unknown",
-    security = "security",
+    security = "quarters",
     lp = "landingpad",
   },
 
@@ -107,7 +107,7 @@ roomTypes = {
     lounge = "pilotsLounge",
     observation = "observation",
     unknown = "station_unknown",
-    security = "security",
+    security = "quarters",
     lp = "landingpad",
   },
 
@@ -115,6 +115,7 @@ roomTypes = {
     asteroid = "asteroidSurface",
     apartment = "quarters",
     lounge = "pilotsLounge",
+    security = "quarters",
   },
 }
 

@@ -2,6 +2,9 @@
 
 ## Version 4.2.22 (In Progress)
 
+### Changed
+- Removed the security center ambiance in favor of the default fallback, forcing living quarters on planets.
+
 ### Fixed
 - Muting a sound now stops it right away if it's already playing, so muted ambiances no longer keep going until you leave the room.
 - Walking into a room whose ambiance is muted no longer leaves the previous room's ambiance looping.

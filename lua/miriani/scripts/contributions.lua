@@ -51,7 +51,9 @@ function receive_contribution(name, line, wildcards, styles)
   mplay("misc/Transactions/cash")
 
   -- Also send to contributions buffer
-  Execute("history_add Contributions=" .. line)
+  if config:get_option("contributions_buffer").value == "yes" then
+    Execute("history_add Contributions=" .. line)
+  end
 end
 
 -- Function to display contributions

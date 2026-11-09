@@ -116,7 +116,7 @@ local actions = {
     role = "repair",
     repairs_hull = true,
     command_sounds = {
-      "ship/combat/componentCritical", "ship/computer/warning1",
+      "ship/alarm/criticalComp", "ship/computer/warning1",
       "ship/misc/lowCharge", "ship/computer/noDamage",
       "ship/misc/repair1",
     },
@@ -136,15 +136,15 @@ end
 
 local wrong_sounds = {
   {"ship/combat/hit/youHit1", "ship/combat/internal"},
-  {"ship/combat/hit/youHit2", "ship/combat/componentCritical"},
+  {"ship/combat/hit/youHit2", "ship/alarm/criticalComp"},
   {"ship/combat/hit/youHit3", "ship/alarm/criticalHull"},
-  {"ship/combat/hit/youHit5", "ship/combat/hullCritical"},
+  {"ship/combat/hit/youHit5", "ship/alarm/criticalHull"},
   {"ship/combat/hit/youHit6", "ship/alarm/hullCompromise"},
   {"ship/combat/hit/youHit7", "ship/combat/internal"},
 }
 
 local timeout_sounds = {
-  {"ship/combat/componentCritical", "ship/alarm/redStart1"},
+  {"ship/alarm/criticalComp", "ship/alarm/redStart1"},
   {"ship/combat/internal", "ship/alarm/redStart2"},
   {"ship/alarm/criticalHull", "ship/combat/hit/youHit4"},
 }

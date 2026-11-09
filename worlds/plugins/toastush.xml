@@ -939,6 +939,9 @@ function OnPluginGetFocus()
   -- Call our focus handling function
   resume_all_sounds()
 
+  -- A room change while unfocused stops ambiance, so start the current one.
+  updateAmbiance()
+
 end -- OnPluginGetFocus
 
 function OnPluginTelnetRequest (type, data)

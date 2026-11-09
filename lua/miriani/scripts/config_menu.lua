@@ -68,6 +68,13 @@ local function validate_option_value(option, value)
       end
       return nil, string.format("Invalid value '%s'. Options: %s", value, table.concat(option.options, ", "))
     end
+  elseif opt_type == "function" then
+    -- Colour options hold a number, so turn a colour name into one.
+    local colour = tonumber(value) or ColourNameToRGB(value)
+    if colour < 0 or colour > 16777215 then
+      return nil, string.format("Invalid colour '%s'. Use a colour name like red, or a number from 0 to 16777215.", value)
+    end
+    return colour, nil
   elseif opt_type == "password" then
     return nil, "Passwords cannot be set inline."
   end

@@ -87,6 +87,7 @@ roomTypes = {
     brig = "brig",
     crawlspace = "crawlspace",
     unknown = "starship_unknown",
+  coffin = "coffin",
   },
 
   planet = {
@@ -98,6 +99,7 @@ roomTypes = {
     unknown = "planet_unknown",
     security = "quarters",
     lp = "landingpad",
+  coffin = "coffin",
   },
 
   station = {
@@ -109,6 +111,7 @@ roomTypes = {
     unknown = "station_unknown",
     security = "quarters",
     lp = "landingpad",
+  coffin = "coffin",
   },
 
   room = {

@@ -102,9 +102,9 @@ ImportXML([=[
    send_to="12"
   >
   <send>if "%1" == "now" then
-    mplay("miriani/device/activate")
+    mplay("device/activate")
   else
-    mplay("miriani/device/deactivate")
+    mplay("device/deactivate")
   end
   </send>
   </trigger>

@@ -9,7 +9,7 @@ ImportXML([=[
   <alias
    name="dialog_input_handler"
    enabled="n"
-   match="^(?!vol|history_|tts|#\$#|Line_Get|clearoutput|prevline|toggleoutput|toggleinterrupt|curline|select|nextline|whichline|topline|snap_shot|endline)(.*)$"
+   match="^(?!vol(?:ume)?\s+(?:up|down|next|prev)$|history_|tts|#\$#|Line_Get|clearoutput|prevline|toggleoutput|toggleinterrupt|curline|select|nextline|whichline|topline|snap_shot|endline)(.*)$"
    regexp="y"
    send_to="12"
    sequence="10"

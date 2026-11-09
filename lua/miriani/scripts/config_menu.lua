@@ -1130,10 +1130,16 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
   else
     -- String or other type - use prompt
     local prompt_message
+    local is_password = option.type == "password"
     if option_key == "relativity_drive_freq" then
       prompt_message = "Presets: 22050=half, 44100=normal, 88200=double\n\nEnter a blank line to reset to default."
     else
-      prompt_message = string.format("Current value: %s\n\nEnter a blank line to reset to default.", tostring(option.value))
+      -- A password shows the same [Set]/[Not set] marker as the menu, not the password itself.
+      local current = tostring(option.value)
+      if is_password then
+        current = option.value ~= "" and "[Set]" or "[Not set]"
+      end
+      prompt_message = string.format("Current value: %s\n\nEnter a blank line to reset to default.", current)
     end
 
     dialog.prompt({
@@ -1153,7 +1159,11 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
         elseif result and result.value then
           -- Normal value
           config:set_option(option_key, result.value)
-          notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), result.value))
+          if is_password then
+            notify("info", string.format("%s updated", strip_trailing_punctuation(option.descr)))
+          else
+            notify("info", string.format("%s set to %s", strip_trailing_punctuation(option.descr), result.value))
+          end
           config:save()
         end
         -- Return to group menu

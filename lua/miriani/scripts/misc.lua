@@ -755,6 +755,12 @@ maybe_check_updates_on_connect()</send>
   <send>
    mplay("misc/Swimming Pool/splash")
 
+   -- Surfacing ends the underwater loop and brings the room ambiance back.
+   if string.find("%0", "^You ") then
+     stop("environment")
+     updateAmbiance()
+   end -- if
+
    if (not getCurrentAmbiance())
    and environment then
      replicate_line(environment.line)

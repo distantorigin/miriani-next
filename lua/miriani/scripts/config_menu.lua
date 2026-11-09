@@ -1019,11 +1019,12 @@ function config_menu.edit_option(option_key, group_name, skip_menu)
     if option_key:match("_buffer$") and new_value == "no" then
       -- Exceptions where the category name differs from the option prefix
       local buffer_exceptions = {
-        url_buffer = "URLs",
-        flight_buffer = "flight control",
-        board_buffer = "boards",
-        scan_buffer = "scans",
-        rp_buffer = "roleplay",
+        url_buffer = "url",
+        flight_buffer = "flight",
+        board_buffer = "board",
+        scan_buffer = "scan",
+        rp_buffer = "rp",
+        contributions_buffer = "Contributions",
       }
       -- Special case: metaf_buffer deletes all buffers starting with "metaf"
       if option_key == "metaf_buffer" then

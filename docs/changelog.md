@@ -1,14 +1,16 @@
 # Miriani-Next Changelog
 
-## Version 4.2.21 (In Progress)
+## Version 4.2.21
 
 ### New
 - Added a sound for the precision wormhole drive powering up.
-- Added a sound for when the computer falls back to the jumpgate network because a destination is out of wormhole range.
+- Added a sound for when the ship falls back to the jumpgate network because a destination is out of wormhole range.
+
+### Changed
+- Buffer search (alt+grave) and jumping to buffers by name are no longer case sensitive.
 
 ### Fixed
-- Buffer search (alt+grave) and jumping to buffers by name are no longer case sensitive.
-- The jumpgate sound now plays when you actually go through the gate instead of on the approach. The approach plays the normal relativity drive acceleration.
+- The jumpgate sound now plays when you actually go through the gate instead of on the approach. The approach plays the normal relativity drive acceleration sound.
 
 ## Version 4.2.20
 

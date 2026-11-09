@@ -600,7 +600,7 @@ match="^(?:The|A|An|Praelor) .+? has (left|entered|exited from|jumped into|jumpe
    if "%1" == "left"
    or string.find  ("%0", "entered Jumpgate")
    or string.find ("%0", "Mission")
-   or "%1" == "jumped out" then
+   or "%1" == "jumped out of" then
      mplay ("ship/move/sectorExit", "ship")
    else
      mplay ("ship/move/sectorEnter", "ship")

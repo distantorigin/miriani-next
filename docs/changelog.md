@@ -1,5 +1,10 @@
 # Miriani-Next Changelog
 
+## Version 4.2.21 (In Progress)
+
+### Fixed
+- Buffer search (alt+grave) and jumping to buffers by name are no longer case sensitive.
+
 ## Version 4.2.20
 
 ### New

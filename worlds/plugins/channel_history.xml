@@ -1148,13 +1148,18 @@ SendToNotepad(np, nptext)
  NotepadReadOnly(np, true)
  ActivateNotepad(np)
  end
+-- Case-insensitive match against the start of a buffer name or any /-separated segment
+function buffer_name_matches(name, query)
+  name, query = name:lower(), query:lower()
+  return name:sub(1, #query) == query or name:find("/" .. query, 1, true) ~= nil
+end
 function history_catsearch(name, line, wc)
  if not require_category(false) then return end
 command=GetCommand()
 if #command~=0 then
 possibles={}
 for k, v in ipairs(categories) do
-if v:sub(1,#command)==command or v:find("%f[^/]"..command,1) then
+if buffer_name_matches(v, command) then
 table.insert(possibles, v)
 end
 end
@@ -1492,7 +1497,7 @@ function sps_handler(name, line, wc)
     local possibles = {}
 
     for k, v in ipairs(categories) do
-      if v:sub(1, #buffer_name) == buffer_name or v:find("%f[^/]" .. buffer_name, 1) then
+      if buffer_name_matches(v, buffer_name) then
         table.insert(possibles, v)
       end
     end

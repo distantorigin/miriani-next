@@ -259,7 +259,7 @@ ImportXML([=[
    regexp="y"
    send_to="14"
    omit_from_output="y"
-   sequence="100"
+   sequence="90"
   >
   <send>
    local bidder = "%1"

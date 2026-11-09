@@ -155,13 +155,12 @@ ImportXML([=[
   >
   <send>
    if config:get_option("secondary_lock").value == "yes" and focusTarget and focusTarget ~= "%1" then
-    return mplay("ship/combat/secondaryLock", "ship")
+    mplay("ship/combat/secondaryLock", "ship")
    else -- main or unset target.
     mplay ("ship/combat/enemyLocked", "ship")
-   print_color({"Locked by %1", "combat"})
-
    end -- if
 
+   print_color({"Locked by %1", "combat"})
    channel("combat", "Locked by %1", {"combat"})
   </send>
   </trigger>

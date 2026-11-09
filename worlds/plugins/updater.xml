@@ -318,7 +318,7 @@ function update_dispatcher(name, line, wildcards)
           if success then
             Note("Installation complete. Running update check and generating manifest...")
 run_updater_visible("-generate-manifest")
-            DoAfterSpecial(5, "update_run(0)", sendto.script)
+            DoAfterSpecial(5, "update_run(false)", sendto.script)
           else
             Note("Installation failed.")
           end
@@ -329,7 +329,7 @@ run_updater_visible("-generate-manifest")
       download_updater(function(success)
         if success then
           Note("Reinstallation complete. Running update check...")
-          update_run(0)
+          update_run(false)
         else
           Note("Reinstallation failed.")
         end

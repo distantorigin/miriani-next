@@ -487,6 +487,16 @@ end
 
 function Config:reset()
   DeleteVariable("toastush_config")
+
+  -- Rebuild from defaults too, or the next save writes the old settings back.
+  self.ignored_sounds, self.sound_groups = {}, {}
+  self.sound_variants, self.enabled_themes = nil, nil
+  self.all_themes_mode, self.force_additive_mode = nil, nil
+  local defaults = vars.options
+  if vars.group_metadata then
+    defaults = {options = vars.options, group_metadata = vars.group_metadata}
+  end
+  self:init(defaults, vars.audio)
 end
 
 function Config:get(var)

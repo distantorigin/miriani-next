@@ -729,6 +729,7 @@ ImportXML([=[
    match="^You (?:can go (nowhere|.+)|see nowhere obvious to go)\.$"
    regexp="y"
    send_to="14"
+   sequence="90"
    keep_evaluating="y"
   >
   <send>

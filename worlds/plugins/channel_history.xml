@@ -1462,11 +1462,13 @@ function history_quicklist(name, line, wc)
     return
   end
 
-  say("Quick list (" .. #quick_buffers .. " buffers):")
+  -- Each say() cuts off the one before it, so speak the whole list at once.
+  local parts = {"Quick list (" .. #quick_buffers .. " buffers):"}
   for i, buffer in ipairs(quick_buffers) do
     local marker = (i == quick_buffer_index) and " (current)" or ""
-    say(i .. ". " .. buffer .. marker)
+    parts[#parts + 1] = i .. ". " .. buffer .. marker
   end
+  say(table.concat(parts, " "))
 end
 
 -- Clear all quick buffers

@@ -340,8 +340,9 @@ run_updater_visible("-generate-manifest")
         -- Interactive switch
         run_updater_visible("switch")
       elseif params == "dev" or params == "stable" then
-        -- Switch to specific channel
-        run_updater_hidden("switch " .. params, function(success, output, exit_code)
+        -- Switch to specific channel. The flag goes before the channel because
+        -- the updater stops reading flags at the first plain argument.
+        run_updater_hidden("switch -non-interactive " .. params, function(success, output, exit_code)
           if success and #output > 0 then
             for _, line in ipairs(output) do
               Note(line)

@@ -187,6 +187,7 @@ ImportXML([=[
    match="^[a-zA-Z].+ input.+ (an activation|a deactivation).+command into .+\.$"
    regexp="y"
    send_to="12"
+   sequence="90"
   >
   <send>
    local action = "%1"

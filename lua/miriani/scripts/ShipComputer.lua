@@ -94,6 +94,11 @@ computer_actions = {
     sound = "ship/computer/failFtl",
     group = "computer"
   },
+  ["Precision wormhole drive is powering up. Calculating optimal path for precision entry..."] = {
+    sound = "ship/move/preciseFtl",
+    group = "ship",
+    PlayComputerSound = true
+  },
   ["An interdiction field is preventing the validation of cached navigational beacon data. Safety overrides are now in effect."] = {
     sound = "ship/computer/error",
     group = "computer"

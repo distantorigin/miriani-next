@@ -2,9 +2,12 @@
 
 ## Version 4.2.21 (In Progress)
 
+### New
+- Added a sound for the precision wormhole drive powering up.
+
 ### Fixed
 - Buffer search (alt+grave) and jumping to buffers by name are no longer case sensitive.
-- The jumpgate sound now plays when you actually go through the gate instead of about five seconds early. The approach plays the normal relativity drive acceleration.
+- The jumpgate sound now plays when you actually go through the gate instead of on the approach. The approach plays the normal relativity drive acceleration.
 
 ## Version 4.2.20
 

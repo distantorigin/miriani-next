@@ -1441,11 +1441,11 @@ function channel(name, line, wc)
   end -- for loop
 end -- channel
 
-function NoOpOnPluginLineReceived(line)
-  if GetVariable("logged_in") ~= "1" then
+function OnPluginLineReceived(line)
+  if not line:find("://", 1, true) then
     return true
   end
-  if not line:find("://", 1, true) then
+  if GetVariable("logged_in") ~= "1" then
     return true
   end
   local url = line:match("(https?://[^%s\"]+)") or
@@ -1471,7 +1471,7 @@ function open_url()
   else
     local url = link.url
     notify("info", "Opening "..url, 1)
-    play("audio/mouseClick.ogg")
+    mplay("misc/Uncategorized/mouseClick", "notification")
     OpenBrowser(url)
   end -- if
 end -- open_url

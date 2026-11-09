@@ -254,6 +254,9 @@ function Config:load()
 end
 
 function Config:save()
+  -- Nothing to save until Config:init has built the option tables.
+  if not self.options then return end
+
   -- Only save values that differ from defaults
   local user_options = {}
   local default_options = vars.options or {}

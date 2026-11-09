@@ -402,7 +402,7 @@ ImportXML([=[
   <trigger
    name="prescan_potential_name"
    enabled="n"
-   group="ship"
+   group="scan_prescan"
    match="^([a-zA-Z]{1}[\(\)\[\]\{\}a-zA-Z0-9'&quot; -:,]{1,99})$"
    regexp="y"
    omit_from_output="y"

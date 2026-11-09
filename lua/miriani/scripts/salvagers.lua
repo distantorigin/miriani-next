@@ -53,14 +53,15 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="vehicle"
+   script="gagline"
    match="^A whirlpool forms nearby, sucking the craft downward into its swirling vortex.+?$"
    regexp="y"
-   send_to="12"
+   omit_from_output="y"
+   send_to="14"
    sequence="100"
   >
   <send>mplay("activity/atmo/whirlpool", "vehicle")
-mplay("activity/atmo/wave", "vehicle")
-gagline()</send>
+mplay("activity/atmo/wave", "vehicle")</send>
   </trigger>
 
   <trigger

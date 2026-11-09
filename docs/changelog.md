@@ -1,6 +1,6 @@
 # Miriani-Next Changelog
 
-## Version 4.3.00 (In Progress)
+## Version 4.3.00
 
 ### New
 - Added a sound for launching an interdictor.

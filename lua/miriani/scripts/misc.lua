@@ -30,7 +30,7 @@ ImportXML([=[
 
   <trigger
    enabled="y"
-   group="misc"
+   group="login"
    match="^Username:$"
    regexp="y"
    send_to="12"
@@ -76,7 +76,7 @@ end
 
   <trigger
    enabled="y"
-     group="misc"
+   group="login"
    match="^(Logged in\!|\*{3} (?:Connected|Redirecting (?:old|new) connection to this port) \*{3})$"
    regexp="y"
    send_to="12"

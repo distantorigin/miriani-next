@@ -1,5 +1,43 @@
 # Miriani-Next Changelog
 
+## Version 4.3.00 (In Progress)
+
+### New
+- Added a sound for launching an interdictor.
+
+### Fixed
+- Deleting a theme folder while it's enabled no longer stops the soundpack from loading.
+- Leaving minimal mode no longer hides most game text until your next scan or move.
+- Alt+Shift+U to open links works once again.
+- Tab completion works again when Tab output is off, and turning it off in conf now sticks properly.
+- 'conf reset' will now trigger a save to force writing to disk.
+- Asteroid mining reactor sounds play again instead of the keyboard sound.
+- Typing a colour name into a colour setting, like 'conf colors combat red', works now.
+- Moving around the output window after clearing it no longer freezes the client.
+- Room ambiance comes back after Shift+Esc or a reconnect.
+- Room ambiance starts again when you alt-tab back after being moved to a new room.
+- The underwater loop now stops when you surface and the room ambiance returns, similar to being stunned.
+- Message board reader mute/unmute sounds play again.
+- Atmospheric salvager docking bay sound plays again.
+- Stellar Surge repair and wrong-key sounds play all their layers again.
+- Auction bids play the bid sound and go to the auction buffer again.
+- Archaeology scanners reporting nothing nearby play the nothing sound instead of the detect sound.
+- Alt+Space no longer reads the previous room's exits in a room with no exits.
+- Ships jumping out of the sector play the exit sound instead of the enter sound.
+- The anomaly body impact sound only plays when you were actually thrown.
+- The salvager whirlpool line follows the spam option.
+- The PA interrupt option now interrupts speech on starships as intended.
+- Locks from non-focused ships show up in the text and combat buffer when the secondary lock sound is on.
+- Auto-login and soundpack registration now work in minimal mode.
+- Escape in a text prompt cancels it instead of saving '0' to the particular conf option.
+- Typing something starting with 'vol' in a menu, like 'volcano', no longer gets dropped.
+- The quick buffer list is read out in one go instead of chunking.
+- 'sps' with several matching buffers jumps to the one you pick.
+- 'update reinstall' and 'update install' show the update check result.
+- 'update switch dev' and 'update switch stable' show their output once again.
+- Turning off the URL, flight, board, scan, roleplay and contributions buffers in conf removes the old buffer from history.
+- The contributions buffer option actually turns the buffer off.
+- The 'conf auto' password prompt no longer shows your password.
 
 ## Version 4.2.22
 

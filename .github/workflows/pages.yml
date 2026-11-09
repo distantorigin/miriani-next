@@ -3,9 +3,6 @@ name: Deploy GitHub Pages
 on:
   release:
     types: [published]
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 permissions:

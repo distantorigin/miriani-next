@@ -633,7 +633,7 @@ SetVariable("last_camera_line", "%2")
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Injuries and Malodies/shock")</send>
+  <send>mplay("misc/Injuries and Maladies/shock")</send>
   </trigger>
   
     <trigger
@@ -644,7 +644,7 @@ SetVariable("last_camera_line", "%2")
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Injuries and Malodies/shock")</send>
+  <send>mplay("misc/Injuries and Maladies/shock")</send>
   </trigger>
   
   <trigger
@@ -655,7 +655,7 @@ SetVariable("last_camera_line", "%2")
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Injuries and Malodies/rend")</send>
+  <send>mplay("misc/Injuries and Maladies/rend")</send>
   </trigger>
   
     <trigger
@@ -666,7 +666,7 @@ SetVariable("last_camera_line", "%2")
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Injuries and Malodies/shock")</send>
+  <send>mplay("misc/Injuries and Maladies/shock")</send>
   </trigger>
     
   </triggers>

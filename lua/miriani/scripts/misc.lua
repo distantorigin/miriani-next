@@ -670,7 +670,7 @@ maybe_check_updates_on_connect()</send>
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Injuries and Malodies/ftlFall")</send>
+  <send>mplay("misc/Injuries and Maladies/ftlFall")</send>
   </trigger>
 
   <trigger
@@ -929,7 +929,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-   <send>mplay("misc/Injuries and Malodies/breakBone", "other")</send>
+<send>mplay("misc/  Injuries and Maladies/breakBone", "other")</send>
   </trigger>
 
   <trigger
@@ -999,7 +999,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-  <send>mplay("misc/Injuries and Malodies/shock")</send>
+  <send>mplay("misc/Injuries and Maladies/shock")</send>
   </trigger>
 
   <trigger

@@ -340,7 +340,7 @@ ImportXML([=[
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Injuries and Malodies/stunTime", "melee")</send>
+  <send>mplay("misc/Injuries and Maladies/stunTime", "melee")</send>
   </trigger>
 
   <trigger

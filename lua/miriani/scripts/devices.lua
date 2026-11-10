@@ -647,7 +647,7 @@ SetVariable("last_camera_line", "%2")
   <send>mplay("misc/Injuries and Malodies/shock")</send>
   </trigger>
   
-    <trigger
+  <trigger
    enabled="y"
    group="devices"
    match="^You gasp as contaminated air leaks through the gaps in your incomplete spacesuit\.$"
@@ -655,7 +655,7 @@ SetVariable("last_camera_line", "%2")
    send_to="12"
    sequence="100"
   >
-  <send>mplay("misc/Injuries and Malodies/rend)</send>
+  <send>mplay("misc/Injuries and Malodies/rend")</send>
   </trigger>
   
     <trigger

@@ -625,5 +625,49 @@ SetVariable("last_camera_line", "%2")
   <send>mplay("device/switch")</send>
   </trigger>
 
+  <trigger
+   enabled="y"
+   group="devices"
+   match="^.+ buzzes with a faint electrostatic discharge as the contaminated atmosphere interferes with the internal electronics\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Injuries and Malodies/shock")</send>
+  </trigger>
+  
+    <trigger
+   enabled="y"
+   group="devices"
+   match="^An? .+ spacesuit .+ hisses and crackles as the contaminated atmosphere attacks the .+'s protective outer layer, degrading its efficacy\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Injuries and Malodies/shock")</send>
+  </trigger>
+  
+    <trigger
+   enabled="y"
+   group="devices"
+   match="^You gasp as contaminated air leaks through the gaps in your incomplete spacesuit\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Injuries and Malodies/rend)</send>
+  </trigger>
+  
+    <trigger
+   enabled="y"
+   group="devices"
+   match="^An? .+ spacesuit .+ crackles and spits as the thick gases work their way across the exposed .+\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc/Injuries and Malodies/shock")</send>
+  </trigger>
+    
   </triggers>
 ]=])

@@ -1,5 +1,11 @@
 # Miriani-Next Changelog
 
+## Version 4.3.01 (In Progress)
+
+### New
+- Added sounds for Eris damaging spacesuits and forcefields.
+
+
 ## Version 4.3.00
 
 ### New

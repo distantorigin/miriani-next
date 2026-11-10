@@ -428,6 +428,16 @@ ImportXML([=[
   >
   <send>mplay("misc/Bathroom/ShowerEnd")</send>
   </trigger>
-
+<trigger
+   enabled="y"
+   group="shenanigans"
+   match="^.+ buzzes with a faint electrostatic discharge as the contaminated atmosphere interferes with the internal electronics\.$"
+   regexp="y"
+   send_to="12"
+   sequence="100"
+  >
+  <send>mplay("misc\Injuries and Malodies/shock")</send>
+</trigger>
+  
   </triggers>
 ]=])

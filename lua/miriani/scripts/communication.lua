@@ -382,7 +382,7 @@ ImportXML([=[
   <trigger
    enabled="y"
    group="comm"
-   match="^((?:An?|The) [^,]+|[A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*) (.+ )?(says?|asks?|exclaims?)(?: (?:to )?([A-Za-z]+(?: [A-Z][A-Za-z]+)*))?, &quot;(.+?)&quot;$"
+   match="^(?!A voice comes over the (?:radio|speakers)\b)((?:An?|The) [^,]+|[A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)*) (.+ )?(says?|asks?|exclaims?)(?: (?:to )?([A-Za-z]+(?: [A-Z][A-Za-z]+)*))?, &quot;(.+?)&quot;$"
    regexp="y"
    omit_from_output="y"
    send_to="14"

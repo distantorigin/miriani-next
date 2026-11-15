@@ -4,7 +4,13 @@
 
 ### New
 - Added sounds for Eris damaging spacesuits and forcefields.
+- Added a sound for contaminated air leaking through an incomplete spacesuit.
 
+### Changed
+- Renamed the sound category "Injuries and Malodies" to "Injuries and Maladies".
+
+### Fixed
+- Radio and speaker announcements no longer get treated as ordinary speech.
 
 ## Version 4.3.00
 

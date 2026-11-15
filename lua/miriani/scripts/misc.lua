@@ -929,7 +929,7 @@ match="^(?:You|[A-Z][^ ]+(?: [^ ]+){0,3}) (?:hits?|smacks?|sends?) the puck (?:f
    regexp="y"
    send_to="12"
   >
-<send>mplay("misc/  Injuries and Maladies/breakBone", "other")</send>
+   <send>mplay("misc/Injuries and Maladies/breakBone", "other")</send>
   </trigger>
 
   <trigger
